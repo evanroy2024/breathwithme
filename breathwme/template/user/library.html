@@ -1,0 +1,289 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+Home - Meditation Dashboard
+{% endblock %}
+
+{% block content %}
+<style>
+    /* General Reset */
+    body {
+        background-color: #121212; /* Dark background for the whole page */
+        color: #e0e0e0; /* Light text color */
+        font-family: Arial, sans-serif;
+        overflow-y: auto; /* Enable vertical scrolling if needed */
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 1420px;
+        margin: 0 auto;
+        padding: 5px;
+        min-height: 100vh; /* Ensure the container takes at least full viewport height */
+    }
+
+    .header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+    .back-arrow {
+        font-size: 24px;
+        margin-right: 12px;
+        cursor: pointer;
+        color: #fff; /* Light color for the back arrow */
+    }
+
+    h1 {
+        font-size: 22px;
+        font-weight: bold;
+        color: #fff; /* Light color for headings */
+    }
+
+    .main-card {
+        background-color: #1f1f1f; /* Dark background for the card */
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3); /* Darker shadow */
+        margin-bottom: 24px;
+    }
+
+    .card {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .icon img {
+        width: 52px;
+        height: 52px;
+    }
+
+    .content h2 {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 4px;
+        color: #fff; /* Light text color */
+    }
+
+    .content p {
+        font-size: 14px;
+        color: #bbb; /* Lighter gray text */
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .grid-item {
+        background-color: #1f1f1f; /* Dark background for grid items */
+        border-radius: 16px;
+        padding: 18px;
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3); /* Darker shadow */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .grid-item .icon img {
+        width: 44px;
+        height: 44px;
+        margin-bottom: 10px;
+    }
+
+    .grid-item .content h3 {
+        font-size: 15px;
+        font-weight: bold;
+        margin-bottom: 6px;
+        color: #fff; /* Light color for headings */
+    }
+
+    .grid-item .content p {
+        font-size: 13px;
+        color: #bbb; /* Lighter gray text */
+    }
+
+    .footer {
+        text-align: center;
+        margin-top: 28px;
+    }
+
+    .explore-btn {
+        background-color: #c5a152;
+        color: #fff;
+        padding: 14px 28px;
+        font-size: 17px;
+        font-weight: bold;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+        width: 100%;
+        margin-bottom: 80px; /* Add space below button */
+    }
+
+    .explore-btn:hover {
+        background-color: #0056d4;
+    }
+
+    #explore-prog {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        color: #bbb; /* Lighter gray color */
+    }
+
+    #explore-line {
+        font-weight: 200;
+        color: #bbb; /* Lighter gray color */
+    }
+
+    .icon img {
+        border-radius: 5px;
+    }
+</style>
+
+<div class="container">
+    <header class="header">
+        <span class="back-arrow"  onclick="window.location.href='{% url 'home' %}'">&#x2190;</span>
+        <h1>Meditations Library</h1>
+    </header>
+
+    <section class="main-card">
+        <div class="card">
+            <div class="icon">
+                <img src="{% static 'img/m1.png' %}" alt="Meditation Icon">
+            </div>
+            <div class="content">
+                <h2>Meditation Program</h2>
+            </div>
+        </div>
+        <hr id="explore-prog">
+        <p id="explore-line">Explore beginner to expert program</p>
+    </section>
+
+    <section class="grid">
+        <div class="grid-item">
+            <div class="icon">
+                <img src="{% static 'img/m2.png' %}" alt="Guided Meditations">
+            </div>
+            <div class="content">
+                <h3>Guided Meditations</h3>
+                <p>Find beginner friendly guided sessions</p>
+            </div>
+        </div>
+
+        <div class="grid-item">
+            <div class="icon">
+                <img src="{% static 'img/m3.png' %}" alt="Sleep Meditations">
+            </div>
+            <div class="content">
+                <h3>Sleep Meditations</h3>
+                <p>Focus on sleep and relaxation.</p>
+            </div>
+        </div>
+
+        <div class="grid-item">
+            <div class="icon">
+                <img src="{% static 'img/m4.png' %}" alt="Mindfulness">
+            </div>
+            <div class="content">
+                <h3>Mindfulness</h3>
+                <p>Achieve focus and mental clarity.</p>
+            </div>
+        </div>
+
+        <div class="grid-item">
+            <div class="icon">
+                <img src="{% static 'img/m5.png' %}" alt="Focus and Clarity">
+            </div>
+            <div class="content">
+                <h3>Focus and Clarity</h3>
+                <p>Sharpen your concentration.</p>
+            </div>
+        </div>
+    </section>
+    
+    <footer class="footer">
+        <button class="explore-btn">Explore All</button>
+    </footer>
+</div>
+<!-- JS and css for dakr to light and light to dark start  -->
+<script>
+    const savedTheme = localStorage.getItem('theme');
+    if (!savedTheme) {
+        localStorage.setItem('theme', 'dark');
+        document.body.classList.add('dark-mode');
+    } else {
+        document.body.classList.add(savedTheme === 'dark' ? 'dark-mode' : 'light-mode');
+    }
+  </script>
+
+  <style>
+    /* Light Mode Styles */
+.light-mode .container {
+    margin-top: 1%;
+    color: #333;
+}
+
+.light-mode .header {
+    background-color: #ffffff;
+    color: #333;
+}
+
+.light-mode .header .back-arrow {
+    color: #007bff;
+}
+
+.light-mode .header h1 {
+    color: #007bff;
+}
+
+.light-mode .main-card {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    color: #333;
+}
+
+.light-mode .main-card .card .content h2 {
+    color: #007bff;
+}
+
+.light-mode #explore-prog {
+    border-top: 1px solid #ddd;
+}
+
+.light-mode #explore-line {
+    color: #555;
+}
+
+.light-mode .grid-item {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    color: #333;
+}
+
+.light-mode .grid-item .content h3 {
+    color: #007bff;
+}
+
+.light-mode .grid-item .content p {
+    color: #555;
+}
+
+.light-mode .footer .explore-btn {
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+}
+
+.light-mode .footer .explore-btn:hover {
+    background-color: #0056b3;
+}
+
+  </style>
+{% endblock %}

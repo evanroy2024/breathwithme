@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings</title>
+  <style>
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Default Light Theme */
+    body {
+      background-color: #f5f5f5; /* Light background */
+      color: #000; /* Light text */
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    /* Dark Theme */
+    body.dark {
+      background-color: #171717; /* Dark background */
+      color: #fff; /* Dark text */
+    }
+
+    /* Button Styling */
+    .toggle-button {
+      background-color: transparent;
+      border: 2px solid #fff;
+      color: #fff;
+      border-radius: 20px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 16px;
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .toggle-button:hover {
+      background-color: #fff;
+      color: #171717;
+    }
+
+    .content {
+      padding: 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Content -->
+  <div class="content">
+    <h1>Settings</h1>
+    <p>Choose your preferred theme:</p>
+    <button class="toggle-button" id="theme-toggle">Switch to Dark Mode</button>
+  </div>
+
+  <script>
+    // Get the current theme from localStorage and apply it
+    const toggleButton = document.getElementById('theme-toggle');
+    const currentTheme = localStorage.getItem('theme');
+
+    // Check if there's a saved theme preference and apply it
+    if (currentTheme === 'dark') {
+      document.body.classList.add('dark');
+      toggleButton.textContent = 'Switch to Light Mode';
+    }
+
+    // Toggle theme when the button is clicked
+    toggleButton.addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+      if (document.body.classList.contains('dark')) {
+        toggleButton.textContent = 'Switch to Light Mode';
+        localStorage.setItem('theme', 'dark');
+      } else {
+        toggleButton.textContent = 'Switch to Dark Mode';
+        localStorage.setItem('theme', 'light');
+      }
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player with Customization</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        h1 {
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 2rem;
+        }
+        #audioPlayer {
+            margin-bottom: 20px;
+        }
+
+        /* Shape Section */
+        #shape {
+            position: relative;
+            margin: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 80%;
+            max-width: 350px;
+        }
+        .shape {
+            position: relative;
+        }
+        .shape.circle {
+            width: 200px;
+            height: 200px;
+            border: 5px solid #daa520;
+            border-radius: 50%;
+        }
+        .shape.square {
+            width: 200px;
+            height: 200px;
+            border: 5px solid #daa520;
+        }
+        .shape.rectangle {
+            width: 300px;
+            height: 150px;
+            border: 5px solid #daa520;
+        }
+        .shape.triangle {
+            width: 0;
+            height: 0;
+            border-left: 100px solid transparent;
+            border-right: 100px solid transparent;
+            border-bottom: 200px solid #daa520;
+        }
+        .shape.diamond {
+            width: 200px;
+            height: 200px;
+            background-color: transparent;
+            border: 5px solid #daa520;
+            transform: rotate(45deg);
+        }
+        .shape.oval {
+            width: 250px;
+            height: 150px;
+            border: 5px solid #daa520;
+            border-radius: 50%;
+        }
+        .shape.pentagon {
+            width: 0;
+            height: 0;
+            border-left: 50px solid transparent;
+            border-right: 50px solid transparent;
+            border-bottom: 90px solid #daa520;
+            position: relative;
+            transform: rotate(54deg);
+        }
+        .shape.star {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            background-color: #daa520;
+        }
+
+        /* Progress Bar */
+        .progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: inherit;
+            overflow: hidden;
+        }
+        .progress::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 5px solid white;
+            border-radius: inherit;
+            clip-path: inset(0 100% 0 0);
+        }
+
+        /* Input and Button Styling */
+        input, select, button {
+            background-color: #222;
+            color: #fff;
+            border: 2px solid #daa520;
+            margin: 5px;
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 5px;
+        }
+
+        input[type="number"] {
+            width: 60px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                font-size: 1rem;
+            }
+            #shape {
+                width: 90%;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Music Player with Customization</h1>
+    <audio id="audioPlayer" src="{% static 'myapp/music/your_music_file.mp3' %}" controls></audio>
+    <div>
+        <label for="shapeSelect">Choose Shape:</label>
+        <select id="shapeSelect">
+            <option value="circle">Circle</option>
+            <option value="square">Square</option>
+            <option value="rectangle">Rectangle</option>
+            <option value="triangle">Triangle</option>
+            <option value="diamond">Diamond</option>
+            <option value="oval">Oval</option>
+            <option value="pentagon">Pentagon</option>
+            <option value="star">Star</option>
+        </select>
+    </div>
+    <div id="shape" class="shape circle">
+        <div class="progress"></div>
+    </div>
+    <div>
+        <label for="breathInTime">Breath In Time (seconds):</label>
+        <input type="number" id="breathInTime" min="1" max="60" value="4">
+        <label for="breathOutTime">Breath Out Time (seconds):</label>
+        <input type="number" id="breathOutTime" min="1" max="60" value="4">
+        <button id="applyBreath">Apply Breath Timing</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const audioPlayer = document.getElementById('audioPlayer');
+            const shapeSelect = document.getElementById('shapeSelect');
+            const shapeDiv = document.getElementById('shape');
+            const progressDiv = shapeDiv.querySelector('.progress');
+            const breathInTimeInput = document.getElementById('breathInTime');
+            const breathOutTimeInput = document.getElementById('breathOutTime');
+            const applyBreathButton = document.getElementById('applyBreath');
+
+            shapeSelect.addEventListener('change', function() {
+                shapeDiv.className = 'shape ' + shapeSelect.value;
+                shapeDiv.appendChild(progressDiv);
+            });
+
+            audioPlayer.addEventListener('play', function() {
+                const duration = audioPlayer.duration;
+
+                function animateProgress() {
+                    const elapsedTime = audioPlayer.currentTime;
+                    const progress = Math.min(elapsedTime / duration, 1) * 100;
+                    progressDiv.style.clipPath = `inset(0 ${100 - progress}% 0 0)`;
+
+                    if (!audioPlayer.paused) {
+                        requestAnimationFrame(animateProgress);
+                    }
+                }
+
+                animateProgress();
+            });
+
+            applyBreathButton.addEventListener('click', function() {
+                const breathInTime = parseInt(breathInTimeInput.value, 10) * 1000;
+                const breathOutTime = parseInt(breathOutTimeInput.value, 10) * 1000;
+
+                function playBreath() {
+                    audioPlayer.play();
+                    setTimeout(function() {
+                        audioPlayer.pause();
+                        setTimeout(playBreath, breathOutTime);
+                    }, breathInTime);
+                }
+
+                audioPlayer.pause();
+                audioPlayer.currentTime = 0;
+                setTimeout(playBreath, breathOutTime);
+
+                audioPlayer.addEventListener('ended', function() {
+                    clearTimeout(playBreath);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

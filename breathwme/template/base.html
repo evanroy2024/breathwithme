@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2DhKNqUv7MX6qzFh++I5l5Zn5m6w/mjZzP76p4sd9UnHF3sP5rDQqa+4+V2TkIMjw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>{% block title %} Meditation Dashboard {% endblock %}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212; /* Dark background by default */
+            color: #fff;
+            padding: 0;
+            margin: 0;
+            transition: all 0.3s ease; /* Smooth transition */
+        }
+
+        body.light-mode {
+            background-color: #FFFFFF; /* Light background */
+            color: #121212; /* Dark text color for light mode */
+        }
+
+        .container {
+            overflow-y: auto; /* Ensures scrolling if content exceeds the height */
+        }
+
+        .start-now {
+            margin-top: 16px;
+            display: block;
+            background-color: #c5a152;
+            color: rgb(255, 255, 255);
+            text-align: center;
+            padding: 14px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #1c1c1c;
+            border-top: 1px solid #444;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+        }
+
+        .nav-bar a {
+            text-align: center;
+            font-size: 12px;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .nav-bar a.active {
+            color: #c5a152;
+        }
+
+        .nav-bar a img {
+            width: 24px;
+            height: 24px;
+            display: block;
+            margin: 0 auto 4px;
+        }
+
+        /* Other media queries and styles remain as they were */
+        @media (min-width: 500px) {
+            .container {
+                max-width: 800px;
+                padding: 0 40px;
+            }
+
+            .header .profile img {
+                width: 70px;
+                height: 70px;
+            }
+
+            .header .profile div {
+                font-size: 20px;
+            }
+
+            .header .quote {
+                font-size: 18px;
+            }
+
+            .features h2 {
+                font-size: 22px;
+            }
+
+            .feature-card {
+                padding: 24px;
+            }
+
+            .feature-card img {
+                width: 50px;
+                height: 50px;
+            }
+
+            .feature-card h3 {
+                font-size: 18px;
+            }
+
+            .feature-card p {
+                font-size: 14px;
+            }
+
+            .start-now {
+                font-size: 18px;
+                padding: 16px;
+            }
+        }
+
+        @media (min-width: 1000px) {
+            .container {
+                max-width: 1200px;
+                padding: 0 60px;
+            }
+
+            .feature-cards {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .header .profile img {
+                width: 90px;
+                height: 90px;
+            }
+
+            .header .profile div {
+                font-size: 24px;
+            }
+
+            .header .quote {
+                font-size: 22px;
+            }
+
+            .features h2 {
+                font-size: 26px;
+            }
+
+            .feature-card {
+                padding: 32px;
+            }
+
+            .feature-card img {
+                width: 60px;
+                height: 60px;
+            }
+
+            .feature-card h3 {
+                font-size: 22px;
+            }
+
+            .feature-card p {
+                font-size: 16px;
+            }
+
+            .start-now {
+                font-size: 20px;
+                padding: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+    <div class="nav-bar">
+        <a href="{% url 'home' %}" class="active">
+            <img src="{% static 'img/icons/icon1.png' %}" alt="Home">
+            <p>Home</p>
+        </a>
+        <a href="{% url 'library' %}">
+            <img src="{% static 'img/icons/icon2.png' %}" alt="Library">
+            <p>Library</p>
+        </a>
+        <a href="{% url 'tracker' %}">
+            <img src="{% static 'img/icons/icon3.png' %}" alt="Tracker">
+            <p>Tracker</p>
+        </a>
+        <a href="{% url 'sleep' %}">
+            <img src="{% static 'img/icons/icon4.png' %}" alt="Sleep">
+            <p>Sleep</p>
+        </a>
+        <a href="{% url 'profile' %}">
+            <img src="{% static 'img/icons/icon5.png' %}" alt="Profile">
+            <p>Profile</p>
+        </a>
+    </div>
+
+    
+    <script src="{% static 'js/script.js' %}"></script>
+<!-- JS and css for dakr to light and light to dark start  -->
+<script>
+    const savedTheme = localStorage.getItem('theme');
+    if (!savedTheme) {
+        localStorage.setItem('theme', 'dark');
+        document.body.classList.add('dark-mode');
+    } else {
+        document.body.classList.add(savedTheme === 'dark' ? 'dark-mode' : 'light-mode');
+    }
+  </script>
+    <style>
+        /* Light Mode Navbar */
+.light-mode .nav-bar {
+    display: flex;
+    justify-content: space-around;
+    background-color: #fff; /* White background */
+    padding: 10px 0;
+    border-top: 1px solid #ddd; /* Light gray top border */
+    border-bottom: 1px solid #ddd; /* Light gray bottom border */
+}
+
+.light-mode .nav-bar a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #333; /* Dark text color */
+    font-size: 14px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    padding: 8px;
+}
+
+.light-mode .nav-bar a:hover {
+    background-color: #f2f2f2; /* Light gray background on hover */
+    border-radius: 5px; /* Rounded corners on hover */
+}
+
+.light-mode .nav-bar a p {
+    margin-top: 5px;
+    color: #333; /* Text color for the labels */
+}
+
+.light-mode .nav-bar a img {
+    width: 30px; /* Icon size */
+    height: 30px;
+    transition: filter 0.3s ease;
+}
+
+.light-mode .nav-bar a:hover img {
+    filter: brightness(0) saturate(100%) invert(42%) sepia(100%) saturate(4600%) hue-rotate(188deg) brightness(104%) contrast(98%);
+    /* Hover effect to change icon color */
+}
+
+.light-mode .nav-bar a.active {
+    color: #007bff; /* Blue color for the active link */
+}
+
+.light-mode .nav-bar a.active img {
+    color: #007bff; /* Blue color for the active link */
+    filter: none; /* Reset icon color for active state */
+}
+
+.light-mode .nav-bar a.active p {
+    font-weight: bold; /* Bold text for active link */
+}
+.container {
+   margin-bottom: 80px;
+}
+    </style>
+</body>
+</html>

@@ -1,0 +1,366 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+Home - Meditation Dashboard
+{% endblock %}
+
+{% block content %}
+<style>
+    /* General Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #121212; /* Dark background */
+      color: #E0E0E0; /* Light text color */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 420px;
+      width: 100%;
+      background-color: #1E1E1E; /* Dark container background */
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .header .back-arrow {
+      font-size: 24px;
+      margin-right: 12px;
+      cursor: pointer;
+      color: #E0E0E0; /* Light arrow color */
+    }
+
+    .header h1 {
+      font-size: 20px;
+      font-weight: bold;
+      color: #E0E0E0; /* Light text for header */
+    }
+
+    .profile-picture {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+
+    .profile-picture img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      position: relative;
+      border: 4px solid #1E1E1E;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    .profile-picture .overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(0, 0, 0, 0.5);
+      border-radius: 50%;
+      padding: 8px;
+    }
+
+    .profile-picture img + .overlay {
+      display: none;
+    }
+
+    .input-group {
+      margin-bottom: 16px;
+    }
+
+    .input-group label {
+      font-size: 14px;
+      color: #B0B0B0; /* Light gray label */
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #444; /* Dark input border */
+      border-radius: 8px;
+      font-size: 14px;
+      color: #E0E0E0; /* Light text color for input */
+      background-color: #333; /* Dark input background */
+    }
+
+    .input-group.password {
+      position: relative;
+    }
+
+    .input-group.password input {
+      padding-right: 40px;
+    }
+
+    .input-group.password .toggle-password {
+      position: absolute;
+      top: 50%;
+      right: 12px;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #B0B0B0; /* Light gray icon color */
+    }
+
+    .save-button {
+      background-color: #6200EE; /* Dark mode primary color */
+      color: #fff;
+      padding: 12px;
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .save-button:hover {
+      background-color: #3700B3; /* Hover effect for button */
+    }
+
+</style>
+
+<div class="container">
+    <div class="header">
+      <span class="back-arrow"  onclick="window.location.href='{% url 'home' %}'">&#8592;</span>
+      <h1>Edit Profile</h1>
+    </div>
+    <div class="profile-picture">
+      <img src="{% static 'du.jpg' %}" alt="Profile Picture">
+    </div>
+    <div class="input-group">
+      <label for="full-name">Full name</label>
+      <input type="text" id="full-name" value="Rose Merry">
+    </div>
+    <div class="input-group">
+      <label for="email">Email Address</label>
+      <input type="email" id="email" value="rosemerry">
+    </div>
+    <div class="input-group password">
+      <label for="password">Password</label>
+      <input type="password" id="password" value="password123">
+      <span class="toggle-password" onclick="togglePasswordVisibility()">&#128065;</span>
+    </div>
+    <button class="save-button">Save Changes</button>
+    <div class="button-container">
+      <!-- Settings Button with Link -->
+      <a href="{% url 'user_settings' %}" class="icon-button-link">
+        <button class="icon-button" id="settings-button">
+          <i class="fas fa-cogs"></i> Settings
+        </button>
+      </a>
+    
+      <!-- Security Button with Link -->
+      <a href="{% url 'sequrity' %}" class="icon-button-link">
+        <button class="icon-button" id="security-button">
+          <i class="fas fa-shield-alt"></i> Security
+        </button>
+      </a>
+    </div>
+    
+<style>
+  /* Container to hold buttons */
+.button-container {
+  display: flex;
+  gap: 20px;  /* Adds space between the buttons */
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Style for both buttons */
+.icon-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #4CAF50;  /* Green background */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+  gap: 10px;  /* Adds space between the icon and text */
+}
+
+/* Hover effect for the buttons */
+.icon-button:hover {
+  background-color: #45a049;  /* Darker green on hover */
+}
+
+/* Style for the icons */
+.icon-button i {
+  font-size: 18px;
+}
+.icon-button-link {
+  text-decoration: none;  /* Remove underline from link */
+}
+</style>  
+</div>
+<!-- JS and css for dakr to light and light to dark start  -->
+<script>
+  const savedTheme = localStorage.getItem('theme');
+  if (!savedTheme) {
+      localStorage.setItem('theme', 'dark');
+      document.body.classList.add('dark-mode');
+  } else {
+      document.body.classList.add(savedTheme === 'dark' ? 'dark-mode' : 'light-mode');
+  }
+</script>
+<style>
+
+        /* Light Mode Styles */
+        .light-mode {
+            background-color: #fff;
+            color: #333;
+        }
+
+        .light-mode h1 {
+            color: blue;
+        }
+
+        .light-mode p {
+            color: green;
+        }
+        .light-mode .container {
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        /* Light Mode Styles */
+.light-mode {
+    background-color: #fff;
+    color: #333;
+}
+
+.light-mode .container {
+    background-color: #f4f4f4;
+    color: #333;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.light-mode .header {
+    background-color: #e9ecef;
+    color: #333;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+}
+
+.light-mode .back-arrow {
+    color: #333;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.light-mode h1 {
+    color: #333;
+    margin: 0;
+}
+
+.light-mode .profile-picture img {
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    margin-bottom: 20px;
+}
+
+.light-mode .input-group {
+    margin-bottom: 20px;
+}
+
+.light-mode .input-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.light-mode .input-group input {
+    width: calc(100% - 20px);
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    color: #333;
+}
+
+.light-mode .input-group input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.light-mode .input-group.password {
+    position: relative;
+}
+
+.light-mode .input-group.password .toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #333;
+}
+
+.light-mode .save-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.light-mode .save-button:hover {
+    background-color: #0056b3;
+}
+
+</style>
+
+<!-- JS and css for dakr to light and light to dark End  -->
+
+<script>
+  // Function to toggle password visibility
+  function togglePasswordVisibility() {
+      const passwordField = document.getElementById('password');
+      const togglePasswordIcon = document.querySelector('.toggle-password');
+
+      if (passwordField.type === 'password') {
+          passwordField.type = 'text';
+          togglePasswordIcon.textContent = '👁️'; // Change icon to "open eye"
+      } else {
+          passwordField.type = 'password';
+          togglePasswordIcon.textContent = '🔒'; // Change icon to "locked"
+      }
+  }
+</script>
+{% endblock %}

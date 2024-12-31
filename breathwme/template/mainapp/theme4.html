@@ -1,0 +1,20 @@
+{% extends "themebase.html" %}
+{% block content %}
+{% load static %}
+<div class="container">
+    <div class="image-container">
+        <img src="{% static 'dark/d4.png' %}" alt="Meditation Image">
+    </div>
+    <div class="text-container">
+        <h1>Progress Tracker !</h1>
+        <p>  Track your progress, see your growth, and set new 
+            goals
+            </p>
+        <div class="button-container">
+            <div class="circle-wrapper">
+                <button class="arrow-button" onclick="window.location.href='{% url 'theme5' %}'">➔</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

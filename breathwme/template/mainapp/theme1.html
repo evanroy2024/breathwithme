@@ -1,0 +1,18 @@
+{% extends "themebase.html" %}
+{% block content %}
+{% load static %}
+<div class="container">
+    <div class="image-container">
+        <img src="{% static 'dark/d1.png' %}" alt="Meditation Image">
+    </div>
+    <div class="text-container">
+        <h1>Welcome to Breathe With Me!</h1>
+        <p>Discover Mindfulness and Inner Peace. Embark on a journey to reduce stress, increase focus, and live more mindfully.</p>
+        <div class="button-container">
+            <div class="circle-wrapper">
+                <button class="arrow-button" onclick="window.location.href='{% url 'theme2' %}'">➔</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

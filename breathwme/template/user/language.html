@@ -1,0 +1,307 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+Home - Meditation Dashboard
+{% endblock %}
+
+{% block content %}
+<style>
+  /* General Reset */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Arial', sans-serif;
+    background-color: #121212; /* Dark background */
+    color: #E0E0E0; /* Light text color */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 420px;
+    width: 100%;
+    background-color: #1E1E1E; /* Dark container background */
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+
+  .back-arrow {
+    font-size: 24px;
+    margin-right: 12px;
+    cursor: pointer;
+    color: #E0E0E0; /* Light arrow color */
+  }
+
+  .header h1 {
+    font-size: 20px;
+    font-weight: bold;
+    color: #E0E0E0; /* Light text for header */
+  }
+
+  .search-box {
+    display: flex;
+    align-items: center;
+    background-color: #333; /* Dark background for search box */
+    padding: 10px 14px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+  }
+
+  .search-box input {
+    border: none;
+    background: transparent;
+    width: 100%;
+    font-size: 14px;
+    color: #E0E0E0; /* Light text for input */
+    margin-left: 8px;
+    outline: none;
+  }
+
+  .language-list {
+    list-style: none;
+  }
+
+  .language-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 12px;
+    border-radius: 12px;
+    background-color: #2C2C2C; /* Dark item background */
+    margin-bottom: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .language-item.active {
+    background-color: #444; /* Slightly lighter background for active item */
+  }
+
+  .language-item .flag {
+    width: 24px;
+    height: 16px;
+    margin-right: 12px;
+    object-fit: cover;
+    border-radius: 2px;
+  }
+
+  .language-item .text {
+    display: flex;
+    align-items: center;
+  }
+
+  .language-item .title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #E0E0E0; /* Light text for title */
+  }
+
+  .language-item .check-icon {
+    font-size: 16px;
+    color: #0056FF; /* Blue check icon */
+  }
+
+  .search-box .search-icon {
+    color: #E0E0E0; /* Light color for search icon */
+  }
+</style>
+
+<div class="container">
+  <div class="header">
+    <span class="back-arrow">&#8592;</span>
+    <h1>Select Language</h1>
+  </div>
+  <div class="search-box">
+    <span class="search-icon">&#128269;</span>
+    <input type="text" placeholder="Search language...">
+  </div>
+  <ul class="language-list">
+    <li class="language-item active">
+      <div class="text">
+        <img src="https://flagcdn.com/w40/us.png" class="flag" alt="USA">
+        <span class="title">English (USA)</span>
+      </div>
+      <span class="check-icon">&#10003;</span>
+    </li>
+    <li class="language-item">
+      <div class="text">
+        <img src="https://flagcdn.com/w40/gb.png" class="flag" alt="GBR">
+        <span class="title">English (GBR)</span>
+      </div>
+    </li>
+    <li class="language-item">
+      <div class="text">
+        <img src="https://flagcdn.com/w40/fr.png" class="flag" alt="France">
+        <span class="title">France (FR)</span>
+      </div>
+    </li>
+    <li class="language-item">
+      <div class="text">
+        <img src="https://flagcdn.com/w40/es.png" class="flag" alt="Spain">
+        <span class="title">Spain (ES)</span>
+      </div>
+    </li>
+    <li class="language-item">
+      <div class="text">
+        <img src="https://flagcdn.com/w40/it.png" class="flag" alt="Italy">
+        <span class="title">Italy (IT)</span>
+      </div>
+    </li>
+    <li class="language-item">
+      <div class="text">
+        <img src="https://flagcdn.com/w40/gr.png" class="flag" alt="Greece">
+        <span class="title">Greece (GR)</span>
+      </div>
+    </li>
+    <li class="language-item">
+      <div class="text">
+        <img src="https://flagcdn.com/w40/sg.png" class="flag" alt="Singapore">
+        <span class="title">Singapore (SG)</span>
+      </div>
+    </li>
+    <li class="language-item">
+      <div class="text">
+        <img src="https://flagcdn.com/w40/nl.png" class="flag" alt="Netherlands">
+        <span class="title">Netherlands (NL)</span>
+      </div>
+    </li>
+    <li class="language-item">
+      <div class="text">
+        <img src="https://flagcdn.com/w40/in.png" class="flag" alt="India">
+        <span class="title">India (IN)</span>
+      </div>
+    </li>
+  </ul>
+</div>
+
+
+<!-- JS and css for dakr to light and light to dark start  -->
+<script>
+  const savedTheme = localStorage.getItem('theme');
+  if (!savedTheme) {
+      localStorage.setItem('theme', 'dark');
+      document.body.classList.add('dark-mode');
+  } else {
+      document.body.classList.add(savedTheme === 'dark' ? 'dark-mode' : 'light-mode');
+  }
+</script>
+
+<style>
+  /* Light Mode Styles */
+.light-mode .container {
+    background-color: #fff; /* White background for the entire container */
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    color: #333; /* Darker text color */
+}
+
+.light-mode .header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.light-mode .header .back-arrow {
+    font-size: 24px;
+    margin-right: 15px;
+    cursor: pointer;
+    color: #007bff;
+}
+
+.light-mode .header h1 {
+    font-size: 24px;
+    color: #007bff;
+}
+
+.light-mode .search-box {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    border: 1px solid #ddd; /* Light gray border */
+}
+
+.light-mode .search-icon {
+    font-size: 20px;
+    color: #888;
+    margin-right: 10px;
+}
+
+.light-mode .search-box input {
+    border: none;
+    outline: none;
+    flex: 1;
+    padding: 8px;
+    font-size: 16px;
+    color: #333; /* Darker text color inside the input */
+}
+
+.light-mode .language-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.light-mode .language-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    background-color: #fff; /* White background */
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.light-mode .language-item:hover {
+    background-color: #f2f2f2; /* Light gray hover effect */
+}
+
+.light-mode .language-item.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.light-mode .language-item.active .check-icon {
+    color: white;
+}
+
+.light-mode .language-item .text {
+    display: flex;
+    align-items: center;
+}
+
+.light-mode .language-item .flag {
+    width: 25px;
+    height: auto;
+    margin-right: 15px;
+}
+
+.light-mode .language-item .title {
+    font-size: 16px;
+    color: #000; /* Black text color */
+}
+
+.light-mode .language-item .check-icon {
+    font-size: 20px;
+    color: #007bff;
+}
+
+</style>
+{% endblock %}

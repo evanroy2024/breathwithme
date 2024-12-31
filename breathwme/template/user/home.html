@@ -1,0 +1,390 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+Home - Meditation Dashboard
+{% endblock %}
+
+{% block content %}
+<style>
+
+       
+        .header {
+            background-color: #c5a152;
+            color: white;
+            padding: 20px;
+            border-radius: 0 0 16px 16px;
+        }
+
+        .header .profile {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .header .profile img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .header .profile div {
+            font-size: 16px;
+        }
+
+        .header .quote {
+            font-size: 14px;
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+
+        .features {
+            padding: 16px;
+            margin-bottom: 50px;
+        }
+
+        .features h2 {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            color: #ffffff;
+        }
+
+        .feature-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .feature-card {
+            background-color: #1c1c1c;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .feature-card.active {
+            background-color: #c5a152;
+            color: black;
+        }
+
+        .feature-card img {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 8px;
+        }
+
+        .feature-card h3 {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .feature-card p {
+            font-size: 12px;
+            color: #bbb;
+        }
+
+        .start-now {
+            margin-top: 16px;
+            margin-top: 16px;
+            display: block;
+            background-color: #c5a152;
+            color: rgb(255, 255, 255);
+            text-align: center;
+            padding: 14px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #1c1c1c;
+            border-top: 1px solid #444;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+        }
+
+        .nav-bar a {
+            text-align: center;
+            font-size: 12px;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .nav-bar a.active {
+            color: #c5a152;
+        }
+
+        .nav-bar a img {
+            width: 24px;
+            height: 24px;
+            display: block;
+            margin: 0 auto 4px;
+        }
+
+        @media (min-width: 500px) {
+            .container {
+                max-width: 800px;
+                padding: 0 40px;
+            }
+
+            .header .profile img {
+                width: 70px;
+                height: 70px;
+            }
+
+            .header .profile div {
+                font-size: 20px;
+            }
+
+            .header .quote {
+                font-size: 18px;
+            }
+
+            .features h2 {
+                font-size: 22px;
+            }
+
+            .feature-card {
+                padding: 24px;
+            }
+
+            .feature-card img {
+                width: 50px;
+                height: 50px;
+            }
+
+            .feature-card h3 {
+                font-size: 18px;
+            }
+
+            .feature-card p {
+                font-size: 14px;
+            }
+
+            .start-now {
+                font-size: 18px;
+                padding: 16px;
+            }
+        }
+
+        @media (min-width: 1000px) {
+            .container {
+                max-width: 1200px;
+                padding: 0 60px;
+            }
+
+            .feature-cards {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .header .profile img {
+                width: 90px;
+                height: 90px;
+            }
+
+            .header .profile div {
+                font-size: 24px;
+            }
+
+            .header .quote {
+                font-size: 22px;
+            }
+
+            .features h2 {
+                font-size: 26px;
+            }
+
+            .feature-card {
+                padding: 32px;
+            }
+
+            .feature-card img {
+                width: 60px;
+                height: 60px;
+            }
+
+            .feature-card h3 {
+                font-size: 22px;
+            }
+
+            .feature-card p {
+                font-size: 16px;
+            }
+
+            .start-now {
+                font-size: 20px;
+                padding: 18px;
+            }
+        }
+     .container {
+            margin: 0 auto;
+            padding: 0 0px;
+        }
+        .header {
+    height: 200px;
+}
+.feature-card p {
+        font-size: 14px;
+        color: white;
+    }
+    .feature-card hr {
+       margin-top: 5px;
+       margin-bottom: 5px;
+    }
+.feature-card img{
+    border-radius: 5px;
+}    
+</style>
+<div class="header">
+    <div class="profile">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQb6jjtDA6oGgxL26KEP4S8XQWpm6csYOW_qw&s" alt="Profile Picture">
+        <div>
+            <p>Welcome Back,</p>
+            <p><strong> {% if username %}{{ username }}{% else %}Guest{% endif %}!</strong></p>
+        </div>
+    </div>
+    <div class="quote">
+        "Start your meditation journey with guided session."
+    </div>
+</div>
+
+<div class="features">
+    <h2>Features</h2>
+    <div class="feature-cards">
+        <div class="feature-card active">
+            <img src="{% static 'img/m2.png' %}" alt="Meditation Program">
+            <h3 style="color: white;">Meditation Program</h3>
+            <hr>
+            <p>Explore beginner to expert program</p>
+        </div>
+        <div class="feature-card">
+            <img src="{% static 'img/m3.png' %}" alt="Sleep Program">
+            <h3>Sleep Program</h3>
+            <hr>
+            <p>Relax and sleep better</p>
+        </div>
+        <div class="feature-card">
+            <img src="{% static 'img/m4.png' %}" alt="Track Progress">
+            <h3>Track Progress</h3>
+            <hr>
+            <p>See your meditation results and growth</p>
+        </div>
+        <div class="feature-card">
+            <img src="{% static 'img/m5.png' %}" alt="Set Goals">
+            <h3>Set Goals</h3>
+            <hr>
+            <p>Create and track meditation milestones</p>
+        </div>
+    </div>
+<a href="#" class="start-now">Start Now</a>
+
+</div>
+<!-- JS and css for dakr to light and light to dark start  -->
+<script>
+    const savedTheme = localStorage.getItem('theme');
+    if (!savedTheme) {
+        localStorage.setItem('theme', 'dark');
+        document.body.classList.add('dark-mode');
+    } else {
+        document.body.classList.add(savedTheme === 'dark' ? 'dark-mode' : 'light-mode');
+    }
+  </script>
+  <style>
+    /* Light Mode Styles */
+.light-mode .header {
+    background-color: #e9ecef;
+    color: #333;
+    border-bottom: 1px solid #ccc;
+}
+
+
+
+.light-mode .header .profile img {
+    border: 2px solid #ccc;
+}
+
+.light-mode .header .profile p {
+    margin: 0;
+    color: #c7c7c7;
+}
+
+.light-mode .header .profile p strong {
+    color: #ffffff;
+}
+
+.light-mode .header .quote {
+    font-style: italic;
+    color: #ffffff;
+}
+
+.light-mode .features {
+    background-color: #fff;
+    color: #333;
+}
+
+.light-mode .features h2 {
+    color: #007bff;
+}
+
+
+.light-mode .feature-card {
+    background-color: #f4f4f4;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.light-mode .feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+
+.light-mode .feature-card h3 {
+    color: #007bff;
+}
+
+.light-mode .feature-card hr {
+    border: none;
+    border-top: 1px solid #ccc;
+}
+
+.light-mode .feature-card p {
+    color: #000000;
+}
+
+.light-mode .feature-card.active {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.light-mode .feature-card.active h3 {
+    color: #fff;
+}
+
+.light-mode .start-now {
+    background-color: #007bff;
+    color: #fff;
+    transition: background-color 0.3s ease;
+}
+
+.light-mode .start-now:hover {
+    background-color: #0056b3;
+}
+.light-mode .header {
+    background-color: #077aee;
+    color: #333;
+    border-bottom: 1px solid #ccc;
+}
+
+  </style>
+{% endblock %}

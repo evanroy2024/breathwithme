@@ -1,0 +1,20 @@
+{% extends "themebase.html" %}
+{% block content %}
+{% load static %}
+<div class="container">
+    <div class="image-container">
+        <img src="{% static 'dark/d2.png' %}" alt="Meditation Image">
+    </div>
+    <div class="text-container">
+        <h1>Guided Meditation!</h1>
+        <p> Start your journey with beginner-friendly guided 
+            meditation.
+            </p>
+        <div class="button-container">
+            <div class="circle-wrapper">
+                <button class="arrow-button" onclick="window.location.href='{% url 'theme3' %}'">➔</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

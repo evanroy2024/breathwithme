@@ -1,0 +1,21 @@
+{% extends "themebase.html" %}
+{% block content %}
+{% load static %}
+<div class="container">
+    <div class="image-container">
+        <img src="{% static 'dark/d5.png' %}" alt="Meditation Image">
+    </div>
+    <div class="text-container">
+        <h1> Set Goals !</h1>
+        <p>  Create specific goals for meditation and sleep 
+            improvement.
+            
+            </p>
+        <div class="button-container">
+            <div class="circle-wrapper">
+                <button class="arrow-button"  onclick="window.location.href='{% url 'signin' %}'">➔</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
