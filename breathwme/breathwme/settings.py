@@ -31,13 +31,19 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'mainapp'
+    'mainapp',
+    'musicapp',
+    'courseapp',
+    'userdata',
+    'userupdates',
+    'embed_video',
 ]
 
 MIDDLEWARE = [
@@ -144,3 +150,19 @@ DEFAULT_FROM_EMAIL = 'noreplys2000@gmail.com'
 
 PAYPAL_CLIENT_ID = 'Ad69gq9ZB9T23e7Gb9HpZqb_h6gO-LzL6aJUikpjlntsAAxawYZ8UH65qGq0uYg_QkfEPlUfsxccNTUW'
 PAYPAL_CLIENT_SECRET = 'EC-tSU2A5x-qDBofT92wR51j7nzkhnz2UZ_eTDa8EUnjt6SRaUmopEw57xF7wZzhZC0ovc2OyT2TgebN'
+
+
+
+# admin panel name change  ------------------------------------------------
+JAZZMIN_SETTINGS = {
+"site_title": "Breath With Me Admin Administration",
+"site_brand": "Breath With Me Admin",
+# "site_logo": "img/admin.png",  # Path to your logo image
+"login_logo": "adminimgs/bwmadmin.png",  # Path to your logo image for the login page
+"login_logo_dark": "adminimgs/bwmadmin.png",  # Path to your logo image for the dark mode login page
+
+"welcome_sign": "Welcome to BreathWithMe Administration",
+
+"copyright": "©2024©BWM All rights reserved",
+
+}

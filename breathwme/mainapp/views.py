@@ -286,6 +286,8 @@ def user_settings(request):
 
 
 # Custom Features Starts here ------------------------------------------------------------------------
-
+from musicapp.models import MusicTrack
 def music_player(request):
-    return render(request, 'myapp/music_player.html')
+    tracks = MusicTrack.objects.all()
+
+    return render(request, 'myapp/music_player.html', {'tracks': tracks})

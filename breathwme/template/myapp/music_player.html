@@ -2,229 +2,1231 @@
 {% load static %}
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Player with Customization</title>
-    <style>
-        /* General Styles */
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background-color: #000;
-            color: #fff;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        h1 {
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: 2rem;
-        }
-        #audioPlayer {
-            margin-bottom: 20px;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <title>Shape Animation with Song</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: rgb(23, 23, 21);
+      flex-direction: column;
+    }
+
+    svg {
+      width: 210px;
+      height: 210px;
+    }
+
+    .shape {
+      display: none;
+      position: relative;
+    }
+
+    .red-line {
+      fill: none;
+      stroke: rgb(177, 157, 65);
+      stroke-width: 4;
+    }
+
+    .blue-line, .blue-line-rectangle, .blue-line-triangle, .blue-line-square {
+      fill: none;
+      stroke: white;
+      stroke-width: 5;
+      stroke-dasharray: 628; /* Default for circle */
+      stroke-dashoffset: 628;
+    }
+
+    .blue-line-rectangle {
+      stroke-dasharray: 800; /* Default for rectangle */
+      stroke-dashoffset: 800;
+    }
+
+    .blue-line-triangle {
+      stroke-dasharray: 480; /* Default for triangle */
+      stroke-dashoffset: 480;
+    }
+
+    .blue-line-square {
+      stroke-dasharray: 760; /* Adjusted for square */
+      stroke-dashoffset: 760;
+    }
+
+    @keyframes draw-circle {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    @keyframes draw-rectangle {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    @keyframes draw-triangle {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    @keyframes draw-square {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    .overlay {
+      fill:  rgb(177, 157, 65);
+      transform-origin: center;
+      animation: expandContract 4s infinite ease-in-out;
+      z-index: 0;
+    }
+
+    @keyframes expandContract {
+      0%, 100% {
+        transform: scale(0);
+      }
+      50% {
+        transform: scale(1);
+      }
+    }
+
+    select {
+      margin-bottom: 20px;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    audio {
+      margin-top: 20px;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    .center-text {
+      font-size: 24px;
+      font-weight: bold;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      z-index: 10; /* Ensure text is above the expanding black color */
+    }
+
+    .center-text-in {
+      fill: rgb(255, 255, 255);
+    }
+
+    .center-text-hold {
+      fill: rgb(255, 255, 255);
+    }
+
+    .center-text-out {
+      fill: rgb(255, 255, 255);
+    }
+
+    .input-container {
+      margin-bottom: 20px;
+    }
+
+    .input-container label,
+    .input-container input {
+      font-size: 16px;
+    }
+
+    /* Code for the music styling  */
+        .audio-player-container {
+            background-color: #1f1f1f;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            margin-bottom: 30px;
+            max-width: 1200px;
+    width: 80%;
+    margin-top: 1%;
+    margin-bottom: 1%;
         }
 
-        /* Shape Section */
-        #shape {
-            position: relative;
-            margin: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 80%;
-            max-width: 350px;
-        }
-        .shape {
-            position: relative;
-        }
-        .shape.circle {
-            width: 200px;
-            height: 200px;
-            border: 5px solid #daa520;
-            border-radius: 50%;
-        }
-        .shape.square {
-            width: 200px;
-            height: 200px;
-            border: 5px solid #daa520;
-        }
-        .shape.rectangle {
-            width: 300px;
-            height: 150px;
-            border: 5px solid #daa520;
-        }
-        .shape.triangle {
-            width: 0;
-            height: 0;
-            border-left: 100px solid transparent;
-            border-right: 100px solid transparent;
-            border-bottom: 200px solid #daa520;
-        }
-        .shape.diamond {
-            width: 200px;
-            height: 200px;
-            background-color: transparent;
-            border: 5px solid #daa520;
-            transform: rotate(45deg);
-        }
-        .shape.oval {
-            width: 250px;
-            height: 150px;
-            border: 5px solid #daa520;
-            border-radius: 50%;
-        }
-        .shape.pentagon {
-            width: 0;
-            height: 0;
-            border-left: 50px solid transparent;
-            border-right: 50px solid transparent;
-            border-bottom: 90px solid #daa520;
-            position: relative;
-            transform: rotate(54deg);
-        }
-        .shape.star {
-            position: relative;
-            width: 200px;
-            height: 200px;
-            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-            background-color: #daa520;
-        }
-
-        /* Progress Bar */
-        .progress {
-            position: absolute;
-            top: 0;
-            left: 0;
+        #waveform {
             width: 100%;
-            height: 100%;
-            border-radius: inherit;
-            overflow: hidden;
-        }
-        .progress::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 5px solid white;
-            border-radius: inherit;
-            clip-path: inset(0 100% 0 0);
+            height: 100px;
+            background-color: #333;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            position: relative;
         }
 
-        /* Input and Button Styling */
-        input, select, button {
-            background-color: #222;
-            color: #fff;
-            border: 2px solid #daa520;
-            margin: 5px;
-            padding: 10px;
-            font-size: 1rem;
-            border-radius: 5px;
+        .controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.songs-list-container:hover{
+    cursor: pointer;
+}
+        .time-display {
+            font-size: 0.9rem;
+            color: #bdbdbd;
         }
 
-        input[type="number"] {
-            width: 60px;
+        button.play-pause, button.next, button.prev, button.songs-toggle, button.cancel {
+            background: none;
+            border: none;
+            color: #f5f5f5;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.2s ease;
         }
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            body {
-                font-size: 1rem;
-            }
-            #shape {
-                width: 90%;
-            }
-            h1 {
-                font-size: 1.5rem;
-            }
+        button.play-pause:hover, button.next:hover, button.prev:hover, button.songs-toggle:hover, button.cancel:hover {
+            transform: scale(1.1);
         }
-    </style>
+
+        .track-list {
+            margin-top: 20px;
+            max-width: 600px;
+            margin: 20px auto;
+            display: none;
+        }
+
+        .track-item {
+            background-color: #1f1f1f;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+
+        .track-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .track-title {
+            color: #ffcc00;
+            font-size: 1.2em;
+        }
+
+        .play-button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            font-size: 1.1em;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border: none;
+        }
+
+        .play-button:hover {
+            background-color: #218838;
+        }
+
+        /* Styles for Song List Toggle */
+        #songs-list {
+            margin-top: 20px;
+            display: none;
+        }
+
+        #songs-list .track-item {
+            width: 90%;
+            margin-bottom: 10px;
+        }
+
+        /* Layout for Cancel Button */
+        .cancel-container {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 10px;
+        }
+  </style>
 </head>
 <body>
-    <h1>Music Player with Customization</h1>
-    <audio id="audioPlayer" src="{% static 'myapp/music/your_music_file.mp3' %}" controls></audio>
-    <div>
-        <label for="shapeSelect">Choose Shape:</label>
-        <select id="shapeSelect">
-            <option value="circle">Circle</option>
-            <option value="square">Square</option>
-            <option value="rectangle">Rectangle</option>
-            <option value="triangle">Triangle</option>
-            <option value="diamond">Diamond</option>
-            <option value="oval">Oval</option>
-            <option value="pentagon">Pentagon</option>
-            <option value="star">Star</option>
-        </select>
+  <div id="color-picker" class="color-picker-overlay" style="display: none;">
+    <div class="color-option" style="background-color: #ff9999;" onclick="changeBackgroundColor('#ff9999')"></div>
+    <div class="color-option" style="background-color: #99ff99;" onclick="changeBackgroundColor('#99ff99')"></div>
+    <div class="color-option" style="background-color: #9999ff;" onclick="changeBackgroundColor('#9999ff')"></div>
+    <div class="color-option" style="background-color: #ffff99;" onclick="changeBackgroundColor('#ffff99')"></div>
+    <div class="color-option" style="background-color: #f0f0f0;" onclick="changeBackgroundColor('#f0f0f0')"></div>
+    <!-- Add more colors below -->
+    <div class="color-option" style="background-color: #ffcc99;" onclick="changeBackgroundColor('#ffcc99')"></div>
+    <div class="color-option" style="background-color: #66ccff;" onclick="changeBackgroundColor('#66ccff')"></div>
+    <div class="color-option" style="background-color: #ffccff;" onclick="changeBackgroundColor('#ffccff')"></div>
+    <div class="color-option" style="background-color: #ff6666;" onclick="changeBackgroundColor('#ff6666')"></div>
+    <div class="color-option" style="background-color: #6699ff;" onclick="changeBackgroundColor('#6699ff')"></div>
+    <div class="color-option" style="background-color: #ffb3b3;" onclick="changeBackgroundColor('#ffb3b3')"></div>
+    <div class="color-option" style="background-color: #b3e0ff;" onclick="changeBackgroundColor('#b3e0ff')"></div>
+    <div class="color-option" style="background-color: #c2f0c2;" onclick="changeBackgroundColor('#c2f0c2')"></div>
+    <div class="color-option" style="background-color: #e6e6e6;" onclick="changeBackgroundColor('#e6e6e6')"></div>
+    <div class="color-option" style="background-color: #ffb366;" onclick="changeBackgroundColor('#ffb366')"></div>
+    <div class="color-option" style="background-color: #99cc99;" onclick="changeBackgroundColor('#99cc99')"></div>
+    <div class="color-option" style="background-color: #ff6666;" onclick="changeBackgroundColor('#ff6666')"></div>
+    <div class="color-option" style="background-color: #66cc66;" onclick="changeBackgroundColor('#66cc66')"></div>
+    <div class="color-option" style="background-color: #ccff99;" onclick="changeBackgroundColor('#ccff99')"></div>
+    <div class="color-option" style="background-color: #ff3399;" onclick="changeBackgroundColor('#ff3399')"></div>
+    <div class="color-option" style="background-color: #66ff66;" onclick="changeBackgroundColor('#66ff66')"></div>
+    <div class="color-option" style="background-color: #ccccff;" onclick="changeBackgroundColor('#ccccff')"></div>
+    <div class="color-option" style="background-color: #ff9933;" onclick="changeBackgroundColor('#ff9933')"></div>
+    <div class="color-option" style="background-color: #b3b3cc;" onclick="changeBackgroundColor('#b3b3cc')"></div>
+    <div class="color-option" style="background-color: #cc99cc;" onclick="changeBackgroundColor('#cc99cc')"></div>
+    <div class="color-option" style="background-color: #ff6600;" onclick="changeBackgroundColor('#ff6600')"></div>
+    <div class="color-option" style="background-color: #cc3333;" onclick="changeBackgroundColor('#cc3333')"></div>
+    <div class="color-option" style="background-color: #ff99cc;" onclick="changeBackgroundColor('#ff99cc')"></div>
+    <div class="color-option" style="background-color: #669966;" onclick="changeBackgroundColor('#669966')"></div>
+    <div class="color-option" style="background-color: #b3ffb3;" onclick="changeBackgroundColor('#b3ffb3')"></div>
+    <div class="color-option" style="background-color: #99b3b3;" onclick="changeBackgroundColor('#99b3b3')"></div>
+    <div class="color-option" style="background-color: #ffccff;" onclick="changeBackgroundColor('#ffccff')"></div>
+    <div class="color-option" style="background-color: #ffff66;" onclick="changeBackgroundColor('#ffff66')"></div>
+    <div class="color-option" style="background-color: #b3b3b3;" onclick="changeBackgroundColor('#b3b3b3')"></div>
+    <div class="color-option" style="background-color: #99ffcc;" onclick="changeBackgroundColor('#99ffcc')"></div>
+    <div class="color-option" style="background-color: #ff3399;" onclick="changeBackgroundColor('#ff3399')"></div>
+    <div class="color-option" style="background-color: #ffb3ff;" onclick="changeBackgroundColor('#ffb3ff')"></div>
+    <div class="color-option" style="background-color: #b3ccff;" onclick="changeBackgroundColor('#b3ccff')"></div>
+    <div class="color-option" style="background-color: #66ffff;" onclick="changeBackgroundColor('#66ffff')"></div>
+    <div class="color-option" style="background-color: #99b3ff;" onclick="changeBackgroundColor('#99b3ff')"></div>
+    <div class="color-option" style="background-color: #ff6699;" onclick="changeBackgroundColor('#ff6699')"></div>
+    <div class="color-option" style="background-color: #ffcccc;" onclick="changeBackgroundColor('#ffcccc')"></div>
+    <div class="color-option" style="background-color: #c2c2ff;" onclick="changeBackgroundColor('#c2c2ff')"></div>
+    <div class="color-option" style="background-color: #ff6600;" onclick="changeBackgroundColor('#ff6600')"></div>
+    <div class="color-option" style="background-color: #ff9999;" onclick="changeBackgroundColor('#ff9999')"></div>
+    <div class="color-option" style="background-color: #33cc33;" onclick="changeBackgroundColor('#33cc33')"></div>
+    <div class="color-option" style="background-color: #ffcc66;" onclick="changeBackgroundColor('#ffcc66')"></div>
+    <div class="color-option" style="background-color: #6699cc;" onclick="changeBackgroundColor('#6699cc')"></div>
+    <div class="color-option" style="background-color: #ffffcc;" onclick="changeBackgroundColor('#ffffcc')"></div>
+    <div class="color-option" style="background-color: #ccffcc;" onclick="changeBackgroundColor('#ccffcc')"></div>
+    <div class="color-option" style="background-color: #ff3333;" onclick="changeBackgroundColor('#ff3333')"></div>
+    <div class="color-option" style="background-color: #99ccff;" onclick="changeBackgroundColor('#99ccff')"></div>
+</div>
+
+<div class="go-back" style="display: flex;">
+  <button 
+  onclick="window.location.href='{% url 'home' %}'" 
+      style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; margin-right: 10px;">←
+  </button>
+  <span style="font-size: 1.2rem; font-weight: bold;">Meditation Program</span>
+</div>
+<hr style="width: 400px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
+
+<style>
+  .go-back{
+    max-width: 400px;
+    width: 80%;
+    display: flex;
+    align-items: center;
+    gap: 60px;
+    color: white;
+    margin-top: 0px;
+    margin-bottom: 5px;
+  }
+</style>
+
+  
+  
+
+  <div class="input-container" id="settings-form" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; z-index: 9999;">
+    <label for="breath-in-time">Breath In Time (seconds):</label>
+    <input type="number" id="breath-in-time" value="4" min="1" />
+  
+    <label for="hold-time">Hold Time (seconds):</label>
+    <input type="number" id="hold-time" value="4" min="1" />
+  
+    <label for="breath-out-time">Breath Out Time (seconds):</label>
+    <input type="number" id="breath-out-time" value="4" min="1" />
+     <!-- OK Button -->
+  <button id="apply-btn" onclick="applySettings()">Done</button>
+  </div>
+
+  <select id="shape-select" onchange="showShape()">
+    <option value="circle" selected>Circle</option>
+    <option value="rectangle">Rectangle</option>
+    <option value="triangle">Triangle</option>
+    <option value="square">Square</option>
+  </select>
+
+  <svg id="circle" class="shape">
+    <circle class="red-line" cx="105" cy="105" r="100" />
+    <circle id="blue-line-circle" class="blue-line" cx="105" cy="105" r="100" />
+    <clipPath id="clip-circle">
+      <circle cx="105" cy="105" r="100" />
+    </clipPath>
+    <circle class="overlay" cx="105" cy="105" r="100" clip-path="url(#clip-circle)" />
+    <text id="text-in" class="center-text center-text-in" x="105" y="105">IN</text>
+    <text id="text-hold" class="center-text center-text-hold" x="105" y="105" style="display:none;">HOLD</text>
+    <text id="text-out" class="center-text center-text-out" x="105" y="105" style="display:none;">OUT</text>
+    
+  </svg>
+
+  <svg id="rectangle" class="shape">
+    <rect class="red-line" x="10" y="10" width="190" height="100" />
+    <rect id="blue-line-rectangle" class="blue-line-rectangle" x="10" y="10" width="190" height="100" />
+    <clipPath id="clip-rectangle">
+      <rect x="10" y="10" width="190" height="100" />
+    </clipPath>
+    <rect class="overlay" x="10" y="10" width="190" height="100" clip-path="url(#clip-rectangle)" />
+    <text id="text-in" class="center-text center-text-in" x="105" y="60">IN</text>
+    <text id="text-hold" class="center-text center-text-hold" x="105" y="60" style="display:none;">HOLD</text>
+    <text id="text-out" class="center-text center-text-out" x="105" y="60" style="display:none;">OUT</text>
+   
+  </svg>
+
+  <svg id="triangle" class="shape">
+    <polygon class="red-line" points="105,10 10,190 200,190" />
+    <polygon id="blue-line-triangle" class="blue-line-triangle" points="105,10 10,190 200,190" />
+    <clipPath id="clip-triangle">
+      <polygon points="105,10 10,190 200,190" />
+    </clipPath>
+    <polygon class="overlay" points="105,10 10,190 200,190" clip-path="url(#clip-triangle)" />
+    <text id="text-in" class="center-text center-text-in" x="105" y="105">IN</text>
+    <text id="text-hold" class="center-text center-text-hold" x="105" y="105" style="display:none;">HOLD</text>
+    <text id="text-out" class="center-text center-text-out" x="105" y="105" style="display:none;">OUT</text>
+   
+  </svg>
+
+  <svg id="square" class="shape">
+    <rect class="red-line" x="10" y="10" width="190" height="190" />
+    <rect id="blue-line-square" class="blue-line-square" x="10" y="10" width="190" height="190" />
+    <clipPath id="clip-square">
+      <rect x="10" y="10" width="190" height="190" />
+    </clipPath>
+    <rect class="overlay" x="10" y="10" width="190" height="190" clip-path="url(#clip-square)" />
+    <text id="text-in" class="center-text center-text-in" x="105" y="105">IN</text>
+    <text id="text-hold" class="center-text center-text-hold" x="105" y="105" style="display:none;">HOLD</text>
+    <text id="text-out" class="center-text center-text-out" x="105" y="105" style="display:none;">OUT</text>
+    
+  </svg>
+  
+  <!-- <audio id="audio-player" controls>
+    <source src="1.mp3" type="audio/mp3" />
+    Your browser does not support the audio element.
+  </audio> -->
+  <div class="audio-player-container">
+    <div id="waveform"></div> <!-- Waveform -->
+    <div class="controls">
+        <button class="prev" onclick="previousTrack()">⏮️</button>
+        <button class="play-pause" id="play-pause" onclick="togglePlayPause()">▶️</button>
+        <button class="next" onclick="nextTrack()">⏭️</button>
+        <span class="time-display" id="time-display">0:00 / 0:00</span>
     </div>
-    <div id="shape" class="shape circle">
-        <div class="progress"></div>
+    <audio id="audio-player" style="display:none;">
+        <source id="audio-source" src="" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+</div>
+
+ <!-- adding vibration button  -->
+ <div class="allbuttons">
+  <button id="logo" onclick="toggleForm()" class="icon-button">
+    <i class="fas fa-cogs logo-icon"></i>
+  </button>
+  <button onclick="toggleColorPicker()" class="icon-button">
+🎨
+  </button>
+  <button id="vibration-logo" onclick="toggleVibrationInput()" class="icon-button">
+    <i class="fas fa-volume-up logo-icon"></i> 
+  </button>
+  <button class="songs-toggle" style="padding: 12px 25px;
+  background-color: #4CAF50;
+  color: white;
+  font-size: 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  gap: 8px;
+  transition: background-color 0.3s ease, transform 0.3s ease;" class="song-button" onclick="toggleSongList()"  class="icon-button"> 🎵</button>
+
+</div>
+<style>
+  /* General button container */
+.allbuttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  gap: 20px;
+  z-index: 1000;
+}
+
+/* Button Style */
+.icon-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 25px;
+  background-color: #4CAF50;
+  color: white;
+  font-size: 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  gap: 8px; /* Space between icon and text */
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.icon-button:hover {
+  background-color: #45a049;
+  transform: scale(1.1);
+}
+
+.icon-button i {
+  font-size: 24px; /* Icon size */
+  margin-right: 8px; /* Space between the icon and text */
+}
+
+/* Style for the logos */
+.logo-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+/* Set spacing and hover effect */
+.icon-button:hover {
+  background-color: #3e8e41;
+  transform: scale(1.1);
+}
+
+</style>
+ <div id="vibration-input-container" class="vibration-input-container" style="display: none;">
+   <div class="vibration-input-box">
+     <button class="close-btn" onclick="toggleVibrationInput()">❌</button>
+     <label for="vibration-intensity">Vibration Intensity:</label>
+     <input type="range" id="vibration-intensity" min="0.5" max="2" step="0.1" value="1" />
+   </div>
+ </div>
+ 
+ <!-- Next html code for the music player Start -->
+
+
+
+
+    <div id="songs-list">
+        <!-- <div class="cancel-container">
+            <button class="cancel" onclick="toggleSongList()">❌ Close</button>
+        </div> -->
+        <div class="songs-list-container">
+            <!-- Django Loop for Tracks -->
+            {% for track in tracks %}
+            <div class="track-item" data-track-url="{{ track.file.url }}" onclick="selectTrack('{{ track.file.url }}')">
+                <span class="track-title">#Song {{ track.id }} {{ track.title }} - {{ track.artist }}</span>
+            </div>
+            {% empty %}
+            <p>No music tracks available.</p>
+            {% endfor %}
+        </div>
     </div>
-    <div>
-        <label for="breathInTime">Breath In Time (seconds):</label>
-        <input type="number" id="breathInTime" min="1" max="60" value="4">
-        <label for="breathOutTime">Breath Out Time (seconds):</label>
-        <input type="number" id="breathOutTime" min="1" max="60" value="4">
-        <button id="applyBreath">Apply Breath Timing</button>
-    </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const audioPlayer = document.getElementById('audioPlayer');
-            const shapeSelect = document.getElementById('shapeSelect');
-            const shapeDiv = document.getElementById('shape');
-            const progressDiv = shapeDiv.querySelector('.progress');
-            const breathInTimeInput = document.getElementById('breathInTime');
-            const breathOutTimeInput = document.getElementById('breathOutTime');
-            const applyBreathButton = document.getElementById('applyBreath');
+ <!-- Next html code for the music player End  -->
+  
+  <script>
+    let breathInTime = 4;
+    let holdTime = 4;
+    let breathOutTime = 4;
 
-            shapeSelect.addEventListener('change', function() {
-                shapeDiv.className = 'shape ' + shapeSelect.value;
-                shapeDiv.appendChild(progressDiv);
-            });
+    document.getElementById('breath-in-time').addEventListener('input', function() {
+      breathInTime = parseInt(this.value);
+    });
 
-            audioPlayer.addEventListener('play', function() {
-                const duration = audioPlayer.duration;
+    document.getElementById('hold-time').addEventListener('input', function() {
+      holdTime = parseInt(this.value);
+    });
 
-                function animateProgress() {
-                    const elapsedTime = audioPlayer.currentTime;
-                    const progress = Math.min(elapsedTime / duration, 1) * 100;
-                    progressDiv.style.clipPath = `inset(0 ${100 - progress}% 0 0)`;
+    document.getElementById('breath-out-time').addEventListener('input', function() {
+      breathOutTime = parseInt(this.value);
+    });
 
-                    if (!audioPlayer.paused) {
-                        requestAnimationFrame(animateProgress);
-                    }
-                }
+    function showShape() {
+      const selectedShape = document.getElementById('shape-select').value;
+      const shapes = document.querySelectorAll('.shape');
 
-                animateProgress();
-            });
+      shapes.forEach(shape => shape.style.display = 'none');
 
-            applyBreathButton.addEventListener('click', function() {
-                const breathInTime = parseInt(breathInTimeInput.value, 10) * 1000;
-                const breathOutTime = parseInt(breathOutTimeInput.value, 10) * 1000;
+      const shape = document.getElementById(selectedShape);
+      shape.style.display = 'block';
 
-                function playBreath() {
-                    audioPlayer.play();
-                    setTimeout(function() {
-                        audioPlayer.pause();
-                        setTimeout(playBreath, breathOutTime);
-                    }, breathInTime);
-                }
+      resetAnimation();
+    }
 
-                audioPlayer.pause();
-                audioPlayer.currentTime = 0;
-                setTimeout(playBreath, breathOutTime);
+    function syncAnimationWithSong() {
+      const audioPlayer = document.getElementById('audio-player');
+      const shapeSelect = document.getElementById('shape-select');
+      const textIn = document.getElementById('text-in');
+      const textHold = document.getElementById('text-hold');
+      const textOut = document.getElementById('text-out');
 
-                audioPlayer.addEventListener('ended', function() {
-                    clearTimeout(playBreath);
-                });
-            });
-        });
-    </script>
+      const duration = audioPlayer.duration;
+
+      audioPlayer.ontimeupdate = function () {
+        const currentTime = audioPlayer.currentTime;
+        const percentage = currentTime / duration;
+
+        if (shapeSelect.value === 'circle') {
+          document.getElementById('blue-line-circle').style.strokeDashoffset = 628 - (628 * percentage);
+        } else if (shapeSelect.value === 'rectangle') {
+          document.getElementById('blue-line-rectangle').style.strokeDashoffset = 800 - (800 * percentage);
+        } else if (shapeSelect.value === 'triangle') {
+          document.getElementById('blue-line-triangle').style.strokeDashoffset = 480 - (480 * percentage);
+        } else if (shapeSelect.value === 'square') {
+          document.getElementById('blue-line-square').style.strokeDashoffset = 760 - (760 * percentage);
+        }
+
+        // Adjust text visibility based on the current time in the song
+        if (currentTime < breathInTime) {
+          textIn.style.display = 'block';
+          textHold.style.display = 'none';
+          textOut.style.display = 'none';
+        } else if (currentTime < breathInTime + holdTime) {
+          textIn.style.display = 'none';
+          textHold.style.display = 'block';
+          textOut.style.display = 'none';
+        } else if (currentTime < breathInTime + holdTime + breathOutTime) {
+          textIn.style.display = 'none';
+          textHold.style.display = 'none';
+          textOut.style.display = 'block';
+        } else {
+          // Cycle back to "IN" after completing the full cycle of IN, HOLD, OUT
+          const cycleTime = breathInTime + holdTime + breathOutTime;
+          const timeInCycle = currentTime % cycleTime; // Loop back to the beginning of the cycle
+
+          if (timeInCycle < breathInTime) {
+            textIn.style.display = 'block';
+            textHold.style.display = 'none';
+            textOut.style.display = 'none';
+          } else if (timeInCycle < breathInTime + holdTime) {
+            textIn.style.display = 'none';
+            textHold.style.display = 'block';
+            textOut.style.display = 'none';
+          } else {
+            textIn.style.display = 'none';
+            textHold.style.display = 'none';
+            textOut.style.display = 'block';
+          }
+        }
+      };
+    }
+
+    function resetAnimation() {
+      document.getElementById('blue-line-circle').style.strokeDashoffset = 628;
+      document.getElementById('blue-line-rectangle').style.strokeDashoffset = 800;
+      document.getElementById('blue-line-triangle').style.strokeDashoffset = 480;
+      document.getElementById('blue-line-square').style.strokeDashoffset = 760;
+    }
+
+    document.getElementById('audio-player').onplay = function () {
+      syncAnimationWithSong();
+    };
+
+    window.onload = function() {
+      showShape();
+    };
+
+    // Adding for vibration intensity 
+    document.getElementById('vibration-intensity').addEventListener('input', function() {
+  const audioPlayer = document.getElementById('audio-player');
+  audioPlayer.playbackRate = parseFloat(this.value);
+});
+
+  </script>
+
+  <!-- To make the styling  -->
+   <script>
+function toggleColorPicker() {
+  const colorPicker = document.getElementById('color-picker');
+  colorPicker.style.display = colorPicker.style.display === 'none' ? 'flex' : 'none';
+}
+
+function changeBackgroundColor(color) {
+  document.body.style.backgroundColor = color;
+  document.getElementById('color-picker').style.display = 'none'; // Hide after selection
+}
+
+// For breating feature 
+function toggleForm() {
+    const form = document.getElementById('settings-form');
+    form.style.display = form.style.display === 'block' ? 'none' : 'block';
+  }
+// Function to toggle the visibility of the settings form
+function toggleForm() {
+  const form = document.getElementById("settings-form");
+  form.style.display = form.style.display === "none" ? "block" : "none";
+}
+
+// Function to apply settings and close the form
+function applySettings() {
+  const breathInTime = document.getElementById("breath-in-time").value;
+  const holdTime = document.getElementById("hold-time").value;
+  const breathOutTime = document.getElementById("breath-out-time").value;
+
+  // Here you can handle the values you get (e.g., save them or apply them to your app)
+  console.log("Breath In Time:", breathInTime);
+  console.log("Hold Time:", holdTime);
+  console.log("Breath Out Time:", breathOutTime);
+
+  // Close the form after applying
+  toggleForm();
+}
+
+
+// For vibration feature 
+function toggleVibrationInput() {
+  const vibrationInputContainer = document.getElementById('vibration-input-container');
+  vibrationInputContainer.style.display = vibrationInputContainer.style.display === 'none' ? 'flex' : 'none';
+
+  // Add a class to trigger animation effect
+  if (vibrationInputContainer.style.display === 'flex') {
+    vibrationInputContainer.classList.add('show');
+  } else {
+    vibrationInputContainer.classList.remove('show');
+  }
+}
+
+   </script>
+ <style>
+  #color-logo {
+    font-size: 24px;
+    padding: 10px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    outline: none;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1000;
+  }
+
+  .color-picker-overlay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+
+  .color-option {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin: 10px;
+    cursor: pointer;
+    border: 2px solid #fff;
+  }
+
+  .color-option:hover {
+    transform: scale(1.1);
+  }
+  .input-container {
+    margin-top: 20px;
+  }
+
+  #vibration-intensity {
+    width: 100%;
+    max-width: 300px;
+  }
+
+/* For breating  ---------------------------------------------------------------------------------------------*/
+/* Full-screen overlay */
+.color-picker-overlay {
+  display: none; /* Hidden by default */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Dark background to focus on the modal */
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Ensures it's above other content */
+  padding: 20px;
+}
+
+/* Show the overlay when active */
+.color-picker-overlay.active {
+  display: flex;
+}
+
+/* Styling the input form container */
+.input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background-color: #ffffff;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  width: 100%;
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Animation for fade-in effect */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Style for each label */
+.input-container label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* Style for input fields */
+.input-container input[type="number"] {
+  padding: 12px;
+  font-size: 16px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  width: 95%;
+}
+
+/* Style for input focus (when clicked) */
+.input-container input[type="number"]:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.6);
+}
+
+/* Optional: Adding hover effect for inputs */
+.input-container input[type="number"]:hover {
+  border-color: #007bff;
+}
+
+/* Button styling (optional if you add a close button) */
+.input-container .close-btn {
+  background-color: #ff4d4d;
+  color: white;
+  padding: 8px 16px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  align-self: flex-end;
+  transition: background-color 0.3s ease;
+}
+
+.input-container .close-btn:hover {
+  background-color: #ff1a1a;
+}
+/* Add a style for the OK button */
+#apply-btn {
+  display: block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#apply-btn:hover {
+  background-color: #45a049;
+}
+
+/* Vibration css  */
+
+/* Container for vibration input (hidden by default) */
+.vibration-input-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Vibrations input box styling */
+.vibration-input-box {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  width: 300px;
+  position: relative;
+}
+
+.vibration-input-box label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.vibration-input-box input {
+  width: 100%;
+  margin-top: 10px;
+}
+
+/* Close button styling */
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: red;
+}
+
+/* Show the input container with animation when toggled */
+.vibration-input-container.show {
+  opacity: 1;
+}
+/* Basic styling for the audio player */
+#audio-player {
+  width: 100%;
+  max-width: 500px;
+  background-color: transparent;
+  border-radius: 12px;
+  padding: 15px;
+  margin: 20px auto;
+  display: block;
+  position: relative;
+  border: 2px solid #333; /* Dark border */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5); /* Soft shadow for depth */
+}
+
+/* Media controls container styling */
+#audio-player::-webkit-media-controls {
+  background-color: transparent; /* Transparent background for the controls */
+  border: none;
+  padding: 8px;
+  box-shadow: none;
+}
+
+/* Panel for the controls */
+#audio-player::-webkit-media-controls-panel {
+  background-color: #222; /* Dark background to contrast with golden accents */
+  color: #bbb; /* Light text for contrast */
+  border-radius: 12px;
+  padding: 8px 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Play/Pause button with golden yellow accent */
+#audio-player::-webkit-media-controls-play-button {
+  background-color: #FFD700; /* Golden yellow for play button */
+  color: #fff; /* White icon */
+  border-radius: 50%;
+  padding: 15px;
+  font-size: 20px;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+/* Play button hover effect */
+#audio-player::-webkit-media-controls-play-button:hover {
+  background-color: #FFB800; /* Slightly lighter golden yellow on hover */
+}
+
+/* Progress bar background */
+#audio-player::-webkit-media-controls-progress-bar {
+  background-color: #444; /* Dark progress bar */
+  border-radius: 8px;
+}
+
+/* The progress indicator (active) */
+#audio-player::-webkit-media-controls-timeline {
+  background-color: #FFD700; /* Golden yellow for progress */
+  border-radius: 8px;
+}
+
+/* Volume control slider */
+#audio-player::-webkit-media-controls-volume-slider {
+  background-color: #444; /* Dark slider background */
+  border-radius: 5px;
+  height: 5px;
+  box-shadow: none;
+}
+
+/* Volume button styling */
+#audio-player::-webkit-media-controls-volume-button {
+  color: #bbb;
+  transition: color 0.3s ease;
+}
+
+/* Volume button hover effect */
+#audio-player::-webkit-media-controls-volume-button:hover {
+  color: #FFD700; /* Highlighted with golden yellow on hover */
+}
+
+/* Forward and Rewind buttons styling */
+#audio-player::-webkit-media-controls-rewind-button,
+#audio-player::-webkit-media-controls-fast-forward-button {
+  background-color: transparent;
+  color: #FFD700; /* Golden yellow icons */
+  font-size: 20px;
+  border: none;
+  transition: color 0.3s ease;
+}
+
+/* Hover effect for forward/rewind buttons */
+#audio-player::-webkit-media-controls-rewind-button:hover,
+#audio-player::-webkit-media-controls-fast-forward-button:hover {
+  color: #FFB800; /* Slightly lighter golden yellow on hover */
+}
+
+/* Customizing the timeline progress on hover */
+#audio-player:hover::-webkit-media-controls-panel {
+  background-color: #333; /* Darker background on hover for better contrast */
+}
+
+#audio-player:hover::-webkit-media-controls-play-button {
+  background-color: #FFB800; /* Lighter golden yellow on hover */
+}
+
+#audio-player:focus {
+  outline: none;
+}
+/* Basic Styling */
+#shape-select {
+  width: 250px;
+  padding: 10px 15px;
+  background-color: #333; /* Dark background for the select box */
+  color: #fff; /* White text for high contrast */
+  border: 2px solid #444; /* Slightly lighter border for a smooth look */
+  border-radius: 10px; /* Rounded corners for a modern design */
+  font-size: 16px; /* Comfortable font size */
+  font-family: 'Arial', sans-serif; /* Clean, modern font */
+  appearance: none; /* Remove default dropdown arrow */
+  cursor: pointer; /* Pointer cursor for interactivity */
+  transition: all 0.3s ease; /* Smooth transition for hover and focus states */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Soft shadow for depth */
+}
+
+/* Custom dropdown arrow */
+#shape-select::after {
+  content: '▼'; /* Custom arrow */
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #FFD700; /* Golden yellow arrow */
+  pointer-events: none; /* Prevent interaction with the arrow */
+}
+
+/* Hover Effect */
+#shape-select:hover {
+  border-color: #FFD700; /* Golden yellow border on hover */
+  background-color: #444; /* Lighter background when hovered */
+}
+
+/* Focus Effect */
+#shape-select:focus {
+  border-color: #FFD700; /* Golden yellow border when focused */
+  outline: none; /* Remove default outline */
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); /* Soft glow effect */
+}
+
+/* Option Styling */
+#shape-select option {
+  background-color: #333; /* Dark background for each option */
+  color: #fff; /* White text */
+  padding: 10px; /* Space inside options */
+  font-size: 16px; /* Matching font size */
+  font-family: 'Arial', sans-serif; /* Consistent font */
+  border: none; /* Remove default borders */
+}
+
+/* Option Hover Effect */
+#shape-select option:hover {
+  background-color: #444; /* Lighter background for options on hover */
+  color: #FFD700; /* Golden yellow text color on hover */
+}
+.color-picker-overlay {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.7);  /* Semi-transparent background */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 10px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+    width: 80%;
+    max-width: 600px;
+    height: auto;
+    overflow-y: auto;  /* Makes sure the list is scrollable if it exceeds screen size */
+    max-height: 80vh;
+}
+
+.color-option {
+    width: 30px;
+    height: 30px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: inline-block;
+}
+
+.color-option:hover {
+    transform: scale(1.1);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+}
+
+.color-picker-overlay .color-option {
+    transition: background-color 0.3s ease;
+}
+
+
+</style>
+  
+<!-- script code for music player start  -->
+
+<!-- External Wavesurfer.js Script -->
+<script src="https://unpkg.com/wavesurfer.js"></script>
+
+<script>
+ let wavesurfer;
+let audioPlayer = document.getElementById('audio-player');
+let audioSource = document.getElementById('audio-source');
+let playPauseButton = document.getElementById('play-pause');
+let timeDisplay = document.getElementById('time-display');
+let selectedTrackUrl = "";  // Initially no track is selected
+let trackList = []; // Array to hold all track URLs
+let currentTrackIndex = 0; // To keep track of the current track index
+
+const defaultTrackUrl = "{% static 'demo/demo.mp3' %}"; // Path to the default demo track
+
+// Initialize Wavesurfer
+function initWavesurfer(url) {
+ if (wavesurfer) {
+     wavesurfer.destroy(); // Destroy any previous instance
+ }
+
+ wavesurfer = WaveSurfer.create({
+     container: '#waveform',
+     waveColor: '#ff6347',
+     progressColor: '#ff4500',
+     height: 100,
+     barWidth: 3,
+     cursorWidth: 1,
+     cursorColor: '#fff',
+     responsive: true,
+     interact: true,
+     barHeight: 1
+ });
+
+ wavesurfer.load(url);
+
+ wavesurfer.on('ready', function () {
+     playPauseButton.textContent = '▶️'; // Reset to Play button
+ });
+
+ wavesurfer.on('audioprocess', function () {
+     let currentTime = wavesurfer.getCurrentTime();
+     let duration = wavesurfer.getDuration();
+     let currentMinutes = Math.floor(currentTime / 60);
+     let currentSeconds = Math.floor(currentTime % 60);
+     let durationMinutes = Math.floor(duration / 60);
+     let durationSeconds = Math.floor(duration % 60);
+
+     timeDisplay.textContent = `${currentMinutes}:${currentSeconds < 10 ? '0' + currentSeconds : currentSeconds} / ${durationMinutes}:${durationSeconds < 10 ? '0' + durationSeconds : durationSeconds}`;
+ });
+}
+
+// Select a track (only set the URL and update player)
+function selectTrack(url) {
+ selectedTrackUrl = url;  // Save the track URL
+ trackList = Array.from(document.querySelectorAll('.track-item')).map(item => item.getAttribute('data-track-url')); // Get all tracks
+ currentTrackIndex = trackList.indexOf(url); // Find the index of the selected track
+ playPauseButton.textContent = '▶️'; // Reset to Play
+ stopCurrentTrack();
+ initWavesurfer(url); // Load new track
+ toggleSongList(); // Close the song list after selection
+}
+
+// Stop the current track
+function stopCurrentTrack() {
+ if (wavesurfer && wavesurfer.isPlaying()) {
+     wavesurfer.stop();
+ }
+}
+
+// Play or Pause the track
+function togglePlayPause() {
+ if (!selectedTrackUrl) {
+     // If no track is selected, set the default track
+     selectedTrackUrl = defaultTrackUrl;
+ }
+
+ if (wavesurfer && wavesurfer.isPlaying()) {
+     wavesurfer.pause();
+     playPauseButton.textContent = '▶️'; // Set to Play
+ } else if (wavesurfer) {
+     wavesurfer.play();
+     playPauseButton.textContent = '⏸️'; // Set to Pause
+ } else {
+     // Initialize and load the track if not already initialized
+     initWavesurfer(selectedTrackUrl);
+     wavesurfer.play();
+     playPauseButton.textContent = '⏸️'; // Set to Pause
+ }
+}
+
+// Go to the next track
+function nextTrack() {
+ if (trackList.length > 0) {
+     currentTrackIndex = (currentTrackIndex + 1) % trackList.length; // Loop back to the first track if at the end
+     selectTrack(trackList[currentTrackIndex]); // Select the next track
+     wavesurfer.play(); // Play the next track
+     playPauseButton.textContent = '⏸️'; // Set to Pause
+ }
+}
+
+// Go to the previous track
+function previousTrack() {
+ if (trackList.length > 0) {
+     currentTrackIndex = (currentTrackIndex - 1 + trackList.length) % trackList.length; // Loop back to the last track if at the beginning
+     selectTrack(trackList[currentTrackIndex]); // Select the previous track
+     wavesurfer.play(); // Play the previous track
+     playPauseButton.textContent = '⏸️'; // Set to Pause
+ }
+}
+
+// Toggle the visibility of the song list
+function toggleSongList() {
+ const songList = document.getElementById('songs-list');
+ songList.style.display = (songList.style.display === 'block') ? 'none' : 'block';
+}
+
+</script>
+<!-- Scipt code for music player end  -->
+
 </body>
 </html>
