@@ -41,3 +41,31 @@ from django.db import models
 
 class Item(models.Model):
     video = EmbedVideoField()  # same like models.URLField()
+
+
+
+# QUIZES      --------------------------------------------------
+from django.db import models
+from django.core.exceptions import ValidationError
+
+class Quiz(models.Model):
+    course = models.ForeignKey(Course, related_name='quizzes', on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    start_date = models.DateField(default=date.today)
+    end_date = models.DateField(default=date.today)
+    
+    quiz_file = models.FileField(upload_to='quiz_data/', blank=True, null=True)
+
+    def __str__(self):
+        return self.title
+
+    def clean(self):
+        """Custom clean method to validate CSV format"""
+        if self.quiz_file:
+            try:
+                # Check if the uploaded file is a CSV file
+                if not self.quiz_file.name.endswith('.csv'):
+                    raise ValidationError("Only CSV files are allowed.")
+            except Exception as e:
+                raise ValidationError(f"Error reading CSV file: {str(e)}")

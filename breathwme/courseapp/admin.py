@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Course, Material , Item
+from .models import Course, Material , Item , Quiz
 
 class MaterialInline(admin.TabularInline):
     model = Material
@@ -11,5 +11,5 @@ class MaterialAdmin(admin.ModelAdmin):
 
 admin.site.register(Course)
 admin.site.register(Material, MaterialAdmin)
-
+admin.site.register(Quiz)
 # admin.site.register(Item)

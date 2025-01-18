@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, MusicTrack
+from .models import Category, MusicTrack , Playlist
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -8,6 +8,9 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(MusicTrack)
 class MusicTrackAdmin(admin.ModelAdmin):
-    list_display = ('title', 'artist', 'category')
-    list_filter = ('category',)
+    list_display = ('title', 'artist', 'category', 'viewcount')
     search_fields = ('title', 'artist')
+    list_filter = ('category',)
+
+    
+admin.site.register(Playlist)

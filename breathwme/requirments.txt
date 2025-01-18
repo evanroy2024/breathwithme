@@ -5,3 +5,4 @@ pip install django-paypal
 pip install -U django-jazzmin
 
 pip install django-embed-video
+

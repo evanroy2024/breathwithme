@@ -8,10 +8,13 @@ Home - Meditation Dashboard
 <style>
     /* General Reset */
     body {
-        background-color: #121212; /* Dark background for the whole page */
-        color: #e0e0e0; /* Light text color */
+        background-color: #121212;
+        /* Dark background for the whole page */
+        color: #e0e0e0;
+        /* Light text color */
         font-family: Arial, sans-serif;
-        overflow-y: auto; /* Enable vertical scrolling if needed */
+        overflow-y: auto;
+        /* Enable vertical scrolling if needed */
         margin: 0;
         padding: 0;
     }
@@ -20,7 +23,8 @@ Home - Meditation Dashboard
         max-width: 1420px;
         margin: 0 auto;
         padding: 5px;
-        min-height: 100vh; /* Ensure the container takes at least full viewport height */
+        min-height: 100vh;
+        /* Ensure the container takes at least full viewport height */
     }
 
     .header {
@@ -33,20 +37,24 @@ Home - Meditation Dashboard
         font-size: 24px;
         margin-right: 12px;
         cursor: pointer;
-        color: #fff; /* Light color for the back arrow */
+        color: #fff;
+        /* Light color for the back arrow */
     }
 
     h1 {
         font-size: 22px;
         font-weight: bold;
-        color: #fff; /* Light color for headings */
+        color: #fff;
+        /* Light color for headings */
     }
 
     .main-card {
-        background-color: #1f1f1f; /* Dark background for the card */
+        background-color: #1f1f1f;
+        /* Dark background for the card */
         border-radius: 16px;
         padding: 20px;
-        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3); /* Darker shadow */
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+        /* Darker shadow */
         margin-bottom: 24px;
     }
 
@@ -65,12 +73,14 @@ Home - Meditation Dashboard
         font-size: 18px;
         font-weight: bold;
         margin-bottom: 4px;
-        color: #fff; /* Light text color */
+        color: #fff;
+        /* Light text color */
     }
 
     .content p {
         font-size: 14px;
-        color: #bbb; /* Lighter gray text */
+        color: #bbb;
+        /* Lighter gray text */
     }
 
     .grid {
@@ -80,10 +90,12 @@ Home - Meditation Dashboard
     }
 
     .grid-item {
-        background-color: #1f1f1f; /* Dark background for grid items */
+        background-color: #1f1f1f;
+        /* Dark background for grid items */
         border-radius: 16px;
         padding: 18px;
-        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3); /* Darker shadow */
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+        /* Darker shadow */
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -100,12 +112,14 @@ Home - Meditation Dashboard
         font-size: 15px;
         font-weight: bold;
         margin-bottom: 6px;
-        color: #fff; /* Light color for headings */
+        color: #fff;
+        /* Light color for headings */
     }
 
     .grid-item .content p {
         font-size: 13px;
-        color: #bbb; /* Lighter gray text */
+        color: #bbb;
+        /* Lighter gray text */
     }
 
     .footer {
@@ -124,7 +138,8 @@ Home - Meditation Dashboard
         cursor: pointer;
         box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
         width: 100%;
-        margin-bottom: 80px; /* Add space below button */
+        margin-bottom: 80px;
+        /* Add space below button */
     }
 
     .explore-btn:hover {
@@ -134,23 +149,29 @@ Home - Meditation Dashboard
     #explore-prog {
         margin-top: 10px;
         margin-bottom: 10px;
-        color: #bbb; /* Lighter gray color */
+        color: #bbb;
+        /* Lighter gray color */
     }
 
     #explore-line {
         font-weight: 200;
-        color: #bbb; /* Lighter gray color */
+        color: #bbb;
+        /* Lighter gray color */
     }
 
     .icon img {
         border-radius: 5px;
     }
+
+    .grid-item:hover {
+        cursor: pointer;
+    }
 </style>
 
 <div class="container">
     <header class="header">
-        <span class="back-arrow"  onclick="window.location.href='{% url 'home' %}'">&#x2190;</span>
-        <h1>Meditations Library</h1>
+        <span class="back-arrow" onclick="window.location.href='{% url 'home' %}'">&#x2190;</span>
+        <h1>Audio Library</h1>
     </header>
 
     <section class="main-card">
@@ -167,27 +188,35 @@ Home - Meditation Dashboard
     </section>
 
     <section class="grid">
-        <div class="grid-item">
+
+        <div class="grid-item" onclick="window.location.href='{% url 'musicapp:create_playlist' %}'">
             <div class="icon">
-                <img src="{% static 'img/m2.png' %}" alt="Guided Meditations">
+                <img src="{% static 'musicapp/add.png' %}" alt="Guided Meditations">
             </div>
             <div class="content">
-                <h3>Guided Meditations</h3>
-                <p>Find beginner friendly guided sessions</p>
+                <h3>Create New PlayList</h3>
+                <p>Create Your Playlist with your faverouite songs and Start listening with us </p>
             </div>
         </div>
-
-        <div class="grid-item">
+        {% if playlists %}
+    {% for playlist in playlists %}
+    <div class="grid-item">
+        <a href="{% url 'musicapp:view_playlist' playlist.id %}">
             <div class="icon">
-                <img src="{% static 'img/m3.png' %}" alt="Sleep Meditations">
+                <img src="{% static 'musicapp/library.png' %}" alt="Playlist Icon">
             </div>
             <div class="content">
-                <h3>Sleep Meditations</h3>
-                <p>Focus on sleep and relaxation.</p>
+                <h3>Name - {{ playlist.name }}</h3>
+                <p>Created By - {{ playlist.user.username }}</p>
             </div>
-        </div>
+        </a>
+    </div>
+    {% endfor %}
+{% else %}
+    <p>No playlists available.</p>
+{% endif %}
 
-        <div class="grid-item">
+        <!-- <div class="grid-item">
             <div class="icon">
                 <img src="{% static 'img/m4.png' %}" alt="Mindfulness">
             </div>
@@ -205,9 +234,12 @@ Home - Meditation Dashboard
                 <h3>Focus and Clarity</h3>
                 <p>Sharpen your concentration.</p>
             </div>
-        </div>
+        </div> -->
+
+
     </section>
-    
+
+
     <footer class="footer">
         <button class="explore-btn">Explore All</button>
     </footer>
@@ -221,69 +253,68 @@ Home - Meditation Dashboard
     } else {
         document.body.classList.add(savedTheme === 'dark' ? 'dark-mode' : 'light-mode');
     }
-  </script>
+</script>
 
-  <style>
+<style>
     /* Light Mode Styles */
-.light-mode .container {
-    margin-top: 1%;
-    color: #333;
-}
+    .light-mode .container {
+        margin-top: 1%;
+        color: #333;
+    }
 
-.light-mode .header {
-    background-color: #ffffff;
-    color: #333;
-}
+    .light-mode .header {
+        background-color: #ffffff;
+        color: #333;
+    }
 
-.light-mode .header .back-arrow {
-    color: #007bff;
-}
+    .light-mode .header .back-arrow {
+        color: #007bff;
+    }
 
-.light-mode .header h1 {
-    color: #007bff;
-}
+    .light-mode .header h1 {
+        color: #007bff;
+    }
 
-.light-mode .main-card {
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    color: #333;
-}
+    .light-mode .main-card {
+        background-color: #ffffff;
+        border: 1px solid #ddd;
+        color: #333;
+    }
 
-.light-mode .main-card .card .content h2 {
-    color: #007bff;
-}
+    .light-mode .main-card .card .content h2 {
+        color: #007bff;
+    }
 
-.light-mode #explore-prog {
-    border-top: 1px solid #ddd;
-}
+    .light-mode #explore-prog {
+        border-top: 1px solid #ddd;
+    }
 
-.light-mode #explore-line {
-    color: #555;
-}
+    .light-mode #explore-line {
+        color: #555;
+    }
 
-.light-mode .grid-item {
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    color: #333;
-}
+    .light-mode .grid-item {
+        background-color: #ffffff;
+        border: 1px solid #ddd;
+        color: #333;
+    }
 
-.light-mode .grid-item .content h3 {
-    color: #007bff;
-}
+    .light-mode .grid-item .content h3 {
+        color: #007bff;
+    }
 
-.light-mode .grid-item .content p {
-    color: #555;
-}
+    .light-mode .grid-item .content p {
+        color: #555;
+    }
 
-.light-mode .footer .explore-btn {
-    background-color: #007bff;
-    color: #ffffff;
-    border: none;
-}
+    .light-mode .footer .explore-btn {
+        background-color: #007bff;
+        color: #ffffff;
+        border: none;
+    }
 
-.light-mode .footer .explore-btn:hover {
-    background-color: #0056b3;
-}
-
-  </style>
+    .light-mode .footer .explore-btn:hover {
+        background-color: #0056b3;
+    }
+</style>
 {% endblock %}

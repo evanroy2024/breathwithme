@@ -23,20 +23,6 @@ def toggle_theme(request):
 def theme1(request):
     return render(request, 'mainapp/theme1.html')
 
-def theme2(request):
-    return render(request, 'mainapp/theme2.html')
-
-def theme3(request):
-    return render(request, 'mainapp/theme3.html')
-
-def theme4(request):
-    return render(request, 'mainapp/theme4.html')
-
-def theme5(request):
-    return render(request, 'mainapp/theme5.html')
-
-
-
 # Starting of Auth here ------------------------------------------------------------------
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
@@ -240,8 +226,10 @@ def home(request):
     username = request.user.username if request.user.is_authenticated else None
     return render(request, 'user/home.html', {'username': username})
 
+from musicapp.models import Playlist
 def library(request):
-    return render(request, 'user/library.html')
+    playlists = Playlist.objects.all()  # Fetch all playlists
+    return render(request, 'user/library.html', {'playlists': playlists})
 
 def sleep(request):
     return render(request, 'user/sleep.html')

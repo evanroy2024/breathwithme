@@ -186,9 +186,9 @@ video {
 <div class="course-detail-container">
     <!-- Course Thumbnail -->
     {% if course.image %}
-    <img class="course-thumbnail" src="{{ course.image.url }}" alt="{{ course.title }}">
+        <img class="course-thumbnail" src="{{ course.image.url }}" alt="{{ course.title }}">
     {% else %}
-    <img class="course-thumbnail" src="https://via.placeholder.com/900x300?text=No+Image+Available" alt="No Image Available">
+        <img class="course-thumbnail" src="https://via.placeholder.com/900x300?text=No+Image+Available" alt="No Image Available">
     {% endif %}
 
     <!-- Course Title -->
@@ -220,23 +220,41 @@ video {
             </h3>
             <div id="lecture-{{ material.id }}" class="lecture-material" style="display: none;">
                 {% if material.material_type == 'video' %}
-                <div>
-                    {% video material.content_url 'small' %}
-                </div>
+                    <div>
+                        {% video material.content_url 'small' %}
+                    </div>
                 {% elif material.material_type == 'audio' %}
-                <p><a href="{{ material.content_url }}" target="_blank">Listen to Audio</a></p>
+                    <p><a href="{{ material.content_url }}" target="_blank">Listen to Audio</a></p>
                 {% elif material.material_type == 'text' %}
-                <p style="color: white;"><a href="{{ material.pdf_file.url }}" target="_blank">Download PDF</a></p>
+                    <p style="color: white;"><a href="{{ material.pdf_file.url }}" target="_blank">Download PDF</a></p>
                 {% endif %}
             </div>
         </div>
-        
         {% empty %}
         <p>No materials available for this course.</p>
         {% endfor %}
-        
+
         <!-- Back Button -->
         <a href="#" class="back-button" id="back-button" style="display: none;" onclick="goBack()">Back to Lectures</a>
+    </div>
+
+    <!-- Quizzes Section -->
+    <div class="quizzes-container" id="quizzes-container">
+        <h2>Quizzes for {{ course.title }}</h2>
+
+        {% if quizzes %}
+            <ul>
+                {% for quiz in quizzes %}
+                <li>
+                    <strong>{{ quiz.title }}</strong><br>
+                    <p>{{ quiz.description }}</p>
+                    <a href="{% url 'quiz_detail' quiz.id %}" class="quiz-link">Start Quiz</a> <!-- Link to start quiz -->
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No quizzes available for this course yet.</p>
+        {% endif %}
     </div>
 </div>
 
