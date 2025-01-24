@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loading Screen</title>
+  <style>
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Body Styling */
+    body {
+      background-color:#171717; /* Matching background color */
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      font-family: 'Arial', sans-serif;
+    }
+
+    /* Logo Styling */
+    .logo {
+      margin-top: 30px;
+    }
+
+    .logo img {
+      width: 150px; /* Adjust size as needed */
+      margin-top: 30%;
+    }
+
+    /* Loader Styling */
+    .loader {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      margin-top: 20%;
+      margin-bottom: 30px;
+    }
+
+    .loader div {
+      width: 15px;
+      height: 15px;
+      background: radial-gradient(circle, #d4af37, #8d6e21); /* Beautiful gold gradient */
+      border-radius: 50%;
+      animation: bounce 1.5s infinite ease-in-out;
+    }
+
+    .loader div:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .loader div:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    /* Keyframes */
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-15px);
+      }
+    }
+
+    @media (max-width: 800px) {
+        .loader{
+            margin-top: 50%;
+        }
+    }
+    .white-line{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: white;
+        width: 50%;
+        height: 5px;
+        border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Logo -->
+  <div class="logo">
+    <img src="{% static 'mainlogo.png' %}" alt="Logo"> <!-- Replace 'your-logo.png' with the actual logo image path -->
+  </div>
+
+  <!-- Loader -->
+  <div class="loader">
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+
+  <div class="white-line"></div>
+  <script>
+    // Redirect after 3 seconds (3000 milliseconds)
+    setTimeout(function() {
+      window.location.href = "{% url 'theme1' %}";  // Redirect to the 'theme1' URL
+    }, 3000);
+  </script>
+</body>
+</html>

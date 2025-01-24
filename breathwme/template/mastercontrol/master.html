@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Control</title>
+</head>
+<body>
+    <h2>Master Control</h2>
+    <ul id="song-list">
+        {% for track in tracks %}
+        <li data-song-id="{{ track.id }}">
+            {{ track.title }} - {{ track.artist }}
+            <button class="play-btn">Play</button>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <h3>Now Playing: <span id="current-song">None</span></h3>
+    <audio id="audio-player" controls></audio>
+
+    <script>
+        let socket;
+
+        function connectWebSocket() {
+            socket = new WebSocket('ws://' + window.location.host + '/ws/mastercontrol/');
+
+            socket.onopen = function() {
+                console.log('WebSocket connection established.');
+            };
+
+            socket.onmessage = function(e) {
+                const data = JSON.parse(e.data);
+
+                if (data.error) {
+                    alert(data.error); 
+                    return;
+                }
+
+                const songTitle = data.song_title;
+                const songUrl = data.song_url;
+
+                // Update the current song display
+                document.getElementById('current-song').textContent = songTitle;
+
+                // Play the song on all devices
+                const audioPlayer = document.getElementById('audio-player');
+                audioPlayer.src = songUrl;
+                audioPlayer.play();
+            };
+
+            socket.onclose = function(e) {
+                console.error('WebSocket closed unexpectedly');
+                setTimeout(connectWebSocket, 5000); // Retry connection after 5 seconds
+            };
+
+            socket.onerror = function(e) {
+                console.error('WebSocket error:', e);
+            };
+        }
+
+        // Start WebSocket connection on page load
+        window.onload = function() {
+            connectWebSocket();
+        };
+
+        // Play button event listener
+        document.querySelectorAll('.play-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (socket && socket.readyState === WebSocket.OPEN) {
+                    const songId = this.parentElement.getAttribute('data-song-id');
+                    socket.send(JSON.stringify({
+                        'action': 'play_song',
+                        'song_id': songId
+                    }));
+                } else {
+                    console.log('WebSocket is not open. Retrying...');
+                    setTimeout(connectWebSocket, 5000); // Retry connection if socket is not open
+                }
+            });
+        });
+    </script>
+</body>
+</html>

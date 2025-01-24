@@ -1,0 +1,156 @@
+{% extends "base2.html" %}
+{% load static %}
+{% block title %}
+Home - Meditation Dashboard
+{% endblock %}
+
+{% block content %}
+<style>
+    /* Center the container */
+    .container {
+        max-width: 600px;
+        margin: 50px auto;
+        background-color: #2c2f33; /* Slightly lighter dark background */
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+        color: #f5f5f5; /* Light text for contrast */
+    }
+
+    /* Form heading */
+    .container h2 {
+        text-align: center;
+        font-size: 28px;
+        margin-bottom: 20px;
+        color: #7289da; /* Discord-inspired blue */
+    }
+
+    /* Form group styling */
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 16px;
+        margin-bottom: 5px;
+        color: #ffffff;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 12px;
+        font-size: 15px;
+        border: 1px solid #444;
+        border-radius: 5px;
+        background-color: #23272a; /* Input field background */
+        color: #ffffff;
+    }
+
+    .form-group input:focus {
+        border-color: #7289da;
+        outline: none;
+        box-shadow: 0 0 5px #7289da;
+    }
+
+    /* Buttons container */
+    .form-buttons {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    /* Buttons styling */
+    button {
+        flex: 1;
+        padding: 12px 20px;
+        font-size: 16px;
+        font-weight: bold;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: transform 0.2s ease, background-color 0.3s ease;
+    }
+
+    button[name="action"][value="create"] {
+        background-color: #3ba55d; /* Professional green for create */
+        color: white;
+    }
+
+    button[name="action"][value="create"]:hover {
+        background-color: #2c9a50;
+        transform: scale(1.05);
+    }
+
+    button[name="action"][value="join"] {
+        background-color: #ffcc4d; /* Gold for join */
+        color: #000000;
+    }
+
+    button[name="action"][value="join"]:hover {
+        background-color: #e6b839;
+        transform: scale(1.05);
+    }
+
+    /* Messages list */
+    ul {
+        margin-top: 20px;
+        padding: 0;
+        list-style: none;
+    }
+
+    ul li {
+        background-color: #444b52;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        color: #ffffff;
+    }
+
+    /* Responsive design */
+    @media (max-width: 600px) {
+        .form-buttons {
+            flex-direction: column;
+        }
+        button {
+            margin-bottom: 10px;
+        }
+    }
+</style>
+
+<div class="container">
+
+    <h2>Create or Join a Chatroom</h2>
+    
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <form method="POST" class="chatroom-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="chatroom_name">Chatroom Name:</label>
+            <input type="text" id="chatroom_name" name="chatroom_name" required>
+        </div>
+        <div class="form-group">
+            <label for="passcode">Passcode:</label>
+            <input type="text" id="passcode" name="passcode">
+        </div>
+        <div class="form-buttons">
+            <button type="submit" name="action" value="create">Create Chatroom</button>
+            <button type="submit" name="action" value="join">Join Chatroom</button>
+        </div>
+        <ul>
+            <li>The admin will have control over the music when you are in the group.</li>
+            <li>You can participate in real-time group chats. Please be polite and respectful to others.</li>
+            <li>Enjoy listening to music with others in real-time, creating a shared experience.</li>
+        </ul>
+        
+    </form>
+    
+</div>
+{% endblock %}
+

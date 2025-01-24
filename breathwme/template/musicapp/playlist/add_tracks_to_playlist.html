@@ -1,0 +1,335 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+Add Songs - {{ playlist.name }}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Header Section -->
+    <div class="header">
+        <button onclick="window.history.back()" class="back-btn">&#8592;</button>
+        <h1 class="page-title">Add Tracks to "{{ playlist.name }}"</h1>
+    </div>
+
+    <!-- Search Button Section -->
+    <div class="search-section">
+        <div class="search-container" id="search-container">
+            <input type="text" id="search-bar" class="search-bar" placeholder="Search songs...">
+        </div>
+    </div>
+
+    <!-- Tracks Selection List -->
+    <form method="post">
+        {% csrf_token %}
+        <ul class="tracks-list" id="tracks-list">
+            {% for track in tracks %}
+                <li class="track-item" data-title="{{ track.title|lower }}">
+                    <div class="track-info">
+                        <span class="track-title">{{ track.title }}</span> by <span class="track-artist">{{ track.artist }}</span>
+                    </div>
+                    <div class="track-actions">
+                        <input type="checkbox" name="tracks" value="{{ track.id }}" id="track_{{ track.id }}" class="track-checkbox">
+                        <label for="track_{{ track.id }}" class="track-label"></label>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <button type="submit" class="btn submit-btn">Add Tracks</button>
+        <div class="song-search">
+            <button type="button" onclick="toggleSearch()" class="search-btn">&#128269; Search</button>
+        </div>
+        
+        
+    </form>
+</div>
+
+<script>
+    // Toggle the visibility of the search bar
+    function toggleSearch() {
+        const searchContainer = document.getElementById('search-container');
+        searchContainer.classList.toggle('active');
+        document.getElementById('search-bar').focus();
+    }
+
+    // Search functionality
+    document.getElementById('search-bar').addEventListener('input', function() {
+        const query = this.value.toLowerCase();
+        const tracks = document.querySelectorAll('.track-item');
+
+        tracks.forEach(function(track) {
+            const title = track.getAttribute('data-title');
+            if (title.includes(query)) {
+                track.style.display = '';
+            } else {
+                track.style.display = 'none';
+            }
+        });
+    });
+</script>
+
+<style>
+          .song-search {
+                display: flex;
+                justify-content: center;
+                margin: 20px 0;
+            }
+        
+            .search-btn {
+                background-color: #1db954;
+                color: #fff;
+                padding: 8px 12px;
+                border: none;
+                border-radius: 20px;  /* Rounded corners for a pill-shaped button */
+                font-size: 1.2rem;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                white-space: nowrap;  /* Prevent text from wrapping */
+            }
+        
+            .search-btn:hover {
+                cursor: pointer;
+            }
+        
+           
+    /* General Reset */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    /* Body Styling */
+    body {
+        background: #121212;
+        color: #f0f0f0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    /* Container */
+    .container {
+        background: #1e1e1e;
+        padding: 20px;
+        border-radius: 15px;
+        width: 100%;
+        max-width: 500px;
+        box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.6);
+        overflow: hidden;
+    }
+
+    /* Header Section */
+    .header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .back-btn {
+        background: none;
+        border: none;
+        color: #1db954;
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+    .back-btn:hover {
+        color: #1ed760;
+    }
+
+    .page-title {
+        font-size: 1.4rem;
+        font-weight: bold;
+        margin-left: 10px;
+        color: #ffffff;
+    }
+
+    /* Search Section */
+    .search-section {
+        margin-top: 20px;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .search-btn {
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: color 0.3s ease;
+        height: 50px;
+    }
+
+    .search-btn:hover {
+        color: #1ed760;
+    }
+
+    .search-container {
+        display: none;
+        margin-top: 10px;
+    }
+
+    .search-container.active {
+        display: block;
+    }
+
+    .search-bar {
+        width: 100%;
+        padding: 8px;
+        font-size: 1rem;
+        border: 1px solid #333;
+        border-radius: 8px;
+        background: #2a2a2a;
+        color: #fff;
+        margin-bottom: 10px;
+    }
+
+    /* Tracks List */
+    .tracks-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+
+    .track-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px;
+        background: #2a2a2a;
+        margin-bottom: 12px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        transition: background 0.3s ease;
+    }
+
+    .track-item:hover {
+        background: #333;
+    }
+
+    .track-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .track-title {
+        color: #fff;
+        font-weight: bold;
+        font-size: 1rem;
+    }
+
+    .track-artist {
+        color: #b3b3b3;
+        font-size: 0.85rem;
+    }
+
+    .track-actions {
+        display: flex;
+        align-items: center;
+    }
+
+    /* Hidden Checkbox, label acts as the clickable button */
+    .track-checkbox {
+        display: none;
+    }
+
+    /* Style for the clickable 'plus' button */
+    .track-label {
+        background: #1db954;
+        color: #fff;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        font-size: 1.5rem;
+        transition: background 0.3s ease;
+    }
+
+    .track-label:hover {
+        background: #1ed760;
+    }
+
+    /* When checked, change background and display a checkmark */
+    .track-checkbox:checked + .track-label {
+        background: #007bff; /* Blue color when checked */
+        color: #fff;
+    }
+
+    /* Change the label content to checkmark (✔) when selected */
+    .track-checkbox:checked + .track-label::before {
+        content: '✔';
+        font-size: 1.4rem;
+    }
+
+    /* Change label to plus when not checked */
+    .track-checkbox:not(:checked) + .track-label::before {
+        content: '+';
+    }
+
+    /* Submit Button */
+    .submit-btn {
+        background: linear-gradient(135deg, #1db954, #1ed760);
+        color: #fff;
+        width: 100%;
+        padding: 12px;
+        text-align: center;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 20px;
+    }
+
+    .submit-btn:hover {
+        background: linear-gradient(135deg, #1ed760, #1db954);
+        box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Scrollbar Customization */
+    .tracks-list::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .tracks-list::-webkit-scrollbar-thumb {
+        background: #1db954;
+        border-radius: 4px;
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 480px) {
+        .track-title {
+            font-size: 0.9rem;
+        }
+
+        .track-artist {
+            font-size: 0.75rem;
+        }
+
+        .submit-btn {
+            font-size: 0.9rem;
+        }
+
+        .search-btn {
+            font-size: 1rem;
+        }
+    }
+</style>
+
+{% endblock %}
