@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>All Playlists</h1>
+{% if playlists %}
+    {% for playlist in playlists %}
+        <div>
+            <h3>{{ playlist.name }}</h3>
+            <p>Created By: {{ playlist.user.username }}</p>
+            <a href="{% url 'musicapp:view_playlist' playlist.id %}">View Playlist</a>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No playlists available.</p>
+{% endif %}
+<a href="{% url 'musicapp:create_playlist' %}">Create New Playlist</a>
+
+</body>
+</html>

@@ -1,0 +1,581 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+Home - Meditation Dashboard
+{% endblock %}
+
+{% block content %}
+  <style>
+    /* General Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+
+    .container {
+      max-width: 1420px;
+      margin: 0 auto;
+      padding: 5px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .back-arrow {
+      font-size: 24px;
+      margin-right: 12px;
+      cursor: pointer;
+      color: #e0e0e0; /* Light text */
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: bold;
+      color: #ffffff; /* Light text for heading */
+    }
+
+    .course-video {
+      position: relative;
+      margin-bottom: 24px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .course-video video {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+    }
+
+    .course-video .play-button {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(0, 0, 0, 0.6);
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      font-size: 24px;
+      color: #fff;
+    }
+
+    .course-details {
+      margin-bottom: 24px;
+    }
+
+    .course-details .category {
+      font-size: 14px;
+      color: #00b0ff; /* Lighter blue */
+      margin-bottom: 8px;
+    }
+
+    .course-details h2 {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #ffffff; /* Light heading color */
+    }
+
+    .course-details p {
+      font-size: 14px;
+      color: #bbbbbb; /* Lighter text */
+    }
+
+    .instructor {
+      display: flex;
+      align-items: center;
+      margin-top: 16px;
+    }
+
+    .instructor img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 12px;
+    }
+
+    .instructor .info {
+      flex: 1;
+    }
+
+    .instructor .info p {
+      font-size: 14px;
+      margin: 2px 0;
+      color: #bbbbbb; /* Lighter text */
+    }
+
+    .instructor .rating {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 14px;
+    }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .details-item {
+      background-color: #1f1f1f; /* Dark background */
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .details-item img {
+      width: 28px;
+      height: 28px;
+      margin-bottom: 8px;
+    }
+
+    .details-item h3 {
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 4px;
+      color: #ffffff; /* Light text */
+    }
+
+    .details-item p {
+      font-size: 12px;
+      color: #bbbbbb; /* Lighter text */
+    }
+
+    .next-session {
+      background-color: #1f1f1f; /* Dark background */
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .next-session h3 {
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 4px;
+      color: #ffffff; /* Light text */
+    }
+
+    .next-session p {
+      font-size: 14px;
+      color: #bbbbbb; /* Lighter text */
+    }
+
+    /* Reviews Section */
+    .reviews-section {
+      background-color: #1f1f1f; /* Dark background */
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      margin-top: 20px;
+    }
+
+    .reviews-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .reviews-header h3 {
+      font-size: 16px;
+      font-weight: bold;
+      color: #ffffff; /* Light text */
+    }
+
+    .reviews-header .see-all {
+      font-size: 14px;
+      color: #00b0ff; /* Lighter blue */
+      text-decoration: none;
+    }
+
+    .review-card {
+      border-top: 1px solid #444444; /* Dark border */
+      padding-top: 16px;
+    }
+
+    .review-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .reviewer-img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 12px;
+    }
+
+    .review-info {
+      flex: 1;
+    }
+
+    .reviewer-name {
+      font-size: 14px;
+      font-weight: bold;
+      color: #ffffff; /* Light text */
+    }
+
+    .review-date {
+      font-size: 12px;
+      color: #bbbbbb; /* Lighter text */
+    }
+
+    .review-rating span {
+      font-size: 14px;
+      color: #ffc107; /* Gold color for stars */
+    }
+
+    .review-text {
+      font-size: 14px;
+      color: #bbbbbb; /* Lighter text */
+      margin-top: 8px;
+      line-height: 1.4;
+    }
+
+    .start-course-btn {
+      width: 100%;
+      background-color: #c5a152;
+      color: #ffffff; /* Dark text */
+      font-size: 16px;
+      font-weight: bold;
+      padding: 12px;
+      border: none;
+      border-radius: 30px;
+      margin-top: 20px;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s ease;
+    }
+
+    .start-course-btn:hover {
+      background-color: #0091cc; /* Darker blue on hover */
+    }
+
+  </style>
+
+  <div class="container">
+    <div class="header">
+      <span class="back-arrow">&larr;</span>
+      <h1>Course</h1>
+    </div>
+
+    <!-- Video Section -->
+    <div class="course-video" style="position: relative; padding-top: 56.25%; width: 100%; height: 0; overflow: hidden;">
+      <!-- Embed YouTube video using iframe -->
+      <iframe src="https://www.youtube.com/embed/ZToicYcHIOU?si=Sf3YOA7JfzWA0SL6" 
+              title="YouTube video player" 
+              frameborder="0" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+              allowfullscreen 
+              style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
+    </div>
+
+    <!-- Course Details -->
+    <div class="course-details">
+      <p class="category">Meditations Library</p>
+      <h2>Mindfulness for Beginners</h2>
+      <p>A calming course to help you get started with mindfulness.</p>
+
+      <div class="instructor">
+        <img src="{% static 'du.jpg' %}" alt="Instructor">
+        <div class="info">
+          <p>Jerremy Mamika</p>
+          <p>Instructor : Jane Doe</p>
+        </div>
+        <div class="rating">
+          <span>&#9733;</span>
+          <span>4.6</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Details Grid -->
+    <div class="details-grid">
+      <div class="details-item">
+        <img src="{% static 'img/d1.png' %}" alt="Duration">
+        <h3>Duration</h3>
+        <p>10 Session</p>
+      </div>
+      <div class="details-item">
+        <img src="{% static 'img/d2.png' %}" alt="Level">
+        <h3>Beginner</h3>
+        <p>Level</p>
+      </div>
+    </div>
+
+    <!-- Next Session -->
+    <div class="next-session">
+      <h3>Next Session</h3>
+      <p>10 October, 2024 10:00 am</p>
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="reviews-section">
+        <div class="reviews-header">
+          <h3>Reviews</h3>
+          <a href="#" class="see-all">See all</a>
+        </div>
+        <div class="review-card">
+          <div class="review-header">
+            <img src="{% static 'du.jpg' %}" alt="Reviewer" class="reviewer-img">
+            <div class="review-info">
+              <p class="reviewer-name">Jhone Kenoady</p>
+              <p class="review-date">23 Oct 2024</p>
+            </div>
+            <div class="review-rating">
+              <span>★★★★★</span>
+            </div>
+          </div>
+          <p class="review-text">
+            Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit.
+          </p>
+        </div>
+        <div class="review-card">
+          <div class="review-header">
+            <img src="{% static 'du.jpg' %}" alt="Reviewer" class="reviewer-img">
+            <div class="review-info">
+              <p class="reviewer-name">Jhone Kenoady</p>
+              <p class="review-date">23 Oct 2024</p>
+            </div>
+            <div class="review-rating">
+              <span>★★★★★</span>
+            </div>
+          </div>
+          <p class="review-text">
+            Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit.
+          </p>
+        </div>
+        <div class="review-card">
+          <div class="review-header">
+            <img src="{% static 'du.jpg' %}" alt="Reviewer" class="reviewer-img">
+            <div class="review-info">
+              <p class="reviewer-name">Jhone Kenoady</p>
+              <p class="review-date">23 Oct 2024</p>
+            </div>
+            <div class="review-rating">
+              <span>★★★★★</span>
+            </div>
+          </div>
+          <p class="review-text">
+            Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit.
+          </p>
+        </div>
+        <button style="margin-bottom: 50px;" class="start-course-btn">Start Course</button>
+
+      </div>
+  </div>
+<!-- JS and css for dakr to light and light to dark start  -->
+<script>
+  const savedTheme = localStorage.getItem('theme');
+  if (!savedTheme) {
+      localStorage.setItem('theme', 'dark');
+      document.body.classList.add('dark-mode');
+  } else {
+      document.body.classList.add(savedTheme === 'dark' ? 'dark-mode' : 'light-mode');
+  }
+</script>
+
+  <style>
+    /* Light Mode Styles */
+.light-mode .container {
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+.light-mode .header {
+    background-color: #ffffff;
+    color: #333;
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+}
+
+.light-mode .header .back-arrow {
+    color: #007bff;
+}
+
+.light-mode .header h1 {
+    color: #007bff;
+    font-size: 24px;
+}
+
+.light-mode .course-video {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    padding: 0;
+}
+
+.light-mode .course-details {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.light-mode .course-details .category {
+    color: #888;
+    font-size: 14px;
+}
+
+.light-mode .course-details h2 {
+    color: #007bff;
+    font-size: 24px;
+}
+
+.light-mode .course-details .instructor {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.light-mode .course-details .instructor img {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    margin-right: 15px;
+}
+
+.light-mode .course-details .instructor .info p {
+    color: #333;
+}
+
+.light-mode .course-details .instructor .rating span {
+    color: #f39c12;
+}
+
+.light-mode .details-grid {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.light-mode .details-grid .details-item {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    padding: 15px;
+    width: 48%;
+    text-align: center;
+}
+
+.light-mode .details-grid .details-item img {
+    width: 50px;
+    height: 50px;
+}
+
+.light-mode .details-grid .details-item h3 {
+    font-size: 18px;
+    color: #007bff;
+}
+
+.light-mode .next-session {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.light-mode .next-session h3 {
+    color: #007bff;
+}
+
+.light-mode .reviews-section {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.light-mode .reviews-section .reviews-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.light-mode .reviews-section h3 {
+    color: #007bff;
+}
+
+.light-mode .reviews-section .see-all {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.light-mode .review-card {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-top: 10px;
+}
+
+.light-mode .review-card .review-header {
+    display: flex;
+    align-items: center;
+}
+
+.light-mode .review-card .reviewer-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.light-mode .review-card .review-info {
+    color: #333;
+}
+
+.light-mode .review-card .reviewer-name {
+    font-weight: bold;
+}
+
+.light-mode .review-card .review-date {
+    color: #888;
+    font-size: 12px;
+}
+
+.light-mode .review-card .review-rating {
+    color: #f39c12;
+}
+
+.light-mode .review-card .review-text {
+    color: #555;
+    margin-top: 10px;
+}
+
+.light-mode .start-course-btn {
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    padding: 12px 20px;
+    width: 100%;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.light-mode .start-course-btn:hover {
+    background-color: #0056b3;
+}
+.container {
+    background-color: #f9f9f9;
+    color: #333;
+    margin-bottom: 40px;
+}
+  </style>
+{% endblock %}

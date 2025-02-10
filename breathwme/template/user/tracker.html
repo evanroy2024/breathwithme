@@ -1,0 +1,587 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+Home - Meditation Dashboard
+{% endblock %}
+
+{% block content %}
+<style>
+    /* General Styles */
+    body {
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
+        background-color: #121212;
+        color: #ffffff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+    
+    .progress-tracker {
+        max-width: 420px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 20px;
+        box-sizing: border-box;
+        background-color: #1a1a1a;
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    }
+    
+    /* Header */
+    .tracker-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    
+    .back-button {
+        font-size: 24px;
+        text-decoration: none;
+        color: #ffffff;
+        margin-right: 15px;
+        font-weight: bold;
+        transition: color 0.3s ease;
+    }
+    
+    .back-button:hover {
+        color: gold;
+    }
+    
+    h1 {
+        font-size: 22px;
+        font-weight: 600;
+        margin: 0;
+    }
+    
+    /* Subheading */
+    .tracker-description {
+        font-size: 14px;
+        margin-bottom: 25px;
+        color: #bbbbbb;
+        line-height: 1.6;
+    }
+    
+    .highlight {
+        color: gold;
+        font-weight: 500;
+    }
+    
+    /* Card Styles */
+    .card {
+        background: #1e1e1e;
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6);
+    }
+    
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    
+    .card h3 {
+        font-size: 18px;
+        margin: 0;
+        font-weight: 500;
+    }
+    
+    .card-description {
+        font-size: 14px;
+        color: #bbbbbb;
+        line-height: 1.6;
+    }
+    
+    /* Charts */
+    .circle-chart {
+        width: 60px;
+        height: 60px;
+        background: conic-gradient(gold 100%, #333 0);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    }
+    
+    .circle-text, .pie-text {
+        font-size: 13px;
+        color: #ffffff;
+        font-weight: bold;
+    }
+    
+    .pie-chart {
+        width: 60px;
+        height: 60px;
+        background: conic-gradient(gold 60%, #333 0);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    }
+    
+    .progress-bar {
+        background: #333;
+        border-radius: 10px;
+        height: 12px;
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+    }
+    
+    .progress {
+        background: gold;
+        height: 100%;
+        border-radius: 10px;
+    }
+    
+    /* Sleep Progress Chart */
+    .chart-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-top: 15px;
+        height: 120px;
+    }
+    
+    .chart-bar {
+        width: 12%;
+        background: gold;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        font-size: 12px;
+        color: #000000;
+        border-radius: 6px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        position: relative;
+    }
+    
+    .chart-bar:hover {
+        background: #f7c949;
+        cursor: pointer;
+    }
+    
+    .chart-bar span {
+        position: absolute;
+        top: -25px;
+        font-size: 10px;
+        color: #ffffff;
+        background: #333;
+        padding: 2px 4px;
+        border-radius: 4px;
+    }
+    
+    /* Dropdown */
+    .dropdown {
+        background: #1e1e1e;
+        color: #ffffff;
+        border: 1px solid #333;
+        border-radius: 8px;
+        padding: 6px 10px;
+        font-size: 13px;
+        cursor: pointer;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .dropdown:focus {
+        border-color: gold;
+        box-shadow: 0 0 6px gold;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 480px) {
+        .progress-tracker {
+            padding: 10px;
+        }
+    
+        h1 {
+            font-size: 20px;
+        }
+    
+        .tracker-description {
+            font-size: 13px;
+        }
+    
+        .card {
+            padding: 15px;
+        }
+    
+        .card h3 {
+            font-size: 16px;
+        }
+    
+        .circle-chart, .pie-chart {
+            width: 50px;
+            height: 50px;
+        }
+    
+        .chart-container {
+            height: 100px;
+        }
+    
+        .chart-bar {
+            width: 10%;
+        }
+    }
+</style>
+
+<div class="progress-tracker">
+    <!-- Header -->
+    <header class="tracker-header">
+        <a href="#" class="back-button"  onclick="window.location.href='{% url 'library' %}'">←</a>
+        <h1>Progress Tracker</h1>
+    </header>
+    <p class="tracker-description">
+        Track your meditation and <span class="highlight">sleep journey.</span>
+    </p>
+
+    <!-- Cards -->
+    <div class="card">
+        <div class="card-header">
+            <h3>Daily Meditation Streak</h3>
+            <div class="circle-chart">
+                <div class="circle-text">7/7 Days</div>
+            </div>
+        </div>
+        <p class="card-description">You have meditated for 7 consecutive days.</p>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3>Meditation Time</h3>
+            <div class="pie-chart">
+                <div class="pie-text">60%</div>
+            </div>
+        </div>
+        <p class="card-description">Total time spent meditating: 15 hrs, 30 min</p>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3 style="margin-right: 5px;">Goal </h3>
+            <div class="progress-bar">
+                <div class="progress" style="width: 80%;"></div>
+            </div>
+        </div>
+        <p class="card-description">
+            You have completed 80% of your mindfulness goal for the week. <span>80/100</span>
+        </p>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3>Sleep Progress</h3>
+            <select class="dropdown">
+                <option>Today</option>
+                <option>This Week</option>
+            </select>
+        </div>
+        <div class="chart-container">
+            <!-- Grid lines -->
+            <div class="grid-lines">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <!-- Bars -->
+            <div class="chart-bar" style="height: 40%;" data-sleep="4 hrs"></div>
+            <div class="chart-bar" style="height: 80%;" data-sleep="8 hrs"></div>
+            <div class="chart-bar" style="height: 60%;" data-sleep="6 hrs"></div>
+            <div class="chart-bar" style="height: 50%;" data-sleep="5 hrs"></div>
+            <div class="chart-bar" style="height: 70%;" data-sleep="7 hrs"></div>
+            <div class="chart-bar" style="height: 90%;" data-sleep="9 hrs"></div>
+            <div class="chart-bar" style="height: 30%;" data-sleep="3 hrs"></div>
+        </div>
+        <div class="chart-labels">
+            <span>Sun</span>
+            <span>Mon</span>
+            <span>Tue</span>
+            <span>Wed</span>
+            <span>Thu</span>
+            <span>Fri</span>
+            <span>Sat</span>
+        </div>
+    </div>
+    
+<style>
+   /* Sleep Progress Chart */
+.chart-container {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    height: 150px;
+    margin-top: 15px;
+    border-left: 2px dashed #444;
+    border-bottom: 2px dashed #444;
+    padding: 0 10px;
+}
+
+.grid-lines {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    z-index: -1;
+}
+
+.grid-lines div {
+    border-top: 1px dashed #555;
+    width: 100%;
+}
+
+.chart-bar {
+    width: 10%;
+    background: gold;
+    border-radius: 5px 5px 0 0;
+    position: relative;
+    transition: transform 0.3s, background 0.3s;
+}
+
+.chart-bar:hover {
+    transform: scale(1.1);
+    background: linear-gradient(to top, #f9d423, #ff4e50);
+}
+
+.chart-bar::after {
+    content: attr(data-sleep);
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1e1e1e;
+    color: white;
+    font-size: 12px;
+    padding: 5px 8px;
+    border-radius: 4px;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    transform: translateY(5px);
+}
+
+.chart-bar:hover::after {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.chart-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    font-size: 12px;
+    color: #bbb;
+}
+
+
+</style>    
+</div>
+<!-- JS and css for dakr to light and light to dark start  -->
+<script>
+    const savedTheme = localStorage.getItem('theme');
+    if (!savedTheme) {
+        localStorage.setItem('theme', 'dark');
+        document.body.classList.add('dark-mode');
+    } else {
+        document.body.classList.add(savedTheme === 'dark' ? 'dark-mode' : 'light-mode');
+    }
+  </script>
+
+<style>
+    /* Light Mode Styles */
+.light-mode .progress-tracker {
+    background-color: #f9f9f9;
+    color: #333;
+    padding: 20px;
+}
+
+.light-mode .tracker-header {
+    display: flex;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.light-mode .tracker-header .back-button {
+    color: #007bff;
+    font-size: 20px;
+    margin-right: 15px;
+    text-decoration: none;
+}
+
+.light-mode .tracker-header h1 {
+    color: #007bff;
+    font-size: 24px;
+}
+
+.light-mode .tracker-description {
+    margin-top: 10px;
+    font-size: 16px;
+    color: #555;
+}
+
+.light-mode .tracker-description .highlight {
+    color: #ff4e50;
+    font-weight: bold;
+}
+
+.light-mode .card {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.light-mode .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.light-mode .card-header h3 {
+    font-size: 18px;
+    color: #007bff;
+}
+
+.light-mode .card-description {
+    color: #555;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.light-mode .circle-chart, .light-mode .pie-chart {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #ff4e50;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+}
+
+.light-mode .circle-text, .light-mode .pie-text {
+    font-weight: bold;
+}
+
+.light-mode .progress-bar {
+    width: 100%;
+    background-color: #ddd;
+    height: 10px;
+    border-radius: 5px;
+    position: relative;
+}
+
+.light-mode .progress-bar .progress {
+    height: 100%;
+    background-color: #007bff;
+    border-radius: 5px;
+}
+
+.light-mode .dropdown {
+    background-color: #ffffff;
+    color: #333;
+    border: 1px solid #ddd;
+    padding: 5px 10px;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.light-mode .dropdown option {
+    background-color: #ffffff;
+    color: #333;
+}
+
+.light-mode .chart-container {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    height: 150px;
+    margin-top: 15px;
+    border-left: 2px dashed #444;
+    border-bottom: 2px dashed #444;
+    padding: 0 10px;
+}
+
+.light-mode .grid-lines {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    z-index: -1;
+}
+
+.light-mode .grid-lines div {
+    border-top: 1px dashed #555;
+    width: 100%;
+}
+
+.light-mode .chart-bar {
+    width: 10%;
+    background: gold;
+    border-radius: 5px 5px 0 0;
+    position: relative;
+    transition: transform 0.3s, background 0.3s;
+}
+
+.light-mode .chart-bar:hover {
+    transform: scale(1.1);
+    background: linear-gradient(to top, #f9d423, #ff4e50);
+}
+
+.light-mode .chart-bar::after {
+    content: attr(data-sleep);
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1e1e1e;
+    color: white;
+    font-size: 12px;
+    padding: 5px 8px;
+    border-radius: 4px;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    transform: translateY(5px);
+}
+
+.light-mode .chart-bar:hover::after {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.light-mode .chart-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    font-size: 12px;
+    color: #bbb;
+}
+.container {
+   margin-bottom: 80px;
+}
+</style>
+{% endblock %}

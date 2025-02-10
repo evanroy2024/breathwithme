@@ -1,0 +1,188 @@
+{% extends "base2.html" %}
+{% load static %}
+
+{% block title %}
+Quiz Results
+{% endblock %}
+
+{% block content %}
+<style>
+  body {
+    background-color: #1e1e2f;
+    color: #f5f5f5;
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .results-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 40px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  }
+
+  .results-container h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    color: #fff;
+    text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.7);
+  }
+
+  .circle-container {
+    position: relative;
+    width: 250px;
+    height: 250px;
+    margin: 20px auto;
+  }
+
+  svg {
+    transform: rotate(-90deg);
+    width: 100%;
+    height: 100%;
+    transition: transform 0.5s ease-in-out;
+  }
+
+  .circle-bg {
+    fill: none;
+    stroke: #333;
+    stroke-width: 15;
+  }
+
+  .circle {
+    fill: none;
+    stroke-width: 15;
+    stroke: url(#gradient);
+    stroke-dasharray: 565;
+    stroke-dashoffset: 565;
+    transition: stroke-dashoffset 2s ease-out, stroke 0.5s ease-in-out;
+  }
+
+  .percentage-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3rem;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+  }
+
+  .btn {
+    margin-top: 30px;
+    padding: 14px 30px;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    text-decoration: none;
+    box-shadow: 0px 5px 15px rgba(0, 123, 255, 0.5);
+    transition: all 0.3s ease-in-out;
+  }
+
+  .btn:hover {
+    background-color: #0056b3;
+    transform: scale(1.1);
+    box-shadow: 0px 8px 20px rgba(0, 123, 255, 0.8);
+  }
+
+  .feedback {
+    margin-top: 20px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-shadow: 2px 2px 15px rgba(0, 0, 0, 0.7);
+  }
+
+  .feedback p {
+    margin: 0;
+    animation: fadeIn 1s ease-out;
+  }
+
+  .text-success {
+    color: #4CAF50;
+  }
+
+  .text-danger {
+    color: #F44336;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+<div class="results-container">
+  <h1>{{ quiz.title }} - Results</h1>
+  <div class="circle-container">
+    <svg>
+      <!-- Gradient for dynamic stroke -->
+      <defs>
+        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color: #4CAF50; stop-opacity: 1;" />
+          <stop offset="100%" style="stop-color: #FFC107; stop-opacity: 1;" />
+        </linearGradient>
+      </defs>
+      <circle cx="125" cy="125" r="100" class="circle-bg"></circle>
+      <circle 
+        cx="125" 
+        cy="125" 
+        r="100" 
+        class="circle" 
+        style="stroke: {% if percentage >= 50 %}url(#gradient){% else %}#F44336{% endif %};">
+      </circle>
+    </svg>
+    <div class="percentage-text">{{ percentage }}%</div>
+  </div>
+  <div class="feedback">
+    {% if percentage >= 50 %}
+      <p class="text-success">Congratulations! You passed the quiz.</p>
+    {% else %}
+      <p class="text-danger">Sorry, you did not pass the quiz. Try again!</p>
+    {% endif %}
+  </div>
+  <a href="{% url 'course_main' %}" class="btn">Back To Course </a>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const circle = document.querySelector('.circle');
+    const percentage = {{ percentage }};
+    const radius = 100; // radius of the circle
+    const circumference = 2 * Math.PI * radius; // calculate circumference of the circle
+
+    // Set total circumference and initial offset
+    circle.style.strokeDasharray = `${circumference}`;
+    circle.style.strokeDashoffset = `${circumference}`;
+
+    // Calculate the stroke offset based on the percentage
+    const offset = circumference - (percentage / 100) * circumference;
+
+    // Animate the circle slowly
+    setTimeout(() => {
+      circle.style.strokeDashoffset = offset;
+    }, 100);
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Play Exercise</title>
+</head>
+<body>
+    <h1>Playing: {{ exercise.name }}</h1>
+    <p>Total Time: <span id="total-time">{{ exercise.total_time }}</span> sec</p>
+    <p>Vibration Cues: <span id="cue-list">{{ exercise.vibration_cues }}</span></p>
+    <p>Shape: {{ exercise.shape }}</p>
+
+    <h2>Timer: <span id="timer">0</span> sec</h2>
+    <button onclick="startExercise()">Start</button>
+
+    <script>
+        function startExercise() {
+            // Get the vibration cues from Django and clean up extra quotes
+            let cueString = "{{ exercise.vibration_cues|escapejs }}".trim();  // Proper escapejs filter
+            console.log("Cue String:", cueString);  // Debugging: Check what is passed to JavaScript
+    
+            // Convert the cue string to an array of integers
+            let cues = cueString.split(',').map(num => {
+                let parsed = parseInt(num.trim(), 10);
+                return isNaN(parsed) ? null : parsed;
+            }).filter(num => num !== null);
+    
+            console.log("Vibration Cues Array:", cues);  // Debugging: Check the parsed array
+    
+            let totalTime = {{ exercise.total_time }};
+            let timerElement = document.getElementById("timer");
+            let elapsed = 0;
+            let triggeredCues = new Set();  // Track which cues have been triggered
+    
+            let interval = setInterval(() => {
+                elapsed++;
+                timerElement.innerText = elapsed;  // Update timer on screen
+    
+                // Vibrate at the specific cue times only
+                if (cues.includes(elapsed) && !triggeredCues.has(elapsed)) {
+                    if (navigator.vibrate) {
+                        navigator.vibrate(1000);  // Vibrate for 1 second
+                        console.log("🔔 Vibrating at", elapsed, "seconds");  // Debugging: Check when it vibrates
+                        triggeredCues.add(elapsed);  // Mark this cue as triggered
+                    }
+                }
+    
+                // Stop the timer when total time is reached
+                if (elapsed >= totalTime) {
+                    clearInterval(interval);
+                    alert("✅ Exercise completed!");
+                }
+            }, 1000);
+        }
+    </script>
+    
+    
+</body>
+</html>

@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Bootstrap & FontAwesome -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+    body {
+        background-color: #121212;
+        color: #ffffff;
+        font-family: 'Arial', sans-serif;
+    }
+    .container {
+        max-width: 600px;
+        margin-top: 50px;
+        padding: 30px;
+        background: #1a1a1a;
+        border-radius: 12px;
+        box-shadow: 0px 0px 15px rgba(0, 255, 255, 0.3);
+        text-align: center;
+        overflow: hidden;
+    }
+    .step {
+        display: none;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+    .step.active {
+        display: block;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    fieldset {
+        border: none;
+        padding: 20px 0;
+    }
+    label {
+        display: block;
+        background: #222;
+        padding: 12px;
+        margin: 5px;
+        border-radius: 6px;
+        cursor: pointer;
+        border: 1px solid #00d9ff;
+        transition: all 0.3s ease;
+    }
+    label:hover, input:checked + label {
+        background: #00d9ff;
+        color: #121212;
+    }
+    input {
+        display: none;
+    }
+    .buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+    .btn {
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .btn-prev {
+        background: #555;
+        color: white;
+    }
+    .btn-prev:hover {
+        background: #777;
+    }
+    .btn-next {
+        background: #00d9ff;
+        color: #121212;
+    }
+    .btn-next:hover {
+        background: #00b8e6;
+    }
+    .final-screen {
+        display: none;
+        text-align: center;
+        animation: fadeInZoom 1s ease-in-out;
+    }
+    .final-screen .icon {
+        font-size: 80px;
+        color: #00ff99;
+        animation: bounceIn 1.2s ease-in-out;
+    }
+    .final-screen h3 {
+        margin-top: 20px;
+        font-size: 24px;
+    }
+    @keyframes fadeInZoom {
+        from { opacity: 0; transform: scale(0.8); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes bounceIn {
+        0% { transform: scale(0.5); opacity: 0; }
+        50% { transform: scale(1.1); opacity: 0.8; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+</style>
+
+<div class="container">
+    <h2>🌿 Build Your Breathing Habit</h2>
+    
+    <form id="breathForm" method="POST">
+        {% csrf_token %}
+
+        <!-- Step 1 -->
+        <div class="step active">
+            <fieldset>
+                <legend>What is your experience with breathwork/meditation?</legend>
+            </fieldset>
+            <input type="radio" id="beginner" name="experience" value="beginner" required>
+            <label for="beginner">Beginner</label>
+
+            <input type="radio" id="intermediate" name="experience" value="intermediate">
+            <label for="intermediate">Intermediate</label>
+
+            <input type="radio" id="advanced" name="experience" value="advanced">
+            <label for="advanced">Advanced</label>
+
+            <div class="buttons">
+                <button type="button" class="btn btn-next">Next ➜</button>
+            </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step">
+            <fieldset>
+                <legend>How many times per week can you commit to practicing?</legend>
+            </fieldset>
+            <input type="radio" id="once" name="practice_frequency" value="1" required>
+            <label for="once">Once a week</label>
+
+            <input type="radio" id="twice" name="practice_frequency" value="2">
+            <label for="twice">Twice a week</label>
+
+            <input type="radio" id="daily" name="practice_frequency" value="7">
+            <label for="daily">Every day</label>
+
+            <div class="buttons">
+                <button type="button" class="btn btn-prev">⬅ Previous</button>
+                <button type="button" class="btn btn-next">Next ➜</button>
+            </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step">
+            <fieldset>
+                <legend>What time of day is best for you to practice?</legend>
+            </fieldset>
+            <input type="radio" id="morning" name="preferred_time" value="morning" required>
+            <label for="morning">Morning</label>
+
+            <input type="radio" id="evening" name="preferred_time" value="evening">
+            <label for="evening">Evening</label>
+
+            <div class="buttons">
+                <button type="button" class="btn btn-prev">⬅ Previous</button>
+                <button type="button" class="btn btn-next">Next ➜</button>
+            </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="step">
+            <fieldset>
+                <legend>Can we send you notifications during these times?</legend>
+            </fieldset>
+            <input type="radio" id="yes" name="allow_notifications" value="yes" required>
+            <label for="yes">Yes</label>
+
+            <input type="radio" id="no" name="allow_notifications" value="no">
+            <label for="no">No</label>
+
+            <div class="buttons">
+                <button type="button" class="btn btn-prev">⬅ Previous</button>
+                <button type="button" class="btn btn-next">Next ➜</button>
+            </div>
+        </div>
+
+        <!-- Step 5 (Goal Selection) -->
+        <div class="step">
+            <fieldset>
+                <legend>What is your main goal for practicing breathwork?</legend>
+            </fieldset>
+            <input type="radio" id="relaxation" name="goal" value="relaxation" required>
+            <label for="relaxation">Relaxation</label>
+
+            <input type="radio" id="focus" name="goal" value="focus">
+            <label for="focus">Better Focus</label>
+
+            <input type="radio" id="sleep" name="goal" value="sleep">
+            <label for="sleep">Improve Sleep</label>
+
+            <input type="radio" id="stress" name="goal" value="stress">
+            <label for="stress">Reduce Stress</label>
+
+            <input type="radio" id="energy" name="goal" value="energy">
+            <label for="energy">Increase Energy</label>
+
+            <div class="buttons">
+                <button type="button" class="btn btn-prev">⬅ Previous</button>
+                <button type="submit" class="btn btn-next">Finish</button>
+            </div>
+        </div>
+
+    </form> 
+
+    <!-- Animated Conclusion -->
+    <div class="final-screen">
+        <i class="fa-solid fa-circle-check icon"></i>
+        <h3>Thank You! Your habit plan is set! 🎉</h3>
+    </div>
+</div>
+
+<script>
+    const steps = document.querySelectorAll('.step');
+    const nextBtns = document.querySelectorAll('.btn-next');
+    const prevBtns = document.querySelectorAll('.btn-prev');
+    const form = document.getElementById('breathForm');
+    const finalScreen = document.querySelector('.final-screen');
+    const container = document.querySelector('.container');
+    let currentStep = 0;
+
+    function showStep(step) {
+        steps.forEach((s, index) => s.classList.toggle('active', index === step));
+    }
+
+    nextBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            if (document.querySelector('.step.active input:checked')) {
+                currentStep++;
+                showStep(currentStep);
+            }
+        });
+    });
+
+    prevBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            currentStep--;
+            showStep(currentStep);
+        });
+    });
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        steps.forEach(s => s.style.display = "none"); 
+        finalScreen.style.display = "block"; 
+        setTimeout(() => {
+            window.location.href = "{% url 'home' %}";
+
+        }, 3000);
+    });
+</script>
+
+{% endblock %}

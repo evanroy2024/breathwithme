@@ -1,0 +1,177 @@
+{% extends "base2.html" %}
+{% load static %}
+{% block title %}
+Home - Meditation Dashboard
+{% endblock %}
+
+{% block content %}
+<div class="quiz-container">
+  <div class="quiz-header">
+    <h1 class="quiz-title">{{ quiz.title }}</h1>
+    <p class="quiz-description">Test your knowledge and improve your skills. Choose the correct answers and submit!</p>
+  </div>
+  
+  <form method="post" class="quiz-form">
+    {% csrf_token %}
+    {% for question in questions %}
+    <div class="quiz-question">
+      <h2 class="question-title">Q{{ question.question_number }}. {{ question.question_text }}</h2>
+      <div class="options-container">
+        {% for option in question.options %}
+        <div class="option">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="question_{{ question.question_number }}"
+            id="option_{{ question.question_number }}_{{ loop.index }}"
+            value="{{ option }}"/>
+          <label for="option_{{ question.question_number }}_{{ loop.index }}">{{ option }}</label>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="correct-answer" style="display: none;">
+        <span>Correct Answer:</span> {{ question.correct_answer }}
+      </div>
+    </div>
+    {% endfor %}
+    <div class="submit-container">
+      <button type="submit" class="btn-submit">Submit Quiz</button>
+    </div>
+  </form>
+</div>
+
+<style>
+  /* General Body Styling */
+  body {
+    background: #121212;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #e0e0e0;
+  }
+
+  .quiz-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #1f1f1f;
+    border-radius: 15px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  }
+
+  .quiz-header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .quiz-title {
+    font-size: 2.5rem;
+    color: #ff4081;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .quiz-description {
+    font-size: 1.1rem;
+    color: #b3b3b3;
+  }
+
+  .quiz-question {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #2a2a2a;
+    border-radius: 10px;
+    border: 1px solid #333;
+  }
+
+  .question-title {
+    font-size: 1.2rem;
+    color: #ffffff;
+    margin-bottom: 15px;
+    font-weight: 500;
+  }
+
+  .options-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .form-check-input {
+    accent-color: #ff4081;
+    transform: scale(1.4);
+  }
+
+  .correct-answer {
+    margin-top: 15px;
+    font-size: 0.9rem;
+    color: #b0bec5;
+    background: #333;
+    padding: 10px;
+    border-radius: 8px;
+  }
+
+  .submit-container {
+    text-align: center;
+    margin-top: 30px;
+  }
+
+  .btn-submit {
+    background: #ff4081;
+    color: #ffffff;
+    font-size: 1.1rem;
+    padding: 12px 30px;
+    border-radius: 50px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .btn-submit:hover {
+    background: #e91e63;
+    transform: scale(1.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Mobile Responsiveness */
+  @media (max-width: 768px) {
+    .quiz-container {
+      padding: 20px;
+    }
+
+    .quiz-title {
+      font-size: 2.2rem;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 14px 20px;
+    }
+  }
+
+  /* Animation Effects */
+  .quiz-container {
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8t94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"></script>
+{% endblock %}

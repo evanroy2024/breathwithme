@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  
+
+<style>
+  /* General Reset */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Arial', sans-serif;
+    background-color: #121212; /* Dark background */
+    color: #E0E0E0; /* Light text color */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 420px;
+    width: 100%;
+    background-color: #1E1E1E; /* Dark container background */
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  }
+
+  .header-image {
+    position: relative;
+    height: 180px;
+    background-image: url('https://images.unsplash.com/photo-1588286840104-8957b019727f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); /* Replace with actual image */
+    background-size: cover;
+    background-position: center;
+  }
+
+  .back-arrow {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    font-size: 24px;
+    color: #fff; /* Light arrow color */
+    cursor: pointer;
+  }
+
+  .content {
+    padding: 20px;
+  }
+
+  .content h1 {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #E0E0E0; /* Light text for heading */
+  }
+
+  .content p {
+    font-size: 14px;
+    color: #B0B0B0; /* Light gray text for description */
+    margin-bottom: 16px;
+  }
+
+  .plan {
+    border: 1px solid #333; /* Dark border */
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    background-color: #2C2C2C; /* Dark background for plans */
+    transition: background-color 0.3s;
+  }
+
+  .plan.active {
+    border-color: #0056FF; /* Highlight color for active plan */
+    background-color: #333; /* Darker background for active plan */
+  }
+
+  .plan-left {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .plan-left .title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 4px;
+    color: #E0E0E0; /* Light text for title */
+  }
+
+  .plan-left .description {
+    font-size: 12px;
+    color: #B0B0B0; /* Light gray for description */
+  }
+
+  .plan-right {
+    display: flex;
+    align-items: center;
+  }
+
+  .plan-price {
+    font-size: 16px;
+    font-weight: bold;
+    margin-right: 12px;
+    color: #E0E0E0; /* Light price text */
+  }
+
+  .radio-button {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #555; /* Dark border */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .radio-button.active {
+    border-color: #0056FF; /* Active border color */
+  }
+
+  .radio-button::after {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background-color: #0056FF; /* Blue for active state */
+    border-radius: 50%;
+    display: none;
+  }
+
+  .radio-button.active::after {
+    display: block;
+  }
+
+  .subscribe-button {
+    background-color: #0056FF; /* Blue background */
+    color: #fff;
+    text-align: center;
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 20px;
+    transition: background-color 0.3s;
+  }
+
+  .subscribe-button:hover {
+    background-color: #0045cc; /* Darker blue on hover */
+  }
+
+</style>
+<body>
+  <div class="container">
+    <div class="header-image">
+      <span class="back-arrow">&#8592;</span>
+    </div>
+    <div class="content">
+      <h1>Be Premium Get Unlimited Access</h1>
+      <p>Enjoy Workout Access Without Ads And Restrictions</p>
+      
+      <div class="plan active" onclick="selectPlan(this)" data-plan-id="1">
+        <div class="plan-left">
+          <span class="title">Free</span>
+          <span class="description">Limited access to meditation programs and features.</span>
+        </div>
+        <div class="plan-right">
+          <span class="plan-price">$0.00</span>
+          <div class="radio-button active"></div>
+        </div>
+      </div>
+      
+      <div class="plan" onclick="selectPlan(this)" data-plan-id="2">
+        <div class="plan-left">
+          <span class="title">Premium Plan</span>
+          <span class="description">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</span>
+        </div>
+        <div class="plan-right">
+          <span class="plan-price">$9.99</span>
+          <div class="radio-button"></div>
+        </div>
+      </div>
+      
+      <div class="plan" onclick="selectPlan(this)" data-plan-id="3">
+        <div class="plan-left">
+          <span class="title">Pro Plan</span>
+          <span class="description">Everything in Premium + exclusive content, priority support.</span>
+        </div>
+        <div class="plan-right">
+          <span class="plan-price">$119.00</span>
+          <div class="radio-button"></div>
+        </div>
+      </div>
+    </div>
+    <div class="subscribe-button" onclick="subscribe()">Subscribe</div>
+</div>
+
+<script>
+  let selectedPlanId = null;
+
+  function selectPlan(planElement) {
+    // Deselect any previously selected plan
+    document.querySelectorAll('.plan').forEach(plan => plan.classList.remove('active'));
+    
+    // Select the clicked plan
+    planElement.classList.add('active');
+    selectedPlanId = planElement.getAttribute('data-plan-id'); // Get the plan ID from data attribute
+  }
+
+  function subscribe() {
+    if (selectedPlanId !== null) {
+      window.location.href = `/paypal/create_payment/${selectedPlanId}/`;  // Redirect to the create_payment view with selected plan ID
+    } else {
+      alert('Please select a plan');
+    }
+  }
+</script>
+
+
+
+
+
+
+</body>
+</html>
