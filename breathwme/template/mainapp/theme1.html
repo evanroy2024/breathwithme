@@ -1,592 +1,588 @@
 <!DOCTYPE html>
-<html lang="en">
 {% load static %}
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Breathe With Me</title>
+    <title>Breathwithme</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
     <style>
-        /* General styles */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #121212;
-            color: #f4f4f4;
-        }
-
-        /* Header and Navbar */
-        header {
-            position: sticky;
-            top: 0;
-            background-color: #191717;
-            padding: 15px 0;
-            z-index: 1000;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            flex-wrap: wrap;
-        }
-
-        .logo a {
-            font-size: 28px;
-            color: #fff;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 30px;
-        }
-
-        .nav-links li {
-            list-style: none;
-        }
-
-        .nav-links a {
-            color: #f4f4f4;
-            text-decoration: none;
-            font-size: 18px;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .nav-links a:hover {
-            color: #ff6347;
-        }
-
-        .signin-button {
-            background-color: #4caf50;
-            color: white;
-            padding: 12px 20px;
-            font-size: 18px;
-            font-weight: 600;
-            text-decoration: none;
-            border-radius: 30px;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-            display: inline-block;
-            box-shadow: 0 4px 8px rgba(76, 175, 80, 0.4);
-        }
-
-        .signin-button:hover {
-            background-color: #45a049;
-            transform: scale(1.05);
-            box-shadow: 0 6px 12px rgba(76, 175, 80, 0.6);
-        }
-
-        /* Mobile Responsiveness */
-        @media (max-width: 768px) {
-            .nav-links {
-                flex-direction: column;
-                gap: 20px;
-                width: 100%;
-                text-align: center;
-                margin-top: 20px;
-            }
-
-            .navbar {
-                padding: 10px;
-            }
-
-            .signin-button {
-                margin-top: 10px;
-            }
-        }
-
-        /* Section Design */
-        .container {
-            max-width: 1200px;
+        .card {
+            position: relative;
+            max-width: 300px;
+            height: auto;
+            background: linear-gradient(-45deg, #fe0847, #feae3f);
+            border-radius: 15px;
             margin: 0 auto;
             padding: 40px 20px;
+            -webkit-box-shadow: 0 10px 15px rgba(0, 0, 0, .1);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, .1);
+            -webkit-transition: .5s;
+            transition: .5s;
         }
 
-        .content-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 60px;
-            padding: 40px 0;
-            border-bottom: 1px solid #333;
-            background-color: #1f1f1f;
-            border-radius: 10px;
-            flex-wrap: wrap;
+        .card:hover {
+            -webkit-transform: scale(1.1);
+            transform: scale(1.1);
         }
 
-        .image-container img {
+        .col-sm-4:nth-child(1) .card,
+        .col-sm-4:nth-child(1) .card .title .fa {
+            background: linear-gradient(-45deg, #f403d1, #64b5f6);
+
+        }
+
+        .col-sm-4:nth-child(2) .card,
+        .col-sm-4:nth-child(2) .card .title .fa {
+            background: linear-gradient(-45deg, #ffec61, #f321d7);
+
+        }
+
+        .col-sm-4:nth-child(3) .card,
+        .col-sm-4:nth-child(3) .card .title .fa {
+            background: linear-gradient(-45deg, #24ff72, #9a4eff);
+
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
             width: 100%;
-            max-width: 500px;
-            height: auto;
-            border-radius: 10px;
+            height: 40%;
+            background: rgba(255, 255, 255, .1);
+            z-index: 1;
+            -webkit-transform: skewY(-5deg) scale(1.5);
+            transform: skewY(-5deg) scale(1.5);
         }
 
-        .text-container {
-            flex: 1;
-            padding-left: 40px;
+        .title .fa {
+            color: #fff;
+            font-size: 60px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 100px;
+            -webkit-box-shadow: 0 10px 10px rgba(0, 0, 0, .1);
+            box-shadow: 0 10px 10px rgba(0, 0, 0, .1);
+
+        }
+
+        .title h2 {
+            position: relative;
+            margin: 20px 0 0;
+            padding: 0;
+            color: #fff;
+            font-size: 28px;
+            z-index: 2;
+        }
+
+        .price,
+        .option {
+            position: relative;
+            z-index: 2;
+        }
+
+        .price h4 {
+            margin: 0;
+            padding: 20px 0;
+            color: #fff;
+            font-size: 60px;
+        }
+
+        .option ul {
+            margin: 0;
+            padding: 0;
+
+        }
+
+        .option ul li {
+            margin: 0 0 10px;
+            padding: 0;
+            list-style: none;
+            color: #fff;
+            font-size: 16px;
+        }
+
+        .card a {
+            position: relative;
+            z-index: 2;
+            background: #fff;
+            color: black;
+            width: 150px;
+            height: 40px;
+            line-height: 40px;
+            border-radius: 40px;
+            display: block;
+            text-align: center;
+            margin: 20px auto 0;
+            font-size: 16px;
+            cursor: pointer;
+            -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, .1);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, .1);
+
+        }
+
+        .card a:hover {
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-r from-black to-[#9b6a34] min-h-screen text-white">
+    <!-- Navigation Bar -->
+    <header
+        class="fixed top-0 left-0 w-full bg-black bg-opacity-20 backdrop-blur-md flex items-center justify-between px-6 md:px-10 py-4 z-50">
+        <h1 class="text-xl md:text-2xl font-bold flex items-center">
+            <span class="mr-2">📖</span> Breathwithme
+        </h1>
+        <!-- Mobile Menu Button -->
+        <button id="menu-btn" class="md:hidden text-white focus:outline-none">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+            </svg>
+        </button>
+        <!-- Navigation Links -->
+        <nav class="hidden md:flex space-x-6 text-lg font-bold text-white">
+            <a href="#" class="hover:text-gray-300 transition">Home</a>
+            <a href="#" class="hover:text-gray-300 transition">About</a>
+            <a href="#" class="hover:text-gray-300 transition">Contact Us</a>
+            <a href="#" class="hover:text-gray-300 transition">Pricing</a>
+        </nav>
+        <a href="{% url 'signin' %}"
+            class="hidden md:block bg-[#c89e64] text-white px-5 py-2 rounded-lg font-semibold hover:bg-[#a97c43] transition">
+            Register
+        </a>
+
+    </header>
+
+    <!-- Mobile Menu -->
+    <nav id="mobile-menu"
+        class="hidden absolute top-16 left-0 w-full bg-black bg-opacity-90 py-4 text-center md:hidden transition-all">
+        <a href="#" class="block py-3 text-white hover:bg-gray-700">Home</a>
+        <a href="#" class="block py-3 text-white hover:bg-gray-700">About</a>
+        <a href="#" class="block py-3 text-white hover:bg-gray-700">Contact Us</a>
+        <a href="#" class="block py-3 text-white hover:bg-gray-700">Pricing</a>
+        <a href="#" class="block py-3 bg-[#c89e64] text-white mx-6 rounded-lg hover:bg-[#a97c43]">Contact</a>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative flex items-center justify-center h-[80vh] text-center px-6 md:px-10">
+        <div class="absolute inset-0 bg-black opacity-50"></div> <!-- Dark Overlay -->
+        <img src="{% static 'fhome/bg1.jpg' %}" alt="Meditation" class="absolute inset-0 w-full h-full object-cover">
+        <div class="relative max-w-3xl z-10 px-4">
+            <h2 class="text-3xl sm:text-4xl md:text-5xl font-serif font-bold leading-tight text-white">
+                Discover the art <br> of mindful living with <b>BREATHWITHME</b>
+            </h2>
+            <p class="mt-4 text-base sm:text-lg text-gray-300">
+                Embark on a transformative journey to find inner peace and balance. Breathe deeply, let go of stress.
+            </p>
+            <a href="{% url 'signin' %}"
+                class="mt-6 inline-block bg-[#c89e64] text-white px-6 py-3 text-lg font-semibold rounded-lg hover:bg-[#a97c43] transition">
+                Join Now
+            </a>
+        </div>
+    </section>
+
+    <!-- Next section  -->
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-r from-[#f9f1e7] to-[#f0e6d4] py-20 px-6">
+        <div class="max-w-7xl mx-auto text-center">
+            <p class="text-[#b89676] font-semibold uppercase tracking-wide">Discover the Power of Presence</p>
+            <h2 class="mt-3 text-6xl font-extrabold italic text-[#5c4632] leading-tight">
+                Unlock the <span class="text-[#b89676]">Secrets</span> of Mindfulness
+            </h2>
+            <p class="mt-5 text-[#7a6b5c] font-medium max-w-3xl mx-auto text-lg">
+                In today's fast-paced world, it's easy to feel overwhelmed and disconnected. At Breathwithme, we believe
+                that cultivating mindfulness and embracing the present moment leads to clarity, balance, and inner
+                peace.
+            </p>
+        </div>
+
+        <!-- Features Section -->
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 text-center mt-16">
+            <div class="flex flex-col items-center">
+                <div class="w-24 h-24 bg-[#b89676] rounded-full flex items-center justify-center shadow-lg">
+                    <i class="fas fa-wind text-white text-5xl"></i>
+                </div>
+                <h3 class="mt-6 text-2xl font-semibold text-[#5c4632] italic">The New Breathe</h3>
+                <p class="mt-3 text-[#7a6b5c] font-medium text-lg">Explore our range of mindfulness workshops and
+                    meditation retreats.</p>
+            </div>
+
+            <div class="flex flex-col items-center">
+                <div class="w-24 h-24 bg-[#b89676] rounded-full flex items-center justify-center shadow-lg">
+                    <i class="fas fa-mountain text-white text-5xl"></i>
+                </div>
+                <h3 class="mt-6 text-2xl font-semibold text-[#5c4632] italic">Elevate Your Practice</h3>
+                <p class="mt-3 text-[#7a6b5c] font-medium text-lg">Experience the profound benefits of our specialized
+                    meditation sessions.</p>
+            </div>
+
+            <div class="flex flex-col items-center">
+                <div class="w-24 h-24 bg-[#b89676] rounded-full flex items-center justify-center shadow-lg">
+                    <i class="fas fa-spa text-white text-5xl"></i>
+                </div>
+                <h3 class="mt-6 text-2xl font-semibold text-[#5c4632] italic">Embrace Serenity</h3>
+                <p class="mt-3 text-[#7a6b5c] font-medium text-lg">Immerse yourself in our calming and restorative
+                    spaces.</p>
+            </div>
+
+            <div class="flex flex-col items-center">
+                <div class="w-24 h-24 bg-[#b89676] rounded-full flex items-center justify-center shadow-lg">
+                    <i class="fas fa-seedling text-white text-5xl"></i>
+                </div>
+                <h3 class="mt-6 text-2xl font-semibold text-[#5c4632] italic">Awaken Your Senses</h3>
+                <p class="mt-3 text-[#7a6b5c] font-medium text-lg">Indulge in our carefully curated selection of organic
+                    teas.</p>
+            </div>
+        </div>
+
+        <!-- Images Section -->
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row gap-12 mt-16">
+            <img src="{% static 'fhome/1.jpg' %}" alt="Mindfulness" class="rounded-2xl shadow-xl w-full md:w-1/2 object-cover" />
+            <img src="{% static 'fhome/6.jpg' %}" alt="Meditation" class="rounded-2xl shadow-xl w-full md:w-1/2 object-cover" />
+        </div>
+    </section>
+
+    <!-- Font Awesome Script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"
+        crossorigin="anonymous"></script>
+
+    <!-- new  -->
+    <section class="bg-gradient-to-r from-[#f9f1e7] to-[#f0e6d4] py-20 px-6">
+        <div class="max-w-7xl mx-auto text-center">
+            <p class="text-[#b89676] font-semibold uppercase tracking-wide">Discover the Power of Presence</p>
+            <h2 class="mt-3 text-6xl font-extrabold italic text-[#5c4632] leading-tight">
+                Unlock the <span class="text-[#b89676]">Secrets</span> of Mindfulness
+            </h2>
+            <p class="mt-5 text-[#7a6b5c] font-medium max-w-3xl mx-auto text-lg">
+                In today's fast-paced world, it's easy to feel overwhelmed and disconnected. At Breathwithme, we believe
+                that cultivating mindfulness and embracing the present moment leads to clarity, balance, and inner
+                peace.
+            </p>
+        </div>
+
+        <div class="max-w-7xl mx-auto relative mt-16 overflow-hidden">
+            <div class="flex space-x-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory transition-transform ease-in-out duration-700"
+                id="imageCarousel">
+                <img src="{% static 'fhome/2.jpg' %}" alt="Mindfulness" class="rounded-2xl shadow-xl w-1/3 object-cover snap-center" />
+                <img src="{% static 'fhome/3.jpg' %}" alt="Meditation" class="rounded-2xl shadow-xl w-1/3 object-cover snap-center" />
+                <img src="{% static 'fhome/4.jpg' %}" alt="Calmness" class="rounded-2xl shadow-xl w-1/3 object-cover snap-center" />
+                <img src="{% static 'fhome/5.jpg' %}" alt="Focus" class="rounded-2xl shadow-xl w-1/3 object-cover snap-center" />
+                <img src="{% static 'fhome/6.jpg' %}" alt="Focus" class="rounded-2xl shadow-xl w-1/3 object-cover snap-center" />
+                <img src="{% static 'fhome/7.jpg' %}" alt="Focus" class="rounded-2xl shadow-xl w-1/3 object-cover snap-center" />
+                
+            </div>
+            <button onclick="scrollLeft()"
+                class="absolute left-5 top-1/2 transform -translate-y-1/2 p-4 text-2xl">&#8249;</button>
+            <button onclick="scrollRight()"
+                class="absolute right-5 top-1/2 transform -translate-y-1/2 p-4 text-2xl">&#8250;</button>
+        </div>
+    </section>
+    <section class="bg-[#f9f1e7] py-16 px-6">
+        <h2 class="pricing-title" style="text-align: center;">Contact Us</h2>
+
+        <p class="pricing-subtitle" style="text-align: center; margin-bottom: 20px;">Reach Out to Us to know more about
+            our services , We provie the best Value in the industry .</p>
+
+        <div
+            class="max-w-7xl mx-auto flex flex-col md:flex-row items-stretch bg-white bg-opacity-80 rounded-2xl shadow-xl overflow-hidden">
+            <div class="md:w-1/2">
+                <img src="{% static 'fhome/6.jpg' %}" alt="Contact Us" class="w-full h-full object-cover">
+            </div>
+            <div class="md:w-1/2 p-10 flex flex-col justify-center">
+                <h2 class="text-3xl font-extrabold italic text-[#5c4632] mb-6 text-center">Get in Touch</h2>
+                <form class="space-y-4">
+                    <div>
+                        <label class="block text-[#7a6b5c] font-medium mb-1">Name</label>
+                        <input type="text"
+                            class="w-full p-3 border border-gray-300 rounded-lg bg-white bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-[#b89676]">
+                    </div>
+                    <div>
+                        <label class="block text-[#7a6b5c] font-medium mb-1">Email</label>
+                        <input type="email"
+                            class="w-full p-3 border border-gray-300 rounded-lg bg-white bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-[#b89676]">
+                    </div>
+                    <div>
+                        <label class="block text-[#7a6b5c] font-medium mb-1">Message</label>
+                        <textarea
+                            class="w-full p-3 border border-gray-300 rounded-lg bg-white bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-[#b89676]"
+                            rows="4"></textarea>
+                    </div>
+                    <button type="submit"
+                        class="bg-[#b89676] text-white px-6 py-3 rounded-lg font-semibold w-full hover:bg-[#a47e5f] transition">
+                        Send Message
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing  -->
+    <section class="pricing-section">
+        <div class="pricing-container">
+            <h2 class="pricing-title">Choose Your Plan</h2>
+            <p class="pricing-subtitle">Start your mindfulness journey with a plan that fits your needs.</p>
+
+            <div class="pricing-grid">
+                <!-- Basic Plan -->
+                <div class="pricing-card">
+                    <i class="pricing-icon fas fa-leaf"></i>
+                    <h3 class="pricing-plan-title">Basic</h3>
+                    <p class="pricing-plan-desc">Great for beginners.</p>
+                    <p class="pricing-price">$15</p>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> 5 Guided Meditations</li>
+                        <li><i class="fas fa-check"></i> Mindfulness Tips</li>
+                        <li><i class="fas fa-check"></i> Weekly Exercises</li>
+                        <li><i class="fas fa-times unavailable"></i> 1-on-1 Sessions</li>
+                    </ul>
+                    <a href="#" class="pricing-btn">Get Started</a>
+                </div>
+
+                <!-- Standard Plan -->
+                <div class="pricing-card highlight">
+                    <i class="pricing-icon fas fa-spa"></i>
+                    <h3 class="pricing-plan-title">Standard</h3>
+                    <p class="pricing-plan-desc">For regular practitioners.</p>
+                    <p class="pricing-price">$35</p>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> 20 Guided Meditations</li>
+                        <li><i class="fas fa-check"></i> Personalized Plans</li>
+                        <li><i class="fas fa-check"></i> Breathwork Challenges</li>
+                        <li><i class="fas fa-times unavailable"></i> 1-on-1 Sessions</li>
+                    </ul>
+                    <a href="#" class="pricing-btn">Join Now</a>
+                </div>
+
+                <!-- Premium Plan -->
+                <div class="pricing-card">
+                    <i class="pricing-icon fas fa-yin-yang"></i>
+                    <h3 class="pricing-plan-title">Premium</h3>
+                    <p class="pricing-plan-desc">For deep transformation.</p>
+                    <p class="pricing-price">$70</p>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Unlimited Meditations</li>
+                        <li><i class="fas fa-check"></i> Live 1-on-1 Coaching</li>
+                        <li><i class="fas fa-check"></i> Exclusive Community</li>
+                        <li><i class="fas fa-check"></i> Sleep & Stress Relief</li>
+                    </ul>
+                    <a href="#" class="pricing-btn">Start Now</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FontAwesome for Icons -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"
+        crossorigin="anonymous"></script>
+
+    <style>
+        /* Unique styles for pricing section */
+        .pricing-section {
+            background: linear-gradient(to right, #f9f1e7, #f0e6d4);
+            padding: 5rem 2rem;
+        }
+
+        .pricing-container {
+            max-width: 1100px;
+            margin: 0 auto;
             text-align: center;
         }
 
-        h1 {
-            font-size: 36px;
-            color: #fff;
-            margin-bottom: 20px;
-        }
-
-        p {
-            font-size: 18px;
-            color: #ddd;
-            line-height: 1.6;
-        }
-
-        /* Smooth Scroll */
-        html {
-            scroll-behavior: smooth;
-        }
-
-        /* Button Styling */
-        .arrow-button {
-            background-color: #ff6347;
-            color: white;
-            border: none;
-            padding: 15px 25px;
-            font-size: 20px;
+        .pricing-title {
+            font-size: 2.8rem;
             font-weight: bold;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            box-shadow: 0 4px 8px rgba(255, 99, 71, 0.4);
+            color: #5c4632;
         }
 
-        .arrow-button:hover {
-            background-color: #d9534f;
-            box-shadow: 0 6px 12px rgba(255, 99, 71, 0.6);
+        .pricing-subtitle {
+            font-size: 1.2rem;
+            color: #7a6b5c;
+            margin-top: 0.5rem;
         }
 
-        .content-section:nth-child(even) {
-            background-color: #2b2b2b;
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
         }
 
-        /* Fixed Bottom Button */
-        .bottom-button-wrapper {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 100;
+        .pricing-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .bottom-button {
-            background-color: #4caf50;
+        .pricing-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .highlight {
+            border: 4px solid #b89676;
+        }
+
+        .pricing-icon {
+            font-size: 3rem;
             color: white;
-            padding: 15px 25px;
-            font-size: 20px;
-            font-weight: bold;
-            text-decoration: none;
+            background: #b89676;
+            padding: 1rem;
             border-radius: 50%;
-            box-shadow: 0 6px 12px rgba(76, 175, 80, 0.5);
-            transition: background-color 0.3s ease, transform 0.3s ease;
         }
 
-        .bottom-button:hover {
-            background-color: #45a049;
-            transform: scale(1.1);
-            box-shadow: 0 8px 16px rgba(76, 175, 80, 0.6);
+        .pricing-plan-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #5c4632;
+            margin-top: 0.5rem;
+        }
+
+        .pricing-plan-desc {
+            font-size: 1rem;
+            color: #7a6b5c;
+        }
+
+        .pricing-price {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #b89676;
+            margin-top: 1rem;
+        }
+
+        .pricing-features {
+            margin-top: 1.5rem;
+            text-align: left;
+            display: inline-block;
+        }
+
+        .pricing-features li {
+            font-size: 1rem;
+            color: #7a6b5c;
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-features li i {
+            color: #b89676;
+            margin-right: 0.5rem;
+        }
+
+        .pricing-features li .unavailable {
+            color: red;
+        }
+
+        .pricing-btn {
+            display: inline-block;
+            margin-top: 1.5rem;
+            background: #b89676;
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .pricing-btn:hover {
+            background: #a07d5c;
         }
     </style>
-   <style>
-    /* General container styling */
-    .container {
-      max-width: 1200px;
-      margin: 50px auto;
-      padding: 20px;
-      font-family: 'Roboto', sans-serif;
-      color: #ffffff; /* White text for dark background */
-    }
-    
-    /* Section styling */
-    .content-section {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 60px 20px;
-      margin: 20px 0;
-      background: linear-gradient(145deg, #1e1f26, #282c34); /* Modern gradient background */
-      border-radius: 15px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7); /* Deep shadow for depth */
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      overflow: hidden;
-      gap: 40px;
-    }
-    
-    /* Hover effect on sections */
-    .content-section:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.9);
-    }
-    
-    /* Alternate alignment for even sections */
-    .content-section:nth-child(even) {
-      flex-direction: row-reverse;
-    }
-    
-    /* Image container styling */
-    .image-container {
-      flex: 1;
-      position: relative;
-    }
-    
-    .image-container img {
-      width: 100%;
-      height: auto;
-      border-radius: 12px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-    }
-    
-    .image-container img:hover {
-      transform: scale(1.05);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.8);
-    }
-    
-    /* Text container styling */
-    .text-container {
-      flex: 1;
-      padding: 20px;
-      color: #e6e6e6; /* Light gray for readability */
-    }
-    
-    .text-container h1 {
-      font-size: 2.5rem;
-      font-weight: bold;
-      color: #61dafb; /* Bright blue for headings */
-      margin-bottom: 20px;
-      position: relative;
-    }
-    
-    .text-container h1::after {
-      content: '';
-      position: absolute;
-      width: 60px;
-      height: 4px;
-      background-color: #61dafb;
-      bottom: -8px;
-      left: 0;
-      border-radius: 2px;
-    }
-    
-    .text-container p {
-      font-size: 1.2rem;
-      line-height: 1.8;
-      margin-bottom: 20px;
-      text-align: justify;
-      animation: fadeInUp 1s ease;
-    }
-    
-    /* Responsive Design */
-    @media (max-width: 768px) {
-      .content-section {
-        flex-direction: column;
-        text-align: center;
-      }
-    
-      .text-container {
-        text-align: center;
-      }
-    
-      .text-container h1 {
-        font-size: 2rem;
-      }
-    }
-    
-    /* Keyframe animations */
-    @keyframes fadeInUp {
-      0% {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    
-    @keyframes buttonHover {
-      0%, 100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-5px);
-      }
-    }
-    </style>
-    
-</head>
 
-<body>
-    <header>
-        <nav class="navbar">
-            <div class="logo">
-              <img style="width: 80px;" src="{% static 'mainlogo.png' %}" alt="">
-            </div>
-            <ul class="nav-links">
-                <li><a href="#section1">Welcome</a></li>
-                <li><a href="#section2">Peace</a></li>
-                <li><a href="#section3">Relax</a></li>
-                <li><a href="#section4">Focus</a></li>
-                <li><a href="{% url 'signin' %}" style="color: #4caf50; font-weight: bold;">LogIn</a></li>
-                
+
+    <!-- FontAwesome for Icons -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"
+        crossorigin="anonymous"></script>
+
+</body>
+<!-- Footer  -->
+<footer class="bg-[#5c4632] text-white py-16 px-6">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
+
+        <!-- Company Info -->
+        <div>
+            <h2 class="text-2xl font-bold mb-4">Breathwithme</h2>
+            <p class="text-sm text-gray-300">
+                Embrace mindfulness and inner peace with us. Stay present, stay calm.
+            </p>
+        </div>
+
+        <!-- Quick Links -->
+        <div>
+            <h3 class="text-xl font-semibold mb-4">Quick Links</h3>
+            <ul class="space-y-2 text-gray-300">
+                <li><a href="#" class="hover:text-[#b89676] transition">About Us</a></li>
+                <li><a href="#" class="hover:text-[#b89676] transition">Services</a></li>
+                <li><a href="#" class="hover:text-[#b89676] transition">Blog</a></li>
+                <li><a href="#" class="hover:text-[#b89676] transition">Contact</a></li>
             </ul>
-        </nav>
-    </header>
+        </div>
 
-    <div class="container">
-        <!-- Section 1 -->
-        <section class="content-section" id="section1">
-            <div class="image-container">
-                <img src="{% static 'dark/d1.png' %}" alt="Welcome Image">
+        <!-- Contact Info -->
+        <div>
+            <h3 class="text-xl font-semibold mb-4">Contact Us</h3>
+            <ul class="space-y-2 text-gray-300">
+                <li>📍 123 Mindfulness Street, India</li>
+                <li>📧 support@breathwithme.com</li>
+                <li>📞 +91 98765 43210</li>
+            </ul>
+        </div>
+
+        <!-- Social Media -->
+        <div>
+            <h3 class="text-xl font-semibold mb-4">Follow Us</h3>
+            <div class="flex space-x-4">
+                <a href="#" class="text-2xl text-gray-300 hover:text-[#b89676] transition"><i
+                        class="fab fa-facebook"></i></a>
+                <a href="#" class="text-2xl text-gray-300 hover:text-[#b89676] transition"><i
+                        class="fab fa-twitter"></i></a>
+                <a href="#" class="text-2xl text-gray-300 hover:text-[#b89676] transition"><i
+                        class="fab fa-instagram"></i></a>
+                <a href="#" class="text-2xl text-gray-300 hover:text-[#b89676] transition"><i
+                        class="fab fa-linkedin"></i></a>
             </div>
-            <div class="text-container">
-                <h1>Welcome to Breathe With Me</h1>
-                <p>
-                    Unlock the power of mindfulness with guided meditations and breathing techniques. 
-                    Discover how to embrace tranquility and live in harmony with yourself and the world around you.
-                </p>
-            </div>
-        </section>
-    
-        <!-- Section 2 -->
-        <section class="content-section" id="section2">
-            <div class="image-container">
-                <img src="{% static 'dark/d2.png' %}" alt="Inner Peace Image">
-            </div>
-            <div class="text-container">
-                <h1>Discover Your Inner Peace</h1>
-                <p>
-                    Take a moment to pause and reflect. Find solace in guided exercises that help you let go of stress, 
-                    embrace the present, and discover the joy of simply being.
-                </p>
-            </div>
-        </section>
-    
-        <!-- Section 3 -->
-        <section class="content-section" id="section3">
-            <div class="image-container">
-                <img src="{% static 'dark/d3.png' %}" alt="Relaxation Image">
-            </div>
-            <div class="text-container">
-                <h1>Relax and Recharge</h1>
-                <p>
-                    Experience complete relaxation as you immerse yourself in calming practices designed to rejuvenate your mind, 
-                    body, and soul. Feel refreshed and ready to face the day with renewed energy.
-                </p>
-            </div>
-        </section>
-    
-        <!-- Section 4 -->
-        <section class="content-section" id="section4">
-            <div class="image-container">
-                <img src="{% static 'dark/d4.png' %}" alt="Focus Image">
-            </div>
-            <div class="text-container">
-                <h1>Boost Your Focus</h1>
-                <p>
-                    Learn techniques to enhance your concentration and clarity. Whether it's work or personal goals, 
-                    mindfulness helps you stay on track and achieve success with a focused mind.
-                </p>
-            </div>
-        </section>
-    
-        <!-- Section 5 -->
-        <section class="content-section" id="section5">
-            <div class="image-container">
-                <img src="{% static 'dark/d5.png' %}" alt="Journey Image">
-            </div>
-            <div class="text-container">
-                <h1>Start Your Journey Today</h1>
-                <p>
-                    Your path to a calmer, more mindful life begins here. Explore our resources, connect with your inner self, 
-                    and take the first step toward a more peaceful you.
-                </p>
-            </div>
-        </section>
+        </div>
+
     </div>
-    
-    
-<!-- Starting of Pricing  -->
-<style>
-    @import url('https://fonts.googleapis.com/css?family=Open+Sans');
 
+    <!-- Copyright Section -->
+    <div class="text-center mt-10 border-t border-gray-600 pt-5 text-gray-300">
+        <p>© 2025 Breathwithme. All rights reserved.</p>
+    </div>
+</footer>
 
+<!-- ✅ Font Awesome for Icons -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js" crossorigin="anonymous"></script>
 
-body {
-	margin-bottom: 150px;
-}
+<script>
+    let carousel = document.getElementById('imageCarousel');
+    function scrollLeft() {
+        carousel.scrollBy({ left: -300, behavior: 'smooth' });
+    }
+    function scrollRight() {
+        carousel.scrollBy({ left: 300, behavior: 'smooth' });
+    }
+    function autoScroll() {
+        carousel.scrollBy({ left: 300, behavior: 'smooth' });
+    }
+    setInterval(autoScroll, 3000);
+</script>
 
-.text-center {
-	text-align: center;
-}
-
-.pricing-box-container {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-wrap: wrap;
-}
-
-.pricing-box {
-	background-color: #ffffff;
-	box-shadow: 0px 2px 15px 0px rgba(0,0,0,0.5);
-	border-radius: 4px;
-	flex: 1;
-	padding: 0 30px 30px;
-	margin: 2%;
-	min-width: 250px;
-	max-width: 350px;
-}
-
-.pricing-box h5 {
-	text-transform: uppercase;
-}
-
-.price {
-	margin: 24px 0;
-	font-size: 36px;
-	font-weight: 900;
-}
-
-.price sub, .price sup {
-	font-size: 16px;
-	font-weight: 100;
-}
-
-.features-list {
-	padding: 0;
-	list-style-type: none;
-}
-
-.features-list li {
-	font-weight: 100;
-	padding: 12px 0;
-	font-weight: 100;
-}
-
-.features-list li:not(:last-of-type) {
-	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.btn-primary {
-	border-radius: 25px;
-	border: none;
-	background-color: #EC1362;
-	color: #ffffff;
-	cursor: pointer;
-	padding: 10px 15px;
-	margin-top: 20px;
-	text-transform: uppercase;
-	transition: all 0.1s ease-in-out;
-}
-
-.btn-primary:hover {
-	box-shadow: 0px 2px 15px 0px rgba(0,0,0,0.5);
-	transform: translateY(-3px);
-}
-
-.pricing-box-bg-image {
-    background-image: url('{% static 'sub.jpg' %}');
-
-	background-size: cover;
-	background-position: center center;
-	color: #ffffff;
-}
-
-.pricing-box-bg-image .features-list li {
-	border-bottom-color: rgba(255, 255, 255, 1);
-}
-
-.pricing-box-bg-image .btn-primary {
-	background-color: #ffffff;
-	color: #000;
-}
-
-footer {
-	background-color: #222;
-	color: #fff;
-	font-size: 14px;
-	bottom: 0;
-	position: fixed;
-	left: 0;
-	right: 0;
-	text-align: center;
-}
-
-footer p {
-	margin: 10px 0;
-}
-
-footer i {
-	color: red;
-}
-
-footer a {
-	color: #3C97BF;
-	text-decoration: none;
-}
-</style>
- <div class="pricing">
-    <h1 class="text-center">Pick the best plan for you</h1>
-
-<div class="pricing-box-container">
-	
-	<div class="pricing-box pricing-box-bg-image text-center">
-		<h5>Premium</h5>
-		<p class="price"><sup>$</sup>39<sub>/mo</sub></p>
-		<ul class="features-list">
-			<li><strong>5</strong> Project</li>
-			<li><strong>20</strong> Team Members</li>
-			<li><strong>100</strong> Personal Projects</li>
-			<li><strong>15,000</strong> Messages</li>
-		</ul>
-		<button onclick="window.location.href='{% url 'signin' %}'" class="btn-primary">Get Started</button>
-	</div>
-
-	<div class="pricing-box pricing-box-bg-image text-center">
-		<h5>Premium</h5>
-		<p class="price"><sup>$</sup>39<sub>/mo</sub></p>
-		<ul class="features-list">
-			<li><strong>5</strong> Project</li>
-			<li><strong>20</strong> Team Members</li>
-			<li><strong>100</strong> Personal Projects</li>
-			<li><strong>15,000</strong> Messages</li>
-		</ul>
-        <button onclick="window.location.href='{% url 'signin' %}'" class="btn-primary">Get Started</button>
-
-	</div>
-
-	
-	<div class="pricing-box pricing-box-bg-image text-center">
-		<h5>Premium</h5>
-		<p class="price"><sup>$</sup>39<sub>/mo</sub></p>
-		<ul class="features-list">
-			<li><strong>5</strong> Project</li>
-			<li><strong>20</strong> Team Members</li>
-			<li><strong>100</strong> Personal Projects</li>
-			<li><strong>15,000</strong> Messages</li>
-		</ul>
-        <button onclick="window.location.href='{% url 'signin' %}'" class="btn-primary">Get Started</button>
-
-	</div>
-</div>
-
-
-</div>
-
-
+<script>
+    // Toggle Mobile Menu
+    document.getElementById('menu-btn').addEventListener('click', function () {
+        document.getElementById('mobile-menu').classList.toggle('hidden');
+    });
+</script>
 </body>
 
 </html>
