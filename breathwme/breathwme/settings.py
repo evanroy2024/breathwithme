@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'userupdates',
     'mastercontrol',
     'breathxapp',
+    'breathwmeadmin',
     'channels',
     'embed_video',
 ]

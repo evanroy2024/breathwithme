@@ -1,0 +1,10 @@
+{% extends "admin/change_list.html" %}
+{% block object-tools %}
+    <div style="margin-bottom: 0px;">
+        <a href="{% url 'breathwmeadmin:upload_music' %}" class="button" style="background: #007bff; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; display: flex; align-items: center;">
+            <span style="color: white; font-size: 16px; margin-right: 5px;">⊕</span> 
+            <span style="color: white; font-weight: bold;">Upload Music</span>
+        </a>
+    </div>
+    {{ block.super }}
+{% endblock %}

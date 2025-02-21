@@ -5,189 +5,204 @@ Home - Meditation Dashboard
 {% endblock %}
 
 {% block content %}
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  
-  <title>Shape Animation with Song</title>
-  <style>
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      background: rgb(23, 23, 21);
-      flex-direction: column;
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<title>Shape Animation with Song</title>
+<style>
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background: rgb(23, 23, 21);
+    flex-direction: column;
+  }
+
+  svg {
+    width: 210px;
+    height: 210px;
+  }
+
+  .shape {
+    display: none;
+    position: relative;
+  }
+
+  .red-line {
+    fill: none;
+    stroke: rgb(177, 157, 65);
+    stroke-width: 4;
+  }
+
+  .blue-line,
+  .blue-line-rectangle,
+  .blue-line-triangle,
+  .blue-line-square {
+    fill: none;
+    stroke: white;
+    stroke-width: 5;
+    stroke-dasharray: 628;
+    /* Default for circle */
+    stroke-dashoffset: 628;
+  }
+
+  .blue-line-rectangle {
+    stroke-dasharray: 800;
+    /* Default for rectangle */
+    stroke-dashoffset: 800;
+  }
+
+  .blue-line-triangle {
+    stroke-dasharray: 480;
+    /* Default for triangle */
+    stroke-dashoffset: 480;
+  }
+
+  .blue-line-square {
+    stroke-dasharray: 760;
+    /* Adjusted for square */
+    stroke-dashoffset: 760;
+  }
+
+  @keyframes draw-circle {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes draw-rectangle {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes draw-triangle {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes draw-square {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  .overlay {
+    fill: rgb(177, 157, 65);
+    transform-origin: center;
+    animation: expandContract 4s infinite ease-in-out;
+    z-index: 0;
+  }
+
+  @keyframes expandContract {
+
+    0%,
+    100% {
+      transform: scale(0);
     }
 
-    svg {
-      width: 210px;
-      height: 210px;
+    50% {
+      transform: scale(1);
     }
+  }
 
-    .shape {
-      display: none;
-      position: relative;
-    }
+  select {
+    margin-bottom: 20px;
+    padding: 10px;
+    font-size: 16px;
+  }
 
-    .red-line {
-      fill: none;
-      stroke: rgb(177, 157, 65);
-      stroke-width: 4;
-    }
+  audio {
+    margin-top: 20px;
+    padding: 10px;
+    font-size: 16px;
+  }
 
-    .blue-line, .blue-line-rectangle, .blue-line-triangle, .blue-line-square {
-      fill: none;
-      stroke: white;
-      stroke-width: 5;
-      stroke-dasharray: 628; /* Default for circle */
-      stroke-dashoffset: 628;
-    }
+  .center-text {
+    font-size: 24px;
+    font-weight: bold;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    z-index: 10;
+    /* Ensure text is above the expanding black color */
+  }
 
-    .blue-line-rectangle {
-      stroke-dasharray: 800; /* Default for rectangle */
-      stroke-dashoffset: 800;
-    }
+  .center-text-in {
+    fill: rgb(255, 255, 255);
+  }
 
-    .blue-line-triangle {
-      stroke-dasharray: 480; /* Default for triangle */
-      stroke-dashoffset: 480;
-    }
+  .center-text-hold {
+    fill: rgb(255, 255, 255);
+  }
 
-    .blue-line-square {
-      stroke-dasharray: 760; /* Adjusted for square */
-      stroke-dashoffset: 760;
-    }
+  .center-text-out {
+    fill: rgb(255, 255, 255);
+  }
 
-    @keyframes draw-circle {
-      to {
-        stroke-dashoffset: 0;
-      }
-    }
+  .input-container {
+    margin-bottom: 20px;
+  }
 
-    @keyframes draw-rectangle {
-      to {
-        stroke-dashoffset: 0;
-      }
-    }
+  .input-container label,
+  .input-container input {
+    font-size: 16px;
+  }
 
-    @keyframes draw-triangle {
-      to {
-        stroke-dashoffset: 0;
-      }
-    }
+  /* General button container */
+  .allbuttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    gap: 20px;
+    z-index: 1000;
+  }
 
-    @keyframes draw-square {
-      to {
-        stroke-dashoffset: 0;
-      }
-    }
+  /* Button Style */
+  .icon-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 25px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 18px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    gap: 8px;
+    /* Space between icon and text */
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
 
-    .overlay {
-      fill:  rgb(177, 157, 65);
-      transform-origin: center;
-      animation: expandContract 4s infinite ease-in-out;
-      z-index: 0;
-    }
+  .icon-button:hover {
+    background-color: #45a049;
+    transform: scale(1.1);
+  }
 
-    @keyframes expandContract {
-      0%, 100% {
-        transform: scale(0);
-      }
-      50% {
-        transform: scale(1);
-      }
-    }
+  .icon-button i {
+    font-size: 24px;
+    /* Icon size */
+    margin-right: 8px;
+    /* Space between the icon and text */
+  }
 
-    select {
-      margin-bottom: 20px;
-      padding: 10px;
-      font-size: 16px;
-    }
+  /* Style for the logos */
+  .logo-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+  }
 
-    audio {
-      margin-top: 20px;
-      padding: 10px;
-      font-size: 16px;
-    }
+  /* Set spacing and hover effect */
+  .icon-button:hover {
+    background-color: #3e8e41;
+    transform: scale(1.1);
+  }
 
-    .center-text {
-      font-size: 24px;
-      font-weight: bold;
-      text-anchor: middle;
-      dominant-baseline: middle;
-      z-index: 10; /* Ensure text is above the expanding black color */
-    }
-
-    .center-text-in {
-      fill: rgb(255, 255, 255);
-    }
-
-    .center-text-hold {
-      fill: rgb(255, 255, 255);
-    }
-
-    .center-text-out {
-      fill: rgb(255, 255, 255);
-    }
-
-    .input-container {
-      margin-bottom: 20px;
-    }
-
-    .input-container label,
-    .input-container input {
-      font-size: 16px;
-    }
-
-     /* General button container */
-.allbuttons {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  gap: 20px;
-  z-index: 1000;
-}
-
-/* Button Style */
-.icon-button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 12px 25px;
-  background-color: #4CAF50;
-  color: white;
-  font-size: 18px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  gap: 8px; /* Space between icon and text */
-  transition: background-color 0.3s ease, transform 0.3s ease;
-}
-
-.icon-button:hover {
-  background-color: #45a049;
-  transform: scale(1.1);
-}
-
-.icon-button i {
-  font-size: 24px; /* Icon size */
-  margin-right: 8px; /* Space between the icon and text */
-}
-
-/* Style for the logos */
-.logo-icon {
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
-}
-
-/* Set spacing and hover effect */
-.icon-button:hover {
-  background-color: #3e8e41;
-  transform: scale(1.1);
-}
-#color-logo {
+  #color-logo {
     font-size: 24px;
     padding: 10px;
     cursor: pointer;
@@ -225,6 +240,7 @@ Home - Meditation Dashboard
   .color-option:hover {
     transform: scale(1.1);
   }
+
   .input-container {
     margin-top: 20px;
   }
@@ -234,341 +250,392 @@ Home - Meditation Dashboard
     max-width: 300px;
   }
 
-/* For breating  ---------------------------------------------------------------------------------------------*/
-/* Full-screen overlay */
-.color-picker-overlay {
-  display: none; /* Hidden by default */
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6); /* Dark background to focus on the modal */
-  justify-content: center;
-  align-items: center;
-  z-index: 9999; /* Ensures it's above other content */
-  padding: 20px;
-}
+  /* For breating  ---------------------------------------------------------------------------------------------*/
+  /* Full-screen overlay */
+  .color-picker-overlay {
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    /* Dark background to focus on the modal */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    /* Ensures it's above other content */
+    padding: 20px;
+  }
 
-/* Show the overlay when active */
-.color-picker-overlay.active {
-  display: flex;
-}
+  /* Show the overlay when active */
+  .color-picker-overlay.active {
+    display: flex;
+  }
 
-/* Styling the input form container */
-.input-container {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  background-color: #ffffff;
-  padding: 25px;
-  border-radius: 8px;
-  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
-  max-width: 400px;
-  width: 100%;
-  animation: fadeIn 0.5s ease-out;
-}
+  /* Styling the input form container */
+  .input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 100%;
+    animation: fadeIn 0.5s ease-out;
+  }
 
-/* Animation for fade-in effect */
-@keyframes fadeIn {
-  from {
+  /* Animation for fade-in effect */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* Style for each label */
+  .input-container label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  /* Style for input fields */
+  .input-container input[type="number"] {
+    padding: 12px;
+    font-size: 16px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    width: 95%;
+  }
+
+  /* Style for input focus (when clicked) */
+  .input-container input[type="number"]:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.6);
+  }
+
+  /* Optional: Adding hover effect for inputs */
+  .input-container input[type="number"]:hover {
+    border-color: #007bff;
+  }
+
+  /* Button styling (optional if you add a close button) */
+  .input-container .close-btn {
+    background-color: #ff4d4d;
+    color: white;
+    padding: 8px 16px;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    align-self: flex-end;
+    transition: background-color 0.3s ease;
+  }
+
+  .input-container .close-btn:hover {
+    background-color: #ff1a1a;
+  }
+
+  /* Add a style for the OK button */
+  #apply-btn {
+    display: block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  #apply-btn:hover {
+    background-color: #45a049;
+  }
+
+  /* Vibration css  */
+
+  /* Container for vibration input (hidden by default) */
+  .vibration-input-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
     opacity: 0;
-    transform: scale(0.8);
+    transition: opacity 0.3s ease-in-out;
   }
-  to {
+
+  /* Vibrations input box styling */
+  .vibration-input-box {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    width: 300px;
+    position: relative;
+  }
+
+  .vibration-input-box label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 16px;
+  }
+
+  .vibration-input-box input {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  /* Close button styling */
+  .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: red;
+  }
+
+  /* Show the input container with animation when toggled */
+  .vibration-input-container.show {
     opacity: 1;
-    transform: scale(1);
   }
-}
 
-/* Style for each label */
-.input-container label {
-  font-size: 16px;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 8px;
-  display: block;
-}
+  /* Basic styling for the audio player */
+  #audio-player {
+    width: 100%;
+    max-width: 500px;
+    background-color: transparent;
+    border-radius: 12px;
+    padding: 15px;
+    margin: 20px auto;
+    display: block;
+    position: relative;
+    border: 2px solid #333;
+    /* Dark border */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+    /* Soft shadow for depth */
+  }
 
-/* Style for input fields */
-.input-container input[type="number"] {
-  padding: 12px;
-  font-size: 16px;
-  border: 2px solid #ddd;
-  border-radius: 6px;
-  outline: none;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  width: 95%;
-}
+  /* Media controls container styling */
+  #audio-player::-webkit-media-controls {
+    background-color: transparent;
+    /* Transparent background for the controls */
+    border: none;
+    padding: 8px;
+    box-shadow: none;
+  }
 
-/* Style for input focus (when clicked) */
-.input-container input[type="number"]:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.6);
-}
+  /* Panel for the controls */
+  #audio-player::-webkit-media-controls-panel {
+    background-color: #222;
+    /* Dark background to contrast with golden accents */
+    color: #bbb;
+    /* Light text for contrast */
+    border-radius: 12px;
+    padding: 8px 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  }
 
-/* Optional: Adding hover effect for inputs */
-.input-container input[type="number"]:hover {
-  border-color: #007bff;
-}
+  /* Play/Pause button with golden yellow accent */
+  #audio-player::-webkit-media-controls-play-button {
+    background-color: #FFD700;
+    /* Golden yellow for play button */
+    color: #fff;
+    /* White icon */
+    border-radius: 50%;
+    padding: 15px;
+    font-size: 20px;
+    border: none;
+    transition: background-color 0.3s ease;
+  }
 
-/* Button styling (optional if you add a close button) */
-.input-container .close-btn {
-  background-color: #ff4d4d;
-  color: white;
-  padding: 8px 16px;
-  font-size: 16px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  align-self: flex-end;
-  transition: background-color 0.3s ease;
-}
+  /* Play button hover effect */
+  #audio-player::-webkit-media-controls-play-button:hover {
+    background-color: #FFB800;
+    /* Slightly lighter golden yellow on hover */
+  }
 
-.input-container .close-btn:hover {
-  background-color: #ff1a1a;
-}
-/* Add a style for the OK button */
-#apply-btn {
-  display: block;
-  margin-top: 20px;
-  padding: 10px 20px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
+  /* Progress bar background */
+  #audio-player::-webkit-media-controls-progress-bar {
+    background-color: #444;
+    /* Dark progress bar */
+    border-radius: 8px;
+  }
 
-#apply-btn:hover {
-  background-color: #45a049;
-}
+  /* The progress indicator (active) */
+  #audio-player::-webkit-media-controls-timeline {
+    background-color: #FFD700;
+    /* Golden yellow for progress */
+    border-radius: 8px;
+  }
 
-/* Vibration css  */
+  /* Volume control slider */
+  #audio-player::-webkit-media-controls-volume-slider {
+    background-color: #444;
+    /* Dark slider background */
+    border-radius: 5px;
+    height: 5px;
+    box-shadow: none;
+  }
 
-/* Container for vibration input (hidden by default) */
-.vibration-input-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
-}
+  /* Volume button styling */
+  #audio-player::-webkit-media-controls-volume-button {
+    color: #bbb;
+    transition: color 0.3s ease;
+  }
 
-/* Vibrations input box styling */
-.vibration-input-box {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
-  width: 300px;
-  position: relative;
-}
+  /* Volume button hover effect */
+  #audio-player::-webkit-media-controls-volume-button:hover {
+    color: #FFD700;
+    /* Highlighted with golden yellow on hover */
+  }
 
-.vibration-input-box label {
-  display: block;
-  margin-bottom: 10px;
-  font-size: 16px;
-}
+  /* Forward and Rewind buttons styling */
+  #audio-player::-webkit-media-controls-rewind-button,
+  #audio-player::-webkit-media-controls-fast-forward-button {
+    background-color: transparent;
+    color: #FFD700;
+    /* Golden yellow icons */
+    font-size: 20px;
+    border: none;
+    transition: color 0.3s ease;
+  }
 
-.vibration-input-box input {
-  width: 100%;
-  margin-top: 10px;
-}
+  /* Hover effect for forward/rewind buttons */
+  #audio-player::-webkit-media-controls-rewind-button:hover,
+  #audio-player::-webkit-media-controls-fast-forward-button:hover {
+    color: #FFB800;
+    /* Slightly lighter golden yellow on hover */
+  }
 
-/* Close button styling */
-.close-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
-  color: red;
-}
+  /* Customizing the timeline progress on hover */
+  #audio-player:hover::-webkit-media-controls-panel {
+    background-color: #333;
+    /* Darker background on hover for better contrast */
+  }
 
-/* Show the input container with animation when toggled */
-.vibration-input-container.show {
-  opacity: 1;
-}
-/* Basic styling for the audio player */
-#audio-player {
-  width: 100%;
-  max-width: 500px;
-  background-color: transparent;
-  border-radius: 12px;
-  padding: 15px;
-  margin: 20px auto;
-  display: block;
-  position: relative;
-  border: 2px solid #333; /* Dark border */
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5); /* Soft shadow for depth */
-}
+  #audio-player:hover::-webkit-media-controls-play-button {
+    background-color: #FFB800;
+    /* Lighter golden yellow on hover */
+  }
 
-/* Media controls container styling */
-#audio-player::-webkit-media-controls {
-  background-color: transparent; /* Transparent background for the controls */
-  border: none;
-  padding: 8px;
-  box-shadow: none;
-}
+  #audio-player:focus {
+    outline: none;
+  }
 
-/* Panel for the controls */
-#audio-player::-webkit-media-controls-panel {
-  background-color: #222; /* Dark background to contrast with golden accents */
-  color: #bbb; /* Light text for contrast */
-  border-radius: 12px;
-  padding: 8px 15px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-}
+  /* Basic Styling */
+  #shape-select {
+    width: 250px;
+    padding: 10px 15px;
+    background-color: #333;
+    /* Dark background for the select box */
+    color: #fff;
+    /* White text for high contrast */
+    border: 2px solid #444;
+    /* Slightly lighter border for a smooth look */
+    border-radius: 10px;
+    /* Rounded corners for a modern design */
+    font-size: 16px;
+    /* Comfortable font size */
+    font-family: 'Arial', sans-serif;
+    /* Clean, modern font */
+    appearance: none;
+    /* Remove default dropdown arrow */
+    cursor: pointer;
+    /* Pointer cursor for interactivity */
+    transition: all 0.3s ease;
+    /* Smooth transition for hover and focus states */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    /* Soft shadow for depth */
+  }
 
-/* Play/Pause button with golden yellow accent */
-#audio-player::-webkit-media-controls-play-button {
-  background-color: #FFD700; /* Golden yellow for play button */
-  color: #fff; /* White icon */
-  border-radius: 50%;
-  padding: 15px;
-  font-size: 20px;
-  border: none;
-  transition: background-color 0.3s ease;
-}
+  /* Custom dropdown arrow */
+  #shape-select::after {
+    content: '▼';
+    /* Custom arrow */
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: #FFD700;
+    /* Golden yellow arrow */
+    pointer-events: none;
+    /* Prevent interaction with the arrow */
+  }
 
-/* Play button hover effect */
-#audio-player::-webkit-media-controls-play-button:hover {
-  background-color: #FFB800; /* Slightly lighter golden yellow on hover */
-}
+  /* Hover Effect */
+  #shape-select:hover {
+    border-color: #FFD700;
+    /* Golden yellow border on hover */
+    background-color: #444;
+    /* Lighter background when hovered */
+  }
 
-/* Progress bar background */
-#audio-player::-webkit-media-controls-progress-bar {
-  background-color: #444; /* Dark progress bar */
-  border-radius: 8px;
-}
+  /* Focus Effect */
+  #shape-select:focus {
+    border-color: #FFD700;
+    /* Golden yellow border when focused */
+    outline: none;
+    /* Remove default outline */
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    /* Soft glow effect */
+  }
 
-/* The progress indicator (active) */
-#audio-player::-webkit-media-controls-timeline {
-  background-color: #FFD700; /* Golden yellow for progress */
-  border-radius: 8px;
-}
+  /* Option Styling */
+  #shape-select option {
+    background-color: #333;
+    /* Dark background for each option */
+    color: #fff;
+    /* White text */
+    padding: 10px;
+    /* Space inside options */
+    font-size: 16px;
+    /* Matching font size */
+    font-family: 'Arial', sans-serif;
+    /* Consistent font */
+    border: none;
+    /* Remove default borders */
+  }
 
-/* Volume control slider */
-#audio-player::-webkit-media-controls-volume-slider {
-  background-color: #444; /* Dark slider background */
-  border-radius: 5px;
-  height: 5px;
-  box-shadow: none;
-}
+  /* Option Hover Effect */
+  #shape-select option:hover {
+    background-color: #444;
+    /* Lighter background for options on hover */
+    color: #FFD700;
+    /* Golden yellow text color on hover */
+  }
 
-/* Volume button styling */
-#audio-player::-webkit-media-controls-volume-button {
-  color: #bbb;
-  transition: color 0.3s ease;
-}
-
-/* Volume button hover effect */
-#audio-player::-webkit-media-controls-volume-button:hover {
-  color: #FFD700; /* Highlighted with golden yellow on hover */
-}
-
-/* Forward and Rewind buttons styling */
-#audio-player::-webkit-media-controls-rewind-button,
-#audio-player::-webkit-media-controls-fast-forward-button {
-  background-color: transparent;
-  color: #FFD700; /* Golden yellow icons */
-  font-size: 20px;
-  border: none;
-  transition: color 0.3s ease;
-}
-
-/* Hover effect for forward/rewind buttons */
-#audio-player::-webkit-media-controls-rewind-button:hover,
-#audio-player::-webkit-media-controls-fast-forward-button:hover {
-  color: #FFB800; /* Slightly lighter golden yellow on hover */
-}
-
-/* Customizing the timeline progress on hover */
-#audio-player:hover::-webkit-media-controls-panel {
-  background-color: #333; /* Darker background on hover for better contrast */
-}
-
-#audio-player:hover::-webkit-media-controls-play-button {
-  background-color: #FFB800; /* Lighter golden yellow on hover */
-}
-
-#audio-player:focus {
-  outline: none;
-}
-/* Basic Styling */
-#shape-select {
-  width: 250px;
-  padding: 10px 15px;
-  background-color: #333; /* Dark background for the select box */
-  color: #fff; /* White text for high contrast */
-  border: 2px solid #444; /* Slightly lighter border for a smooth look */
-  border-radius: 10px; /* Rounded corners for a modern design */
-  font-size: 16px; /* Comfortable font size */
-  font-family: 'Arial', sans-serif; /* Clean, modern font */
-  appearance: none; /* Remove default dropdown arrow */
-  cursor: pointer; /* Pointer cursor for interactivity */
-  transition: all 0.3s ease; /* Smooth transition for hover and focus states */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Soft shadow for depth */
-}
-
-/* Custom dropdown arrow */
-#shape-select::after {
-  content: '▼'; /* Custom arrow */
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 16px;
-  color: #FFD700; /* Golden yellow arrow */
-  pointer-events: none; /* Prevent interaction with the arrow */
-}
-
-/* Hover Effect */
-#shape-select:hover {
-  border-color: #FFD700; /* Golden yellow border on hover */
-  background-color: #444; /* Lighter background when hovered */
-}
-
-/* Focus Effect */
-#shape-select:focus {
-  border-color: #FFD700; /* Golden yellow border when focused */
-  outline: none; /* Remove default outline */
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); /* Soft glow effect */
-}
-
-/* Option Styling */
-#shape-select option {
-  background-color: #333; /* Dark background for each option */
-  color: #fff; /* White text */
-  padding: 10px; /* Space inside options */
-  font-size: 16px; /* Matching font size */
-  font-family: 'Arial', sans-serif; /* Consistent font */
-  border: none; /* Remove default borders */
-}
-
-/* Option Hover Effect */
-#shape-select option:hover {
-  background-color: #444; /* Lighter background for options on hover */
-  color: #FFD700; /* Golden yellow text color on hover */
-}
-.color-picker-overlay {
+  .color-picker-overlay {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     padding: 20px;
-    background-color: rgba(0, 0, 0, 0.7);  /* Semi-transparent background */
+    background-color: rgba(0, 0, 0, 0.7);
+    /* Semi-transparent background */
     position: fixed;
     top: 50%;
     left: 50%;
@@ -579,11 +646,12 @@ Home - Meditation Dashboard
     width: 80%;
     max-width: 600px;
     height: auto;
-    overflow-y: auto;  /* Makes sure the list is scrollable if it exceeds screen size */
+    overflow-y: auto;
+    /* Makes sure the list is scrollable if it exceeds screen size */
     max-height: 80vh;
-}
+  }
 
-.color-option {
+  .color-option {
     width: 30px;
     height: 30px;
     margin: 5px;
@@ -591,212 +659,239 @@ Home - Meditation Dashboard
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
     display: inline-block;
-}
+  }
 
-.color-option:hover {
+  .color-option:hover {
     transform: scale(1.1);
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-}
+  }
 
-.color-picker-overlay .color-option {
+  .color-picker-overlay .color-option {
     transition: background-color 0.3s ease;
-}
+  }
+</style>
 
-
-  </style>
-
-  <div id="color-picker" class="color-picker-overlay" style="display: none;">
-    <div class="color-option" style="background-color: #ff9999;" onclick="changeBackgroundColor('#ff9999')"></div>
-    <div class="color-option" style="background-color: #99ff99;" onclick="changeBackgroundColor('#99ff99')"></div>
-    <div class="color-option" style="background-color: #9999ff;" onclick="changeBackgroundColor('#9999ff')"></div>
-    <div class="color-option" style="background-color: #ffff99;" onclick="changeBackgroundColor('#ffff99')"></div>
-    <div class="color-option" style="background-color: #f0f0f0;" onclick="changeBackgroundColor('#f0f0f0')"></div>
-    <!-- Add more colors below -->
-    <div class="color-option" style="background-color: #ffcc99;" onclick="changeBackgroundColor('#ffcc99')"></div>
-    <div class="color-option" style="background-color: #66ccff;" onclick="changeBackgroundColor('#66ccff')"></div>
-    <div class="color-option" style="background-color: #ffccff;" onclick="changeBackgroundColor('#ffccff')"></div>
-    <div class="color-option" style="background-color: #ff6666;" onclick="changeBackgroundColor('#ff6666')"></div>
-    <div class="color-option" style="background-color: #6699ff;" onclick="changeBackgroundColor('#6699ff')"></div>
-    <div class="color-option" style="background-color: #ffb3b3;" onclick="changeBackgroundColor('#ffb3b3')"></div>
-    <div class="color-option" style="background-color: #b3e0ff;" onclick="changeBackgroundColor('#b3e0ff')"></div>
-    <div class="color-option" style="background-color: #c2f0c2;" onclick="changeBackgroundColor('#c2f0c2')"></div>
-    <div class="color-option" style="background-color: #e6e6e6;" onclick="changeBackgroundColor('#e6e6e6')"></div>
-    <div class="color-option" style="background-color: #ffb366;" onclick="changeBackgroundColor('#ffb366')"></div>
-    <div class="color-option" style="background-color: #99cc99;" onclick="changeBackgroundColor('#99cc99')"></div>
-    <div class="color-option" style="background-color: #ff6666;" onclick="changeBackgroundColor('#ff6666')"></div>
-    <div class="color-option" style="background-color: #66cc66;" onclick="changeBackgroundColor('#66cc66')"></div>
-    <div class="color-option" style="background-color: #ccff99;" onclick="changeBackgroundColor('#ccff99')"></div>
-    <div class="color-option" style="background-color: #ff3399;" onclick="changeBackgroundColor('#ff3399')"></div>
-    <div class="color-option" style="background-color: #66ff66;" onclick="changeBackgroundColor('#66ff66')"></div>
-    <div class="color-option" style="background-color: #ccccff;" onclick="changeBackgroundColor('#ccccff')"></div>
-    <div class="color-option" style="background-color: #ff9933;" onclick="changeBackgroundColor('#ff9933')"></div>
-    <div class="color-option" style="background-color: #b3b3cc;" onclick="changeBackgroundColor('#b3b3cc')"></div>
-    <div class="color-option" style="background-color: #cc99cc;" onclick="changeBackgroundColor('#cc99cc')"></div>
-    <div class="color-option" style="background-color: #ff6600;" onclick="changeBackgroundColor('#ff6600')"></div>
-    <div class="color-option" style="background-color: #cc3333;" onclick="changeBackgroundColor('#cc3333')"></div>
-    <div class="color-option" style="background-color: #ff99cc;" onclick="changeBackgroundColor('#ff99cc')"></div>
-    <div class="color-option" style="background-color: #669966;" onclick="changeBackgroundColor('#669966')"></div>
-    <div class="color-option" style="background-color: #b3ffb3;" onclick="changeBackgroundColor('#b3ffb3')"></div>
-    <div class="color-option" style="background-color: #99b3b3;" onclick="changeBackgroundColor('#99b3b3')"></div>
-    <div class="color-option" style="background-color: #ffccff;" onclick="changeBackgroundColor('#ffccff')"></div>
-    <div class="color-option" style="background-color: #ffff66;" onclick="changeBackgroundColor('#ffff66')"></div>
-    <div class="color-option" style="background-color: #b3b3b3;" onclick="changeBackgroundColor('#b3b3b3')"></div>
-    <div class="color-option" style="background-color: #99ffcc;" onclick="changeBackgroundColor('#99ffcc')"></div>
-    <div class="color-option" style="background-color: #ff3399;" onclick="changeBackgroundColor('#ff3399')"></div>
-    <div class="color-option" style="background-color: #ffb3ff;" onclick="changeBackgroundColor('#ffb3ff')"></div>
-    <div class="color-option" style="background-color: #b3ccff;" onclick="changeBackgroundColor('#b3ccff')"></div>
-    <div class="color-option" style="background-color: #66ffff;" onclick="changeBackgroundColor('#66ffff')"></div>
-    <div class="color-option" style="background-color: #99b3ff;" onclick="changeBackgroundColor('#99b3ff')"></div>
-    <div class="color-option" style="background-color: #ff6699;" onclick="changeBackgroundColor('#ff6699')"></div>
-    <div class="color-option" style="background-color: #ffcccc;" onclick="changeBackgroundColor('#ffcccc')"></div>
-    <div class="color-option" style="background-color: #c2c2ff;" onclick="changeBackgroundColor('#c2c2ff')"></div>
-    <div class="color-option" style="background-color: #ff6600;" onclick="changeBackgroundColor('#ff6600')"></div>
-    <div class="color-option" style="background-color: #ff9999;" onclick="changeBackgroundColor('#ff9999')"></div>
-    <div class="color-option" style="background-color: #33cc33;" onclick="changeBackgroundColor('#33cc33')"></div>
-    <div class="color-option" style="background-color: #ffcc66;" onclick="changeBackgroundColor('#ffcc66')"></div>
-    <div class="color-option" style="background-color: #6699cc;" onclick="changeBackgroundColor('#6699cc')"></div>
-    <div class="color-option" style="background-color: #ffffcc;" onclick="changeBackgroundColor('#ffffcc')"></div>
-    <div class="color-option" style="background-color: #ccffcc;" onclick="changeBackgroundColor('#ccffcc')"></div>
-    <div class="color-option" style="background-color: #ff3333;" onclick="changeBackgroundColor('#ff3333')"></div>
-    <div class="color-option" style="background-color: #99ccff;" onclick="changeBackgroundColor('#99ccff')"></div>
+<div id="color-picker" class="color-picker-overlay" style="display: none;">
+  <div class="color-option" style="background-color: #ff9999;" onclick="changeBackgroundColor('#ff9999')"></div>
+  <div class="color-option" style="background-color: #99ff99;" onclick="changeBackgroundColor('#99ff99')"></div>
+  <div class="color-option" style="background-color: #9999ff;" onclick="changeBackgroundColor('#9999ff')"></div>
+  <div class="color-option" style="background-color: #ffff99;" onclick="changeBackgroundColor('#ffff99')"></div>
+  <div class="color-option" style="background-color: #f0f0f0;" onclick="changeBackgroundColor('#f0f0f0')"></div>
+  <!-- Add more colors below -->
+  <div class="color-option" style="background-color: #ffcc99;" onclick="changeBackgroundColor('#ffcc99')"></div>
+  <div class="color-option" style="background-color: #66ccff;" onclick="changeBackgroundColor('#66ccff')"></div>
+  <div class="color-option" style="background-color: #ffccff;" onclick="changeBackgroundColor('#ffccff')"></div>
+  <div class="color-option" style="background-color: #ff6666;" onclick="changeBackgroundColor('#ff6666')"></div>
+  <div class="color-option" style="background-color: #6699ff;" onclick="changeBackgroundColor('#6699ff')"></div>
+  <div class="color-option" style="background-color: #ffb3b3;" onclick="changeBackgroundColor('#ffb3b3')"></div>
+  <div class="color-option" style="background-color: #b3e0ff;" onclick="changeBackgroundColor('#b3e0ff')"></div>
+  <div class="color-option" style="background-color: #c2f0c2;" onclick="changeBackgroundColor('#c2f0c2')"></div>
+  <div class="color-option" style="background-color: #e6e6e6;" onclick="changeBackgroundColor('#e6e6e6')"></div>
+  <div class="color-option" style="background-color: #ffb366;" onclick="changeBackgroundColor('#ffb366')"></div>
+  <div class="color-option" style="background-color: #99cc99;" onclick="changeBackgroundColor('#99cc99')"></div>
+  <div class="color-option" style="background-color: #ff6666;" onclick="changeBackgroundColor('#ff6666')"></div>
+  <div class="color-option" style="background-color: #66cc66;" onclick="changeBackgroundColor('#66cc66')"></div>
+  <div class="color-option" style="background-color: #ccff99;" onclick="changeBackgroundColor('#ccff99')"></div>
+  <div class="color-option" style="background-color: #ff3399;" onclick="changeBackgroundColor('#ff3399')"></div>
+  <div class="color-option" style="background-color: #66ff66;" onclick="changeBackgroundColor('#66ff66')"></div>
+  <div class="color-option" style="background-color: #ccccff;" onclick="changeBackgroundColor('#ccccff')"></div>
+  <div class="color-option" style="background-color: #ff9933;" onclick="changeBackgroundColor('#ff9933')"></div>
+  <div class="color-option" style="background-color: #b3b3cc;" onclick="changeBackgroundColor('#b3b3cc')"></div>
+  <div class="color-option" style="background-color: #cc99cc;" onclick="changeBackgroundColor('#cc99cc')"></div>
+  <div class="color-option" style="background-color: #ff6600;" onclick="changeBackgroundColor('#ff6600')"></div>
+  <div class="color-option" style="background-color: #cc3333;" onclick="changeBackgroundColor('#cc3333')"></div>
+  <div class="color-option" style="background-color: #ff99cc;" onclick="changeBackgroundColor('#ff99cc')"></div>
+  <div class="color-option" style="background-color: #669966;" onclick="changeBackgroundColor('#669966')"></div>
+  <div class="color-option" style="background-color: #b3ffb3;" onclick="changeBackgroundColor('#b3ffb3')"></div>
+  <div class="color-option" style="background-color: #99b3b3;" onclick="changeBackgroundColor('#99b3b3')"></div>
+  <div class="color-option" style="background-color: #ffccff;" onclick="changeBackgroundColor('#ffccff')"></div>
+  <div class="color-option" style="background-color: #ffff66;" onclick="changeBackgroundColor('#ffff66')"></div>
+  <div class="color-option" style="background-color: #b3b3b3;" onclick="changeBackgroundColor('#b3b3b3')"></div>
+  <div class="color-option" style="background-color: #99ffcc;" onclick="changeBackgroundColor('#99ffcc')"></div>
+  <div class="color-option" style="background-color: #ff3399;" onclick="changeBackgroundColor('#ff3399')"></div>
+  <div class="color-option" style="background-color: #ffb3ff;" onclick="changeBackgroundColor('#ffb3ff')"></div>
+  <div class="color-option" style="background-color: #b3ccff;" onclick="changeBackgroundColor('#b3ccff')"></div>
+  <div class="color-option" style="background-color: #66ffff;" onclick="changeBackgroundColor('#66ffff')"></div>
+  <div class="color-option" style="background-color: #99b3ff;" onclick="changeBackgroundColor('#99b3ff')"></div>
+  <div class="color-option" style="background-color: #ff6699;" onclick="changeBackgroundColor('#ff6699')"></div>
+  <div class="color-option" style="background-color: #ffcccc;" onclick="changeBackgroundColor('#ffcccc')"></div>
+  <div class="color-option" style="background-color: #c2c2ff;" onclick="changeBackgroundColor('#c2c2ff')"></div>
+  <div class="color-option" style="background-color: #ff6600;" onclick="changeBackgroundColor('#ff6600')"></div>
+  <div class="color-option" style="background-color: #ff9999;" onclick="changeBackgroundColor('#ff9999')"></div>
+  <div class="color-option" style="background-color: #33cc33;" onclick="changeBackgroundColor('#33cc33')"></div>
+  <div class="color-option" style="background-color: #ffcc66;" onclick="changeBackgroundColor('#ffcc66')"></div>
+  <div class="color-option" style="background-color: #6699cc;" onclick="changeBackgroundColor('#6699cc')"></div>
+  <div class="color-option" style="background-color: #ffffcc;" onclick="changeBackgroundColor('#ffffcc')"></div>
+  <div class="color-option" style="background-color: #ccffcc;" onclick="changeBackgroundColor('#ccffcc')"></div>
+  <div class="color-option" style="background-color: #ff3333;" onclick="changeBackgroundColor('#ff3333')"></div>
+  <div class="color-option" style="background-color: #99ccff;" onclick="changeBackgroundColor('#99ccff')"></div>
 </div>
 
-  
-  
-  
 
-  <div class="input-container" id="settings-form" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; z-index: 9999;">
-    <label for="breath-in-time">Breath In Time (seconds):</label>
-    <input type="number" id="breath-in-time" value="4" min="1" />
+
+
+
+<!-- <div class="input-container" id="settings-form"
+  style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; z-index: 9999;">
+  <label for="breath-in-time">Breath In Time (seconds):</label>
+  <input type="number" id="breath-in-time" value="4" min="1" />
+
+  <label for="hold-time">Hold Time (seconds):</label>
+  <input type="number" id="hold-time" value="4" min="1" />
+
+  <label for="breath-out-time">Breath Out Time (seconds):</label>
+  <input type="number" id="breath-out-time" value="4" min="1" />
   
-    <label for="hold-time">Hold Time (seconds):</label>
-    <input type="number" id="hold-time" value="4" min="1" />
-  
-    <label for="breath-out-time">Breath Out Time (seconds):</label>
-    <input type="number" id="breath-out-time" value="4" min="1" />
-     <!-- OK Button -->
   <button id="apply-btn" onclick="applySettings()">Done</button>
+</div> -->
+<div class="input-container" id="settings-form"
+  style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; z-index: 99999; width: 90%; max-width: 400px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); font-family: Arial, sans-serif;">
+  
+  <h2 style="text-align: center; font-size: 18px; color: #333; margin-bottom: 15px;">Breathing Settings</h2>
+
+  <label for="breath-in-time" style="font-size: 14px; color: #555; margin-bottom: 5px; display: block;">Breath In Time (seconds):</label>
+  <input type="number" id="breath-in-time" value="4" min="1" 
+    style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; background: #f9f9f9; margin-bottom: 10px;">
+
+  <label for="hold-time" style="font-size: 14px; color: #555; margin-bottom: 5px; display: block;">Hold Time (seconds):</label>
+  <input type="number" id="hold-time" value="4" min="1"
+    style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; background: #f9f9f9; margin-bottom: 10px;">
+
+  <label for="breath-out-time" style="font-size: 14px; color: #555; margin-bottom: 5px; display: block;">Breath Out Time (seconds):</label>
+  <input type="number" id="breath-out-time" value="4" min="1"
+    style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; background: #f9f9f9; margin-bottom: 15px;">
+
+  <button id="apply-btn" onclick="applySettings()" 
+    style="width: 100%; padding: 12px; border: none; background: linear-gradient(135deg, #6e8efb, #a777e3); color: white; font-size: 16px; border-radius: 5px; cursor: pointer; transition: 0.3s;">
+    Done
+  </button>
+</div>
+
+<select id="shape-select" onchange="showShape()">
+  <option value="circle" selected>Circle</option>
+  <option value="rectangle">Rectangle</option>
+  <option value="triangle">Triangle</option>
+  <option value="square">Square</option>
+  <option value="upside-down-triangle">Upside-Down Triangle</option>
+</select>
+
+
+<!-- Circle: Inhale/Exhale -->
+<svg id="circle" class="shape">
+  <circle class="red-line" cx="105" cy="105" r="100" />
+  <circle id="blue-line-circle" class="blue-line" cx="105" cy="105" r="100" />
+  <clipPath id="clip-circle">
+    <circle cx="105" cy="105" r="100" />
+  </clipPath>
+  <circle class="overlay" cx="105" cy="105" r="100" clip-path="url(#clip-circle)" />
+  <text id="text-in-circle" class="center-text center-text-in" x="105" y="105">INHALE</text>
+  <text id="text-out-circle" class="center-text center-text-out" x="105" y="105" style="display:none;">EXHALE</text>
+</svg>
+
+<!-- Square: Inhale/Hold/Exhale/Hold -->
+<svg id="square" class="shape">
+  <rect class="red-line" x="10" y="10" width="190" height="190" />
+  <rect id="blue-line-square" class="blue-line-square" x="10" y="10" width="190" height="190" />
+  <clipPath id="clip-square">
+    <rect x="10" y="10" width="190" height="190" />
+  </clipPath>
+  <rect class="overlay" x="10" y="10" width="190" height="190" clip-path="url(#clip-square)" />
+  <text id="text-in-square" class="center-text center-text-in" x="105" y="105">INHALE</text>
+  <text id="text-hold1-square" class="center-text center-text-hold" x="105" y="105" style="display:none;">HOLD</text>
+  <text id="text-out-square" class="center-text center-text-out" x="105" y="105" style="display:none;">EXHALE</text>
+  <text id="text-hold2-square" class="center-text center-text-hold" x="105" y="105" style="display:none;">HOLD</text>
+</svg>
+
+<!-- Rectangle: Inhale/Hold/Hold/Exhale/Hold/Hold -->
+<svg id="rectangle" class="shape">
+  <rect class="red-line" x="10" y="10" width="190" height="100" />
+  <rect id="blue-line-rectangle" class="blue-line-rectangle" x="10" y="10" width="190" height="100" />
+  <clipPath id="clip-rectangle">
+    <rect x="10" y="10" width="190" height="100" />
+  </clipPath>
+  <rect class="overlay" x="10" y="10" width="190" height="100" clip-path="url(#clip-rectangle)" />
+  <text id="text-in-rectangle" class="center-text center-text-in" x="105" y="60">INHALE</text>
+  <text id="text-hold1-rectangle" class="center-text center-text-hold" x="105" y="60" style="display:none;">HOLD</text>
+  <text id="text-hold2-rectangle" class="center-text center-text-hold" x="105" y="60" style="display:none;">HOLD</text>
+  <text id="text-out-rectangle" class="center-text center-text-out" x="105" y="60" style="display:none;">EXHALE</text>
+  <text id="text-hold3-rectangle" class="center-text center-text-hold" x="105" y="60" style="display:none;">HOLD</text>
+  <text id="text-hold4-rectangle" class="center-text center-text-hold" x="105" y="60" style="display:none;">HOLD</text>
+</svg>
+
+<!-- Triangle: Inhale/Exhale/Hold -->
+<svg id="triangle" class="shape">
+  <polygon class="red-line" points="105,10 10,190 200,190" />
+  <polygon id="blue-line-triangle" class="blue-line-triangle" points="105,10 10,190 200,190" />
+  <clipPath id="clip-triangle">
+    <polygon points="105,10 10,190 200,190" />
+  </clipPath>
+  <polygon class="overlay" points="105,10 10,190 200,190" clip-path="url(#clip-triangle)" />
+  <text id="text-in-triangle" class="center-text center-text-in" x="105" y="105">INHALE</text>
+  <text id="text-out-triangle" class="center-text center-text-out" x="105" y="105" style="display:none;">EXHALE</text>
+  <text id="text-hold-triangle" class="center-text center-text-hold" x="105" y="105" style="display:none;">HOLD</text>
+</svg>
+
+<!-- Reverse Triangle: Inhale/Hold/Exhale -->
+<svg id="upside-down-triangle" class="shape">
+  <polygon class="red-line" points="105,190 10,10 200,10" />
+  <polygon id="blue-line-upside-down-triangle" class="blue-line-triangle" points="105,190 10,10 200,10" />
+  <clipPath id="clip-upside-down-triangle">
+    <polygon points="105,190 10,10 200,10" />
+  </clipPath>
+  <polygon class="overlay" points="105,190 10,10 200,10" clip-path="url(#clip-upside-down-triangle)" />
+  <text id="text-in-upside-down-triangle" class="center-text center-text-in" x="105" y="105">INHALE</text>
+  <text id="text-hold-upside-down-triangle" class="center-text center-text-hold" x="105" y="105"
+    style="display:none;">HOLD</text>
+  <text id="text-out-upside-down-triangle" class="center-text center-text-out" x="105" y="105"
+    style="display:none;">EXHALE</text>
+</svg>
+
+<div class="custom-audio-player">
+  <!-- Progress Bar -->
+  <div class="progress-bar-container">
+    <div class="progress-bar" id="progress-bar" onclick="seek(event)"></div>
   </div>
+  <div id="time-display" class="time-display">00:00 / 00:00</div>
 
-  <select id="shape-select" onchange="showShape()">
-    <option value="circle" selected>Circle</option>
-    <option value="rectangle">Rectangle</option>
-    <option value="triangle">Triangle</option>
-    <option value="square">Square</option>
-    <option value="upside-down-triangle">Upside-Down Triangle</option> 
-  </select>
-  
-
-  <svg id="circle" class="shape">
-    <circle class="red-line" cx="105" cy="105" r="100" />
-    <circle id="blue-line-circle" class="blue-line" cx="105" cy="105" r="100" />
-    <clipPath id="clip-circle">
-      <circle cx="105" cy="105" r="100" />
-    </clipPath>
-    <circle class="overlay" cx="105" cy="105" r="100" clip-path="url(#clip-circle)" />
-    <text id="text-in" class="center-text center-text-in" x="105" y="105">IN</text>
-    <text id="text-hold" class="center-text center-text-hold" x="105" y="105" style="display:none;">HOLD</text>
-    <text id="text-out" class="center-text center-text-out" x="105" y="105" style="display:none;">OUT</text>
-    
-  </svg>
-
-  <svg id="rectangle" class="shape">
-    <rect class="red-line" x="10" y="10" width="190" height="100" />
-    <rect id="blue-line-rectangle" class="blue-line-rectangle" x="10" y="10" width="190" height="100" />
-    <clipPath id="clip-rectangle">
-      <rect x="10" y="10" width="190" height="100" />
-    </clipPath>
-    <rect class="overlay" x="10" y="10" width="190" height="100" clip-path="url(#clip-rectangle)" />
-    <text id="text-in" class="center-text center-text-in" x="105" y="60">IN</text>
-    <text id="text-hold" class="center-text center-text-hold" x="105" y="60" style="display:none;">HOLD</text>
-    <text id="text-out" class="center-text center-text-out" x="105" y="60" style="display:none;">OUT</text>
-   
-  </svg>
-
-  <svg id="triangle" class="shape">
-    <polygon class="red-line" points="105,10 10,190 200,190" />
-    <polygon id="blue-line-triangle" class="blue-line-triangle" points="105,10 10,190 200,190" />
-    <clipPath id="clip-triangle">
-      <polygon points="105,10 10,190 200,190" />
-    </clipPath>
-    <polygon class="overlay" points="105,10 10,190 200,190" clip-path="url(#clip-triangle)" />
-    <text id="text-in" class="center-text center-text-in" x="105" y="105">IN</text>
-    <text id="text-hold" class="center-text center-text-hold" x="105" y="105" style="display:none;">HOLD</text>
-    <text id="text-out" class="center-text center-text-out" x="105" y="105" style="display:none;">OUT</text>
-   
-  </svg>
-
-  <svg id="square" class="shape">
-    <rect class="red-line" x="10" y="10" width="190" height="190" />
-    <rect id="blue-line-square" class="blue-line-square" x="10" y="10" width="190" height="190" />
-    <clipPath id="clip-square">
-      <rect x="10" y="10" width="190" height="190" />
-    </clipPath>
-    <rect class="overlay" x="10" y="10" width="190" height="190" clip-path="url(#clip-square)" />
-    <text id="text-in" class="center-text center-text-in" x="105" y="105">IN</text>
-    <text id="text-hold" class="center-text center-text-hold" x="105" y="105" style="display:none;">HOLD</text>
-    <text id="text-out" class="center-text center-text-out" x="105" y="105" style="display:none;">OUT</text>
-    
-  </svg>
-  
-  <svg id="upside-down-triangle" class="shape" style="display: none;">
-    <!-- Upside-down Triangle -->
-    <polygon class="red-line" points="105,190 10,10 200,10" />
-    <polygon id="blue-line-upside-down-triangle" class="blue-line-triangle" points="105,190 10,10 200,10" />
-    <clipPath id="clip-upside-down-triangle">
-      <polygon points="105,190 10,10 200,10" />
-    </clipPath>
-    <polygon class="overlay" points="105,190 10,10 200,10" clip-path="url(#clip-upside-down-triangle)" />
-    <text id="text-in" class="center-text center-text-in" x="105" y="105">IN</text>
-    <text id="text-hold" class="center-text center-text-hold" x="105" y="105" style="display:none;">HOLD</text>
-    <text id="text-out" class="center-text center-text-out" x="105" y="105" style="display:none;">OUT</text>
-  </svg>
-  <div class="custom-audio-player">
-    <!-- Progress Bar -->
-    <div class="progress-bar-container">
-      <div class="progress-bar" id="progress-bar" onclick="seek(event)"></div>
-    </div>
-    <div id="time-display" class="time-display">00:00 / 00:00</div>
-  
-    <!-- Audio Player -->
-    <audio id="audio-player">
-      <source id="audio-source" src="{% static '1.mp3' %}" type="audio/mp3" />
-      Your browser does not support the audio element.
+  <!-- Audio Player -->
+  <audio id="audio-player">
+    <source id="audio-source" src="{% static '1.mp3' %}" type="audio/mp3" />
+    Your browser does not support the audio element.
   </audio>
-  
+
   <!-- <div id="vibration-status">Vibration Pattern Applied</div>
   <div id="error-message"></div>
    -->
-  
-    <!-- Controls (Play, Pause, Next, Previous) -->
-    <div class="player-controls">
-      <button id="prev-track" class="control-btn">
-        <i class="fa fa-backward"></i>
-      </button>
-      <button id="play-pause" class="control-btn">
-        <i class="fa fa-play"></i>
-      </button>
-      <button id="next-track" class="control-btn">
-        <i class="fa fa-forward"></i>
-      </button>
-    </div>
-    <!-- <div id="vibration-status">Vibration Pattern APPLIED</div> -->
-    <!-- <div id="error-message"></div> -->
+
+  <!-- Controls (Play, Pause, Next, Previous) -->
+  <div class="player-controls">
+    <button id="prev-track" class="control-btn">
+      <i class="fa fa-backward"></i>
+    </button>
+    <button id="play-pause" class="control-btn">
+      <i class="fa fa-play"></i>
+    </button>
+    <button id="next-track" class="control-btn">
+      <i class="fa fa-forward"></i>
+    </button>
   </div>
+  <!-- <div id="vibration-status">Vibration Pattern APPLIED</div> -->
+  <!-- <div id="error-message"></div> -->
+</div>
 <!-- Selection of audio start -->
 <div class="all-audio">
   <!-- Dropdown for selecting songs -->
   <select onchange="loadSelectedTrack(this.value)">
     <option value="">Select a Song</option>
     {% for track in tracks %}
-      <option value="{{ track.file.url }}">{{ track.title }} by {{ track.artist }}</option>
+    <option value="{{ track.file.url }}">{{ track.title }} by {{ track.artist }}</option>
     {% endfor %}
   </select>
 </div>
-  
-  <!-- Selection of audio end  -->
- <!-- adding vibration button  -->
- <div class="allbuttons">
+
+<!-- Selection of audio end  -->
+<!-- adding vibration button  -->
+<div class="allbuttons">
   <button id="logo" onclick="toggleForm()" class="icon-button">
     <i class="fas fa-cogs logo-icon"></i> Settings
   </button>
@@ -813,300 +908,83 @@ Home - Meditation Dashboard
   </div>
 </div>
 <style>
- 
+
 </style>
- <div id="vibration-input-container" class="vibration-input-container" style="display: none;">
-   <div class="vibration-input-box">
-     <button class="close-btn" onclick="toggleVibrationInput()">❌</button>
-     <label for="vibration-intensity">Vibration Intensity:</label>
-     <input type="range" id="vibration-intensity" min="0.5" max="2" step="0.1" value="1" />
-   </div>
- </div>
- <script>
-  let breathInTime = 4;
-  let holdTime = 4;
-  let breathOutTime = 4;
+<div id="vibration-input-container" class="vibration-input-container" style="display: none;">
+  <div class="vibration-input-box">
+    <button class="close-btn" onclick="toggleVibrationInput()">❌</button>
+    <label for="vibration-intensity">Vibration Intensity:</label>
+    <input type="range" id="vibration-intensity" min="0.5" max="2" step="0.1" value="1" />
+  </div>
+</div>
 
-  document.getElementById('breath-in-time').addEventListener('input', function() {
-    breathInTime = parseInt(this.value);
-  });
 
-  document.getElementById('hold-time').addEventListener('input', function() {
-    holdTime = parseInt(this.value);
-  });
-
-  document.getElementById('breath-out-time').addEventListener('input', function() {
-    breathOutTime = parseInt(this.value);
-  });
-
-  function showShape() {
-    const selectedShape = document.getElementById('shape-select').value;
-    const shapes = document.querySelectorAll('.shape');
-
-    shapes.forEach(shape => shape.style.display = 'none');
-
-    const shape = document.getElementById(selectedShape);
-    shape.style.display = 'block';
-
-    resetAnimation();
+<!-- To make the styling  -->
+<script>
+  function toggleColorPicker() {
+    const colorPicker = document.getElementById('color-picker');
+    colorPicker.style.display = colorPicker.style.display === 'none' ? 'flex' : 'none';
   }
 
-  function syncAnimationWithSong() {
-    const audioPlayer = document.getElementById('audio-player');
-    const shapeSelect = document.getElementById('shape-select');
-    const textIn = document.getElementById('text-in');
-    const textHold = document.getElementById('text-hold');
-    const textOut = document.getElementById('text-out');
-
-    const duration = audioPlayer.duration;
-
-    audioPlayer.ontimeupdate = function () {
-      const currentTime = audioPlayer.currentTime;
-      const percentage = currentTime / duration;
-
-      // Handling animation based on shape selection
-      if (shapeSelect.value === 'circle') {
-        document.getElementById('blue-line-circle').style.strokeDashoffset = 628 - (628 * percentage);
-      } else if (shapeSelect.value === 'rectangle') {
-        document.getElementById('blue-line-rectangle').style.strokeDashoffset = 800 - (800 * percentage);
-      } else if (shapeSelect.value === 'triangle') {
-        document.getElementById('blue-line-triangle').style.strokeDashoffset = 480 - (480 * percentage);
-      } else if (shapeSelect.value === 'square') {
-        document.getElementById('blue-line-square').style.strokeDashoffset = 760 - (760 * percentage);
-      } else if (shapeSelect.value === 'upside-down-triangle') {
-        document.getElementById('blue-line-upside-down-triangle').style.strokeDashoffset = 480 - (480 * percentage);
-      }
-
-      // Adjust text visibility based on the current time in the song
-      if (currentTime < breathInTime) {
-        textIn.style.display = 'block';
-        textHold.style.display = 'none';
-        textOut.style.display = 'none';
-      } else if (currentTime < breathInTime + holdTime) {
-        textIn.style.display = 'none';
-        textHold.style.display = 'block';
-        textOut.style.display = 'none';
-      } else if (currentTime < breathInTime + holdTime + breathOutTime) {
-        textIn.style.display = 'none';
-        textHold.style.display = 'none';
-        textOut.style.display = 'block';
-      } else {
-        // Cycle back to "IN" after completing the full cycle of IN, HOLD, OUT
-        const cycleTime = breathInTime + holdTime + breathOutTime;
-        const timeInCycle = currentTime % cycleTime; // Loop back to the beginning of the cycle
-
-        if (timeInCycle < breathInTime) {
-          textIn.style.display = 'block';
-          textHold.style.display = 'none';
-          textOut.style.display = 'none';
-        } else if (timeInCycle < breathInTime + holdTime) {
-          textIn.style.display = 'none';
-          textHold.style.display = 'block';
-          textOut.style.display = 'none';
-        } else {
-          textIn.style.display = 'none';
-          textHold.style.display = 'none';
-          textOut.style.display = 'block';
-        }
-      }
-    };
+  function changeBackgroundColor(color) {
+    document.body.style.backgroundColor = color;
+    document.getElementById('color-picker').style.display = 'none'; // Hide after selection
   }
 
-  function resetAnimation() {
-    document.getElementById('blue-line-circle').style.strokeDashoffset = 628;
-    document.getElementById('blue-line-rectangle').style.strokeDashoffset = 800;
-    document.getElementById('blue-line-triangle').style.strokeDashoffset = 480;
-    document.getElementById('blue-line-square').style.strokeDashoffset = 760;
-    document.getElementById('blue-line-upside-down-triangle').style.strokeDashoffset = 480;
-  }
-
-  document.getElementById('audio-player').onplay = function () {
-    syncAnimationWithSong();
-  };
-
-  window.onload = function() {
-    showShape();
-  };
-
-</script>
-
-<!--   
-  <script>
-    let breathInTime = 4;
-    let holdTime = 4;
-    let breathOutTime = 4;
-
-    document.getElementById('breath-in-time').addEventListener('input', function() {
-      breathInTime = parseInt(this.value);
-    });
-
-    document.getElementById('hold-time').addEventListener('input', function() {
-      holdTime = parseInt(this.value);
-    });
-
-    document.getElementById('breath-out-time').addEventListener('input', function() {
-      breathOutTime = parseInt(this.value);
-    });
-
-    function showShape() {
-      const selectedShape = document.getElementById('shape-select').value;
-      const shapes = document.querySelectorAll('.shape');
-
-      shapes.forEach(shape => shape.style.display = 'none');
-
-      const shape = document.getElementById(selectedShape);
-      shape.style.display = 'block';
-
-      resetAnimation();
-    }
-
-    function syncAnimationWithSong() {
-      const audioPlayer = document.getElementById('audio-player');
-      const shapeSelect = document.getElementById('shape-select');
-      const textIn = document.getElementById('text-in');
-      const textHold = document.getElementById('text-hold');
-      const textOut = document.getElementById('text-out');
-
-      const duration = audioPlayer.duration;
-
-      audioPlayer.ontimeupdate = function () {
-        const currentTime = audioPlayer.currentTime;
-        const percentage = currentTime / duration;
-
-        if (shapeSelect.value === 'circle') {
-          document.getElementById('blue-line-circle').style.strokeDashoffset = 628 - (628 * percentage);
-        } else if (shapeSelect.value === 'rectangle') {
-          document.getElementById('blue-line-rectangle').style.strokeDashoffset = 800 - (800 * percentage);
-        } else if (shapeSelect.value === 'triangle') {
-          document.getElementById('blue-line-triangle').style.strokeDashoffset = 480 - (480 * percentage);
-        } else if (shapeSelect.value === 'square') {
-          document.getElementById('blue-line-square').style.strokeDashoffset = 760 - (760 * percentage);
-        }
-
-        // Adjust text visibility based on the current time in the song
-        if (currentTime < breathInTime) {
-          textIn.style.display = 'block';
-          textHold.style.display = 'none';
-          textOut.style.display = 'none';
-        } else if (currentTime < breathInTime + holdTime) {
-          textIn.style.display = 'none';
-          textHold.style.display = 'block';
-          textOut.style.display = 'none';
-        } else if (currentTime < breathInTime + holdTime + breathOutTime) {
-          textIn.style.display = 'none';
-          textHold.style.display = 'none';
-          textOut.style.display = 'block';
-        } else {
-          // Cycle back to "IN" after completing the full cycle of IN, HOLD, OUT
-          const cycleTime = breathInTime + holdTime + breathOutTime;
-          const timeInCycle = currentTime % cycleTime; // Loop back to the beginning of the cycle
-
-          if (timeInCycle < breathInTime) {
-            textIn.style.display = 'block';
-            textHold.style.display = 'none';
-            textOut.style.display = 'none';
-          } else if (timeInCycle < breathInTime + holdTime) {
-            textIn.style.display = 'none';
-            textHold.style.display = 'block';
-            textOut.style.display = 'none';
-          } else {
-            textIn.style.display = 'none';
-            textHold.style.display = 'none';
-            textOut.style.display = 'block';
-          }
-        }
-      };
-    }
-
-    function resetAnimation() {
-      document.getElementById('blue-line-circle').style.strokeDashoffset = 628;
-      document.getElementById('blue-line-rectangle').style.strokeDashoffset = 800;
-      document.getElementById('blue-line-triangle').style.strokeDashoffset = 480;
-      document.getElementById('blue-line-square').style.strokeDashoffset = 760;
-    }
-
-    document.getElementById('audio-player').onplay = function () {
-      syncAnimationWithSong();
-    };
-
-    window.onload = function() {
-      showShape();
-    };
-
-    // Adding for vibration intensity 
-//     document.getElementById('vibration-intensity').addEventListener('input', function() {
-//   const audioPlayer = document.getElementById('audio-player');
-//   audioPlayer.playbackRate = parseFloat(this.value);
-// });
-
-  </script> -->
-
-  <!-- To make the styling  -->
-   <script>
-function toggleColorPicker() {
-  const colorPicker = document.getElementById('color-picker');
-  colorPicker.style.display = colorPicker.style.display === 'none' ? 'flex' : 'none';
-}
-
-function changeBackgroundColor(color) {
-  document.body.style.backgroundColor = color;
-  document.getElementById('color-picker').style.display = 'none'; // Hide after selection
-}
-
-// For breating feature 
-function toggleForm() {
+  // For breating feature 
+  function toggleForm() {
     const form = document.getElementById('settings-form');
     form.style.display = form.style.display === 'block' ? 'none' : 'block';
   }
-// Function to toggle the visibility of the settings form
-function toggleForm() {
-  const form = document.getElementById("settings-form");
-  form.style.display = form.style.display === "none" ? "block" : "none";
-}
-
-// Function to apply settings and close the form
-function applySettings() {
-  const breathInTime = document.getElementById("breath-in-time").value;
-  const holdTime = document.getElementById("hold-time").value;
-  const breathOutTime = document.getElementById("breath-out-time").value;
-
-  // Here you can handle the values you get (e.g., save them or apply them to your app)
-  console.log("Breath In Time:", breathInTime);
-  console.log("Hold Time:", holdTime);
-  console.log("Breath Out Time:", breathOutTime);
-
-  // Close the form after applying
-  toggleForm();
-}
-
-
-// For vibration feature 
-function toggleVibrationInput() {
-  const vibrationInputContainer = document.getElementById('vibration-input-container');
-  vibrationInputContainer.style.display = vibrationInputContainer.style.display === 'none' ? 'flex' : 'none';
-
-  // Add a class to trigger animation effect
-  if (vibrationInputContainer.style.display === 'flex') {
-    vibrationInputContainer.classList.add('show');
-  } else {
-    vibrationInputContainer.classList.remove('show');
+  // Function to toggle the visibility of the settings form
+  function toggleForm() {
+    const form = document.getElementById("settings-form");
+    form.style.display = form.style.display === "none" ? "block" : "none";
   }
-}
 
-   </script>
+  // Function to apply settings and close the form
+  function applySettings() {
+    const breathInTime = document.getElementById("breath-in-time").value;
+    const holdTime = document.getElementById("hold-time").value;
+    const breathOutTime = document.getElementById("breath-out-time").value;
+
+    // Here you can handle the values you get (e.g., save them or apply them to your app)
+    console.log("Breath In Time:", breathInTime);
+    console.log("Hold Time:", holdTime);
+    console.log("Breath Out Time:", breathOutTime);
+
+    // Close the form after applying
+    toggleForm();
+  }
+
+
+  // For vibration feature 
+  function toggleVibrationInput() {
+    const vibrationInputContainer = document.getElementById('vibration-input-container');
+    vibrationInputContainer.style.display = vibrationInputContainer.style.display === 'none' ? 'flex' : 'none';
+
+    // Add a class to trigger animation effect
+    if (vibrationInputContainer.style.display === 'flex') {
+      vibrationInputContainer.classList.add('show');
+    } else {
+      vibrationInputContainer.classList.remove('show');
+    }
+  }
+
+</script>
 <script>
   function loadSelectedTrack(filePath) {
-      const audioPlayer = document.getElementById('audio-player');
-      audioPlayer.src = filePath; // Set the audio source
-      audioPlayer.pause(); // Pause the audio initially
+    const audioPlayer = document.getElementById('audio-player');
+    audioPlayer.src = filePath; // Set the audio source
+    audioPlayer.pause(); // Pause the audio initially
 
-      // Wait for 1 second, then trigger play via the play button
-      setTimeout(() => {
-          audioPlayer.play();
-      }, 500);
+    // Wait for 1 second, then trigger play via the play button
+    setTimeout(() => {
+      audioPlayer.play();
+    }, 500);
   }
 </script>
-  
+
 
 <!-- Updating the style for music player                     Start -->
 <style>
@@ -1140,12 +1018,17 @@ function toggleVibrationInput() {
     font-size: 14px;
     color: #b0b0b0;
     text-align: center;
-    margin-top: 10px; /* Space between progress bar and time display */
-    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
-    padding: 5px 10px; /* Padding for aesthetics */
+    margin-top: 10px;
+    /* Space between progress bar and time display */
+    background-color: rgba(0, 0, 0, 0.6);
+    /* Semi-transparent background */
+    padding: 5px 10px;
+    /* Padding for aesthetics */
     border-radius: 5px;
-    width: fit-content; /* Adjust width to fit the content */
-    margin-left: auto; /* Center horizontally */
+    width: fit-content;
+    /* Adjust width to fit the content */
+    margin-left: auto;
+    /* Center horizontally */
     margin-right: auto;
   }
 
@@ -1175,146 +1058,165 @@ function toggleVibrationInput() {
   }
 
   .all-audio {
-  width: 100%;
-  max-width: 400px;
-  margin: 30px auto;
-  font-family: 'Arial', sans-serif;
-  text-align: center;
-  color: #fff; /* White text for a dark background */
-}
-
-.all-audio select {
-  width: 100%;
-  padding: 12px 20px;
-  border: 2px solid #6C63FF; /* Purple border */
-  border-radius: 8px;
-  background-color: #1E1E2F; /* Deep dark gray for the dropdown background */
-  font-size: 16px;
-  color: #fff; /* White text for dropdown */
-  outline: none;
-  transition: 0.3s ease;
-  text-align: center;
-  appearance: none; /* Remove default dropdown arrow */
-  margin-top: -20%;
-  margin-bottom: -20%;
-}
-
-.all-audio select:hover {
-  border-color: #8C82FF; /* Light purple on hover */
-  background-color: #29293D; /* Slightly lighter gray on hover */
-}
-
-.all-audio select:focus {
-  border-color: #A9A3FF; /* Bright purple on focus */
-  box-shadow: 0 0 8px rgba(169, 163, 255, 0.8); /* Purple glow */
-}
-
-.all-audio option {
-  font-size: 16px;
-  color: #000; /* Black text for dropdown options */
-  background-color: #EFEFEF; /* Light gray background for options */
-  padding: 10px;
-  border-bottom: 1px solid #ddd; /* Subtle separator for options */
-  transition: 0.3s ease;
-}
-
-.all-audio option:hover {
-  background-color: #D6D6F5; /* Soft purple background on hover */
-  color: #333; /* Darker text on hover */
-}
-
-.all-audio option:focus {
-  background-color: #C3C3FF; /* Bright purple for focused option */
-  color: #000; /* Black text for focused option */
-  outline: none;
-}
-
-.all-audio option:last-of-type {
-  border-bottom: none; /* Remove border from the last option */
-}
-/* For Sound  */
-.sound-control {
-  position: relative;
-  display: inline-block;
-}
-
-
-
-.volume-slider-container {
-  position: absolute;
-  top: 60px; /* Positioned below the button */
-  left: -85%;
-  transform: translateX(-50%);
-  background: #000000;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 10px;
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-10px);
+    width: 100%;
+    max-width: 400px;
+    margin: 30px auto;
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    color: #fff;
+    /* White text for a dark background */
   }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
+
+  .all-audio select {
+    width: 100%;
+    padding: 12px 20px;
+    border: 2px solid #6C63FF;
+    /* Purple border */
+    border-radius: 8px;
+    background-color: #1E1E2F;
+    /* Deep dark gray for the dropdown background */
+    font-size: 16px;
+    color: #fff;
+    /* White text for dropdown */
+    outline: none;
+    transition: 0.3s ease;
+    text-align: center;
+    appearance: none;
+    /* Remove default dropdown arrow */
+    margin-top: -20%;
+    margin-bottom: -20%;
   }
-}
 
-#volume-slider {
-  -webkit-appearance: none;
-  width: 150px;
-  height: 5px;
-  background: #ddd;
-  border-radius: 5px;
-  outline: none;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
+  .all-audio select:hover {
+    border-color: #8C82FF;
+    /* Light purple on hover */
+    background-color: #29293D;
+    /* Slightly lighter gray on hover */
+  }
 
-#volume-slider:hover {
-  background: #ccc;
-}
+  .all-audio select:focus {
+    border-color: #A9A3FF;
+    /* Bright purple on focus */
+    box-shadow: 0 0 8px rgba(169, 163, 255, 0.8);
+    /* Purple glow */
+  }
 
-#volume-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 15px;
-  height: 15px;
-  background: #6e8efb;
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  transition: background 0.3s ease, transform 0.2s ease;
-}
+  .all-audio option {
+    font-size: 16px;
+    color: #000;
+    /* Black text for dropdown options */
+    background-color: #EFEFEF;
+    /* Light gray background for options */
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    /* Subtle separator for options */
+    transition: 0.3s ease;
+  }
 
-#volume-slider::-webkit-slider-thumb:hover {
-  background: #a777e3;
-  transform: scale(1.2);
-}
+  .all-audio option:hover {
+    background-color: #D6D6F5;
+    /* Soft purple background on hover */
+    color: #333;
+    /* Darker text on hover */
+  }
 
-#volume-slider::-moz-range-thumb {
-  width: 15px;
-  height: 15px;
-  background: #6e8efb;
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  transition: background 0.3s ease, transform 0.2s ease;
-}
+  .all-audio option:focus {
+    background-color: #C3C3FF;
+    /* Bright purple for focused option */
+    color: #000;
+    /* Black text for focused option */
+    outline: none;
+  }
 
-#volume-slider::-moz-range-thumb:hover {
-  background: #a777e3;
-  transform: scale(1.2);
-}
+  .all-audio option:last-of-type {
+    border-bottom: none;
+    /* Remove border from the last option */
+  }
 
+  /* For Sound  */
+  .sound-control {
+    position: relative;
+    display: inline-block;
+  }
+
+
+
+  .volume-slider-container {
+    position: absolute;
+    top: 60px;
+    /* Positioned below the button */
+    left: -85%;
+    transform: translateX(-50%);
+    background: #000000;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  }
+
+  #volume-slider {
+    -webkit-appearance: none;
+    width: 150px;
+    height: 5px;
+    background: #ddd;
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  #volume-slider:hover {
+    background: #ccc;
+  }
+
+  #volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    background: #6e8efb;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+
+  #volume-slider::-webkit-slider-thumb:hover {
+    background: #a777e3;
+    transform: scale(1.2);
+  }
+
+  #volume-slider::-moz-range-thumb {
+    width: 15px;
+    height: 15px;
+    background: #6e8efb;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+
+  #volume-slider::-moz-range-thumb:hover {
+    background: #a777e3;
+    transform: scale(1.2);
+  }
 </style>
 <script>
   // For the next pause button 
@@ -1329,8 +1231,8 @@ function toggleVibrationInput() {
   let currentTrackIndex = 0;
   let tracks = [
     {% for track in tracks %}
-      { url: "{{ track.file.url }}", title: "{{ track.title }}", artist: "{{ track.artist }}" },
-    {% endfor %}
+  { url: "{{ track.file.url }}", title: "{{ track.title }}", artist: "{{ track.artist }}" },
+  {% endfor %}
   ];
 
   let trackCount = tracks.length;
@@ -1407,20 +1309,20 @@ function toggleVibrationInput() {
 
   // For sound 
   function toggleVolumeControl() {
-  const volumeControl = document.getElementById('volume-control');
-  
-  // Toggle visibility
-  if (volumeControl.style.display === 'none') {
-    volumeControl.style.display = 'block';
-  } else {
-    volumeControl.style.display = 'none';
-  }
-}
+    const volumeControl = document.getElementById('volume-control');
 
-function adjustVolume(value) {
-  const audioPlayer = document.getElementById('audio-player');
-  audioPlayer.volume = value; // Adjust volume based on slider value
-}
+    // Toggle visibility
+    if (volumeControl.style.display === 'none') {
+      volumeControl.style.display = 'block';
+    } else {
+      volumeControl.style.display = 'none';
+    }
+  }
+
+  function adjustVolume(value) {
+    const audioPlayer = document.getElementById('audio-player');
+    audioPlayer.volume = value; // Adjust volume based on slider value
+  }
 
 </script>
 <!-- Updating the style for music player                     End -->
@@ -1439,44 +1341,462 @@ function adjustVolume(value) {
     console.log('Vibration Pattern:', vibrationPattern);
 
     function playVibrationSync() {
-        if (!('vibrate' in navigator)) {
-            errorMessage.textContent = 'Vibration API is not supported on your device or browser.';
-            console.error('Vibration API not supported.');
-            return;
+      if (!('vibrate' in navigator)) {
+        errorMessage.textContent = 'Vibration API is not supported on your device or browser.';
+        console.error('Vibration API not supported.');
+        return;
+      }
+
+      if (!Array.isArray(vibrationPattern) || vibrationPattern.length === 0) {
+        errorMessage.textContent = 'No vibration pattern is set for this audio.';
+        console.error('No valid vibration pattern found.');
+        return;
+      }
+
+      const cycleDuration = vibrationPattern.reduce((sum, duration) => sum + duration, 0);
+      console.log('Total Vibration Cycle Duration (ms):', cycleDuration);
+
+      let vibrationIndex = 0;
+      const interval = setInterval(() => {
+        if (audioElement.paused || audioElement.ended) {
+          clearInterval(interval);
+          return;
         }
 
-        if (!Array.isArray(vibrationPattern) || vibrationPattern.length === 0) {
-            errorMessage.textContent = 'No vibration pattern is set for this audio.';
-            console.error('No valid vibration pattern found.');
-            return;
-        }
+        const vibrationDuration = vibrationPattern[vibrationIndex];
+        navigator.vibrate(vibrationDuration);
+        console.log('Vibrating for:', vibrationDuration, 'ms');
 
-        const cycleDuration = vibrationPattern.reduce((sum, duration) => sum + duration, 0);
-        console.log('Total Vibration Cycle Duration (ms):', cycleDuration);
-
-        let vibrationIndex = 0;
-        const interval = setInterval(() => {
-            if (audioElement.paused || audioElement.ended) {
-                clearInterval(interval);
-                return;
-            }
-
-            const vibrationDuration = vibrationPattern[vibrationIndex];
-            navigator.vibrate(vibrationDuration);
-            console.log('Vibrating for:', vibrationDuration, 'ms');
-
-            vibrationIndex = (vibrationIndex + 1) % vibrationPattern.length;
-        }, cycleDuration);
+        vibrationIndex = (vibrationIndex + 1) % vibrationPattern.length;
+      }, cycleDuration);
     }
 
     // Trigger vibration when audio starts playing
     audioElement.addEventListener('play', playVibrationSync);
+  });
+
+</script>
+<!-- Adding the vibration Ending here -------------------------------------------------------------------------- -->
+<style>
+  .overlay {
+    fill: rgb(177, 157, 65);
+    transform-origin: center;
+    animation: none;
+    animation-play-state: paused;
+  }
+
+  @keyframes expandContract {
+
+    0%,
+    100% {
+      transform: scale(0);
+    }
+
+    50% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes expandContract-rectangle {
+
+    0%,
+    100% {
+      transform: scaleX(0);
+    }
+
+    50% {
+      transform: scaleX(1);
+    }
+  }
+
+  @keyframes expandContract-square {
+
+    0%,
+    100% {
+      transform: scale(0);
+    }
+
+    50% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes expandContract-triangle {
+
+    0%,
+    100% {
+      transform: scale(0);
+    }
+
+    50% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes expandContract-upside-down-triangle {
+
+    0%,
+    100% {
+      transform: scale(0);
+    }
+
+    50% {
+      transform: scale(1);
+    }
+  }
+</style>
+
+<!-- <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    let animationActive = false;
+    let breathInTime = 4;
+    let holdTime = 2;
+    let breathOutTime = 4;
+    const audioPlayer = document.getElementById('audio-player');
+    const shapes = document.querySelectorAll('.shape');
+
+    function updateShapeAnimation(shape) {
+      if (!animationActive) return;
+
+      const totalDuration = breathInTime + holdTime + breathOutTime;
+      let shapeType = shape.id || 'circle'; // Default to circle
+
+      let animationName = 'expandContract'; // Default animation
+      if (shapeType === 'rectangle') animationName = 'expandContract-rectangle';
+      else if (shapeType === 'square') animationName = 'expandContract-square';
+      else if (shapeType === 'triangle') animationName = 'expandContract-triangle';
+      else if (shapeType === 'upside-down-triangle') animationName = 'expandContract-upside-down-triangle';
+
+      let overlay = shape.querySelector('.overlay');
+      if (overlay) {
+        overlay.style.animation = `${animationName} ${totalDuration}s infinite ease-in-out`;
+        overlay.style.animationPlayState = 'running';
+      }
+    }
+
+    document.getElementById('breath-in-time').addEventListener('input', function () {
+      breathInTime = parseInt(this.value) || 4;
+      if (animationActive) shapes.forEach(updateShapeAnimation);
+    });
+
+    document.getElementById('hold-time').addEventListener('input', function () {
+      holdTime = parseInt(this.value) || 2;
+      if (animationActive) shapes.forEach(updateShapeAnimation);
+    });
+
+    document.getElementById('breath-out-time').addEventListener('input', function () {
+      breathOutTime = parseInt(this.value) || 4;
+      if (animationActive) shapes.forEach(updateShapeAnimation);
+    });
+
+    audioPlayer.addEventListener('play', function () {
+      animationActive = true;
+      shapes.forEach(updateShapeAnimation);
+    });
+
+    audioPlayer.addEventListener('pause', function () {
+      animationActive = false;
+      shapes.forEach(shape => {
+        let overlay = shape.querySelector('.overlay');
+        if (overlay) overlay.style.animationPlayState = 'paused';
+      });
+    });
+
+    audioPlayer.addEventListener('ended', function () {
+      animationActive = false;
+      shapes.forEach(shape => {
+        let overlay = shape.querySelector('.overlay');
+        if (overlay) overlay.style.animation = `none`;
+      });
+    });
+
+    shapes.forEach(shape => {
+      let overlay = shape.querySelector('.overlay');
+      if (overlay) overlay.style.animation = `none`;
+    });
+  });
+</script> -->
+
+  
+<!-- For the breathing time set starts here  -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    let animationActive = false;
+    let breathInTime = 4;
+    let holdTime = 4;
+    let breathOutTime = 4;
+    let animationTimeouts = [];
+    let phaseIndex = 0;
+    let cycleCount = 0;
+    let maxCycles = Infinity;
+
+    const audioPlayer = document.getElementById('audio-player');
+    const shapeSelect = document.getElementById('shape-select');
+    const shapes = document.querySelectorAll('.shape');
+
+    function updateTimes() {
+        breathInTime = parseInt(document.getElementById('breath-in-time').value) || 4;
+        holdTime = parseInt(document.getElementById('hold-time').value) || 4;
+        breathOutTime = parseInt(document.getElementById('breath-out-time').value) || 4;
+
+        if (animationActive) {
+            showShape();
+        }
+    }
+
+    document.getElementById('breath-in-time').addEventListener('input', updateTimes);
+    document.getElementById('hold-time').addEventListener('input', updateTimes);
+    document.getElementById('breath-out-time').addEventListener('input', updateTimes);
+    shapeSelect.addEventListener('change', showShape);
+
+    function showShape() {
+        const selectedShape = shapeSelect.value;
+        shapes.forEach(shape => shape.style.display = 'none');
+
+        const shape = document.getElementById(selectedShape);
+        if (shape) {
+            shape.style.display = 'block';
+
+            if (animationActive) {
+                startBreathingAnimation(selectedShape);
+            }
+        }
+    }
+
+    function startBreathingAnimation(selectedShape) {
+        animationTimeouts.forEach(timeout => clearTimeout(timeout));
+        animationTimeouts = [];
+
+        const shape = document.getElementById(selectedShape);
+        const overlay = shape.querySelector('.overlay');
+        const blueLine = document.getElementById(`blue-line-${selectedShape}`);
+
+        const textElements = {
+            in: document.getElementById(`text-in-${selectedShape}`),
+            hold1: document.getElementById(`text-hold1-${selectedShape}`),
+            hold2: document.getElementById(`text-hold2-${selectedShape}`),
+            hold3: document.getElementById(`text-hold3-${selectedShape}`),
+            hold4: document.getElementById(`text-hold4-${selectedShape}`),
+            out: document.getElementById(`text-out-${selectedShape}`)
+        };
+
+        const strokeOffsets = {
+            circle: 628,
+            square: 760,
+            rectangle: 800,
+            triangle: 480,
+            "upside-down-triangle": 480
+        };
+
+        const breathingPatterns = {
+            circle: ['in', 'out'],
+            square: ['in', 'hold1', 'out', 'hold2'],
+            rectangle: ['in', 'hold1', 'hold2', 'out', 'hold3', 'hold4'],
+            triangle: ['in', 'out', 'hold1'],
+            "upside-down-triangle": ['in', 'hold1', 'out']
+        };
+
+        const pattern = breathingPatterns[selectedShape];
+
+        const times = {
+            in: breathInTime * 1000,
+            hold1: holdTime * 1000,
+            hold2: holdTime * 1000,
+            hold3: holdTime * 1000,
+            hold4: holdTime * 1000,
+            out: breathOutTime * 1000
+        };
+
+        let cycleDuration = Object.values(times).reduce((sum, time) => sum + time, 0);
+        let songDuration = audioPlayer.duration * 1000;
+
+        if (!isNaN(songDuration) && songDuration > 0) {
+            maxCycles = Math.floor(songDuration / cycleDuration);
+        }
+
+        cycleCount = 0;
+        phaseIndex = 0;
+
+        function nextPhase() {
+            if (!animationActive || cycleCount >= maxCycles) return;
+
+            Object.values(textElements).forEach(text => {
+                if (text) text.style.display = 'none';
+            });
+
+            const phase = pattern[phaseIndex];
+            if (textElements[phase]) textElements[phase].style.display = 'block';
+
+            if (blueLine) {
+                blueLine.style.transition = `${times[phase] / 1000}s linear`;
+                blueLine.style.strokeDashoffset = strokeOffsets[selectedShape] - (strokeOffsets[selectedShape] * (phaseIndex / pattern.length));
+            }
+
+            phaseIndex++;
+            if (phaseIndex >= pattern.length) {
+                phaseIndex = 0;
+                cycleCount++;
+            }
+
+            animationTimeouts.push(setTimeout(nextPhase, times[phase]));
+        }
+
+        if (overlay) {
+            let animationName = 'expandContract';
+            if (selectedShape === 'rectangle') animationName = 'expandContract-rectangle';
+            else if (selectedShape === 'square') animationName = 'expandContract-square';
+            else if (selectedShape === 'triangle') animationName = 'expandContract-triangle';
+            else if (selectedShape === 'upside-down-triangle') animationName = 'expandContract-upside-down-triangle';
+
+            let adjustedTime = Math.max((breathInTime + holdTime + breathOutTime) - 2, 1);  // Ensure minimum 1s duration
+            overlay.style.animation = `${animationName} ${adjustedTime}s infinite ease-in-out`;
+
+            overlay.style.animationPlayState = 'running';
+        }
+
+        /*** Start first phase immediately ***/
+        nextPhase();
+    }
+
+    audioPlayer.addEventListener('play', function () {
+        animationActive = true;
+        showShape();
+        startBreathingAnimation(shapeSelect.value);  // Ensure animation starts instantly
+    });
+
+    audioPlayer.addEventListener('pause', function () {
+        animationActive = false;
+        animationTimeouts.forEach(timeout => clearTimeout(timeout));
+        shapes.forEach(shape => {
+            let overlay = shape.querySelector('.overlay');
+            if (overlay) overlay.style.animationPlayState = 'paused';
+        });
+    });
+
+    audioPlayer.addEventListener('ended', function () {
+        animationActive = false;
+        animationTimeouts.forEach(timeout => clearTimeout(timeout));
+        shapes.forEach(shape => {
+            let overlay = shape.querySelector('.overlay');
+            if (overlay) overlay.style.animation = 'none';
+        });
+    });
+
+    audioPlayer.addEventListener('loadedmetadata', function () {
+        if (!isNaN(audioPlayer.duration)) {
+            maxCycles = Math.floor((audioPlayer.duration * 1000) / (breathInTime + holdTime + breathOutTime));
+        }
+    });
+
+    showShape();
 });
 
 </script>
+  
+ <!-- <script>
+  let breathInTime = 4;
+let holdTime = 4;
+let breathOutTime = 4;
 
+// Update timing values when input fields change
+document.getElementById('breath-in-time').addEventListener('input', function () {
+    breathInTime = parseInt(this.value) || 4;
+});
 
-<!-- Adding the vibration Ending here -------------------------------------------------------------------------- -->
+document.getElementById('hold-time').addEventListener('input', function () {
+    holdTime = parseInt(this.value) || 4;
+});
+
+document.getElementById('breath-out-time').addEventListener('input', function () {
+    breathOutTime = parseInt(this.value) || 4;
+});
+
+function showShape() {
+    const selectedShape = document.getElementById('shape-select').value;
+    const shapes = document.querySelectorAll('.shape');
+
+    // Hide all shapes first
+    shapes.forEach(shape => shape.style.display = 'none');
+
+    // Show the selected shape
+    const shape = document.getElementById(selectedShape);
+    shape.style.display = 'block';
+
+    // Start animation for selected shape
+    startBreathingAnimation(selectedShape);
+}
+
+function startBreathingAnimation(selectedShape) {
+    const textElements = {
+        in: document.getElementById(`text-in-${selectedShape}`),
+        hold1: document.getElementById(`text-hold1-${selectedShape}`),
+        hold2: document.getElementById(`text-hold2-${selectedShape}`),
+        hold3: document.getElementById(`text-hold3-${selectedShape}`),
+        hold4: document.getElementById(`text-hold4-${selectedShape}`),
+        out: document.getElementById(`text-out-${selectedShape}`)
+    };
+
+    const blueLine = document.getElementById(`blue-line-${selectedShape}`);
+
+    const strokeOffsets = {
+        circle: 628,
+        square: 760,
+        rectangle: 800,
+        triangle: 480,
+        "upside-down-triangle": 480
+    };
+
+    const breathingPatterns = {
+        circle: ['in', 'out'],
+        square: ['in', 'hold1', 'out', 'hold2'],
+        rectangle: ['in', 'hold1', 'hold2', 'out', 'hold3', 'hold4'],
+        triangle: ['in', 'out', 'hold1'],
+        "upside-down-triangle": ['in', 'hold1', 'out']
+    };
+
+    const pattern = breathingPatterns[selectedShape];
+
+    const times = {
+        in: breathInTime * 1000,
+        hold1: holdTime * 1000,
+        hold2: holdTime * 1000,
+        hold3: holdTime * 1000,
+        hold4: holdTime * 1000,
+        out: breathOutTime * 1000
+    };
+
+    let totalTime = 0;
+    let phaseIndex = 0;
+
+    function nextPhase() {
+        // Hide all texts
+        Object.values(textElements).forEach(text => {
+            if (text) text.style.display = 'none';
+        });
+
+        // Show the current phase text
+        const phase = pattern[phaseIndex];
+        if (textElements[phase]) textElements[phase].style.display = 'block';
+
+        // Update the stroke offset (animation effect)
+        if (blueLine) {
+            blueLine.style.transition = `${times[phase] / 1000}s linear`;
+            blueLine.style.strokeDashoffset = strokeOffsets[selectedShape] - (strokeOffsets[selectedShape] * (phaseIndex / pattern.length));
+        }
+
+        // Move to the next phase
+        phaseIndex = (phaseIndex + 1) % pattern.length;
+        setTimeout(nextPhase, times[phase]);
+    }
+
+    nextPhase(); // Start the animation loop
+}
+
+// Automatically start the first shape
+showShape();
+
+</script> -->
+<!-- For the breathing time set Ends here  -->
 
 
 {% endblock %}

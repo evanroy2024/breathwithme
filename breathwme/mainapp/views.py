@@ -289,13 +289,57 @@ def user_settings(request):
 # Custom Features Starts here ------------------------------------------------------------------------
 from musicapp.models import MusicTrack
 
+# def music_player(request):
+#     tracks = MusicTrack.objects.all()
+    
+#     # Example: Getting vibration patterns for all tracks
+#     vibration_patterns = {track.title: track.get_vibration_pattern() for track in tracks}
+    
+#     return render(request, 'myapp/music_player.html', {
+#         'tracks': tracks,
+#         'vibration_patterns': vibration_patterns,
+#     })
+
+from django.shortcuts import render
+from musicapp.models import MusicTrack, Playlist , Category
+
 def music_player(request):
-    tracks = MusicTrack.objects.all()
+    user_playlists = Playlist.objects.filter(user=request.user)
+    categories = Category.objects.all()  # Get all categories
     
-    # Example: Getting vibration patterns for all tracks
-    vibration_patterns = {track.title: track.get_vibration_pattern() for track in tracks}
-    
+    selected_playlist_id = request.GET.get("playlist", None)
+    selected_category_id = request.GET.get("category", None)
+
+    tracks = MusicTrack.objects.all()  # Default: show all tracks
+
+    if selected_playlist_id and selected_playlist_id != "all":
+        selected_playlist = Playlist.objects.get(id=selected_playlist_id, user=request.user)
+        tracks = selected_playlist.tracks.all()  
+
+    if selected_category_id and selected_category_id != "all":
+        tracks = tracks.filter(category_id=selected_category_id)
+
     return render(request, 'myapp/music_player.html', {
         'tracks': tracks,
-        'vibration_patterns': vibration_patterns,
+        'playlists': user_playlists,
+        'categories': categories,
+        'selected_playlist': selected_playlist_id
     })
+
+
+# def music_player(request):
+#     tracks = MusicTrack.objects.all()
+
+#     # Get vibration patterns and timestamps for each track
+#     track_data = {
+#         track.title: {
+#             "vibration_pattern": track.get_vibration_pattern(),
+#             "timestamps": track.get_timestamps()
+#         }
+#         for track in tracks
+#     }
+
+#     return render(request, 'myapp/music_player.html', {
+#         'tracks': tracks,
+#         'track_data': track_data,
+#     })
