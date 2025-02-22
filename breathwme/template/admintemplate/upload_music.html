@@ -151,6 +151,11 @@
     </style>
 </head>
 <body>
+    <!-- Loader -->
+<div id="loader" style="display: none; text-align: center;">
+    <p>Uploading...</p>
+</div>
+
 
     <div class="container">
         <div class="card">
@@ -302,6 +307,36 @@
             })
             .catch(() => alert("Something went wrong!"));
         });
+
+
+        // Code for loader start here and goes till end 
+        document.getElementById("uploadForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    
+    // Show loader
+    document.getElementById("loader").style.display = "block";
+
+    let formData = new FormData(this);
+    if (selectedTimestamps.length > 0) {
+        formData.append("timestamps", selectedTimestamps.join(","));
+    }
+
+    fetch("{% url 'breathwmeadmin:upload_music' %}", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.error || "Track uploaded successfully!");
+        location.reload();
+    })
+    .catch(() => alert("Something went wrong!"))
+    .finally(() => {
+        // Hide loader after upload is done
+        document.getElementById("loader").style.display = "none";
+    });
+});
+
     </script>
     
     <!-- <style>
