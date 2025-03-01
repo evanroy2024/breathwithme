@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+{% load static %}
+
 <html lang="en">
 
 <head>
@@ -398,12 +400,164 @@ option {
     display: none;
 }
 
+/* New Code for it --------------------------------------------------------------------------------- */
+.container { max-width: 700px; }
+        .header { font-size: 24px; font-weight: bold; padding: 15px 0; display: flex; align-items: center; }
+        .header i { color: #1DB954; font-size: 28px; margin-right: 10px; }
+        .filters select { flex: 1; background: #222; color: white; border: none; padding: 8px; border-radius: 5px; }
+        .track-item { padding: 12px; display: flex; align-items: center; gap: 15px; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+        .track-item:hover { background: rgba(255, 255, 255, 0.1); transform: scale(1.02); }
+        .track-item img { width: 55px; height: 55px; border-radius: 5px; }
+        .track-info { flex-grow: 1; }
+        .track-title { font-size: 16px; font-weight: bold; color: white; margin-bottom: 2px; }
+        .track-artist { font-size: 14px; color: rgba(255, 255, 255, 0.7); }
+        .play-btn { font-size: 18px; color: #1DB954; transition: transform 0.2s; }
+        .track-item:hover .play-btn { transform: scale(1.3); }
+
+/* Triangle  */
+/* .triangle {
+    width: 0;
+    height: 0;
+    border-left: 100px solid transparent;
+    border-right: 100px solid transparent;
+    border-bottom: 200px solid white;
+    position: relative;
+    background: none;
+    top: 50px;
+}
+
+.triangle::after {
+    content: "";
+    position: absolute;
+    top: 5px;
+    left: -95px;
+    width: 0;
+    height: 0;
+    border-left: 95px solid transparent;
+    border-right: 95px solid transparent;
+    border-bottom: 190px solid black;
+}
+
+.triangle::before {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: -100px;
+    width: 200px;
+    height: 5px;
+    background: rgb(0, 0, 0);
+} */
+
+
+/* Cover line placed exactly at the top of the triangle */
+/* .cover-line {
+    position: absolute;
+    width: 40%;
+    max-width: 20%;
+    height: 7px;
+    background-color: rgb(255, 0, 0);
+    left: 50%;
+    top: 34%;
+    transform: translateX(-50%);
+    z-index: 100;
+} */
+.triangle {
+    width: 0;
+    height: 0;
+    border-left: 102px solid transparent;
+    border-right: 99px solid transparent;
+    border-bottom: 199px solid white;
+    position: relative;
+    background: none;
+    z-index: 1; /* Lower than .text */
+}
+
+.triangle::after {
+    content: "";
+    position: absolute;
+    top: 5px;
+    left: -95px;
+    width: 0;
+    height: 0;
+    border-left: 95px solid transparent;
+    border-right: 95px solid transparent;
+    border-bottom: 190px solid rgb(255, 255, 255);
+    mix-blend-mode: difference; /* Makes the center transparent */
+}
+
+.triangle::before {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: -100px;
+    width: 200px;
+    height: 5px;
+    background: rgb(0, 0, 0);
+}
+@keyframes moveTriangle {
+    0% { transform: translate(4px, 191px); }         /* Start at bottom-left (5px up) */
+    33.33% { transform: translate(100px, -4px); }    /* Move to the top */
+    66.66% { transform: translate(200px, 191px); }   /* Move to bottom-right (5px up) */
+    100% { transform: translate(0px, 191px); }       /* Back to bottom-left */
+}
+
+/* upside down triangle  */
+.upside-down-triangle {
+    width: 0;
+    height: 0;
+    border-left: 102px solid transparent;
+    border-right: 99px solid transparent;
+    border-top: 199px solid white; /* Changed from border-bottom to border-top */
+    position: relative;
+    background: none;
+    z-index: 1; /* Lower than .text */
+}
+
+.upside-down-triangle::after {
+    content: "";
+    position: absolute;
+    bottom: 5px; /* Adjusted positioning */
+    left: -95px;
+    width: 0;
+    height: 0;
+    border-left: 95px solid transparent;
+    border-right: 95px solid transparent;
+    border-top: 190px solid rgb(255, 255, 255); /* Changed from border-bottom to border-top */
+    mix-blend-mode: difference; /* Makes the center transparent */
+}
+
+.upside-down-triangle::before {
+    content: "";
+    position: absolute;
+    bottom: -5px; /* Adjusted to bottom */
+    left: -100px;
+    width: 200px;
+    height: 5px;
+    background: rgb(0, 0, 0);
+}
+
+@keyframes moveUpsideDownTriangle {
+    0% { transform: translate(5px, -201px); }         /* Start at top-left (10px up) */
+    33.33% { transform: translate(100px, -6px); }     /* Move to the bottom (10px up) */
+    66.66% { transform: translate(200px, -201px); }   /* Move to top-right (10px up) */
+    100% { transform: translate(5px, -201px); }       /* Back to top-left */
+}
+
+
     </style>
 </head>
 
 <body>
+ 
     
 <div class="part1">
+    <div style="position: absolute; top: 20%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+        <a href="{% url 'home' %}" style="text-decoration: none; color: white; display: flex; align-items: center; justify-content: center;">
+            <i class="bi bi-arrow-left" style="font-size: 24px; margin-right: 8px;"></i> 
+            <span style="font-size: 20px; font-weight: bold; margin-left: 20%; margin-right: 20%;">  Breathing Exercise   </span>
+        </a>
+        <hr style="width: 25vw; border: 1px solid white; margin: 5px auto;">
+    </div>
     <select id="shapeSelector">
         <option value="circle">Select a Shape</option>
         <option value="circle">Circle</option>
@@ -424,29 +578,118 @@ option {
     </ul>
 </div>
 <div class="part2">
+    
     <h2>Choose Breating TIme</h2>
     <div id="timingControls"></div>
 
 </div>
+
+
+
+
 <div class="part3">
-    <select id="trackSelector">
-      <option value="">Select a song</option>
-      {% for track in tracks %}
-          <option value="{{ track.file.url }}" 
-                  data-title="{{ track.title }}" 
-                  data-artist="{{ track.artist }}"
-                  data-pattern="{{ track.get_vibration_pattern }}"
-                  data-timestamps="{{ track.get_timestamps }}">
-              {{ track.title }} - {{ track.artist }}
-          </option>
-      {% endfor %}
-  </select>
+    
+    <div class="container mt-4">
+        <div class="header">
+            <i class="bi bi-music-note-beamed"></i> Liked Songs
+        </div>
+
+        <!-- Filters -->
+        <div class="filters d-flex gap-2 mb-3">
+            <!-- Playlist Filter -->
+            <select id="playlistFilter">
+                <option value="all" {% if selected_playlist == "all" or not selected_playlist %}selected{% endif %}>All Playlists</option>
+                {% for playlist in playlists %}
+                <option value="{{ playlist.id }}" {% if selected_playlist == playlist.id|stringformat:"s" %}selected{% endif %}>{{ playlist.name }}</option>
+                {% endfor %}
+            </select>
+
+            <!-- Category Filter -->
+            <select id="categoryFilter">
+                <option value="all">All Categories</option>
+                {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.name }}</option>
+                {% endfor %}
+            </select>
+
+            <!-- Time Filter (For display only) -->
+            <select id="timeFilter">
+                <option value="all">All Time</option>
+                <option value="latest">Latest</option>
+                <option value="oldest">Oldest</option>
+            </select>
+        </div>
+
+        <!-- Track List -->
+        <div id="trackList">
+            {% for track in tracks %}
+            <div class="track-item d-flex align-items-center bg-transparent border-0"
+                data-url="{{ track.file.url }}"
+                data-title="{{ track.title }}"
+                data-artist="{{ track.artist }}"
+                data-category="{{ track.category.id }}"
+                data-timestamps="{{ track.timestamps|default:'' }}">
+
+                <img src="{% if track.image %}{{ track.image.url }}{% else %}{% static 'music/songimg.png' %}{% endif %}" alt="{{ track.title }}">
+                <div class="track-info">
+                    <div class="track-title">{{ track.title }}</div>
+                    <div class="track-artist">{{ track.artist }}</div>
+                </div>
+                <i class="bi bi-play-circle-fill play-btn"></i>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 </div>
 
-<section>
-    <button id="reloadBtn">Customise</button>
-    <button id="goBackToPart3">Select Another Song</button>
+<!-- AJAX Script -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    document.body.addEventListener("change", function (event) {
+        if (event.target && (event.target.id === "playlistFilter" || event.target.id === "categoryFilter")) {
+            let playlistId = document.getElementById("playlistFilter").value;
+            let categoryId = document.getElementById("categoryFilter").value;
+            
+            console.log("Filters Applied:", { playlist: playlistId, category: categoryId });
 
+            fetch(`?playlist=${playlistId}&category=${categoryId}`, { method: "GET" })
+                .then(response => response.text())
+                .then(html => {
+                    let parser = new DOMParser();
+                    let doc = parser.parseFromString(html, "text/html");
+                    
+                    let newTrackList = doc.getElementById("trackList");
+                    if (newTrackList) {
+                        document.getElementById("trackList").innerHTML = newTrackList.innerHTML;
+                    } else {
+                        console.error("Error: Track list not found in response!");
+                    }
+                })
+                .catch(error => console.error("Error fetching tracks:", error));
+        }
+    });
+});
+</script>
+
+    
+</div>
+
+
+
+
+
+
+<section>
+    <div class="cover-line"></div>
+
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 10vh; text-align: center;">
+        <a href="{% url 'home' %}" style="text-decoration: none; color: white; display: flex; align-items: center; gap: 10px;">
+            <i class="bi bi-arrow-left" style="font-size: 24px;"></i> 
+            <span style="font-size: 20px; font-weight: bold; white-space: nowrap; ">Breathing Exercise</span>
+        </a>
+        <hr style="width: 30vw; border: 1px solid white; margin: 2px auto 0; ">
+    </div>
+    
 <div class="shape-container" id="shapeContainer"></div>
 
   <audio id="audioPlayer"></audio>
@@ -459,12 +702,195 @@ option {
   
   <!-- <button id="playSong">Play</button>
   <button id="stopButton">Stop</button> -->
-
-  <button id="prevSong">Previous</button>
-  <button id="playSong">Play</button>
-  <button id="nextSong">Next</button>
-  <button id="stopButton">Stop</button>
+<div class="playallbtns">
+  <button id="prevSong">⏮</button>
+  <button id="playSong">▶️ </button>
+  <button id="nextSong">⏭</button>
+</div>
+<div class="others">
+  <button id="reloadBtn">Customise</button>
+  <button id="goBackToPart3">Songs</button>
+</div>
 </section>
+
+<!-- Confirmation Box -->
+<div id="confirmBox">
+    <div class="confirm-content">
+        <p>Are you sure you want to stop the exercise?</p>
+        <button id="stopButton">Confirm Stop</button>
+    </div>
+</div>
+
+
+<style>
+    #confirmBox {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #222; /* Dark background */
+    padding: 25px;
+    box-shadow: 0px 4px 15px rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    text-align: center;
+    display: none; /* Hidden by default */
+    z-index: 1000;
+    width: 320px;
+    color: white;
+    font-size: 18px;
+    font-family: Arial, sans-serif;
+}
+
+/* Blur the background when the confirm box appears */
+body.confirm-active::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* Dark overlay */
+    z-index: 999;
+}
+
+/* Stop Button */
+#stopButton {
+    background: red;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 15px;
+    border-radius: 8px;
+    transition: 0.2s ease-in-out;
+    font-weight: bold;
+}
+
+#stopButton:hover {
+    background: #ff4d4d; /* Slightly lighter red on hover */
+}
+
+/* Prevent interactions with the rest of the page when confirm box is active */
+body.confirm-active {
+    pointer-events: none;
+}
+
+#confirmBox * {
+    pointer-events: auto;
+}
+
+</style>
+<style>
+    /* Center everything inside the section */
+section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    padding: 20px 0;
+}
+
+/* Progress Bar Container */
+#progressContainer {
+    width: 80%;
+    max-width: 400px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.2); /* Subtle white tone */
+    border-radius: 10px;
+    position: relative;
+    margin: 15px auto;
+    overflow: hidden;
+}
+
+/* Progress Fill */
+#progressBar {
+    height: 100%;
+    width: 0%;
+    background: #d4af37; /* Soft gold */
+    transition: width 0.3s ease-in-out;
+}
+
+/* Progress Handle */
+#progressHandle {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: #fff;
+    border-radius: 50%;
+    top: 50%;
+    left: 0%;
+    transform: translate(-50%, -50%);
+    transition: left 0.3s ease-in-out;
+}
+
+/* Row of Main Music Buttons */
+.playallbtns {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+/* Music Buttons (Previous, Play, Next) */
+#prevSong, #playSong, #nextSong {
+    font-size: 20px;
+    padding: 12px 14px;
+    background: transparent;
+    border: 1px;
+    color: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Play button slightly bigger */
+#playSong {
+    font-size: 22px;
+    padding: 14px 16px;
+}
+
+/* Hover Effect */
+#prevSong:hover, #playSong:hover, #nextSong:hover {
+    color: #222;
+}
+
+/* Other Buttons Row */
+.others {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+/* Customise & Select Another Song Buttons */
+.others button {
+    font-size: 14px;
+    padding: 10px 18px;
+    border: 1.5px solid #d4af37;
+    border-radius: 6px;
+    color: #fff;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Hover Effect */
+.others button:hover {
+    background: #d4af37;
+    color: #222;
+}
+.part3{
+    max-width: 1200px;
+    width: 90%;
+}
+.container {
+    max-width: 900px;
+}
+</style>
 
 
   <script>
@@ -585,6 +1011,45 @@ option {
                         div.style.height = "300px";
                         goldenLine.style.animation = `moveRectangleV ${currentDuration} linear 1`;
                         break;
+                    case "triangle":
+                        div.className = "triangle"; // Apply triangle styles
+                        goldenLine.style.animation = `moveTriangle ${currentDuration} linear infinite`;
+                         // Apply text styles only for the triangle case
+                        textElement.style.position = "absolute";
+                        textElement.style.color = "white";
+                        textElement.style.fontSize = "20px";
+                        textElement.style.zIndex = "2";
+                        textElement.style.marginTop = "115px";
+                        textElement.style.fontWeight = "bold";
+                        textElement.style.marginLeft = "-30px";
+                        // Apply golden-line styles only for the triangle case
+                        goldenLine.style.position = "absolute";
+                        goldenLine.style.border = "2px solid gold";
+                        goldenLine.style.marginLeft = "-108px";
+                        goldenLine.style.zIndex = "2"; // Ensure it stays above the triangle
+                        break;
+
+                    case "reverseTriangle":
+                        div.className = "upside-down-triangle"; // Apply upside-down triangle styles
+                        goldenLine.style.animation = `moveUpsideDownTriangle ${currentDuration} linear infinite`;
+
+                        // Apply text styles only for the upside-down triangle case
+                        textElement.style.position = "absolute";
+                        textElement.style.color = "white";
+                        textElement.style.fontSize = "20px";
+                        textElement.style.zIndex = "2";
+                        textElement.style.marginTop = "-120px"; // Adjusted for upside-down positioning
+                        textElement.style.fontWeight = "bold";
+                        textElement.style.marginLeft = "-30px";
+
+                        // Apply golden-line styles only for the upside-down triangle case
+                        goldenLine.style.position = "absolute";
+                        goldenLine.style.border = "2px solid gold";
+                        goldenLine.style.marginLeft = "-108px";
+                        goldenLine.style.zIndex = "2"; // Ensure it stays above the triangle
+
+                        break;
+                        
                 }
   
                 animationTimeout = setTimeout(() => {
@@ -613,6 +1078,26 @@ option {
         div.appendChild(textElement);
         shapeContainer.appendChild(div);
         stopAnimation();
+        // Extra trial for stop animation 
+
+        
+playSong.addEventListener("click", () => {
+    if (!selectedTrack) {
+        alert("Please select a song first!");
+        return;
+    }
+
+    if (audioPlayer.paused) {
+        audioPlayer.src = selectedTrack;
+        audioPlayer.play();
+        playSong.textContent = "⏸";
+        startAnimation();
+    } else {
+        audioPlayer.pause();
+        playSong.textContent = "▶️";
+        stopAnimation();
+    }
+});
     }
   
     shapeSelector.addEventListener("change", (e) => {
@@ -622,28 +1107,91 @@ option {
   
     createShape(shapeSelector.value);
     createTimingInputs(shapeSelector.value);
-  
-    // 🎵 Music Controls + Progress Bar
+
+
+// ------------------------------------------------------------------------------------------------------------------
+document.addEventListener("DOMContentLoaded", function () {
+    const trackList = document.getElementById("trackList");
+    const playSong = document.getElementById("playSong");
+    const audioPlayer = document.getElementById("audioPlayer");
+
+    let selectedTrack = null;
+    let timestamps = [];
+    let isPlaying = false;
+
+    // Song selection logic
+    trackList.addEventListener("click", (event) => {
+        const trackItem = event.target.closest(".track-item");
+        if (!trackItem) return;
+
+        selectedTrack = trackItem.dataset.url;
+        setTimestamps(trackItem);
+
+        // Highlight selected song
+        document.querySelectorAll(".track-item").forEach(item => item.style.fontWeight = "normal");
+        trackItem.style.fontWeight = "bold";
+    });
+
+    // Play/Pause button logic
+    const stopButton = document.getElementById("stopButton");
+    const confirmBox = document.getElementById("confirmBox");
+
+
     playSong.addEventListener("click", () => {
-        const trackSelector = document.getElementById("trackSelector");
-        const selectedOption = trackSelector.options[trackSelector.selectedIndex];
-  
-        if (!selectedOption.value) {
+        if (!selectedTrack) {
             alert("Please select a song first!");
             return;
         }
-  
-        if (audioPlayer.paused) {
-            audioPlayer.src = selectedOption.value;
+
+        if (!isPlaying) {
+            audioPlayer.src = selectedTrack;
             audioPlayer.play();
-            playSong.textContent = "Pause";
-            startAnimation();
+            playSong.textContent = "⏸";
+            isPlaying = true;
+            startAnimation(); // ✅ Start animation when 
+            confirmBox.style.display = "none"; // Hide confirmation box when playing
         } else {
+            
             audioPlayer.pause();
-            playSong.textContent = "Play";
-            stopAnimation();
+            confirmBox.style.display = "flex"; // Show confirmation box when paused
+            playSong.textContent = "▶️";
+            isPlaying = false;
+        }
+        
+    });
+// Hide the confirmation box and stop the animation when the stop button is clicked
+stopButton.addEventListener("click", () => {
+    confirmBox.style.display = "none";
+    stopAnimation(); // Call your function to stop animation
+});
+    function setTimestamps(trackItem) {
+        let rawTimestamps = trackItem.dataset.timestamps;
+        timestamps = rawTimestamps ? rawTimestamps.split(",").map(Number) : [];
+        console.log("Loaded timestamps:", timestamps);
+    }
+
+    // ===== VIBRATION CODE STARTS HERE =====
+    audioPlayer.addEventListener("timeupdate", function () {
+        let currentTime = Math.floor(audioPlayer.currentTime);
+
+        // Ensure vibration only happens at set timestamps once
+        if (timestamps.includes(currentTime)) {
+            navigator.vibrate(1000);
+            timestamps = timestamps.filter(t => t !== currentTime);
         }
     });
+    // ===== VIBRATION CODE ENDS HERE =====
+
+    // // Handle song ending
+    // audioPlayer.addEventListener("ended", function () {
+    //     isPlaying = false;
+    //     playSong.textContent = "▶️";
+    //     stopAnimation(); // ✅ Stop animation when song ends
+    //     console.log("Song ended");
+    // });
+});
+
+// ------------------------------------------------------------------------------------------------------------------
   
     function updateProgressBar() {
         if (audioPlayer.duration) {
@@ -698,33 +1246,82 @@ option {
 const nextSong = document.getElementById("nextSong");
 const trackSelector = document.getElementById("trackSelector");
 
+const trackItems = document.querySelectorAll(".track-item");
+
+let currentIndex = 0; // Start from the first song
+
 function changeTrack(direction) {
-    let currentIndex = trackSelector.selectedIndex;
     let newIndex = currentIndex + direction;
 
-    if (newIndex >= 1 && newIndex < trackSelector.options.length) {
-        trackSelector.selectedIndex = newIndex;
+    if (newIndex >= 0 && newIndex < trackItems.length) {
+        currentIndex = newIndex;
         playSelectedTrack();
     }
 }
-
 function playSelectedTrack() {
-    const selectedOption = trackSelector.options[trackSelector.selectedIndex];
+    const selectedTrack = trackItems[currentIndex];
 
-    if (selectedOption.value) {
-        audioPlayer.src = selectedOption.value;
+    if (selectedTrack) {
+        audioPlayer.src = selectedTrack.dataset.url;
         audioPlayer.play();
-        playSong.textContent = "Pause";
+        playSong.textContent = "⏸";
         startAnimation();
     }
 }
 
+// Next & Previous button event listeners
 nextSong.addEventListener("click", () => changeTrack(1));
 prevSong.addEventListener("click", () => changeTrack(-1));
-
   </script>
-  
-<!-- new code here ------------------------------------------------------------------------------------------------ -->
+  <!-- Vibration code start here  -->
+ <script>
+    // document.addEventListener("DOMContentLoaded", function () {
+    //     let audioPlayer = document.getElementById("audioPlayer");
+    //     let playButtons = document.querySelectorAll(".play-btn");
+    //     let timestamps = []; // Store timestamps for the current song
+    //     let isPlaying = false; // Track if the song is playing
+    
+    //     // Function to set timestamps when a song is played
+    //     function setTimestamps(trackItem) {
+    //         let rawTimestamps = trackItem.dataset.timestamps; // Get timestamps from data attribute
+    //         timestamps = rawTimestamps ? rawTimestamps.split(",").map(Number) : [];
+    //         console.log("Loaded timestamps:", timestamps);
+    //     }
+    
+    //     // Attach event listeners to all play buttons
+    //     playButtons.forEach(button => {
+    //         button.addEventListener("click", function () {
+    //             let trackItem = this.closest(".track-item");
+    //             let trackUrl = trackItem.dataset.url; // Get song URL
+    
+    //             if (!isPlaying) {
+    //                 audioPlayer.src = trackUrl; // Load song
+    //                 audioPlayer.play(); // Start playing
+    //                 setTimestamps(trackItem); // Get timestamps for this song
+    //                 isPlaying = true; // Mark song as playing
+    //             }
+    //         });
+    //     });
+    
+    //     // Listen for audio time updates to trigger vibration
+    //     audioPlayer.addEventListener("timeupdate", function () {
+    //         let currentTime = Math.floor(audioPlayer.currentTime);
+    
+    //         if (timestamps.includes(currentTime)) {
+    //             navigator.vibrate(1000); // Vibrate for 1 second
+    //             timestamps = timestamps.filter(t => t !== currentTime); // Remove triggered timestamp
+    //         }
+    //     });
+    
+    //     // Reset `isPlaying` when the audio ends to allow playing again
+    //     audioPlayer.addEventListener("ended", function () {
+    //         isPlaying = false;
+    //     });
+    // });
+    </script> 
+    
+<!-- Vibration code Ends here  -->
+  <!-- new code here ------------------------------------------------------------------------------------------------ -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const part1 = document.querySelector(".part1");
@@ -763,14 +1360,24 @@ prevSong.addEventListener("click", () => changeTrack(-1));
             });
         }
 
-        // When a song is selected, show the final section and hide Part 3
-        trackSelector.addEventListener("change", function () {
-            if (trackSelector.value) {
-                part3.style.display = "none";
-                section.style.display = "block";
-                goBackToPart3.style.display = "block"; // Show button after song selection
-            }
-        });
+        const trackList = document.getElementById("trackList");
+let selectedTrack = null; // Store selected song
+
+trackList.addEventListener("click", (event) => {
+    const trackItem = event.target.closest(".track-item"); // Ensure clicking inside a track item
+    if (!trackItem) return;
+
+    selectedTrack = trackItem.dataset.url; // Get song URL
+
+    // Hide Part 3 and Show Final Section
+    document.querySelector(".part3").style.display = "none";
+    document.querySelector("section").style.display = "block";
+    document.getElementById("goBackToPart3").style.display = "block"; // Show button after song selection
+
+    // Optional: Highlight selected song (basic visual feedback)
+    document.querySelectorAll(".track-item").forEach(item => item.style.fontWeight = "normal");
+    trackItem.style.fontWeight = "bold";
+});
 
         // Go back to Part 3 when button is clicked
         goBackToPart3.addEventListener("click", function () {
@@ -783,6 +1390,54 @@ prevSong.addEventListener("click", () => changeTrack(-1));
         location.reload();
     });
 </script>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<style>
+       body { background: #000000; color: white; }
+    .container { max-width: 700px; }
+    .header { font-size: 24px; font-weight: bold; padding: 15px 0; display: flex; align-items: center; }
+    .header i { color: #1DB954; font-size: 28px; margin-right: 10px; }
+    .filters select { flex: 1; background: #222; color: white; border: none; padding: 8px; border-radius: 5px; }
+    .track-item { padding: 12px; display: flex; align-items: center; gap: 15px; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+    .track-item:hover { background: rgba(255, 255, 255, 0.1); transform: scale(1.02); }
+    .track-item img { width: 55px; height: 55px; border-radius: 5px; }
+    .track-info { flex-grow: 1; }
+    .track-title { font-size: 16px; font-weight: bold; color: white; margin-bottom: 2px; }
+    .track-artist { font-size: 14px; color: rgba(255, 255, 255, 0.7); }
+    .play-btn { font-size: 18px; color: #1DB954; transition: transform 0.2s; }
+    .track-item:hover .play-btn { transform: scale(1.3); }
+</style>
+
+<!-- Trianngle code  -->
+<style>
+/* Triangle Moving Ball Animation */
+/* @keyframes moveTriangle {
+    0% { top: 0px; left: 50px; }
+    33.33% { top: 150px; left: 200px; }
+    66.66% { top: 150px; left: -100px; }
+    100% { top: 0px; left: 50px; }
+} */
+
+</style>
+<style>
+    
+</style>
 </body>
 
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

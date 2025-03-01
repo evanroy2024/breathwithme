@@ -15,13 +15,18 @@ class MusicTrack(models.Model):
         ('three_quarter', '3/4 Note'),
         ('full', 'Full Note'),
     ]
+    VIBRATION_CHOICES = [
+    ('Default', 'Default'),
+    ('Customise', 'Customise'),
+    ]
 
     title = models.CharField(max_length=200)
     artist = models.CharField(max_length=100, default='By admin')
     file = models.FileField(upload_to='music/')
     image = models.ImageField(upload_to="music/images/", blank=True, null=True)
     viewcount = models.IntegerField(default=0)
-    
+
+    vibrationset = models.CharField(max_length=10, choices=VIBRATION_CHOICES, default='Default')
     vibration_pattern = models.CharField(
         max_length=20,
         choices=SCALE_CHOICES,

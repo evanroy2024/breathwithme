@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,11 +9,12 @@
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://unpkg.com/wavesurfer.js"></script> 
+    <script src="https://unpkg.com/wavesurfer.js"></script>
 
     <style>
         /* Global Styles */
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
         body {
             background: url("{% static 'img/admin/bg3.jpg' %}") no-repeat center center/cover;
             color: #333;
@@ -34,7 +36,8 @@
             border-radius: 12px;
             padding: 25px;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-            border: 1px solid #FFD700; /* Gold */
+            border: 1px solid #FFD700;
+            /* Gold */
         }
 
         h2 {
@@ -76,26 +79,27 @@
         }
 
         /* Waveform */
-#waveform {
-    width: 100%;
-    height: 100px;
-    background: rgb(51, 51, 51);
-    border-radius: 5px;
-    margin-top: 10px;
-    cursor: pointer;
-    position: relative;
-}
+        #waveform {
+            width: 100%;
+            height: 100px;
+            background: rgb(51, 51, 51);
+            border-radius: 5px;
+            margin-top: 10px;
+            cursor: pointer;
+            position: relative;
+        }
 
-/* Marker */
-.waveform-marker {
-    position: absolute;
-    top: 0;
-    height: 100%;
-    width: 3px;
-    background-color: rgb(253, 0, 0);
-    border-radius: 2px;
-    z-index: 10; /* Ensure marker appears above the waveform */
-}
+        /* Marker */
+        .waveform-marker {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background-color: rgb(253, 0, 0);
+            border-radius: 2px;
+            z-index: 10;
+            /* Ensure marker appears above the waveform */
+        }
 
 
         /* Controls */
@@ -150,17 +154,19 @@
         }
     </style>
 </head>
-<body>
-    <!-- Loader -->
-<div id="loader" style="display: none; text-align: center;">
-    <p>Uploading...</p>
-</div>
 
+<body>
+    <!-- Loader (Hidden by Default) -->
+    <div id="uploadOverlay" class="upload-overlay">
+        <div class="upload-box">
+            <div class="spinner"></div>
+            <p>Uploading...</p>
+        </div>
+    </div>
 
     <div class="container">
         <div class="card">
             <h2>Upload Music</h2>
-
             <form id="uploadForm" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
 
@@ -170,7 +176,7 @@
                     <input type="text" class="form-control" id="artist" name="artist" value="By Admin" required>
                     <select class="form-select" id="category" name="category" required>
                         {% for category in categories %}
-                            <option value="{{ category.id }}">{{ category.name }}</option>
+                        <option value="{{ category.id }}">{{ category.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -178,7 +184,8 @@
                 <!-- File Upload -->
                 <div class="mb-3">
                     <label class="form-label mt-3">Choose File:</label>
-                    <input type="file" class="form-control file-input" id="file" name="file" accept="audio/*" required onchange="loadWaveform()">
+                    <input type="file" class="form-control file-input" id="file" name="file" accept="audio/*" required
+                        onchange="loadWaveform()">
                 </div>
 
                 <!-- Waveform -->
@@ -186,83 +193,108 @@
 
                 <!-- Controls -->
                 <div class="controls">
+                    <!-- FontAwesome for Icons (CDN) -->
+                    <link rel="stylesheet"
+                        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+                    <!-- Mark Timestamp Button -->
+                    <button type="button" class="btn-circle" id="markTimestampBtn" onclick="markTimestamp()">
+                        <i class="fa-solid fa-pencil-alt"></i>
+                    </button>
+
+
+
+
+
                     <button type="button" class="btn-circle" id="rewindBtn" onclick="seek(-10)">⏪</button>
                     <button type="button" class="btn-circle" id="playPauseBtn" onclick="togglePlay()">▶</button>
                     <button type="button" class="btn-circle" id="forwardBtn" onclick="seek(10)">⏩</button>
+                    <!-- Copy Pattern Button -->
+                    <button type="button" class="btn-circle" id="copyPatternBtn">
+                        <i class="fa-solid fa-copy"></i>
+                    </button>
                 </div>
 
                 <!-- Timestamp Display -->
                 <p class="timestamp-list">Timestamps: <span id="timestamps">None</span></p>
 
-                <!-- Vibration Pattern -->
-                <div class="mb-3">
-                    <label class="form-label">Vibration Pattern (Optional):</label>
-                    <select class="form-select" id="vibration_pattern" name="vibration_pattern">
-                        <option value="">-- Select --</option>
-                        <option value="quarter">1/4 Note</option>
-                        <option value="half">1/2 Note</option>
-                        <option value="three_quarter">3/4 Note</option>
-                        <option value="full">Full Note</option>
-                    </select>
-                </div>
+               
+
+                <!-- Vibration Set -->
+<div class="mb-3">
+    <label class="form-label">Vibration Setting:</label>
+    <select class="form-select" id="vibrationset" name="vibrationset">
+        <option value="Default">Default</option>
+        <option value="Customise">Customise</option>
+    </select>
+</div>
+
 
                 <!-- Upload Button -->
                 <button type="submit" class="btn btn-custom">Upload</button>
             </form>
-        </div>
-    </div>
+            <!-- Beautiful Button to Open Django Admin Panel -->
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="/admin/" target="_blank" class="admin-button">Go to Admin Panel</a>
+            </div>
 
-    <script>
-        let wavesurfer;
+
+
+        </div>
+
+    </div>
+ <!-- Vibration Pattern -->
+ <!-- <div class="mb-3">
+    <label class="form-label">Vibration Pattern (Optional):</label>
+    <select class="form-select" id="vibration_pattern" name="vibration_pattern">
+        <option value="">-- Select --</option>
+        <option value="quarter">1/4 Note</option>
+        <option value="half">1/2 Note</option>
+        <option value="three_quarter">3/4 Note</option>
+        <option value="full">Full Note</option>
+    </select>
+</div> -->
+    <script>let wavesurfer;
         let selectedTimestamps = [];
-    
+
         function loadWaveform() {
             let fileInput = document.getElementById("file").files[0];
-    
+
             if (!fileInput) {
                 alert("Please select a file first!");
                 return;
             }
-    
+
             let reader = new FileReader();
-            reader.onload = function(event) {
+            reader.onload = function (event) {
                 if (wavesurfer) {
                     wavesurfer.destroy();
                 }
-    
+
                 wavesurfer = WaveSurfer.create({
                     container: "#waveform",
-                    waveColor: "#ADD8E6",  /* Light Blue - soft and elegant */
-                    progressColor: "#FFD700",  /* Yellow - vibrant and eye-catching */
+                    waveColor: "#ADD8E6",
+                    progressColor: "#FFD700",
                     height: 100,
                     barWidth: 2,
-                    interact: false, 
+                    interact: false,
                 });
-    
+
                 wavesurfer.load(event.target.result);
-    
-                wavesurfer.on('ready', function() {
+
+                wavesurfer.on('ready', function () {
                     console.log("Waveform ready!");
-                });
-    
-                document.getElementById("waveform").addEventListener("click", function(event) {
-                    let duration = wavesurfer.getDuration();
-                    let boundingRect = event.target.getBoundingClientRect();
-                    let clickX = event.clientX - boundingRect.left;
-                    let percentage = clickX / boundingRect.width;
-                    let timestamp = parseFloat((percentage * duration).toFixed(2));
-    
-                    if (!selectedTimestamps.includes(timestamp)) {
-                        selectedTimestamps.push(timestamp);
+                    if (!selectedTimestamps.includes(0)) {
+                        selectedTimestamps = [0]; // Reset and ensure 0 is always first
+                        addMarker(0);
                         updateTimestampList();
-                        addMarker(clickX);
                     }
                 });
             };
-    
+
             reader.readAsDataURL(fileInput);
         }
-    
+
         function togglePlay() {
             if (wavesurfer) {
                 wavesurfer.playPause();
@@ -270,27 +302,81 @@
                 btn.textContent = wavesurfer.isPlaying() ? "⏸" : "▶";
             }
         }
-    
+
         function seek(seconds) {
             if (wavesurfer) {
                 let newTime = wavesurfer.getCurrentTime() + seconds;
                 wavesurfer.seekTo(newTime / wavesurfer.getDuration());
             }
         }
-    
+
         function updateTimestampList() {
             document.getElementById("timestamps").innerText = selectedTimestamps.join(", ") || "None";
         }
-    
-        function addMarker(clickX) {
+
+        function addMarkerAtCurrentTime() {
+            if (wavesurfer) {
+                let currentTime = parseFloat(wavesurfer.getCurrentTime().toFixed(2));
+                if (!selectedTimestamps.includes(currentTime)) {
+                    selectedTimestamps.push(currentTime);
+                    updateTimestampList();
+                    addMarker(currentTime);
+                }
+            }
+        }
+
+        function addMarker(timestamp) {
+            if (!wavesurfer || wavesurfer.getDuration() === 0) return;
+
             let waveform = document.getElementById("waveform");
             let marker = document.createElement("div");
             marker.classList.add("waveform-marker");
-            marker.style.left = `${clickX}px`;
+
+            let duration = wavesurfer.getDuration();
+            let position = (timestamp / duration) * waveform.clientWidth;
+            marker.style.left = `${position}px`;
+
             waveform.appendChild(marker);
         }
-    
-        document.getElementById("uploadForm").addEventListener("submit", function(event) {
+
+        function copyPattern() {
+            if (selectedTimestamps.length < 2 || !wavesurfer) return;
+            let duration = wavesurfer.getDuration();
+            let pattern = [...selectedTimestamps];
+            let lastTimestamp = pattern[pattern.length - 1];
+            let intervals = [];
+
+            for (let i = 1; i < pattern.length; i++) {
+                intervals.push(pattern[i] - pattern[i - 1]);
+            }
+
+            while (lastTimestamp + intervals[intervals.length - 1] < duration) {
+                for (let interval of intervals) {
+                    lastTimestamp += interval;
+                    if (lastTimestamp >= duration) break;
+                    selectedTimestamps.push(parseFloat(lastTimestamp.toFixed(2)));
+                    addMarker(lastTimestamp);
+                }
+            }
+            updateTimestampList();
+        }
+
+        document.addEventListener("keydown", function (event) {
+            if (event.code === "Space") {
+                event.preventDefault();
+                addMarkerAtCurrentTime();
+            }
+        });
+
+        document.getElementById("markTimestampBtn").addEventListener("click", function () {
+            addMarkerAtCurrentTime();
+        });
+
+        document.getElementById("copyPatternBtn").addEventListener("click", function () {
+            copyPattern();
+        });
+
+        document.getElementById("uploadForm").addEventListener("submit", function (event) {
             event.preventDefault();
             let formData = new FormData(this);
             if (selectedTimestamps.length > 0) {
@@ -300,68 +386,120 @@
                 method: "POST",
                 body: formData
             })
-            .then(response => response.json())
-            .then(data => {
-                alert(data.error || "Track uploaded successfully!");
-                location.reload();
-            })
-            .catch(() => alert("Something went wrong!"));
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.error || "Track uploaded successfully!");
+                    location.reload();
+                })
+                .catch(() => alert("Something went wrong!"));
         });
-
-
-        // Code for loader start here and goes till end 
-        document.getElementById("uploadForm").addEventListener("submit", function(event) {
-    event.preventDefault();
-    
-    // Show loader
-    document.getElementById("loader").style.display = "block";
-
-    let formData = new FormData(this);
-    if (selectedTimestamps.length > 0) {
-        formData.append("timestamps", selectedTimestamps.join(","));
-    }
-
-    fetch("{% url 'breathwmeadmin:upload_music' %}", {
-        method: "POST",
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert(data.error || "Track uploaded successfully!");
-        location.reload();
-    })
-    .catch(() => alert("Something went wrong!"))
-    .finally(() => {
-        // Hide loader after upload is done
-        document.getElementById("loader").style.display = "none";
-    });
-});
-
     </script>
-    
-    <!-- <style>
-        /* Customize the waveform appearance */
-        #waveform {
+    <!-- <button id="copyPatternBtn">Copy Pattern</button> -->
+
+
+    <style>
+        /* Overlay to dim the background */
+        .upload-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            height: 100px;
-            background: #f0f0f0;
-            border-radius: 5px;
-            margin-top: 10px;
-            cursor: pointer;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            /* Hazy effect */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            display: none;
+            /* Hidden by default */
+        }
+
+        /* Uploading box */
+        .upload-box {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
             position: relative;
+            z-index: 10000;
         }
 
-        .waveform-container wave {
-            stroke: #FFD700 !important; /* Golden color */
+        /* Spinner animation */
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(0, 0, 0, 0.3);
+            border-radius: 50%;
+            border-top-color: #FFD700;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
         }
 
-        .waveform-container wave.progress {
-            stroke: #FFA500 !important; /* Darker gold (orange shade) */
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+    <!-- ✅ Button Styling -->
+    <style>
+        .admin-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            /* Gradient Effect */
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
-        .waveform-container wave.cursor {
-            stroke: red !important; /* Red cursor for better visibility */
+        .admin-button:hover {
+            background: linear-gradient(135deg, #5b7cfb, #966be3);
+            /* Darker gradient on hover */
+            transform: scale(1.05);
+            /* Slight zoom on hover */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
         }
-    </style> -->
+
+        .btn-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: white;
+            font-size: 20px;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s ease-in-out;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-circle i {
+            color: white;
+            font-size: 22px;
+        }
+
+        .btn-circle:hover {
+            transform: scale(1.1);
+            box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+    <script>
+        document.getElementById("uploadForm").addEventListener("submit", function (event) {
+            document.getElementById("uploadOverlay").style.display = "flex"; // Show loader
+        });
+    </script>
+
 </body>
+
 </html>

@@ -18,7 +18,7 @@ from .models import MusicTrack
 
 @admin.register(MusicTrack)
 class MusicTrackAdmin(admin.ModelAdmin):
-    list_display = ('title', 'artist', 'viewcount', 'vibration_pattern', 'category', 'image')
+    list_display = ('title', 'artist', 'viewcount', 'vibration_pattern', 'category', 'image','vibrationset')
     search_fields = ('title', 'artist')
     list_filter = ('vibration_pattern', 'category')
     ordering = ('-viewcount',)

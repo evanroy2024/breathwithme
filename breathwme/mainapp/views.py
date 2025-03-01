@@ -304,7 +304,7 @@ from django.shortcuts import render
 from musicapp.models import MusicTrack, Playlist , Category
 
 def music_player(request):
-    user_playlists = Playlist.objects.filter(user=request.user)
+    # user_playlists = Playlist.objects.filter(user=request.user)
     categories = Category.objects.all()  # Get all categories
     
     selected_playlist_id = request.GET.get("playlist", None)
@@ -321,7 +321,7 @@ def music_player(request):
 
     return render(request, 'myapp/music_player.html', {
         'tracks': tracks,
-        'playlists': user_playlists,
+        # 'playlists': user_playlists,
         'categories': categories,
         'selected_playlist': selected_playlist_id
     })
