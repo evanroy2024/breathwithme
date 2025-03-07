@@ -35,19 +35,29 @@ def exercise_list(request):
     exercises = SilentExercise.objects.all()
     return render(request, 'breathxapp/exercise_list.html', {'exercises': exercises})
 
-from musicapp.models import MusicTrack
+from .models import SilentExercise
+from django.shortcuts import render, get_object_or_404
+from breathxapp.models import SilentExercise
+
 def play_exercise(request, exercise_id):
     """Fetch exercise details and return JSON response."""
     exercise = get_object_or_404(SilentExercise, id=exercise_id)
-    tracks = MusicTrack.objects.all()
-    vibration_patterns = {track.title: track.get_vibration_pattern() for track in tracks}
-    print(exercise.breaths)
-    return render(request, 'breathxapp/play_exercise.html', {
-        'exercise': exercise,
-        'tracks': tracks,
-        'vibration_patterns': vibration_patterns,
-    })
 
+    # Convert vibration cues string to a list
+
+    context = {
+        'exercise': {
+            'id': exercise.id,
+            'name': exercise.name,
+            'total_time': exercise.total_time,
+            'breaths': exercise.breaths,
+            'skill_level': exercise.skill_level,
+            'shape': exercise.shape,
+            'vibration_pattern': exercise.vibration_pattern,
+        }
+    }
+
+    return render(request, 'breathxapp/play_exercise.html', context)
 
 
 
@@ -88,3 +98,6 @@ def activaty(request):
     return render(request, "breathxapp/activaty.html")
 
 # MEtting booking ends here ---------------------------------------------------------------------------------
+
+def breathfree(request):
+    return render(request, "breathxapp/breathfree.html")

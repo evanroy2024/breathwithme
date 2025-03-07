@@ -25,6 +25,7 @@ class MusicTrack(models.Model):
     file = models.FileField(upload_to='music/')
     image = models.ImageField(upload_to="music/images/", blank=True, null=True)
     viewcount = models.IntegerField(default=0)
+    bpm = models.IntegerField(default=30,blank=True, null=True)
 
     vibrationset = models.CharField(max_length=10, choices=VIBRATION_CHOICES, default='Default')
     vibration_pattern = models.CharField(

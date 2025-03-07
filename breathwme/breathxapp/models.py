@@ -12,10 +12,14 @@ class SilentExercise(models.Model):
     total_time = models.PositiveIntegerField(help_text="Total duration in seconds (e.g., 120 for 2 minutes)")
     breaths = models.PositiveIntegerField()
     skill_level = models.CharField(max_length=15, choices=[('Beginner', 'Beginner'), ('Intermediate', 'Intermediate'), ('Advanced', 'Advanced')])
-    
     shape = models.CharField(max_length=15, choices=SHAPE_CHOICES, help_text="Shape associated with the vibration cue")
-    vibration_cues = models.CharField(max_length=255, help_text="Enter vibration cues as comma-separated values (e.g., 10, 20, 25)")
-
+    vibration_cues = models.CharField(max_length=255, help_text="Enter vibration cues as comma-separated values (e.g., 10, 20, 25)",blank=True,null=True)
+    vibration_pattern = models.CharField(
+        max_length=20,
+        blank=True,  # Allow it to be empty if timestamps are used
+        null=True,
+        help_text="Choose the vibration pattern based on the music scale"
+    )
     def __str__(self):
         return self.name
 

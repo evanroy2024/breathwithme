@@ -89,7 +89,7 @@
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h4 class="mb-0">Silent Exercise</h4>
-                            <a href="{% url 'home' %}" class="btn btn-primary btn-sm">
+                            <a href="{% url 'breathxapp:breathfree' %}" class="btn btn-primary btn-sm">
                                 <i class="fas fa-dumbbell me-2"></i> BreathFree
                             </a>
                             
@@ -110,6 +110,31 @@
                                     <span class="badge filter-badge px-3 py-2" onclick="filterBySkill('Advanced')">Advanced</span>
                                 </div>
                             </div>
+                        </div>
+                        <div class="activity-timeline" id="exerciseList">
+                          
+                            <div class="activity-item" data-skill="{{ exercise.skill_level }}" data-name="{{ exercise.name|lower }}">
+                                <div class="d-flex gap-3 align-items-center">
+                                    <div class="activity-icon">
+                                        <i class="fas fa-dumbbell"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h6 class="mb-0">BreathFree - Perform a BreathFree Exercise with us with all your choice </h6>
+                                            <span class="activity-date text-light">300 sec</span>
+                                        </div>
+                                        <span class="activity-date text-light">Skills Level - Depends on your Choice</span>
+
+                                        <div class="d-flex align-items-center">
+                                            <div class="progress flex-grow-1 me-3" style="height: 6px;">
+                                                <div class="progress-bar w-100" role="progressbar"></div>
+                                            </div>
+                                            <a href="{% url 'breathxapp:breathfree' %}" class="btn btn-primary btn-sm">Play</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
                         </div>
                         <div class="activity-timeline" id="exerciseList">
                             {% for exercise in exercises %}

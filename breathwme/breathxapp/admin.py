@@ -4,7 +4,7 @@ from .models import SilentExercise
 import json
 
 class SilentExerciseAdmin(admin.ModelAdmin):
-    list_display = ('name', 'total_time', 'breaths', 'skill_level', 'shape')
+    list_display = ('name', 'total_time', 'breaths', 'skill_level', 'shape','vibration_pattern')
 
     class Media:
         js = ('admin/vibration_editor.js',)  # Custom JavaScript for visual editor

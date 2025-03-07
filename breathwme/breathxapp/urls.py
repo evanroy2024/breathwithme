@@ -12,7 +12,7 @@
 from django.urls import path
 from . import views
 from .views import build_habit
-from .views import book_meeting, my_bookings , activaty
+from .views import book_meeting, my_bookings , activaty , breathfree
 
 app_name = 'breathxapp'
 
@@ -25,5 +25,7 @@ urlpatterns = [
     path("my-bookings/", my_bookings, name="my_bookings"),  # Ensure this name matches
 
     path("activaty/", activaty, name="activaty"),  # Ensure this name matches
+    path("breathfree/", breathfree, name="breathfree"),  # Ensure this name matches
+
 
 ]

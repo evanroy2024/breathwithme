@@ -638,7 +638,8 @@ option {
                 data-artist="{{ track.artist }}"
                 data-category="{{ track.category.id }}"
                 data-timestamps="{{ track.timestamps|default:'' }}"
-                data-vibrationset="{{ track.vibrationset }}">
+                data-vibrationset="{{ track.vibrationset }}"
+                data-bpm="{{ track.bpm }}">
 
                 <img src="{% if track.image %}{{ track.image.url }}{% else %}{% static 'music/songimg.png' %}{% endif %}" alt="{{ track.title }}">
                 <div class="track-info">
@@ -720,7 +721,23 @@ document.addEventListener("DOMContentLoaded", function () {
 <div class="others">
   <button id="reloadBtn">Customise</button>
   <button id="goBackToPart3">Songs</button>
+  <button onclick="showPopup()">Vibration</button>
+
+
 </div>
+
+<div id="vibrationPopup" class="popup">
+    <label for="vibrationLevel">Vibration Intensity:</label>
+    <select id="vibrationLevel" onchange="hidePopup()">
+        <option value="500">Quarter Note</option>
+        <option value="1000" selected>Half Note</option>
+        <option value="1500">Three Quarter</option>
+        <option value="2000">Full Note</option>
+    </select>
+</div>
+
+
+
 </section>
 
 <!-- Confirmation Box -->
@@ -737,14 +754,117 @@ document.addEventListener("DOMContentLoaded", function () {
   <script>
     const shapeContainer = document.getElementById("shapeContainer");
     const shapeSelector = document.getElementById("shapeSelector");
-    const timingControls = document.getElementById("timingControls");
+    // const timingControls = document.getElementById("timingControls");
     const playSong = document.getElementById("playSong");
     const stopButton = document.getElementById("stopButton");
     const progressContainer = document.getElementById("progressContainer");
     const progressBar = document.getElementById("progressBar");
     const progressHandle = document.getElementById("progressHandle");
     const audioPlayer = document.getElementById("audioPlayer");
-  
+    // const trackItem = document.querySelector(".track-item"); 
+    // const timingControls = parseInt(trackItem.getAttribute("data-bpm"), 10);
+    // console.log(timingControls);  // Check
+
+
+// ------------------------------------------------------------------------------------------------------------------
+document.addEventListener("DOMContentLoaded", function () {
+    const trackList = document.getElementById("trackList");
+    const playSong = document.getElementById("playSong");
+    const audioPlayer = document.getElementById("audioPlayer");
+
+    let selectedTrack = null;
+    let timestamps = [];
+    let isPlaying = false;
+
+    // Song selection logic
+    trackList.addEventListener("click", (event) => {
+        const trackItem = event.target.closest(".track-item");
+        if (!trackItem) return;
+
+        selectedTrack = trackItem.dataset.url;
+        setTimestamps(trackItem);
+
+        // Highlight selected song
+        document.querySelectorAll(".track-item").forEach(item => item.style.fontWeight = "normal");
+        trackItem.style.fontWeight = "bold";
+    });
+
+    // Play/Pause button logic
+    const stopButton = document.getElementById("stopButton");
+    const confirmBox = document.getElementById("confirmBox");
+
+
+    playSong.addEventListener("click", () => {
+        if (!selectedTrack) {
+            alert("Please select a song first!");
+            return;
+        }
+        
+        if (!isPlaying) {
+            audioPlayer.src = selectedTrack;
+            audioPlayer.play();
+            playSong.textContent = "⏸";
+            isPlaying = true;
+            startAnimation(); // ✅ Start animation when 
+            confirmBox.style.display = "none"; // Hide confirmation box when playing
+        } else {
+            
+            audioPlayer.pause();
+            confirmBox.style.display = "flex"; // Show confirmation box when paused
+            playSong.textContent = "▶️";
+            isPlaying = false;
+        }
+        
+    });
+// Hide the confirmation box and stop the animation when the stop button is clicked
+stopButton.addEventListener("click", () => {
+    confirmBox.style.display = "none";
+    stopAnimation(); // Call your function to stop animation
+});
+    function setTimestamps(trackItem) {
+        let rawTimestamps = trackItem.dataset.timestamps;
+        timestamps = rawTimestamps ? rawTimestamps.split(",").map(Number) : [];
+
+        console.log("Loaded timestamps:", timestamps);
+        // Select the element (assuming trackItem is the target element)
+
+// Store the value globally
+        window.vibrationSet = trackItem ? trackItem.dataset.vibrationset : "Not found";
+
+// Now you can print it anywhere in the script
+        console.log("Vibration Set:", window.vibrationSet);
+
+
+
+    }
+
+    // ===== VIBRATION CODE STARTS HERE =====
+    const vibrationDropdown = document.getElementById("vibrationLevel");
+
+audioPlayer.addEventListener("timeupdate", function () {
+    let currentTime = Math.floor(audioPlayer.currentTime);
+    let selectedVibration = parseInt(vibrationDropdown.value, 10); // Get selected vibration duration
+
+    if (window.vibrationSet === "Default") {
+        if (window.calculatedTiming && !isNaN(window.calculatedTiming)) {
+            if (currentTime % window.calculatedTiming === 0 && currentTime !== 0) {
+                navigator.vibrate(selectedVibration);
+            }
+        } else {
+            console.warn("window.calculatedTiming is not defined or invalid");
+        }
+    } else if (window.vibrationSet === "Customise") {
+        if (timestamps.includes(currentTime)) {
+            navigator.vibrate(selectedVibration);
+            timestamps = timestamps.filter(t => t !== currentTime);
+        }
+    }
+});
+
+
+});
+
+// ------------------------------------------------------------------------------------------------------------------
     let textIndex = 0;
     let interval;
     let isAnimating = false;
@@ -761,47 +881,40 @@ document.addEventListener("DOMContentLoaded", function () {
     };
   
     function createTimingInputs(shape) {
-    timingControls.innerHTML = ""; // Clear previous options
+    timingControls.innerHTML = ""; // Clear previous inputs
 
-    let globalSelect; // To store the single input reference
+    let globalSelect;
     const timingOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 18];
 
-    // Function to calculate the timing value based on the shape
-    function calculateTiming(userValue, shape) {
+    function calculateTiming(bpm, shape) {
+        if (!bpm) return 2; // Default fallback
+
         const baseValue = 60;
-        let result = baseValue / userValue;
+        let result = baseValue / bpm;
 
         const shapeDivisors = {
             circle: 2,
             square: 4,
-            hRectangle: 6,
-            vRectangle: 6,
+            hRectangle: 4,
+            vRectangle: 4,
             triangle: 3,
             reverseTriangle: 3
         };
 
-        let calculatedValue = Math.floor(result / shapeDivisors[shape]);
+        let calculatedValue = Math.floor(result / (shapeDivisors[shape] || 1));
 
-        // Ensure calculated value exists in dropdown options
-        let closestValue = timingOptions.reduce((prev, curr) =>
+        return timingOptions.reduce((prev, curr) =>
             Math.abs(curr - calculatedValue) < Math.abs(prev - calculatedValue) ? curr : prev
         );
-
-        return closestValue;
     }
 
-    breathingTexts[shape].forEach((phase, index) => {
-        const wrapper = document.createElement("div"); // Wrapper for each input
+    breathingTexts[shape].forEach((_, index) => {
+        const wrapper = document.createElement("div");
         wrapper.id = `wrapper-${index}`;
 
-        const label = document.createElement("label");
-        // label.innerText = `${phase} (seconds): `;
-
-        // Create a select dropdown
         const select = document.createElement("select");
         select.id = `duration-${index}`;
 
-        // Populate dropdown with options
         timingOptions.forEach(time => {
             const option = document.createElement("option");
             option.value = time;
@@ -809,45 +922,50 @@ document.addEventListener("DOMContentLoaded", function () {
             select.appendChild(option);
         });
 
-        // Default selected value
-        select.value = "2";
-
-        // If it's the first input, store the reference
         if (index === 0) {
             globalSelect = select;
-        } else {
-            wrapper.style.display = "none"; // Completely hide the entire element
+            globalSelect.value = "2"; // Default value
         }
 
-        // Append elements to the wrapper
-        wrapper.appendChild(label);
         wrapper.appendChild(select);
-
-        // Append wrapper to the container
         timingControls.appendChild(wrapper);
     });
 
-    // Function to update all input values and set global `calculatedTiming`
-    function updateGlobalTiming() {
-        const userValue = parseInt(globalSelect.value);
-        const calculatedValue = calculateTiming(userValue, shape);
-
-        // Set globally so it can be accessed anywhere
-        window.calculatedTiming = calculatedValue;
+    function updateGlobalTiming(bpm) {
+        const calculatedValue = calculateTiming(bpm, shape);
 
         breathingTexts[shape].forEach((_, index) => {
             document.getElementById(`duration-${index}`).value = calculatedValue;
         });
 
-        console.log("Updated global calculatedTiming:", window.calculatedTiming);
+        console.log("Updated to BPM:", bpm, "Calculated:", calculatedValue);
     }
 
-    // Sync all inputs when the first input changes
-    globalSelect.addEventListener("change", updateGlobalTiming);
+    globalSelect.addEventListener("change", function () {
+        updateGlobalTiming(parseInt(globalSelect.value));
+    });
 
-    // Initialize with default calculation
-    updateGlobalTiming();
+    updateGlobalTiming(2); // Default init
 }
+
+// 🎵 **Song Selection - Update Timing on BPM Change**
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("trackList").addEventListener("click", function (event) {
+        const trackItem = event.target.closest(".track-item");
+        if (!trackItem) return;
+
+        const bpm = trackItem.dataset.bpm ? Number(trackItem.dataset.bpm) : 2; // Default fallback
+        const shape = window.currentShape || "circle";
+
+        console.log("Song selected with BPM:", bpm);
+
+        if (document.getElementById("duration-0")) {
+            document.getElementById("duration-0").value = bpm;
+            document.getElementById("duration-0").dispatchEvent(new Event("change"));
+        }
+    });
+});
+
 
   
     function createShape(shape) {
@@ -959,7 +1077,7 @@ function animateNextPhase() {
     goldenLine.style.animationDuration = goldenLineDuration;
     
     textElement.innerText = breathingTexts[shape][index];
-    console.log("Shape update:", shape, "| Current Duration:", currentDuration);
+    // console.log("Shape update:", shape, "| Current Duration:", currentDuration);
 
     switch (shape) {
         case "circle":
@@ -1024,85 +1142,7 @@ function animateNextPhase() {
 // Start the golden line animation only once
 startGoldenLineAnimation();
 
-            // function animateNextPhase() {
-            //     if (!isAnimating) return;
-            //     let currentDuration = durations[index] + "s";
-            //     goldenLine.style.animation = "none";
-            //     void goldenLine.offsetWidth;
-  
-            //     textElement.innerText = breathingTexts[shape][index];
-                
-                
-            //     switch (shape) {
-            //         case "circle":
-            //             console.log(currentDuration);
-            //             div.style.width = "200px";
-            //             div.style.height = "200px";
-            //             div.style.borderRadius = "50%";
-            //             goldenLine.style.animation = `moveCircle ${currentDuration} linear 1`;
-            //             break;
-            //         case "square":
-            //             div.style.width = "200px";
-            //             div.style.height = "200px";
-            //             console.log(currentDuration);
-            //             goldenLine.style.animation = `moveSquare ${currentDuration} linear infinite`;
-            //             break;
-            //         case "hRectangle":
-            //             div.style.width = "300px";
-            //             div.style.height = "150px";
-            //             goldenLine.style.animation = `moveRectangleH ${currentDuration} linear 1`;
-            //             break;
-            //         case "vRectangle":
-            //             div.style.width = "150px";
-            //             div.style.height = "300px";
-            //             goldenLine.style.animation = `moveRectangleV ${currentDuration} linear 1`;
-            //             break;
-            //         case "triangle":
-            //             div.className = "triangle"; // Apply triangle styles
-            //             goldenLine.style.animation = `moveTriangle ${currentDuration} linear infinite`;
-            //              // Apply text styles only for the triangle case
-            //             textElement.style.position = "absolute";
-            //             textElement.style.color = "white";
-            //             textElement.style.fontSize = "20px";
-            //             textElement.style.zIndex = "2";
-            //             textElement.style.marginTop = "115px";
-            //             textElement.style.fontWeight = "bold";
-            //             textElement.style.marginLeft = "-30px";
-            //             // Apply golden-line styles only for the triangle case
-            //             goldenLine.style.position = "absolute";
-            //             goldenLine.style.border = "2px solid gold";
-            //             goldenLine.style.marginLeft = "-108px";
-            //             goldenLine.style.zIndex = "2"; // Ensure it stays above the triangle
-            //             break;
-
-            //         case "reverseTriangle":
-            //             div.className = "upside-down-triangle"; // Apply upside-down triangle styles
-            //             goldenLine.style.animation = `moveUpsideDownTriangle ${currentDuration} linear infinite`;
-
-            //             // Apply text styles only for the upside-down triangle case
-            //             textElement.style.position = "absolute";
-            //             textElement.style.color = "white";
-            //             textElement.style.fontSize = "20px";
-            //             textElement.style.zIndex = "2";
-            //             textElement.style.marginTop = "-120px"; // Adjusted for upside-down positioning
-            //             textElement.style.fontWeight = "bold";
-            //             textElement.style.marginLeft = "-30px";
-
-            //             // Apply golden-line styles only for the upside-down triangle case
-            //             goldenLine.style.position = "absolute";
-            //             goldenLine.style.border = "2px solid gold";
-            //             goldenLine.style.marginLeft = "-108px";
-            //             goldenLine.style.zIndex = "2"; // Ensure it stays above the triangle
-
-            //             break;
-                        
-            //     }
-  
-            //     animationTimeout = setTimeout(() => {
-            //         index = (index + 1) % durations.length;
-            //         animateNextPhase();
-            //     }, durations[index] * 1000);
-            // }
+        
   
             animateNextPhase();
         }
@@ -1155,126 +1195,6 @@ playSong.addEventListener("click", () => {
     createTimingInputs(shapeSelector.value);
 
 
-// ------------------------------------------------------------------------------------------------------------------
-document.addEventListener("DOMContentLoaded", function () {
-    const trackList = document.getElementById("trackList");
-    const playSong = document.getElementById("playSong");
-    const audioPlayer = document.getElementById("audioPlayer");
-
-    let selectedTrack = null;
-    let timestamps = [];
-    let isPlaying = false;
-
-    // Song selection logic
-    trackList.addEventListener("click", (event) => {
-        const trackItem = event.target.closest(".track-item");
-        if (!trackItem) return;
-
-        selectedTrack = trackItem.dataset.url;
-        setTimestamps(trackItem);
-
-        // Highlight selected song
-        document.querySelectorAll(".track-item").forEach(item => item.style.fontWeight = "normal");
-        trackItem.style.fontWeight = "bold";
-    });
-
-    // Play/Pause button logic
-    const stopButton = document.getElementById("stopButton");
-    const confirmBox = document.getElementById("confirmBox");
-
-
-    playSong.addEventListener("click", () => {
-        if (!selectedTrack) {
-            alert("Please select a song first!");
-            return;
-        }
-        
-        if (!isPlaying) {
-            audioPlayer.src = selectedTrack;
-            audioPlayer.play();
-            playSong.textContent = "⏸";
-            isPlaying = true;
-            startAnimation(); // ✅ Start animation when 
-            confirmBox.style.display = "none"; // Hide confirmation box when playing
-        } else {
-            
-            audioPlayer.pause();
-            confirmBox.style.display = "flex"; // Show confirmation box when paused
-            playSong.textContent = "▶️";
-            isPlaying = false;
-        }
-        
-    });
-// Hide the confirmation box and stop the animation when the stop button is clicked
-stopButton.addEventListener("click", () => {
-    confirmBox.style.display = "none";
-    stopAnimation(); // Call your function to stop animation
-});
-    function setTimestamps(trackItem) {
-        let rawTimestamps = trackItem.dataset.timestamps;
-        timestamps = rawTimestamps ? rawTimestamps.split(",").map(Number) : [];
-
-        console.log("Loaded timestamps:", timestamps);
-        // Select the element (assuming trackItem is the target element)
-
-// Store the value globally
-        window.vibrationSet = trackItem ? trackItem.dataset.vibrationset : "Not found";
-
-// Now you can print it anywhere in the script
-        console.log("Vibration Set:", window.vibrationSet);
-
-
-
-    }
-
-    // ===== VIBRATION CODE STARTS HERE =====
-
-    audioPlayer.addEventListener("timeupdate", function () {
-        let currentTime = Math.floor(audioPlayer.currentTime);
-        if (window.vibrationSet === "Default") {
-            if (window.calculatedTiming && !isNaN(window.calculatedTiming)) {
-                if (currentTime % window.calculatedTiming === 0 && currentTime !== 0) {
-                    navigator.vibrate(1000);
-                }
-            } else {
-                console.warn("window.calculatedTiming is not defined or invalid");
-            }
-        }   else if (window.vibrationSet === "Customise") {
-            if (timestamps.includes(currentTime)) {
-                navigator.vibrate(1000);
-
-                timestamps = timestamps.filter(t => t !== currentTime);
-            }
-        }
-
-    });
-    // Ensure window.calculatedTiming exists and is a valid number
-// audioPlayer.addEventListener("timeupdate", function () {
-//     let currentTime = Math.floor(audioPlayer.currentTime);
-
-//     if (window.vibrationSet === "Default") {
-//         if (window.calculatedTiming && !isNaN(window.calculatedTiming)) {
-//             if (currentTime % window.calculatedTiming === 0 && currentTime !== 0) {
-//                 navigator.vibrate(1000);
-//             }
-//         } else {
-//             console.warn("window.calculatedTiming is not defined or invalid");
-//         }
-//     }
-// });
-
-    // ===== VIBRATION CODE ENDS HERE =====
-
-    // // Handle song ending
-    // audioPlayer.addEventListener("ended", function () {
-    //     isPlaying = false;
-    //     playSong.textContent = "▶️";
-    //     stopAnimation(); // ✅ Stop animation when song ends
-    //     console.log("Song ended");
-    // });
-});
-
-// ------------------------------------------------------------------------------------------------------------------
   
     function updateProgressBar() {
         if (audioPlayer.duration) {
@@ -1355,66 +1275,105 @@ function playSelectedTrack() {
 // Next & Previous button event listeners
 nextSong.addEventListener("click", () => changeTrack(1));
 prevSong.addEventListener("click", () => changeTrack(-1));
+
+
+const part3 = document.querySelector(".part3");
+const section = document.querySelector("section");
+
+audioPlayer.addEventListener("ended", () => {
+    section.style.display = "none"; // Hide section
+    part3.style.display = "block";  // Show Part 3
+});
+
+
   </script>
   <!-- Vibration code start here  -->
 
     
 <!-- Vibration code Ends here  -->
   <!-- new code here ------------------------------------------------------------------------------------------------ -->
-  <script>
+<script>
     document.addEventListener("DOMContentLoaded", function () {
-        const part1 = document.querySelector(".part1");
-        const part2 = document.querySelector(".part2");
-        const part3 = document.querySelector(".part3");
-        const section = document.querySelector("section");
-        const goBackToPart3 = document.getElementById("goBackToPart3");
+    const part1 = document.querySelector(".part1");
+    const part2 = document.querySelector(".part2");
+    const part3 = document.querySelector(".part3");
+    const section = document.querySelector("section");
+    const goBackToPart3 = document.getElementById("goBackToPart3");
 
-        // Hide all parts except Part 1 initially
-        part2.style.display = "none";
-        part3.style.display = "none";
-        section.style.display = "none";
-        goBackToPart3.style.display = "none";
+    // Hide all parts except Part 1 initially
+    part2.style.display = "none";  // Keep Part 2 hidden
+    part3.style.display = "none";
+    section.style.display = "none";
+    goBackToPart3.style.display = "none";
 
-        // Move to Part 2 when a shape is selected
-        document.getElementById("shapeSelector").addEventListener("change", function () {
-            part1.style.display = "none";
-            part2.style.display = "block";
-        });
-
-        // Move to Part 3 when any value is selected in timingControls
-        document.getElementById("timingControls").addEventListener("change", function () {
-            part2.style.display = "none";
-            part3.style.display = "block";
-        });
-
-        // Handle track selection in Part 3
-        document.getElementById("trackList").addEventListener("click", (event) => {
-            const trackItem = event.target.closest(".track-item");
-            if (!trackItem) return;
-
-            document.querySelector(".part3").style.display = "none";
-            document.querySelector("section").style.display = "block";
-            goBackToPart3.style.display = "block";
-
-            // Highlight selected track
-            document.querySelectorAll(".track-item").forEach(item => item.style.fontWeight = "normal");
-            trackItem.style.fontWeight = "bold";
-        });
-
-        // Go back to Part 3
-        goBackToPart3.addEventListener("click", function () {
-            section.style.display = "none";
-            part3.style.display = "block";
-        });
-
-        // Reload button
-        document.getElementById("reloadBtn").addEventListener("click", function () {
-            location.reload();
-        });
+    // Skip Part 2 and go directly to Part 3 when a shape is selected
+    document.getElementById("shapeSelector").addEventListener("change", function () {
+        part1.style.display = "none";
+        part3.style.display = "block";
     });
+
+    // Move to Part 3 when any value is selected in timingControls (even though Part 2 is hidden)
+    document.getElementById("timingControls").addEventListener("change", function () {
+        part2.style.display = "none";  // Ensure Part 2 remains hidden
+        part3.style.display = "block";
+    });
+
+    // Handle track selection in Part 3
+    document.getElementById("trackList").addEventListener("click", (event) => {
+        const trackItem = event.target.closest(".track-item");
+        if (!trackItem) return;
+
+        part3.style.display = "none";
+        section.style.display = "block";
+        goBackToPart3.style.display = "block";
+
+        // Highlight selected track
+        document.querySelectorAll(".track-item").forEach(item => item.style.fontWeight = "normal");
+        trackItem.style.fontWeight = "bold";
+    });
+
+    // Go back to Part 3
+    goBackToPart3.addEventListener("click", function () {
+        section.style.display = "none";
+        part3.style.display = "block";
+    });
+
+    // Reload button
+    document.getElementById("reloadBtn").addEventListener("click", function () {
+        location.reload();
+    });
+});
+
+</script>
+
+<!-- Extra code shape selection etc start here  -->
+
+<script>
+    function showPopup() {
+        document.getElementById("vibrationPopup").style.display = "block";
+    }
+
+    function hidePopup() {
+        document.getElementById("vibrationPopup").style.display = "none";
+    }
+
+    
 </script>
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Extra code shape selection etc end here  -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -1432,21 +1391,7 @@ prevSong.addEventListener("click", () => changeTrack(-1));
     .track-artist { font-size: 14px; color: rgba(255, 255, 255, 0.7); }
     .play-btn { font-size: 18px; color: #1DB954; transition: transform 0.2s; }
     .track-item:hover .play-btn { transform: scale(1.3); }
-</style>
 
-<!-- Trianngle code  -->
-<style>
-/* Triangle Moving Ball Animation */
-/* @keyframes moveTriangle {
-    0% { top: 0px; left: 50px; }
-    33.33% { top: 150px; left: 200px; }
-    66.66% { top: 150px; left: -100px; }
-    100% { top: 0px; left: 50px; }
-} */
-
-</style>
-
-<style>
     #confirmBox {
     position: fixed;
     top: 50%;
@@ -1504,8 +1449,6 @@ body.confirm-active {
     pointer-events: auto;
 }
 
-</style>
-<style>
     /* Center everything inside the section */
 section {
     display: flex;
@@ -1635,23 +1578,44 @@ section {
     padding: 10px;
 }
 
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    color: #333;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    border-radius: 10px;
+    width: 300px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+.popup select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    outline: none;
+    background: #f9f9f9;
+    color: #333;
+    font-size: 16px;
+}
+
+.popup select:focus {
+    border-color: #6e8efb;
+    box-shadow: 0 0 5px rgba(110, 142, 251, 0.5);
+}
 
 
 </style>
 </body>
 
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
 
 
