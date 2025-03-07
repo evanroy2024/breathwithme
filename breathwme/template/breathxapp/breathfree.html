@@ -61,16 +61,15 @@
             font-size: 20px;
             font-weight: bold;
         }
-
         @keyframes moveCircle {
             0% {
-                transform: rotate(0deg) translateX(100px) rotate(0deg);
+                transform: rotate(-90deg) translateX(100px) rotate(90deg);
             }
-
             100% {
-                transform: rotate(360deg) translateX(100px) rotate(-360deg);
+                transform: rotate(270deg) translateX(100px) rotate(-270deg);
             }
         }
+
 
         @keyframes moveSquare {
             0% {
@@ -495,11 +494,12 @@ option {
     background: rgb(0, 0, 0);
 }
 @keyframes moveTriangle {
-    0% { transform: translate(4px, 191px); }         /* Start at bottom-left (5px up) */
-    33.33% { transform: translate(100px, -4px); }    /* Move to the top */
-    66.66% { transform: translate(200px, 191px); }   /* Move to bottom-right (5px up) */
-    100% { transform: translate(0px, 191px); }       /* Back to bottom-left */
+    0% { transform: translate(100px, -4px); }     /* Start at the top */
+    33.33% { transform: translate(200px, 191px); } /* Move to bottom-right */
+    66.66% { transform: translate(0px, 191px); }  /* Move to bottom-left */
+    100% { transform: translate(100px, -4px); }   /* Back to the top */
 }
+
 
 /* upside down triangle  */
 .upside-down-triangle {
@@ -537,10 +537,10 @@ option {
 }
 
 @keyframes moveUpsideDownTriangle {
-    0% { transform: translate(5px, -201px); }         /* Start at top-left (10px up) */
-    33.33% { transform: translate(100px, -6px); }     /* Move to the bottom (10px up) */
-    66.66% { transform: translate(200px, -201px); }   /* Move to top-right (10px up) */
-    100% { transform: translate(5px, -201px); }       /* Back to top-left */
+    0% { transform: translate(5px, -201px); }        /* Start at top-left */
+    33.33% { transform: translate(200px, -201px); }  /* Move to top-right */
+    66.66% { transform: translate(100px, -6px); }    /* Move to bottom */
+    100% { transform: translate(5px, -201px); }      /* Back to top-left */
 }
 
 
@@ -728,7 +728,7 @@ option {
     let durations = [];
   
     const breathingTexts = {
-        circle: ["Inhale", "Exhale"],
+        circle: ["Inhale","Inhale","Exhale", "Exhale"],
         square: ["Inhale", "Hold", "Exhale", "Hold"],
         hRectangle: ["Inhale", "Hold", "Hold", "Exhale", "Hold", "Hold"],
         vRectangle: ["Inhale", "Inhale", "Hold", "Exhale", "Exhale", "Hold"],
@@ -871,7 +871,7 @@ function startGoldenLineAnimation() {
             goldenLineDuration = (currentDuration * 4) + "s";
             break;
         case "vRectangle":
-            goldenLineDuration = (currentDuration * 5) + "s";
+            goldenLineDuration = (currentDuration * 4) + "s";
             break;
         case "triangle":
             goldenLineDuration = (currentDuration * 6) + "s";
@@ -920,10 +920,10 @@ function animateNextPhase() {
             goldenLineDuration = (currentDuration * 4) + "s";
             break;
         case "hRectangle":
-            goldenLineDuration = (currentDuration * 6) + "s";
+            goldenLineDuration = (currentDuration * 4) + "s";
             break;
         case "vRectangle":
-            goldenLineDuration = (currentDuration * 6) + "s";
+            goldenLineDuration = (currentDuration * 4) + "s";
             break;
         case "triangle":
             goldenLineDuration = (currentDuration * 3) + "s";
