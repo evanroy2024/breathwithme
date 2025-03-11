@@ -73,13 +73,13 @@
 
         @keyframes moveSquare {
             0% {
-                top: -10px;
+                top: -8px;
                 left: 10px;
             }
 
             25% {
                 top: -10px;
-                left: 195px;
+                left: 192px;
             }
 
             50% {
@@ -89,7 +89,7 @@
 
             75% {
                 top: 195px;
-                left: -10px;
+                left: -8px;
             }
 
             100% {
@@ -100,13 +100,13 @@
 
         @keyframes moveRectangleH {
             0% {
-                top: -10px;
+                top: -8px;
                 left: 10px;
             }
 
-            25% {
+            33.3% {
                 top: -10px;
-                left: 295px;
+                left: 292px;
             }
 
             50% {
@@ -114,9 +114,9 @@
                 left: 295px;
             }
 
-            75% {
+            83.3% {
                 top: 140px;
-                left: -10px;
+                left: -8px;
             }
 
             100% {
@@ -124,26 +124,25 @@
                 left: -10px;
             }
         }
-
         @keyframes moveRectangleV {
             0% {
-                top: -10px;
+                top: -8px;
                 left: 10px;
             }
 
-            25% {
+            16.7% {
                 top: -10px;
-                left: 145px;
+                left: 141px;
             }
 
             50% {
-                top: 295px;
+                top: 292px;
                 left: 140px;
             }
 
-            75% {
+            66.7% {
                 top: 295px;
-                left: -10px;
+                left: -8px;
             }
 
             100% {
@@ -999,6 +998,26 @@ document.addEventListener("DOMContentLoaded", function () {
             // Start the golden line animation once
 function startGoldenLineAnimation() {
     let currentDuration = parseFloat(durations[index]); // Get current duration as a number
+
+    // ===== VIBRATION CODE STARTS HERE =====
+const vibrationDropdown = document.getElementById("vibrationLevel");
+let lastVibrationTime = -1; // To track when the last vibration happened
+
+audioPlayer.addEventListener("timeupdate", function () {
+    let currentTime = Math.floor(audioPlayer.currentTime);
+    let selectedVibration = parseInt(vibrationDropdown.value, 10); // Get selected vibration duration
+
+    if (window.vibrationSet === "Default") {
+        if ((currentTime === currentDuration - 0.7) || (currentTime % currentDuration === 0 && currentTime !== 0)) {
+            if (lastVibrationTime !== currentTime) { // Ensure it vibrates only once per second
+                console.log("Vibrating for:", selectedVibration, "milliseconds");
+                navigator.vibrate(selectedVibration);
+                lastVibrationTime = currentTime; // Update last vibration time
+            }
+        }
+    }
+});
+
     let goldenLineDuration;
 
     switch (shape) {
@@ -1053,6 +1072,8 @@ function animateNextPhase() {
     if (!isAnimating) return;
     
     let currentDuration = parseFloat(durations[index]); // Get current duration as a number
+
+
     let goldenLineDuration;
 
     switch (shape) {
@@ -1243,6 +1264,7 @@ playSong.addEventListener("click", () => {
         progressBar.style.width = "0%";
         progressHandle.style.left = "0%";
     });
+
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -33,6 +33,8 @@ urlpatterns = [
     path("userdetails/",include('userdata.urls')),
     path('breathxapp/', include('breathxapp.urls', namespace='breathxapp')),
     path('breathwmeadmin/', include('breathwmeadmin.urls', namespace='breathwmeadmin')),
+    path('activityapp/', include('activityapp.urls', namespace='activityapp')),
+    path('referal/', include('referal.urls', namespace='referal')),
 
     # path(r'^ws/', include(routing.websocket_urlpatterns)),  # Include WebSocket URLs
 

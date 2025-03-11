@@ -167,11 +167,13 @@
     <div class="container">
         <div class="card">
             <h2>Upload Music</h2>
+
             <form id="uploadForm" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
 
                 <!-- Title, Artist, Category in one row -->
                 <div class="form-group">
+
                     <input type="text" class="form-control" id="title" name="title" placeholder="Enter Title" required>
                     <input type="text" class="form-control" id="artist" name="artist" value="By Admin" required>
                     <select class="form-select" id="category" name="category" required>
@@ -218,16 +220,16 @@
                 <!-- Timestamp Display -->
                 <p class="timestamp-list">Timestamps: <span id="timestamps">None</span></p>
 
-               
+
 
                 <!-- Vibration Set -->
-<div class="mb-3">
-    <label class="form-label">Vibration Setting:</label>
-    <select class="form-select" id="vibrationset" name="vibrationset">
-        <option value="Default">Default</option>
-        <option value="Customise">Customise</option>
-    </select>
-</div>
+                <div class="mb-3">
+                    <label class="form-label">Vibration Setting:</label>
+                    <select class="form-select" id="vibrationset" name="vibrationset">
+                        <option value="Default">Default</option>
+                        <option value="Customise">Customise</option>
+                    </select>
+                </div>
 
 
                 <!-- Upload Button -->
@@ -243,8 +245,8 @@
         </div>
 
     </div>
- <!-- Vibration Pattern -->
- <!-- <div class="mb-3">
+    <!-- Vibration Pattern -->
+    <!-- <div class="mb-3">
     <label class="form-label">Vibration Pattern (Optional):</label>
     <select class="form-select" id="vibration_pattern" name="vibration_pattern">
         <option value="">-- Select --</option>
@@ -362,11 +364,12 @@
         }
 
         document.addEventListener("keydown", function (event) {
-            if (event.code === "Space") {
-                event.preventDefault();
-                addMarkerAtCurrentTime();
-            }
+        if (event.code === "Space" && event.target.tagName !== "INPUT" && event.target.tagName !== "TEXTAREA") {
+            event.preventDefault();
+            addMarkerAtCurrentTime();
+        }
         });
+
 
         document.getElementById("markTimestampBtn").addEventListener("click", function () {
             addMarkerAtCurrentTime();

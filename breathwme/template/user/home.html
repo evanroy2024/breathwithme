@@ -327,6 +327,13 @@ Home - Meditation Dashboard
             <hr>
             <p>Everything you need to customize the app to your needs</p>
         </div>
+        <div class="feature-card" onclick="window.location.href='{% url 'referal:generate_referral_link' %}'">
+            <i class="fas fa-user-friends fa-2x" ></i> <!-- Referral-related icon -->
+            <h3 style="color: white;">Ambassador Program</h3>
+            <hr>
+            <p>Get points when anyone signs up using your referral link.</p>
+        </div>
+        
     </div>
 <a href="{% url 'course_main' %}" class="start-now">Start Now</a>
 

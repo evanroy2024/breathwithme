@@ -752,7 +752,6 @@ option {
 
     // Initialize with default calculation
     updateGlobalTiming();
-    
 }
 
   
@@ -787,7 +786,6 @@ option {
             // Start the golden line animation once
 function startGoldenLineAnimation() {
     let currentDuration = parseFloat(durations[index]); // Get current duration as a number
-    
     let goldenLineDuration;
 
     switch (shape) {
@@ -834,7 +832,6 @@ function startGoldenLineAnimation() {
             break;
     }
 }
-let firstRun = true; // Track first execution
 
 // Animate the shape changes (golden line remains untouched)
 function animateNextPhase() {
@@ -922,33 +919,13 @@ function animateNextPhase() {
 
             break;
     }
+
     animationTimeout = setTimeout(() => {
         index = (index + 1) % durations.length;
         animateNextPhase();
     }, durations[index] * 1000);
-
-
-
-console.log(currentDuration)
-document.getElementById("playSong").addEventListener("click", function () {
-    firstRun = !firstRun; // Toggle between true and false
-    console.log("firstRun is now:", firstRun); // Debugging log
-});
-
-if (firstRun) {
-        firstRun = false; // Skip vibration on the first call
-        console.log("First run - No vibration");
-        return; // Exit function without vibrating
-    }
-
-    // Vibrate for 1 second on subsequent calls
-    navigator.vibrate(1000);
-    console.log("Vibrating for 1 second");
- // Hide golden-line and text when isPlaying is true, show them when false
-
 }
 
-  
 // Start the golden line animation only once
 startGoldenLineAnimation();
 
@@ -975,7 +952,23 @@ startGoldenLineAnimation();
         // Extra trial for stop animation 
 
         
+playSong.addEventListener("click", () => {
+    if (!selectedTrack) {
+        alert("Please select a song first!");
+        return;
+    }
 
+    if (audioPlayer.paused) {
+        audioPlayer.src = selectedTrack;
+        audioPlayer.play();
+        playSong.textContent = "⏸";
+        startAnimation();
+    } else {
+        audioPlayer.pause();
+        playSong.textContent = "▶️";
+        stopAnimation();
+    }
+});
     }
   
     shapeSelector.addEventListener("change", (e) => {
@@ -1015,14 +1008,78 @@ document.addEventListener("DOMContentLoaded", function () {
     const confirmBox = document.getElementById("confirmBox");
 
 
-   
+    playSong.addEventListener("click", () => {
+        if (!selectedTrack) {
+            alert("Please select a song first!");
+            return;
+        }
+        
+        if (!isPlaying) {
+            
+            audioPlayer.src = selectedTrack;
+            audioPlayer.play();
+            playSong.textContent = "⏸";
+            isPlaying = true;
+            startAnimation(); // ✅ Start animation when 
+            confirmBox.style.display = "none"; // Hide confirmation box when playing
+        } else {
+            
+            audioPlayer.pause();
+            confirmBox.style.display = "flex"; // Show confirmation box when paused
+            playSong.textContent = "▶️";
+            isPlaying = false;
+        }
+        
+    });
 // Hide the confirmation box and stop the animation when the stop button is clicked
 stopButton.addEventListener("click", () => {
     confirmBox.style.display = "none";
     stopAnimation(); // Call your function to stop animation
 });
- 
-   
+    function setTimestamps(trackItem) {
+        let rawTimestamps = trackItem.dataset.timestamps;
+        timestamps = rawTimestamps ? rawTimestamps.split(",").map(Number) : [];
+
+        console.log("Loaded timestamps:", timestamps);
+        // Select the element (assuming trackItem is the target element)
+
+// Store the value globally
+        window.vibrationSet = trackItem ? trackItem.dataset.vibrationset : "Not found";
+
+// Now you can print it anywhere in the script
+        console.log("Vibration Set:", window.vibrationSet);
+
+
+
+    }
+
+    // ===== VIBRATION CODE STARTS HERE =====
+
+    audioPlayer.addEventListener("timeupdate", function () {
+    let currentTime = Math.floor(audioPlayer.currentTime);
+
+    if (window.timestamps && window.timestamps.includes(currentTime)) {
+        navigator.vibrate(1000);
+        console.log('vibrating')
+        window.timestamps = window.timestamps.filter(t => t !== currentTime);
+    }
+});
+
+    // Ensure window.calculatedTiming exists and is a valid number
+// audioPlayer.addEventListener("timeupdate", function () {
+//     let currentTime = Math.floor(audioPlayer.currentTime);
+
+//     if (window.vibrationSet === "Default") {
+//         if (window.calculatedTiming && !isNaN(window.calculatedTiming)) {
+//             if (currentTime % window.calculatedTiming === 0 && currentTime !== 0) {
+//                 navigator.vibrate(1000);
+//             }
+//         } else {
+//             console.warn("window.calculatedTiming is not defined or invalid");
+//         }
+//     }
+// });
+
     // ===== VIBRATION CODE ENDS HERE =====
 
     // // Handle song ending
@@ -1033,7 +1090,6 @@ stopButton.addEventListener("click", () => {
     //     console.log("Song ended");
     // });
 });
-
 
 // ------------------------------------------------------------------------------------------------------------------
   
@@ -1118,98 +1174,131 @@ nextSong.addEventListener("click", () => changeTrack(1));
 prevSong.addEventListener("click", () => changeTrack(-1));
   </script>
   <!-- Vibration code start here  -->
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const playButton = document.getElementById("playSong");
-      const prevButton = document.getElementById("prevSong");
-      const nextButton = document.getElementById("nextSong");
-      const progressBar = document.getElementById("progressBar");
-      const progressHandle = document.getElementById("progressHandle");
-      const timeDisplay = document.getElementById("timeDisplay");
-      const confirmBox = document.getElementById("confirmBox");
-  
-      const totalTime = 300; // 5 minutes (300 seconds)
-      let remainingTime = totalTime;
-      let isPlaying = false;
-      let interval;
-  
-      function formatTime(seconds) {
-          const minutes = Math.floor(seconds / 60);
-          const secs = seconds % 60;
-          return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
-      }
-  
-      function updateProgressBar() {
-          if (remainingTime <= 0) {
-              clearInterval(interval);
-              isPlaying = false;
-              playButton.textContent = "▶️"; 
-              return;
-          }
-  
-          const elapsedTime = totalTime - remainingTime;
-          const progressPercent = (elapsedTime / totalTime) * 100;
-          progressBar.style.width = `${progressPercent}%`;
-          progressHandle.style.left = `${progressPercent}%`;
-          timeDisplay.textContent = formatTime(remainingTime);
-  
-          remainingTime -= 1;
-      }
-  
-      function togglePlayPause() {
-          console.log("Playing status:", isPlaying);
-  
-          const goldenLine = document.querySelector(".golden-line");
-  
-          if (isPlaying) {
-              clearInterval(interval);
-              playButton.textContent = "▶️"; 
-              confirmBox.style.display = "block"; 
-          } else {
-              interval = setInterval(updateProgressBar, 1000);
-              playButton.textContent = "⏸"; 
-              confirmBox.style.display = "none"; 
-          }
-  
-          // Hide golden-line and text when isPlaying is true, show them when false
-          if (isPlaying && goldenLine) {
-              goldenLine.style.display = "none";
-              document.querySelector(".text").style.display = "none";
-          } else if (!isPlaying && goldenLine) {
-              goldenLine.style.display = "block";
-              document.querySelector(".text").style.display = "block";
-          }
-  
-          isPlaying = !isPlaying;
-      }
-  
-      function resetTimer() {
-          clearInterval(interval);
-          remainingTime = totalTime;
-          progressBar.style.width = "0%";
-          progressHandle.style.left = "0%";
-          timeDisplay.textContent = formatTime(totalTime);
-          isPlaying = false;
-          playButton.textContent = "▶️";
-          confirmBox.style.display = "none";
-      }
-  
-      playButton.addEventListener("click", togglePlayPause);
-      prevButton.addEventListener("click", resetTimer);
-      nextButton.addEventListener("click", resetTimer);
-  
-      timeDisplay.textContent = formatTime(totalTime);
-  });
-  
+<script>
   document.addEventListener("DOMContentLoaded", function () {
-      const backToBreathButton = document.getElementById("backtobreath");
-  
-      backToBreathButton.addEventListener("click", function () {
-          window.location.href = "{% url 'breathxapp:exercise_list' %}"; // Django URL routing
-      });
-  });
-  </script>
-  
+    const playButton = document.getElementById("playSong");
+    const prevButton = document.getElementById("prevSong");
+    const nextButton = document.getElementById("nextSong");
+    const progressBar = document.getElementById("progressBar");
+    const progressHandle = document.getElementById("progressHandle");
+    const timeDisplay = document.getElementById("timeDisplay");
+    const confirmBox = document.getElementById("confirmBox");
+
+    const totalTime = 300; // 5 minutes (300 seconds)
+    let remainingTime = totalTime;
+    let isPlaying = false;
+    let interval;
+    
+    let vibrationInterval;
+    let vibrationStartTime = null; 
+
+    let vibrationTimestamps = [5, 120, 180, 240].map(t => t - 1); // Adjusting timestamps (5 → 4, 120 → 119, etc.)
+
+    function formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+
+    function updateProgressBar() {
+        if (remainingTime <= 0) {
+            clearInterval(interval);
+            clearInterval(vibrationInterval); 
+            isPlaying = false;
+            
+            playButton.textContent = "▶️"; 
+            
+            return;
+        }
+
+        const elapsedTime = totalTime - remainingTime;
+        const progressPercent = (elapsedTime / totalTime) * 100;
+        progressBar.style.width = `${progressPercent}%`;
+        progressHandle.style.left = `${progressPercent}%`;
+        timeDisplay.textContent = formatTime(remainingTime);
+
+        if (vibrationTimestamps.includes(elapsedTime) && !vibrationStartTime) {
+            startVibrating(1000, 5000); 
+            vibrationStartTime = elapsedTime;
+        }
+
+        remainingTime -= 1;
+    }
+
+    function startVibrating(duration, intervalTime) {
+        navigator.vibrate(duration);
+        console.log("Vibrating at:", totalTime - remainingTime);
+
+        vibrationInterval = setInterval(() => {
+            navigator.vibrate(duration);
+            console.log("Continuous vibration");
+        }, intervalTime);
+    }
+
+    function stopVibrating() {
+        clearInterval(vibrationInterval);
+        navigator.vibrate(0);
+        vibrationStartTime = null;
+    }
+
+    function togglePlayPause() {
+    console.log("Playing status:", isPlaying);
+
+    const goldenLine = document.querySelector(".golden-line");
+
+    if (isPlaying) {
+        clearInterval(interval);
+        stopVibrating();
+        playButton.textContent = "▶️"; 
+        confirmBox.style.display = "block"; 
+    } else {
+        interval = setInterval(updateProgressBar, 1000);
+        playButton.textContent = "⏸"; 
+        confirmBox.style.display = "none"; 
+        
+    }
+
+    // Hide golden-line when isPlaying is true, show it when false
+    if (isPlaying && goldenLine) {
+        goldenLine.style.display = "none";
+        document.querySelector(".text").style.display = "none";
+
+    } else if (!isPlaying && goldenLine) {
+        goldenLine.style.display = "block";
+        document.querySelector(".text").style.display = "block";
+
+    }
+
+    isPlaying = !isPlaying;
+}
+
+    function resetTimer() {
+        clearInterval(interval);
+        stopVibrating();
+        remainingTime = totalTime;
+        progressBar.style.width = "0%";
+        progressHandle.style.left = "0%";
+        timeDisplay.textContent = formatTime(totalTime);
+        isPlaying = false;
+        playButton.textContent = "▶️";
+        confirmBox.style.display = "none";
+    }
+
+    playButton.addEventListener("click", togglePlayPause);
+    prevButton.addEventListener("click", resetTimer);
+    nextButton.addEventListener("click", resetTimer);
+
+    timeDisplay.textContent = formatTime(totalTime);
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    const backToBreathButton = document.getElementById("backtobreath");
+
+    backToBreathButton.addEventListener("click", function () {
+        window.location.href = "{% url 'breathxapp:exercise_list' %}"; // Django URL routing
+    });
+});
+</script>
     
 <!-- Vibration code Ends here  -->
   <!-- new code here ------------------------------------------------------------------------------------------------ -->

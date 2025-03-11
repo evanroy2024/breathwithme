@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription Expired</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #121212;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        .container {
+            background: #1c1c1c;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0px 10px 30px rgba(255, 215, 0, 0.1);
+            max-width: 420px;
+            width: 90%;
+            animation: fadeIn 0.8s ease-in-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-size: 28px;
+            background: linear-gradient(135deg, #FFD700, #FFB700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+            animation: glowText 2s infinite alternate ease-in-out;
+        }
+
+        p {
+            font-size: 15px;
+            opacity: 0.85;
+            margin: 15px 0 25px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #FFD700, #FFB700);
+            color: #121212;
+            font-size: 16px;
+            font-weight: 500;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0px 4px 15px rgba(255, 215, 0, 0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 6px 20px rgba(255, 215, 0, 0.5);
+        }
+
+        /* Background Glow Animation */
+        @keyframes glowText {
+            0% { text-shadow: 0px 0px 10px rgba(255, 215, 0, 0.3); }
+            100% { text-shadow: 0px 0px 20px rgba(255, 215, 0, 0.6); }
+        }
+
+        /* Container Fade In */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Moving Animated Background */
+        .container::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.1), transparent);
+            animation: moveBackground 6s linear infinite;
+        }
+
+        @keyframes moveBackground {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Subscription Expired</h1>
+        <p>Your subscription has ended. Renew now to regain access.</p>
+        <a href="{% url 'subscriptions' %}" class="btn">Renew Now</a>
+    </div>
+</body>
+</html>

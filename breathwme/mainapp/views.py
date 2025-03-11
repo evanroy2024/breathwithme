@@ -33,76 +33,101 @@ import random
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
 
+import random
+from django.contrib.auth.models import User
+from django.contrib import messages
+from django.core.mail import send_mail
+from django.conf import settings
+from django.shortcuts import render, redirect
+from referal.models import ReferralLink, DigitalCoin  # Import referral & coin models
+
 # Function to generate OTP
 def generate_otp():
-    return random.randint(100000, 999999)
+    return str(random.randint(100000, 999999))  # Ensure OTP is stored as a string
 
-# Register view
+# Register view with referral code support
 def register(request):
+    referral_code = request.GET.get("ref")  # Get referral code from URL
+
     if request.method == "POST":
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
+        username = request.POST.get("username")
+        email = request.POST.get("email")
+        password = request.POST.get("password")
 
         # Check if user already exists
         if User.objects.filter(username=username).exists():
             messages.error(request, "Username already taken.")
-            return redirect('register')
+            return redirect("register")
         if User.objects.filter(email=email).exists():
             messages.error(request, "Email already registered.")
-            return redirect('register')
+            return redirect("register")
 
-        # Generate OTP and send email
+        # Generate OTP and save in session
         otp = generate_otp()
-        request.session['otp'] = otp  # Save OTP in session for verification
+        request.session["otp"] = otp
+
+        # Save referral code in session (if provided)
+        if referral_code:
+            request.session["referral_code"] = referral_code  
 
         # Send OTP email
         send_mail(
-            'Your OTP Code',
-            f'Your OTP code is {otp}',
+            "Your OTP Code",
+            f"Your OTP code is {otp}",
             settings.DEFAULT_FROM_EMAIL,
             [email],
             fail_silently=False,
         )
 
-        # Save user data temporarily to session for OTP verification
-        request.session['username'] = username
-        request.session['email'] = email
-        request.session['password'] = password
+        # Save user data temporarily to session
+        request.session["username"] = username
+        request.session["email"] = email
+        request.session["password"] = password
 
         messages.success(request, "OTP sent to your email. Please verify.")
-        return redirect('otp_varify')  # Redirect to OTP verification page
-    
-    return render(request, 'user/register.html')
+        return redirect("otp_varify")  # Redirect to OTP verification page
 
-# OTP verification view
+    return render(request, "user/register.html")
+
+
+# OTP verification view with referral rewards
 def otp_varify(request):
     if request.method == "POST":
-        entered_otp = request.POST.get('otp')
-        
-        # Verify OTP
-        if int(entered_otp) == request.session.get('otp'):
-            # OTP is correct, create user in the database
-            username = request.session.get('username')
-            email = request.session.get('email')
-            password = request.session.get('password')
+        entered_otp = request.POST.get("otp")
 
-            # Create user in the database
+        # Verify OTP
+        if entered_otp == str(request.session.get("otp")):  # Ensure string comparison
+            username = request.session.get("username")
+            email = request.session.get("email")
+            password = request.session.get("password")
+
+            # Create new user
             user = User.objects.create_user(username=username, email=email, password=password)
             user.save()
 
-            # Clear the session data
-            del request.session['otp']
-            del request.session['username']
-            del request.session['email']
-            del request.session['password']
+            # Initialize user's digital coin balance
+            DigitalCoin.objects.get_or_create(user=user, defaults={"amount": 0})
+
+            # Check if referral code was used
+            referral_code = request.session.get("referral_code")
+            if referral_code:
+                try:
+                    referrer = ReferralLink.objects.get(code=referral_code).user  # Find referrer
+                    digital_coin, created = DigitalCoin.objects.get_or_create(user=referrer)
+                    digital_coin.amount += 5  # Reward referrer with 5 coins
+                    digital_coin.save()
+                except ReferralLink.DoesNotExist:
+                    pass  # Ignore if referral code is invalid
+
+            # Clear session data after successful registration
+            request.session.flush()
 
             messages.success(request, "OTP verified successfully! You can now login.")
-            return redirect('signin')  # Redirect to login page
-        else:
-            messages.error(request, "Invalid OTP. Please try again.")
-    
-    return render(request, 'user/otp.html')
+            return redirect("signin")
+
+        messages.error(request, "Invalid OTP. Please try again.")
+
+    return render(request, "user/otp.html")
 
 def signin(request):
     if request.method == "POST":
@@ -224,7 +249,9 @@ def execute_payment(request):
 from django.shortcuts import render
 from userdata.models import Userdata
 from django.contrib.auth.decorators import login_required
+from .decorators import check_subscription
 
+@check_subscription
 @login_required
 def home(request):
     userdata = Userdata.objects.filter(user=request.user).first()
@@ -327,19 +354,12 @@ def music_player(request):
     })
 
 
-# def music_player(request):
-#     tracks = MusicTrack.objects.all()
+# //////////////////////////////////// SubscriptionPlan CHECK START //////////////////////////////////////
+from django.urls import path
+from django.shortcuts import render
 
-#     # Get vibration patterns and timestamps for each track
-#     track_data = {
-#         track.title: {
-#             "vibration_pattern": track.get_vibration_pattern(),
-#             "timestamps": track.get_timestamps()
-#         }
-#         for track in tracks
-#     }
+# View for Subscription Expired Page
+def subscription_expired(request):
+    return render(request, 'subscription_expired.html')
 
-#     return render(request, 'myapp/music_player.html', {
-#         'tracks': tracks,
-#         'track_data': track_data,
-#     })
+# //////////////////////////////////// SubscriptionPlan CHECK End ////////////////////////////////////////

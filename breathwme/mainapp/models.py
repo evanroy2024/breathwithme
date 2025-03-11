@@ -5,6 +5,7 @@ class SubscriptionPlan(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
     price = models.DecimalField(max_digits=8, decimal_places=2)
+    duration = models.PositiveIntegerField(blank=True, null=True, help_text="Duration of the subscription in days ")
     
     def __str__(self):
         return self.name
@@ -15,6 +16,8 @@ class Subscription(models.Model):
     payment_status = models.CharField(max_length=20, default='Pending')
     payment_transaction_id = models.CharField(max_length=255, blank=True, null=True)
     subscription_date = models.DateTimeField(auto_now_add=True)
+    start_date = models.DateField(blank=True, null=True)  # Can be empty
+    end_date = models.DateField(blank=True, null=True)  # Can be empty
 
     def __str__(self):
         return f"{self.user.username} - {self.plan.name} - {self.payment_status}"
