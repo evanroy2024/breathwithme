@@ -668,7 +668,7 @@ option {
     timingControls.innerHTML = ""; // Clear previous options
 
     let globalSelect; // To store the single input reference
-    const timingOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 18,20,25,30,35,40,45,50,55,60]; // Available timing options
+    const timingOptions = [0,1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 18,20,25,30,35,40,45,50,55,60]; // Available timing options
 
     // Function to calculate the timing value based on the shape
     function calculateTiming(userValue, shape) {
@@ -714,7 +714,7 @@ option {
         });
 
         // Default selected value
-        select.value = "2";
+        select.value = "0";
 
 
         // If it's the first input, store the reference
