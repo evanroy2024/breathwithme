@@ -561,10 +561,10 @@ option {
         <option value="circle">Select a Shape</option>
         <option value="circle">Circle</option>
         <option value="square">Square</option>
-        <option value="hRectangle">Horizontal Rectangle</option>
+        <!-- <option value="hRectangle">Horizontal Rectangle</option>
         <option value="vRectangle">Vertical Rectangle</option>
         <option value="triangle">Triangle</option>
-        <option value="reverseTriangle">Reverse Triangle</option>
+        <option value="reverseTriangle">Reverse Triangle</option> -->
     </select>
      <!-- Bullet points explaining each shape -->
      <ul class="shape-description">
@@ -721,26 +721,30 @@ document.addEventListener("DOMContentLoaded", function () {
   <button id="reloadBtn">Customise</button>
   <button id="goBackToPart3">Songs</button>
   <button onclick="showPopup()">Vibration</button>
-
-
 </div>
 
 <div id="vibrationPopup" class="popup">
-    <label for="vibrationLevel">Vibration Intensity:</label>
+    <!-- <label for="vibrationLevel">Vibration Intensity:</label>
     <select id="vibrationLevel" onchange="hidePopup()">
         <option value="500">Quarter Note</option>
         <option value="1000" selected>Half Note</option>
         <option value="1500">Three Quarter</option>
         <option value="2000">Full Note</option>
+    </select> -->
+    <select id="noteSelector"  onchange="hidePopup()">
+        <option value="Full">Default ( Full Note )</option>
+        <option value="1/2">1/2 Note</option>
+        <option value="1/4">1/4 Note</option>
     </select>
 </div>
 
 
-<select id="noteSelector">
+<!-- <select id="noteSelector">
+    
     <option value="Full">Full Note</option>
     <option value="1/2">1/2 Note</option>
     <option value="1/4">1/4 Note</option>
-</select>
+</select> -->
 
 </section>
 
@@ -825,45 +829,45 @@ stopButton.addEventListener("click", () => {
     confirmBox.style.display = "none";
     stopAnimation(); // Call your function to stop animation
 });
-    function setTimestamps(trackItem) {
-        let rawTimestamps = trackItem.dataset.timestamps;
-        timestamps = rawTimestamps ? rawTimestamps.split(",").map(Number) : [];
+//     function setTimestamps(trackItem) {
+//         let rawTimestamps = trackItem.dataset.timestamps;
+//         timestamps = rawTimestamps ? rawTimestamps.split(",").map(Number) : [];
 
-        console.log("Loaded timestamps:", timestamps);
-        // Select the element (assuming trackItem is the target element)
+//         console.log("Loaded timestamps:", timestamps);
+//         // Select the element (assuming trackItem is the target element)
 
-// Store the value globally
-        window.vibrationSet = trackItem ? trackItem.dataset.vibrationset : "Not found";
+// // Store the value globally
+//         window.vibrationSet = trackItem ? trackItem.dataset.vibrationset : "Not found";
 
-// Now you can print it anywhere in the script
-        console.log("Vibration Set:", window.vibrationSet);
+// // Now you can print it anywhere in the script
+//         console.log("Vibration Set:", window.vibrationSet);
 
 
 
-    }
+//     }
 
     // ===== VIBRATION CODE STARTS HERE =====
-    const vibrationDropdown = document.getElementById("vibrationLevel");
+//     const vibrationDropdown = document.getElementById("vibrationLevel");
 
-audioPlayer.addEventListener("timeupdate", function () {
-    let currentTime = Math.floor(audioPlayer.currentTime);
-    let selectedVibration = parseInt(vibrationDropdown.value, 10); // Get selected vibration duration
+// audioPlayer.addEventListener("timeupdate", function () {
+//     let currentTime = Math.floor(audioPlayer.currentTime);
+//     let selectedVibration = parseInt(vibrationDropdown.value, 10); // Get selected vibration duration
 
-    if (window.vibrationSet === "Default") {
-        if (window.calculatedTiming && !isNaN(window.calculatedTiming)) {
-            if (currentTime % window.calculatedTiming === 0 && currentTime !== 0) {
-                navigator.vibrate(selectedVibration);
-            }
-        } else {
-            console.warn("window.calculatedTiming is not defined or invalid");
-        }
-    } else if (window.vibrationSet === "Customise") {
-        if (timestamps.includes(currentTime)) {
-            navigator.vibrate(selectedVibration);
-            timestamps = timestamps.filter(t => t !== currentTime);
-        }
-    }
-});
+//     if (window.vibrationSet === "Default") {
+//         if (window.calculatedTiming && !isNaN(window.calculatedTiming)) {
+//             if (currentTime % window.calculatedTiming === 0 && currentTime !== 0) {
+//                 navigator.vibrate(selectedVibration);
+//             }
+//         } else {
+//             console.warn("window.calculatedTiming is not defined or invalid");
+//         }
+//     } else if (window.vibrationSet === "Customise") {
+//         if (timestamps.includes(currentTime)) {
+//             navigator.vibrate(selectedVibration);
+//             timestamps = timestamps.filter(t => t !== currentTime);
+//         }
+//     }
+// });
 
 
 });
@@ -1078,7 +1082,7 @@ function animateNextPhase() {
                     break;
             }
             goldenLineDuration = (currentDuration * multiplier) + "s";
-            navigator.vibrate(100); // Corrected vibration call
+            navigator.vibrate(500); // Corrected vibration call
 
             break;
         case "square":
