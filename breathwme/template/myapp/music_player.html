@@ -561,10 +561,10 @@ option {
         <option value="circle">Select a Shape</option>
         <option value="circle">Circle</option>
         <option value="square">Square</option>
-        <!-- <option value="hRectangle">Horizontal Rectangle</option>
+        <option value="hRectangle">Horizontal Rectangle</option>
         <option value="vRectangle">Vertical Rectangle</option>
         <option value="triangle">Triangle</option>
-        <option value="reverseTriangle">Reverse Triangle</option> -->
+        <option value="reverseTriangle">Reverse Triangle</option>
     </select>
      <!-- Bullet points explaining each shape -->
      <ul class="shape-description">
@@ -736,6 +736,11 @@ document.addEventListener("DOMContentLoaded", function () {
 </div>
 
 
+<select id="noteSelector">
+    <option value="Full">Full Note</option>
+    <option value="1/2">1/2 Note</option>
+    <option value="1/4">1/4 Note</option>
+</select>
 
 </section>
 
@@ -871,7 +876,7 @@ audioPlayer.addEventListener("timeupdate", function () {
     let durations = [];
   
     const breathingTexts = {
-        circle: ["Inhale","Inhale","Exhale", "Exhale"],
+        circle: ["Inhale","Exhale"],
         square: ["Inhale", "Hold", "Exhale", "Hold"],
         hRectangle: ["Inhale", "Hold", "Hold", "Exhale", "Hold", "Hold"],
         vRectangle: ["Inhale", "Inhale", "Hold", "Exhale", "Exhale", "Hold"],
@@ -892,7 +897,7 @@ audioPlayer.addEventListener("timeupdate", function () {
         let result = baseValue / bpm;
 
         const shapeDivisors = {
-            circle: 4,
+            circle: 2,
             square: 4,
             hRectangle: 6,
             vRectangle: 6,
@@ -999,31 +1004,11 @@ document.addEventListener("DOMContentLoaded", function () {
 function startGoldenLineAnimation() {
     let currentDuration = parseFloat(durations[index]); // Get current duration as a number
 
-    // ===== VIBRATION CODE STARTS HERE =====
-const vibrationDropdown = document.getElementById("vibrationLevel");
-let lastVibrationTime = -1; // To track when the last vibration happened
-
-audioPlayer.addEventListener("timeupdate", function () {
-    let currentTime = Math.floor(audioPlayer.currentTime);
-    let selectedVibration = parseInt(vibrationDropdown.value, 10); // Get selected vibration duration
-
-    if (window.vibrationSet === "Default") {
-        if ((currentTime === currentDuration - 0.7) || (currentTime % currentDuration === 0 && currentTime !== 0)) {
-            if (lastVibrationTime !== currentTime) { // Ensure it vibrates only once per second
-                console.log("Vibrating for:", selectedVibration, "milliseconds");
-                navigator.vibrate(selectedVibration);
-                lastVibrationTime = currentTime; // Update last vibration time
-            }
-        }
-    }
-});
-
     let goldenLineDuration;
 
     switch (shape) {
         case "circle":
             goldenLineDuration = (currentDuration * 2) + "s";
-            console.log("safsfgsd")
             break;
         case "square":
             goldenLineDuration = (currentDuration * 3) + "s";
@@ -1075,10 +1060,26 @@ function animateNextPhase() {
 
 
     let goldenLineDuration;
-
+    
+    // For full note half note etc start 
     switch (shape) {
         case "circle":
-            goldenLineDuration = (currentDuration * 2) + "s";
+            let multiplier = 8; // Default for Full Note
+            switch (document.getElementById("noteSelector").value) {
+                case "1/2":
+                    multiplier = 2;
+                    break;
+                case "1/4":
+                    multiplier = 4;
+                    break;
+                case "Full":
+                default:
+                    multiplier = 1;
+                    break;
+            }
+            goldenLineDuration = (currentDuration * multiplier) + "s";
+            navigator.vibrate(100); // Corrected vibration call
+
             break;
         case "square":
             goldenLineDuration = (currentDuration * 4) + "s";
