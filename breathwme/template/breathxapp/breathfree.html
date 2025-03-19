@@ -544,6 +544,19 @@ option {
     100% { transform: translate(5px, -201px); }     
 } */
 
+/* Starting of oval shape --------------------------------------- */
+/* .oval {
+    width: 250px;  
+    height: 150px; 
+    border-radius: 50%;
+    background-color: #4CAF50; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+}
+ */
 
     </style>
 </head>
@@ -582,6 +595,7 @@ option {
             <select id="shapeSelector">
                 <option value="circle">Shape</option>
                 <option value="circle">Circle</option>
+                <option value="oval">Oval</option>
                 <option value="square">Square</option>
                 <option value="hRectangle">Horizontal Rectangle</option>
                 <option value="vRectangle">Vertical Rectangle</option>
@@ -590,7 +604,22 @@ option {
             </select>
         </div> 
         <button id="toggleButton">Breath</button>
- 
+ <select id="timeSelector">
+    <option value="300" selected>5 Minutes (Default)</option>
+    <option value="120">2 Minutes</option>
+    <option value="180">3 Minutes</option>
+    <option value="240">4 Minutes</option>
+    <option value="600">10 Minutes</option>
+    <option value="600">15 Minutes</option>
+    <option value="600">20 Minutes</option>
+    <option value="600">25 Minutes</option>
+    <option value="600">30 Minutes</option>
+    <option value="600">40 Minutes</option>
+    <option value="600">50 Minutes</option>
+    <option value="600">60 Minutes</option>
+
+</select>
+
        
     </div>
 
@@ -628,9 +657,13 @@ option {
   <!-- <button id="playSong">Play</button>
   <button id="stopButton">Stop</button> -->
 <div class="playallbtns">
-  <button id="prevSong">⏮</button>
+  <button id="prevSong" style="display: none;">⏮</button>
+  <button id="decreaseTime">-</button>
+
   <button id="playSong">▶️ </button>
-  <button id="nextSong">⏭</button>
+  <button id="nextSong" style="display: none;">⏭</button>
+  <button id="increaseTime">+</button>
+
 </div>
 <!-- <div class="others">
   <button id="reloadBtn">Customise</button>
@@ -686,6 +719,7 @@ option {
   
     const breathingTexts = {
         circle: ["Inhale","Exhale"],
+        oval: ["Inhale","Exhale"],
         square: ["Inhale", "Hold", "Exhale", "Hold"],
         hRectangle: ["Inhale", "Inhale", "Hold", "Exhale", "Exhale", "Hold"],
         vRectangle: ["Inhale", "Hold", "Hold", "Exhale", "Hold", "Hold"],
@@ -693,7 +727,7 @@ option {
         reverseTriangle: ["Inhale", "Hold", "Exhale"]
     };
   
-function createTimingInputs(shape) {
+    function createTimingInputs(shape) {
     timingControls.innerHTML = ""; // Clear previous options
 
     // Ensure global storage
@@ -738,6 +772,18 @@ function createTimingInputs(shape) {
         // Update stored values when dropdown changes
         select.addEventListener("change", () => {
             window.storedTimings[index] = select.value;
+
+            // If shape is "circle", ensure both inputs have the same value
+            if (shape === "circle" && index === 0) {
+                window.storedTimings[1] = select.value; // Sync value
+                
+                // Hide second input
+                const secondWrapper = document.getElementById(`wrapper-1`);
+                if (secondWrapper) {
+                    secondWrapper.style.display = "none";
+                }
+            }
+
             console.log("Updated storedTimings:", window.storedTimings);
         });
 
@@ -749,13 +795,22 @@ function createTimingInputs(shape) {
         timingControls.appendChild(wrapper);
     });
 
+    // If shape is "circle", hide the second input immediately
+    if (shape === "circle") {
+        setTimeout(() => {
+            const secondWrapper = document.getElementById(`wrapper-1`);
+            if (secondWrapper) {
+                secondWrapper.style.display = "none";
+            }
+        }, 100);
+    }
+
     // Print values globally after 4 seconds
     setTimeout(() => {
         console.log("Global storedTimings after 4 sec:", window.storedTimings);
     }, 4000);
 }
 
-  
     function createShape(shape) {
         
         shapeContainer.innerHTML = "";
@@ -790,26 +845,26 @@ function startGoldenLineAnimation() {
     let currentDuration = parseFloat(durations[index]); // Get current duration as a number
     let goldenLineDuration;
 
-    switch (shape) {
-        case "circle":
-            goldenLineDuration = (currentDuration * 2) + "s";
-            break;
-        case "square":
-            goldenLineDuration = (currentDuration * 4) + "s";
-            break;
-        case "hRectangle":
-            goldenLineDuration = (currentDuration * 6) + "s";
-            break;
-        case "vRectangle":
-            goldenLineDuration = (currentDuration * 6) + "s";
-            break;
-        case "triangle":
-            goldenLineDuration = (currentDuration * 3) + "s";
-            break;
-        case "reverseTriangle":
-            goldenLineDuration = (currentDuration * 3) + "s";
-            break;
-    }
+    // switch (shape) {
+    //     case "circle":
+    //         goldenLineDuration = (currentDuration * 2) + "s";
+    //         break;
+    //     case "square":
+    //         goldenLineDuration = (currentDuration * 4) + "s";
+    //         break;
+    //     case "hRectangle":
+    //         goldenLineDuration = (currentDuration * 6) + "s";
+    //         break;
+    //     case "vRectangle":
+    //         goldenLineDuration = (currentDuration * 6) + "s";
+    //         break;
+    //     case "triangle":
+    //         goldenLineDuration = (currentDuration * 3) + "s";
+    //         break;
+    //     case "reverseTriangle":
+    //         goldenLineDuration = (currentDuration * 3) + "s";
+    //         break;
+    // }
 
     // console.log("Golden Line Duration:", goldenLineDuration);
 
@@ -1024,7 +1079,82 @@ function animateNextPhase() {
         console.error("goldenLine is not defined or not found in the DOM.");
     }
     break;
+  
+    case "oval":
+    div.style.width = "300px";  // Oval width
+    div.style.height = "200px"; // Oval height
+    div.style.borderRadius = "50%";
+    console.log("Applying ultra-smooth & aligned oval animation...");
 
+    // Ensure storedTimings exists and has 2 values
+    if (!window.storedTimings || window.storedTimings.length < 2) {
+        console.warn("Not enough values in storedTimings. Using default values.");
+        window.storedTimings = [4, 6]; // Default fallback values
+    }
+
+    // Convert values to numbers
+    const ovalDurations = window.storedTimings.slice(0, 2).map(Number);
+    const [ovalFirstDuration, ovalSecondDuration] = ovalDurations;
+
+    console.log("Dynamic Timings for Oval:", ovalDurations);
+
+    // Define oval radii (horizontal and vertical)
+    const radiusX = 150; // Half of width
+    const radiusY = 100; // Half of height
+
+    // Adjust for better alignment (raising & shifting slightly left)
+    const offsetX = -3; // Small left shift (fix for right-start issue)
+    const offsetY = -5; // Moves it slightly up to align with the oval border
+
+    // Create keyframes dynamically (BREAK IT MORE for SUPER SMOOTHNESS)
+    let keyframes = `@keyframes moveOval {`;
+    for (let i = 0; i <= 100; i += 2) { // More precise steps (2% instead of 5%)
+        let angle = (i / 100) * 2 * Math.PI;
+        let dynamicRadiusX = (i === 50) ? radiusX - 2 : radiusX; // Reduce by 2px at 50%
+        let x = dynamicRadiusX * Math.cos(angle) + offsetX;
+        let y = radiusY * Math.sin(angle) + offsetY; // Apply upward shift
+        keyframes += `${i}% { transform: translate(${x}px, ${y}px); }`;
+    }
+    keyframes += `}`;
+
+    // Remove previous animation style if exists
+    let existingOvalStyle = document.getElementById("dynamicOvalAnimation");
+    if (existingOvalStyle) existingOvalStyle.remove();
+
+    // Inject new animation style
+    let ovalStyleSheet = document.createElement("style");
+    ovalStyleSheet.id = "dynamicOvalAnimation";
+    ovalStyleSheet.innerHTML = keyframes;
+    document.head.appendChild(ovalStyleSheet);
+
+    // Ensure the element exists
+    if (goldenLine) {
+        goldenLine.style.position = "absolute"; // Ensure absolute positioning
+        goldenLine.style.left = `${radiusX + offsetX}px`;  // Start slightly left
+        goldenLine.style.top = `${radiusY + offsetY}px`;  
+
+        let isFirstDuration = true; // Toggle between durations
+
+        function updateAnimation() {
+            let duration = isFirstDuration ? ovalFirstDuration : ovalSecondDuration;
+            goldenLine.style.animation = `none`; // Reset animation to apply new timing
+            setTimeout(() => {
+                goldenLine.style.animation = `moveOval ${duration}s linear infinite`;
+            }, 0);
+            isFirstDuration = !isFirstDuration; // Switch for the next cycle
+        }
+
+        // Apply the initial animation
+        updateAnimation();
+
+        // Listen for animation iteration completion to swap durations
+        goldenLine.addEventListener("animationiteration", updateAnimation);
+
+        console.log("Ultra-smooth, dynamically-timed oval animation applied.");
+    } else {
+        console.error("goldenLine is not defined or not found in the DOM.");
+    }
+    break;
 
         case "square":
             div.style.width = "200px";
@@ -1552,13 +1682,16 @@ prevSong.addEventListener("click", () => changeTrack(-1));
         const progressHandle = document.getElementById("progressHandle");
         const timeDisplay = document.getElementById("timeDisplay");
         const confirmBox = document.getElementById("confirmBox");
-        const popupOverlay = document.getElementById("popupOverlay"); // Pop-up element
-        let popupShown = false; // Ensure pop-up appears only once
+        const popupOverlay = document.getElementById("popupOverlay");
+        const timeSelector = document.getElementById("timeSelector");
+        const increaseTime = document.getElementById("increaseTime");
+        const decreaseTime = document.getElementById("decreaseTime");
 
-        const totalTime = 300; // 30 seconds
+        let totalTime = parseInt(timeSelector.value);
         let remainingTime = totalTime;
         let isPlaying = false;
         let interval;
+        let popupShown = false;
 
         function formatTime(seconds) {
             const minutes = Math.floor(seconds / 60);
@@ -1574,11 +1707,9 @@ prevSong.addEventListener("click", () => changeTrack(-1));
                 return;
             }
 
-            // Show pop-up when 5 seconds are left
             if (remainingTime === 1 && !popupShown) {
-                console.log("I am done");
                 if (popupOverlay) {
-                    popupOverlay.style.display = "flex"; // Show pop-up
+                    popupOverlay.style.display = "flex";
                 }
                 popupShown = true;
             }
@@ -1593,7 +1724,6 @@ prevSong.addEventListener("click", () => changeTrack(-1));
         }
 
         function togglePlayPause() {
-            console.log("Playing status:", isPlaying);
             const goldenLine = document.querySelector(".golden-line");
 
             if (isPlaying) {
@@ -1606,13 +1736,9 @@ prevSong.addEventListener("click", () => changeTrack(-1));
                 confirmBox.style.display = "none";
             }
 
-            // Hide golden-line and text when playing, show them when paused
-            if (isPlaying && goldenLine) {
-                goldenLine.style.display = "none";
-                document.querySelector(".text").style.display = "none";
-            } else if (!isPlaying && goldenLine) {
-                goldenLine.style.display = "block";
-                document.querySelector(".text").style.display = "block";
+            if (goldenLine) {
+                goldenLine.style.display = isPlaying ? "none" : "block";
+                document.querySelector(".text").style.display = isPlaying ? "none" : "block";
             }
 
             isPlaying = !isPlaying;
@@ -1620,6 +1746,7 @@ prevSong.addEventListener("click", () => changeTrack(-1));
 
         function resetTimer() {
             clearInterval(interval);
+            totalTime = parseInt(timeSelector.value);
             remainingTime = totalTime;
             progressBar.style.width = "0%";
             progressHandle.style.left = "0%";
@@ -1627,12 +1754,45 @@ prevSong.addEventListener("click", () => changeTrack(-1));
             isPlaying = false;
             playButton.textContent = "▶️";
             confirmBox.style.display = "none";
-            popupShown = false; // Reset pop-up state
+            popupShown = false;
+        }
+
+        function updateTimeWhileRunning() {
+            const newTime = parseInt(timeSelector.value);
+            const progressFraction = (totalTime - remainingTime) / totalTime;
+
+            totalTime = newTime;
+            remainingTime = Math.round(newTime * (1 - progressFraction));
+
+            if (remainingTime < 1) {
+                remainingTime = 1;
+            }
+
+            const newProgress = ((totalTime - remainingTime) / totalTime) * 100;
+            progressBar.style.width = `${newProgress}%`;
+            progressHandle.style.left = `${newProgress}%`;
+            timeDisplay.textContent = formatTime(remainingTime);
+        }
+
+        function adjustTime(change) {
+            totalTime += change;
+            if (totalTime < 60) totalTime = 60; // Minimum 1 min
+
+            remainingTime += change;
+            if (remainingTime > totalTime) remainingTime = totalTime; 
+
+            const newProgress = ((totalTime - remainingTime) / totalTime) * 100;
+            progressBar.style.width = `${newProgress}%`;
+            progressHandle.style.left = `${newProgress}%`;
+            timeDisplay.textContent = formatTime(remainingTime);
         }
 
         playButton.addEventListener("click", togglePlayPause);
         prevButton.addEventListener("click", resetTimer);
         nextButton.addEventListener("click", resetTimer);
+        timeSelector.addEventListener("change", updateTimeWhileRunning);
+        increaseTime.addEventListener("click", () => adjustTime(60)); // +1 min
+        decreaseTime.addEventListener("click", () => adjustTime(-60)); // -1 min
 
         timeDisplay.textContent = formatTime(totalTime);
     });
@@ -1640,7 +1800,7 @@ prevSong.addEventListener("click", () => changeTrack(-1));
     document.addEventListener("DOMContentLoaded", function () {
         const backToBreathButton = document.getElementById("backtobreath");
         backToBreathButton.addEventListener("click", function () {
-            window.location.href = "{% url 'breathxapp:exercise_list' %}"; 
+            window.location.href = "{% url 'breathxapp:exercise_list' %}";
         });
     });
 
@@ -1650,7 +1810,7 @@ prevSong.addEventListener("click", () => changeTrack(-1));
     }
 </script>
 
-  
+
     
 <!-- Vibration code Ends here  -->
   <!-- new code here ------------------------------------------------------------------------------------------------ -->
@@ -1993,6 +2153,53 @@ section {
 
 
 /* /////////////////////////////////////////////// */
+#timeSelector{
+    padding: 12px 16px;
+    font-size: 16px;
+    font-weight: 500;
+    border: 2px solid #FFD700;
+    border-radius: 8px;
+    background: #000;
+    color: #fff;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+    width: 120px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(255, 215, 0, 0.2);
+    display: block;
+    margin: 0 auto;
+}
+   
+#increaseTime, #decreaseTime {
+    background: linear-gradient(145deg, #1c1c1c, #222); /* Subtle gradient */
+    border: 1px solid #333;
+    border-radius: 6px; /* Square shape with slightly rounded corners */
+    width: 30px; /* Small like a play button */
+    height: 30px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #ddd;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 1px 1px 3px #111, -1px -1px 3px #2a2a2a; /* Realistic shadow */
+    margin-top: 5px;
+}
+
+#increaseTime:hover, #decreaseTime:hover {
+    background: #292929;
+    border-color: #444;
+}
+
+#increaseTime:active, #decreaseTime:active {
+    background: #131313;
+    border-color: #555;
+    transform: scale(0.95);
+    box-shadow: inset 1px 1px 3px #111, inset -1px -1px 3px #2a2a2a;
+}
 
 #toggleButton {
     padding: 12px 16px;
