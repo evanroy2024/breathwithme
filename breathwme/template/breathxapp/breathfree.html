@@ -604,7 +604,7 @@ option {
             </select>
         </div> 
         <button id="toggleButton">Breath</button>
- <select id="timeSelector">
+ <select id="timeSelector" style="display: none;">
     <option value="300" selected>5 Minutes (Default)</option>
     <option value="120">2 Minutes</option>
     <option value="180">3 Minutes</option>
@@ -616,7 +616,7 @@ option {
     <option value="1800">30 Minutes</option>
     <option value="240">40 Minutes</option>
     <option value="3000">50 Minutes</option>
-    <option value="3600">60 Minutes</option>
+    <option value="6000">60 Minutes</option>
 
 </select>
 
@@ -773,8 +773,8 @@ option {
         select.addEventListener("change", () => {
             window.storedTimings[index] = select.value;
 
-            // If shape is "circle", ensure both inputs have the same value
-            if (shape === "circle" && index === 0) {
+            // If shape is "circle" or "oval", ensure both inputs have the same value
+            if ((shape === "circle" || shape === "oval") && index === 0) {
                 window.storedTimings[1] = select.value; // Sync value
                 
                 // Hide second input
@@ -795,8 +795,8 @@ option {
         timingControls.appendChild(wrapper);
     });
 
-    // If shape is "circle", hide the second input immediately
-    if (shape === "circle") {
+    // If shape is "circle" or "oval", hide the second input immediately
+    if (shape === "circle" || shape === "oval") {
         setTimeout(() => {
             const secondWrapper = document.getElementById(`wrapper-1`);
             if (secondWrapper) {
@@ -935,6 +935,7 @@ function startGoldenLineAnimation() {
         //     break;
     }
 }
+
 let firstRun = true; // Track first execution
 
 // Animate the shape changes (golden line remains untouched)
@@ -1029,19 +1030,19 @@ function animateNextPhase() {
     div.style.borderRadius = "50%";
     console.log("Applying dynamic circle animation...");
 
-    // Ensure storedTimings exists and has 2 values
+    // Ensure storedTimings exists and has at least 2 values
     if (!window.storedTimings || window.storedTimings.length < 2) {
         console.warn("Not enough values in storedTimings. Using default values.");
         window.storedTimings = [4, 6]; // Default fallback values
     }
 
-    // Convert values to numbers (since they might be stored as strings)
+    // Convert values to numbers
     const circleDurations = window.storedTimings.slice(0, 2).map(Number);
     const [firstDuration, secondDuration] = circleDurations;
 
     console.log("Dynamic Timings for Circle:", circleDurations);
 
-    // Create dynamic keyframes for full-circle motion starting from 12 o’clock (-90deg)
+    // Create keyframes for full-circle motion, starting from 12 o’clock (-90deg)
     const circleAnimationCSS = `
         @keyframes moveCircleFirst {
             0% { transform: rotate(-90deg) translateX(100px) rotate(90deg); }
@@ -1054,7 +1055,7 @@ function animateNextPhase() {
         }
     `;
 
-    // Remove previous animation style if exists
+    // Remove any existing animation styles
     let existingCircleStyle = document.getElementById("dynamicCircleAnimation");
     if (existingCircleStyle) existingCircleStyle.remove();
 
@@ -1068,89 +1069,84 @@ function animateNextPhase() {
     if (goldenLine) {
         goldenLine.style.position = "absolute"; // Ensure absolute positioning
 
-        // Apply animation: firstDuration for one full rotation, then secondDuration for another full rotation
+        // ✅ **Reset animation to force restart from the beginning**
+        goldenLine.style.animation = "none"; // Stops current animation
+        void goldenLine.offsetWidth; // Forces reflow (hack to restart animation)
+        
+        // ✅ **Reapply animation from the start (12 o’clock)**
         goldenLine.style.animation = `
             moveCircleFirst ${firstDuration}s linear 0s infinite,
             moveCircleSecond ${secondDuration}s linear ${firstDuration}s infinite
         `;
 
-        console.log("Circle animation applied with dynamic values:", circleDurations);
+        console.log("Circle animation restarted from 12 o’clock with dynamic values:", circleDurations);
     } else {
         console.error("goldenLine is not defined or not found in the DOM.");
     }
     break;
-  
+
     case "oval":
-    div.style.width = "300px";  // Oval width
-    div.style.height = "200px"; // Oval height
+    div.style.width = "300px";
+    div.style.height = "200px";
     div.style.borderRadius = "50%";
     console.log("Applying ultra-smooth & aligned oval animation...");
 
-    // Ensure storedTimings exists and has 2 values
     if (!window.storedTimings || window.storedTimings.length < 2) {
         console.warn("Not enough values in storedTimings. Using default values.");
-        window.storedTimings = [4, 6]; // Default fallback values
+        window.storedTimings = [4, 6];
     }
 
-    // Convert values to numbers
     const ovalDurations = window.storedTimings.slice(0, 2).map(Number);
     const [ovalFirstDuration, ovalSecondDuration] = ovalDurations;
 
     console.log("Dynamic Timings for Oval:", ovalDurations);
 
-    // Define oval radii (horizontal and vertical)
-    const radiusX = 150; // Half of width
-    const radiusY = 100; // Half of height
+    const radiusX = 150; 
+    const radiusY = 100;
 
-    // Adjust for better alignment (raising & shifting slightly left)
-    const offsetX = -3; // Small left shift (fix for right-start issue)
-    const offsetY = -5; // Moves it slightly up to align with the oval border
+    const offsetX = -3;
+    const offsetY = 78;  
 
-    // Create keyframes dynamically (BREAK IT MORE for SUPER SMOOTHNESS)
     let keyframes = `@keyframes moveOval {`;
-    for (let i = 0; i <= 100; i += 2) { // More precise steps (2% instead of 5%)
-        let angle = (i / 100) * 2 * Math.PI;
-        let dynamicRadiusX = (i === 50) ? radiusX - 2 : radiusX; // Reduce by 2px at 50%
-        let x = dynamicRadiusX * Math.cos(angle) + offsetX;
-        let y = radiusY * Math.sin(angle) + offsetY; // Apply upward shift
-        keyframes += `${i}% { transform: translate(${x}px, ${y}px); }`;
+    for (let i = 0; i <= 100; i += 2) { 
+        let angle = ((i / 100) * 2 * Math.PI) - (Math.PI / 2);
+        let x = radiusX * Math.cos(angle) + offsetX;
+        let y = radiusY * Math.sin(angle) + offsetY; 
+        keyframes += `${i}% { transform: translate3d(${x}px, ${y}px, 0); }`;
     }
     keyframes += `}`;
 
-    // Remove previous animation style if exists
     let existingOvalStyle = document.getElementById("dynamicOvalAnimation");
     if (existingOvalStyle) existingOvalStyle.remove();
 
-    // Inject new animation style
     let ovalStyleSheet = document.createElement("style");
     ovalStyleSheet.id = "dynamicOvalAnimation";
     ovalStyleSheet.innerHTML = keyframes;
     document.head.appendChild(ovalStyleSheet);
 
-    // Ensure the element exists
     if (goldenLine) {
-        goldenLine.style.position = "absolute"; // Ensure absolute positioning
-        goldenLine.style.left = `${radiusX + offsetX}px`;  // Start slightly left
-        goldenLine.style.top = `${radiusY + offsetY}px`;  
+        goldenLine.style.position = "absolute";
+        goldenLine.style.left = `${radiusX + offsetX}px`;
+        goldenLine.style.top = `${radiusY - 85}px`;
+        goldenLine.style.willChange = "transform"; // Helps prevent lag
 
-        let isFirstDuration = true; // Toggle between durations
+        // 🔥 **Ensure proper animation reset**
+        goldenLine.style.animation = "none"; // Stop animation
+        void goldenLine.offsetWidth; // Force browser to recalculate styles (reset)
+        goldenLine.style.animation = `moveOval ${ovalFirstDuration}s linear infinite`;
 
-        function updateAnimation() {
-            let duration = isFirstDuration ? ovalFirstDuration : ovalSecondDuration;
-            goldenLine.style.animation = `none`; // Reset animation to apply new timing
-            setTimeout(() => {
-                goldenLine.style.animation = `moveOval ${duration}s linear infinite`;
-            }, 0);
-            isFirstDuration = !isFirstDuration; // Switch for the next cycle
+        let duration = ovalFirstDuration;
+        
+        // 🛠 **Fix: Prevent unintended resets**
+        goldenLine.removeEventListener("animationiteration", handleOvalAnimation);
+        goldenLine.addEventListener("animationiteration", handleOvalAnimation);
+
+        function handleOvalAnimation() {
+            duration = (duration === ovalFirstDuration) ? ovalSecondDuration : ovalFirstDuration;
+            goldenLine.style.animationDuration = `${duration}s`;
         }
 
-        // Apply the initial animation
-        updateAnimation();
-
-        // Listen for animation iteration completion to swap durations
-        goldenLine.addEventListener("animationiteration", updateAnimation);
-
-        console.log("Ultra-smooth, dynamically-timed oval animation applied.");
+        console.log("Ultra-smooth oval animation applied with zero lag.");
     } else {
         console.error("goldenLine is not defined or not found in the DOM.");
     }
@@ -1480,6 +1476,7 @@ function animateNextPhase() {
 
 
     }
+   
     animationTimeout = setTimeout(() => {
         index = (index + 1) % durations.length;
         animateNextPhase();
