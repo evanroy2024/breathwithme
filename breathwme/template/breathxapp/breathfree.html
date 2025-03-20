@@ -727,6 +727,7 @@ option {
         reverseTriangle: ["Inhale", "Hold", "Exhale"]
     };
   
+  
     function createTimingInputs(shape) {
     timingControls.innerHTML = ""; // Clear previous options
 
@@ -773,14 +774,12 @@ option {
         select.addEventListener("change", () => {
             window.storedTimings[index] = select.value;
 
-            // If shape is "circle" or "oval", ensure both inputs have the same value
-            if ((shape === "circle" || shape === "oval") && index === 0) {
+            // If shape is "circle" or "oval", ensure both inputs always have the same value
+            if (shape === "circle" || shape === "oval") {
                 window.storedTimings[1] = select.value; // Sync value
-                
-                // Hide second input
-                const secondWrapper = document.getElementById(`wrapper-1`);
-                if (secondWrapper) {
-                    secondWrapper.style.display = "none";
+                const secondSelect = document.getElementById(`duration-1`);
+                if (secondSelect) {
+                    secondSelect.value = select.value; // Update second dropdown's displayed value
                 }
             }
 
@@ -795,12 +794,17 @@ option {
         timingControls.appendChild(wrapper);
     });
 
-    // If shape is "circle" or "oval", hide the second input immediately
+    // If shape is "circle" or "oval", hide the second input and sync value immediately
     if (shape === "circle" || shape === "oval") {
         setTimeout(() => {
             const secondWrapper = document.getElementById(`wrapper-1`);
+            const secondSelect = document.getElementById(`duration-1`);
             if (secondWrapper) {
                 secondWrapper.style.display = "none";
+            }
+            if (secondSelect) {
+                secondSelect.value = window.storedTimings[0]; // Ensure same value
+                window.storedTimings[1] = window.storedTimings[0]; // Sync globally
             }
         }, 100);
     }
@@ -1069,17 +1073,13 @@ function animateNextPhase() {
     if (goldenLine) {
         goldenLine.style.position = "absolute"; // Ensure absolute positioning
 
-        // ✅ **Reset animation to force restart from the beginning**
-        goldenLine.style.animation = "none"; // Stops current animation
-        void goldenLine.offsetWidth; // Forces reflow (hack to restart animation)
-        
-        // ✅ **Reapply animation from the start (12 o’clock)**
+        // ✅ **Apply animation directly without resetting**
         goldenLine.style.animation = `
-            moveCircleFirst ${firstDuration}s linear 0s infinite,
+            moveCircleFirst ${firstDuration}s linear infinite,
             moveCircleSecond ${secondDuration}s linear ${firstDuration}s infinite
         `;
 
-        console.log("Circle animation restarted from 12 o’clock with dynamic values:", circleDurations);
+        console.log("Circle animation applied smoothly without restart:", circleDurations);
     } else {
         console.error("goldenLine is not defined or not found in the DOM.");
     }
