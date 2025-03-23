@@ -601,6 +601,7 @@ option {
                 <option value="vRectangle">Vertical Rectangle</option>
                 <option value="triangle">Triangle</option>
                 <option value="reverseTriangle">Reverse Triangle</option>
+                <option value="diamondShape">Diamond Shape</option> <!-- Added New Shape -->
             </select>
         </div> 
         <button id="toggleButton">Breath</button>
@@ -722,11 +723,11 @@ option {
         oval: ["Inhale","Exhale"],
         square: ["Inhale", "Hold", "Exhale", "Hold"],
         hRectangle: ["Inhale", "Inhale", "Hold", "Exhale", "Exhale", "Hold"],
-        vRectangle: ["Inhale", "Hold", "Hold", "Exhale", "Hold", "Hold"],
+        vRectangle: ["Inhale", "Inhale", "Hold", "Exhale","Exhale","Hold"],
         triangle: ["Inhale", "Exhale", "Hold"],
-        reverseTriangle: ["Inhale", "Hold", "Exhale"]
+        reverseTriangle: ["Inhale", "Hold", "Exhale"],
+        diamondShape: ["Inhale", "Hold", "Exhale", "Hold"] // Added for Diamond Shape
     };
-  
   
     function createTimingInputs(shape) {
     timingControls.innerHTML = ""; // Clear previous options
@@ -765,21 +766,48 @@ option {
         });
 
         // Default selected value
-        select.value = "2";
+        select.value = "0"; // User sees "0" initially
 
         // Store selected values globally
-        window.storedTimings[index] = select.value;
+        window.storedTimings[index] = 2; // Internally treat 0 as 2
 
         // Update stored values when dropdown changes
         select.addEventListener("change", () => {
-            window.storedTimings[index] = select.value;
+            let selectedValue = Number(select.value);
 
-            // If shape is "circle" or "oval", ensure both inputs always have the same value
-            if (shape === "circle" || shape === "oval") {
-                window.storedTimings[1] = select.value; // Sync value
-                const secondSelect = document.getElementById(`duration-1`);
-                if (secondSelect) {
-                    secondSelect.value = select.value; // Update second dropdown's displayed value
+            // If user selects 0, treat it as 2 in the background
+            window.storedTimings[index] = selectedValue === 0 ? 2 : selectedValue;
+
+            // If shape is "circle", ensure both inputs have the same value
+            if (shape === "circle" && index === 0) {
+                window.storedTimings[1] = window.storedTimings[index]; // Sync value
+
+                // Hide second input
+                const secondWrapper = document.getElementById(`wrapper-1`);
+                if (secondWrapper) {
+                    secondWrapper.style.display = "none";
+                }
+            }
+
+            // If shape is "square", set all inputs to the first input's value
+            if (shape === "square" && index === 0) {
+                breathingTexts[shape].forEach((_, i) => {
+                    window.storedTimings[i] = window.storedTimings[0]; // Sync all values
+                    document.getElementById(`duration-${i}`).value = window.storedTimings[0];
+                });
+            }
+
+            if (shape === "vRectangle") {
+                if (index === 0) {
+                    // Apply first input value to 2nd, 4th, and 5th inputs
+                    [1, 3, 4].forEach(i => {
+                        window.storedTimings[i] = window.storedTimings[0];
+                        document.getElementById(`duration-${i}`).value = window.storedTimings[0];
+                    });
+                } else if (index === 2) {
+                    // Apply third input value to 6th input
+                    window.storedTimings[5] = window.storedTimings[2];
+                    document.getElementById(`duration-${5}`).value = window.storedTimings[2];
                 }
             }
 
@@ -794,20 +822,40 @@ option {
         timingControls.appendChild(wrapper);
     });
 
-    // If shape is "circle" or "oval", hide the second input and sync value immediately
-    if (shape === "circle" || shape === "oval") {
+    // If shape is "circle", hide the second input immediately
+    if (shape === "circle") {
         setTimeout(() => {
             const secondWrapper = document.getElementById(`wrapper-1`);
-            const secondSelect = document.getElementById(`duration-1`);
             if (secondWrapper) {
                 secondWrapper.style.display = "none";
             }
-            if (secondSelect) {
-                secondSelect.value = window.storedTimings[0]; // Ensure same value
-                window.storedTimings[1] = window.storedTimings[0]; // Sync globally
-            }
         }, 100);
     }
+
+    // If shape is "square", hide all inputs except the first one
+    if (shape === "square") {
+        setTimeout(() => {
+            breathingTexts[shape].forEach((_, i) => {
+                if (i !== 0) {
+                    document.getElementById(`wrapper-${i}`).style.display = "none";
+                }
+            });
+        }, 100);
+    }
+
+    // If shape is "vRectangle", hide all inputs except the first and third one
+    if (shape === "vRectangle") {
+        setTimeout(() => {
+            breathingTexts[shape].forEach((_, i) => {
+                if (i !== 0 && i !== 2) {
+                    document.getElementById(`wrapper-${i}`).style.display = "none";
+                }
+            });
+        }, 100);
+    }
+
+
+    
 
     // Print values globally after 4 seconds
     setTimeout(() => {
@@ -837,7 +885,20 @@ option {
         const textElement = document.createElement("span");
         textElement.classList.add("text");
         textElement.innerText = breathingTexts[shape][textIndex];
-  
+        
+            
+        // The Oval Animation Start --------------------------------------------------------------------------------------
+        if (!window.storedTimings || window.storedTimings.length < 2) {
+            console.warn("Not enough values in storedTimings. Using default values.");
+            window.storedTimings = [5, 3]; // Default fallback
+        }
+        console.log("Stored Timings: :::::::::::::::::::::::::::::::::::::::::::", window.storedTimings);
+        // Initialize currentOvalDuration if not set
+        if (!window.currentOvalIndex) {
+            window.currentOvalIndex = 0;
+        }
+        // The Oval Animation End --------------------------------------------------------------------------------------
+
         function startAnimation() {
             stopAnimation();
             durations = breathingTexts[shape].map((_, index) => parseInt(document.getElementById(`duration-${index}`).value) || 2);
@@ -1084,22 +1145,14 @@ function animateNextPhase() {
         console.error("goldenLine is not defined or not found in the DOM.");
     }
     break;
+    
 
-    case "oval":
+
+case "oval":
     div.style.width = "300px";
     div.style.height = "200px";
     div.style.borderRadius = "50%";
     console.log("Applying ultra-smooth & aligned oval animation...");
-
-    if (!window.storedTimings || window.storedTimings.length < 2) {
-        console.warn("Not enough values in storedTimings. Using default values.");
-        window.storedTimings = [4, 6];
-    }
-
-    const ovalDurations = window.storedTimings.slice(0, 2).map(Number);
-    const [ovalFirstDuration, ovalSecondDuration] = ovalDurations;
-
-    console.log("Dynamic Timings for Oval:", ovalDurations);
 
     const radiusX = 150; 
     const radiusY = 100;
@@ -1130,23 +1183,18 @@ function animateNextPhase() {
         goldenLine.style.top = `${radiusY - 85}px`;
         goldenLine.style.willChange = "transform"; // Helps prevent lag
 
-        // 🔥 **Ensure proper animation reset**
+        // Get current timing from storedTimings
+        let currentOvalDuration = window.storedTimings[window.currentOvalIndex];
+
+        // Reset animation properly
         goldenLine.style.animation = "none"; // Stop animation
         void goldenLine.offsetWidth; // Force browser to recalculate styles (reset)
-        goldenLine.style.animation = `moveOval ${ovalFirstDuration}s linear infinite`;
+        goldenLine.style.animation = `moveOval ${currentOvalDuration}s linear infinite`;
 
-        let duration = ovalFirstDuration;
-        
-        // 🛠 **Fix: Prevent unintended resets**
-        goldenLine.removeEventListener("animationiteration", handleOvalAnimation);
-        goldenLine.addEventListener("animationiteration", handleOvalAnimation);
+        console.log(`Ultra-smooth oval animation applied with ${currentOvalDuration}s duration.`);
 
-        function handleOvalAnimation() {
-            duration = (duration === ovalFirstDuration) ? ovalSecondDuration : ovalFirstDuration;
-            goldenLine.style.animationDuration = `${duration}s`;
-        }
-
-        console.log("Ultra-smooth oval animation applied with zero lag.");
+        // 🚀 When oval case runs again, switch the timing to next storedTiming
+        window.currentOvalIndex = (window.currentOvalIndex + 1) % window.storedTimings.length;
     } else {
         console.error("goldenLine is not defined or not found in the DOM.");
     }
@@ -1155,6 +1203,7 @@ function animateNextPhase() {
         case "square":
             div.style.width = "200px";
             div.style.height = "200px";
+            
             console.log("Applying dynamic square animation...");
 
             // Ensure storedTimings exists and has 4 values
@@ -1210,7 +1259,9 @@ function animateNextPhase() {
                 console.error("goldenLine is not defined or not found in the DOM.");
             }
             break;
-
+        
+        
+        
             case "hRectangle":
     div.style.width = "300px";
     div.style.height = "150px";
@@ -1294,33 +1345,27 @@ function animateNextPhase() {
 
     // Combine values to form 4 segment durations
     const vRectangleSegmentTimes = [
-        vRectangleDurations[0],                      // First segment
-        vRectangleDurations[1] + vRectangleDurations[2],   // Second segment
-        vRectangleDurations[3],                      // Third segment
-        vRectangleDurations[4] + vRectangleDurations[5]    // Fourth segment
+        vRectangleDurations[3],                      // First segment (D → A)
+        vRectangleDurations[4] + vRectangleDurations[5],   // Second segment (A → B)
+        vRectangleDurations[0],                      // Third segment (B → C)
+        vRectangleDurations[1] + vRectangleDurations[2]    // Fourth segment (C → D)
     ];
 
     const vRectangleTotalTime = vRectangleSegmentTimes.reduce((a, b) => a + b, 0);
 
     console.log("Calculated segment durations for Vertical Rectangle:", vRectangleSegmentTimes);
 
-    // Compute animation percentages
-    const vRectanglePercents = [
-        0,
-        (vRectangleSegmentTimes[0] / vRectangleTotalTime) * 100,
-        ((vRectangleSegmentTimes[0] + vRectangleSegmentTimes[1]) / vRectangleTotalTime) * 100,
-        ((vRectangleSegmentTimes[0] + vRectangleSegmentTimes[1] + vRectangleSegmentTimes[2]) / vRectangleTotalTime) * 100,
-        100
-    ];
+    // Define fixed animation percentages
+    const vRectanglePercents = [0, 33.33, 49.99, 83.32, 100];
 
-    // Create dynamic keyframes with calculated percentages
+    // Create dynamic keyframes with adjusted percentages
     const vRectangleAnimationCSS = `
         @keyframes moveVerticalRectangle {
-            ${vRectanglePercents[0]}% { top: -8px; left: 10px; }
-            ${vRectanglePercents[1]}% { top: -10px; left: 141px; }
-            ${vRectanglePercents[2]}% { top: 292px; left: 140px; }
-            ${vRectanglePercents[3]}% { top: 295px; left: -8px; }
-            ${vRectanglePercents[4]}% { top: -10px; left: -10px; }
+            ${vRectanglePercents[0]}% { top: 295px; left: -8px; }  /* Start at Point D */
+            ${vRectanglePercents[1]}% { top: -10px; left: -10px; }  /* Move to Point A */
+            ${vRectanglePercents[2]}% { top: -8px; left: 141px; }   /* Move to Point B */
+            ${vRectanglePercents[3]}% { top: 292px; left: 140px; }  /* Move to Point C */
+            ${vRectanglePercents[4]}% { top: 295px; left: -8px; }  /* Back to Point D */
         }
     `;
 
@@ -1337,14 +1382,13 @@ function animateNextPhase() {
     // Ensure the element exists
     if (goldenLine) {
         goldenLine.style.animation = `moveVerticalRectangle ${vRectangleTotalTime}s linear infinite`;
-        console.log("Vertical Rectangle animation applied with unique variables.");
+        console.log("Vertical Rectangle animation applied, starting from Point D with adjusted speed.");
     } else {
         console.error("goldenLine is not defined or not found in the DOM.");
     }
     break;
-
-            
-            case "triangle":
+        
+    case "triangle":
     div.className = "triangle"; // Apply triangle styles
 
     // Apply text styles only for the triangle case
@@ -1380,14 +1424,14 @@ function animateNextPhase() {
     const trianglePercent2 = trianglePercent1 + (triangleSide2 / totalTriangleDuration) * 100;
     const trianglePercent3 = trianglePercent2 + (triangleSide3 / totalTriangleDuration) * 100;
 
-    // Create keyframes dynamically
+    // Create keyframes dynamically with the golden line starting from point C
     const triangleAnimationCSS = `
         @keyframes moveTriangle {
-            0% { transform: translate(100px, -4px); }     
-            ${trianglePercent1}% { transform: translate(200px, 191px); }
-            ${trianglePercent2}% { transform: translate(0px, 191px); }
-            ${trianglePercent3}% { transform: translate(100px, -4px); }
-            100% { transform: translate(100px, -4px); }
+            0% { transform: translate(0px, 191px); }     
+            ${trianglePercent1}% { transform: translate(100px, -4px); }
+            ${trianglePercent2}% { transform: translate(200px, 191px); }
+            ${trianglePercent3}% { transform: translate(0px, 191px); }
+            100% { transform: translate(0px, 191px); }
         }
     `;
 
@@ -1406,7 +1450,6 @@ function animateNextPhase() {
 
     console.log("Triangle Animation applied with dynamic values:", triangleDurations);
     break;
-
 
 
     case "reverseTriangle":
@@ -1445,14 +1488,14 @@ function animateNextPhase() {
     const reversePercent2 = reversePercent1 + (reverseSide2 / totalReverseTriangleDuration) * 100;
     const reversePercent3 = reversePercent2 + (reverseSide3 / totalReverseTriangleDuration) * 100;
 
-    // Create keyframes dynamically
+    // Create keyframes dynamically with the golden line starting from point A
     const reverseTriangleAnimationCSS = `
         @keyframes moveUpsideDownTriangle {
-            0% { transform: translate(5px, -201px); }        
-            ${reversePercent1}% { transform: translate(200px, -201px); }  
-            ${reversePercent2}% { transform: translate(100px, -6px); }   
-            ${reversePercent3}% { transform: translate(5px, -201px); }     
-            100% { transform: translate(5px, -201px); }
+            0% { transform: translate(100px, -6px); }        
+            ${reversePercent1}% { transform: translate(5px, -201px); }  
+            ${reversePercent2}% { transform: translate(200px, -201px); }   
+            ${reversePercent3}% { transform: translate(100px, -6px); }     
+            100% { transform: translate(100px, -6px); }
         }
     `;
 
@@ -1470,6 +1513,67 @@ function animateNextPhase() {
     goldenLine.style.animation = `moveUpsideDownTriangle ${totalReverseTriangleDuration}s linear infinite`;
 
     console.log("Reverse Triangle Animation applied with dynamic values:", reverseTriangleDurations);
+    break;
+
+    case "diamondShape":
+        div.style.width = "200px";
+        div.style.height = "200px";
+        div.style.transform = "rotate(45deg)"; // Rotate the element to form a diamond
+        textElement.style.transform = "rotate(-45deg)"; // Adjust text to stay upright
+    console.log("Applying dynamic square2 animation...");
+
+    // Ensure storedTimings exists and has 4 values
+    if (!window.storedTimings || window.storedTimings.length < 4) {
+        console.warn("Not enough values in storedTimings. Using default values.");
+        window.storedTimings = [2, 5, 6, 2]; // Default fallback
+    }
+
+    // Convert values to numbers (since they might be stored as strings)
+    const square2Durations = window.storedTimings.map(Number);
+    const [square2Side1, square2Side2, square2Side3, square2Side4] = square2Durations;
+    const square2TotalDuration = square2Side1 + square2Side2 + square2Side3 + square2Side4;
+
+    console.log("Dynamic Timings for square2:", square2Durations);
+
+    // Calculate percentage timings
+    const square2Percent1 = (square2Side1 / square2TotalDuration) * 100;
+    const square2Percent2 = square2Percent1 + (square2Side2 / square2TotalDuration) * 100;
+    const square2Percent3 = square2Percent2 + (square2Side3 / square2TotalDuration) * 100;
+    const square2Percent4 = square2Percent3 + (square2Side4 / square2TotalDuration) * 100;
+
+    // Create keyframes dynamically
+    const square2AnimationCSS = `
+        @keyframes moveSquare2 {
+            0% { top: -8px; left: 10px; }
+            ${square2Percent1}% { top: -10px; left: 192px; }
+            ${square2Percent2}% { top: 190px; left: 195px; }
+            ${square2Percent3}% { top: 195px; left: -8px; }
+            ${square2Percent4}% { top: -8px; left: -4px; }
+            100% { top: -8px; left: -4px; }
+        }
+    `;
+
+    // Remove previous animation style if exists
+    let existingSquare2Style = document.getElementById("dynamicSquare2Animation");
+    if (existingSquare2Style) existingSquare2Style.remove();
+
+    // Inject new animation style
+    let square2StyleSheet = document.createElement("style");
+    square2StyleSheet.id = "dynamicSquare2Animation";
+    square2StyleSheet.innerHTML = square2AnimationCSS;
+    document.head.appendChild(square2StyleSheet);
+
+    // Ensure the element exists
+    if (goldenLine) {
+        goldenLine.style.position = "absolute"; // Ensure absolute positioning
+
+        // Apply the animation with dynamic infinite looping
+        goldenLine.style.animation = `moveSquare2 ${square2TotalDuration}s linear infinite`;
+
+        console.log("Animation applied with dynamic values:", square2Durations);
+    } else {
+        console.error("goldenLine is not defined or not found in the DOM.");
+    }
     break;
 
 
