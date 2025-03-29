@@ -80,7 +80,6 @@
         border-color: #004494;
     }
 </style>
-
 <div class="">
     <div class="container py-5">
         <div class="row justify-content-center">
@@ -108,72 +107,48 @@
                             </div>
                         </div>
                         
+                        
+
+                        <!-- Search and Filter -->
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <div class="search-box d-flex align-items-center p-2 rounded">
                                     <i class="fas fa-search text-muted me-2"></i>
-                                    <input type="text" id="searchInput" class="border-0 w-100" placeholder="Search activities..." onkeyup="filterExercises()">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="d-flex gap-2 flex-wrap">
-                                    <span class="badge filter-badge active px-3 py-2" onclick="filterBySkill('All')">All</span>
-                                    <span class="badge filter-badge px-3 py-2" onclick="filterBySkill('Beginner')">Beginner</span>
-                                    <span class="badge filter-badge px-3 py-2" onclick="filterBySkill('Intermediate')">Intermediate</span>
-                                    <span class="badge filter-badge px-3 py-2" onclick="filterBySkill('Advanced')">Advanced</span>
+                                    <input type="text" id="searchInput" class="border-0 w-100" placeholder="Search exercises..." onkeyup="filterExercises()">
                                 </div>
                             </div>
                         </div>
-                        <div class="activity-timeline" id="exerciseList">
-                          
-                            <div class="activity-item" data-skill="{{ exercise.skill_level }}" data-name="{{ exercise.name|lower }}">
-                                <div class="d-flex gap-3 align-items-center">
-                                    <div class="activity-icon">
-                                        <i class="fas fa-dumbbell"></i>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <h6 class="mb-0">BreathFree - Perform a BreathFree Exercise with us with all your choice </h6>
-                                            <span class="activity-date text-light">300 sec</span>
-                                        </div>
-                                        <span class="activity-date text-light">Skills Level - Depends on your Choice</span>
 
-                                        <div class="d-flex align-items-center">
-                                            <div class="progress flex-grow-1 me-3" style="height: 6px;">
-                                                <div class="progress-bar w-100" role="progressbar"></div>
-                                            </div>
-                                            <a href="{% url 'breathxapp:breathfree' %}" class="btn btn-primary btn-sm">Play</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                        </div>
+                        <!-- Saved Exercises List -->
                         <div class="activity-timeline" id="exerciseList">
                             {% for exercise in exercises %}
-                            <div class="activity-item" data-skill="{{ exercise.skill_level }}" data-name="{{ exercise.name|lower }}">
+                            <div class="activity-item" data-name="{{ exercise.nickname|lower }}">
                                 <div class="d-flex gap-3 align-items-center">
                                     <div class="activity-icon">
                                         <i class="fas fa-dumbbell"></i>
                                     </div>
                                     <div class="flex-grow-1">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <h6 class="mb-0">{{ exercise.name }}</h6>
-                                            <span class="activity-date text-light">{{ exercise.total_time }} sec</span>
+                                            <h6 class="mb-0">{{ exercise.nickname }}</h6>
+                                            <span class="activity-date text-light">Shape : {{ exercise.shape }}</span>
+                                            <span class="activity-date text-light">Shape : {{ exercise.inputs }}</span>
+
                                         </div>
-                                        <span class="activity-date text-light">Skills Level - {{ exercise.skill_level }}</span>
 
                                         <div class="d-flex align-items-center">
                                             <div class="progress flex-grow-1 me-3" style="height: 6px;">
                                                 <div class="progress-bar w-100" role="progressbar"></div>
                                             </div>
-                                            <a href="{% url 'breathxapp:play_exercise' exercise.id %}" class="btn btn-primary btn-sm">Play</a>
+                                            <a href="{% url 'breathxapp:view_saved_exercise' exercise.id %}" class="btn btn-primary btn-sm">Open</a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            {% empty %}
+                            <p class="text-center text-muted">No saved exercises found.</p>
                             {% endfor %}
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -185,28 +160,16 @@
     function filterExercises() {
         let searchQuery = document.getElementById("searchInput").value.toLowerCase();
         let exercises = document.querySelectorAll(".activity-item");
-        
+
         exercises.forEach(exercise => {
             let exerciseName = exercise.getAttribute("data-name");
             let matchesSearch = exerciseName.includes(searchQuery);
             exercise.style.display = matchesSearch ? "block" : "none";
         });
     }
-
-    function filterBySkill(skillLevel) {
-        let exercises = document.querySelectorAll(".activity-item");
-        exercises.forEach(exercise => {
-            let exerciseSkill = exercise.getAttribute("data-skill");
-            if (skillLevel === "All" || exerciseSkill === skillLevel) {
-                exercise.style.display = "block";
-            } else {
-                exercise.style.display = "none";
-            }
-        });
-        document.querySelectorAll(".filter-badge").forEach(btn => btn.classList.remove("active"));
-        event.target.classList.add("active");
-    }
 </script>
+
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}

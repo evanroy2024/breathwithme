@@ -101,3 +101,62 @@ def activaty(request):
 
 def breathfree(request):
     return render(request, "breathxapp/breathfree.html")
+
+
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from .models import SilentSaveExercise
+
+@login_required
+def save_exercise(request):
+    if request.method == "POST":
+        try:
+            user = request.user
+            nickname = request.POST.get("nickname")
+            shape = request.POST.get("shape")
+            inputs = request.POST.get("inputs")
+
+            if not nickname or not shape or not inputs:
+                return JsonResponse({"error": "Missing data"}, status=400)
+
+            SilentSaveExercise.objects.create(
+                user=user,
+                nickname=nickname,
+                shape=shape,
+                inputs=inputs
+            )
+
+            return JsonResponse({"success": True})
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
+
+
+from django.shortcuts import render
+from .models import SilentSaveExercise
+
+def usersavedexercise(request):
+    """ Fetch all exercises saved by the logged-in user """
+    if not request.user.is_authenticated:
+        return render(request, "usersavedexercise.html", {"exercises": []})
+
+    exercises = SilentSaveExercise.objects.filter(user=request.user)  # FIXED
+    return render(request, "breathxapp/usersavedexercise.html", {"exercises": exercises})
+
+from django.shortcuts import render, get_object_or_404
+from .models import SilentSaveExercise
+
+def view_saved_exercise(request, exercise_id):
+    exercise = get_object_or_404(SilentSaveExercise, id=exercise_id, user=request.user)
+    return render(request, "breathxapp/view_saved_exercise.html", {"exercise": exercise})
+
+# Making admin user uploads Start ----------------------------------------------------
+from django.shortcuts import render
+from .models import Exercise
+
+def exercise_overview(request):  # Unique view name
+    exercises = Exercise.objects.prefetch_related("phases").all()
+    return render(request, "breathxapp/test/exercise_list.html", {"exercises": exercises})
+
+# Making admin user uploads End ----------------------------------------------------

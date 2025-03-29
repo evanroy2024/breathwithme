@@ -13,6 +13,7 @@ from django.urls import path
 from . import views
 from .views import build_habit
 from .views import book_meeting, my_bookings , activaty , breathfree
+from .views import save_exercise , usersavedexercise , exercise_overview    
 
 app_name = 'breathxapp'
 
@@ -27,5 +28,9 @@ urlpatterns = [
     path("activaty/", activaty, name="activaty"),  # Ensure this name matches
     path("breathfree/", breathfree, name="breathfree"),  # Ensure this name matches
 
+    path("save-exercise/", save_exercise, name="save_exercise"),
+    path("usersavedexercise/", usersavedexercise, name="usersavedexercise"),
+    path("view-exercise/<int:exercise_id>/", views.view_saved_exercise, name="view_saved_exercise"),
+    path("exercise-overview/", exercise_overview, name="exercise_overview"),  # Unique URL name
 
 ]

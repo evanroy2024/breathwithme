@@ -570,8 +570,8 @@ option {
 
     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 10vh; text-align: center;">
         <!-- <a href="/" style="text-decoration: none; color: white; display: flex; align-items: center; gap: 10px;"> -->
-        <b style="cursor: pointer;">
-            <i class="bi bi-arrow-left" id="openPopup" style="font-size: 24px;"></i> 
+        <b style="cursor: pointer;" onclick="window.location.href='{% url "breathxapp:usersavedexercise" %}';">
+            <i class="bi bi-arrow-left" style="font-size: 24px;" ></i> 
             <span style="font-size: 20px; font-weight: bold; white-space: nowrap; ">Breathing Exercise</span>
         </b>
         <hr style="width: 30vw; border: 1px solid white; margin: 2px auto 0; ">
@@ -596,41 +596,22 @@ option {
     </div>
 </div>
 
-
-<div id="shapeGuidePopup" class="popup-overlay">
-    <div class="popup-content">
-        <h2 id="popupTitle">Silent Exercise Guide</h2>
-        <ul id="popupDescription">
-            <li>Select a shape to control your breath.</li>
-            <li>Set the breathing time for each phase.</li>
-            <li>Press play and follow the movement.</li>
-            <li>Click "Guide" to learn how it works.</li>
-            <li>Save a pattern if you like the flow.</li>
-            <li>Your breathing guide will show here.</li>
-        </ul>
-        <!-- <span >&times;</span> -->
-        <button id="closePopup">Confirm </button>
-    </div>
-</div>
-    <!-- End POP UP  -->
+<div class="nousething" style="display: none;">
+<!-- End POP UP  -->
     <div class="fullcontainer" style="margin-top: 20px;">
         <div class="part1">
             <select id="shapeSelector">
-                <option value="circle">Shape</option>
-                <option value="circle">Circle</option>
-                <option value="oval">Oval</option>
-                <option value="square">Square</option>
-                <!-- <option value="hRectangle">Horizontal Rectangle</option> -->
-                <option value="vRectangle">Rectangle</option>
-                <option value="triangle">Triangle</option>
-                <option value="reverseTriangle">Reverse Triangle</option>
-                <option value="diamondShape">Quadrilateral</option> <!-- Added New Shape -->
+                <option value="circle" {% if exercise.shape == "circle" %}selected{% endif %}>Circle</option>
+                <option value="oval" {% if exercise.shape == "oval" %}selected{% endif %}>Oval</option>
+                <option value="square" {% if exercise.shape == "square" %}selected{% endif %}>Square</option>
+                <option value="vRectangle" {% if exercise.shape == "vRectangle" %}selected{% endif %}>Rectangle</option>
+                <option value="triangle" {% if exercise.shape == "triangle" %}selected{% endif %}>Triangle</option>
+                <option value="reverseTriangle" {% if exercise.shape == "reverseTriangle" %}selected{% endif %}>Reverse Triangle</option>
+                <option value="diamondShape" {% if exercise.shape == "diamondShape" %}selected{% endif %}>Quadrilateral</option>
             </select>
+            
         </div> 
-        <button id="guideButton">Guide</button>
-
         <button id="toggleButton">Breath</button>
-
  <select id="timeSelector" style="display: none;">
     <option value="300" selected>5 Minutes (Default)</option>
     <option value="120">2 Minutes</option>
@@ -659,7 +640,7 @@ option {
         </button>
         
     </div>
-
+</div> 
     <script>
         document.getElementById("toggleButton").addEventListener("click", function() {
             const timingContainer = document.getElementById("timingContainer");
@@ -763,7 +744,7 @@ option {
         diamondShape: ["Inhale", "Hold", "Exhale", "Hold"] // Added for Diamond Shape
     };
   
-    function createTimingInputs(shape) {
+    function createTimingInputs(shape, storedValues = []) {
     timingControls.innerHTML = ""; // Clear previous options
 
     // Ensure global storage
@@ -799,54 +780,11 @@ option {
             select.appendChild(option);
         });
 
-        // Default selected value
-        select.value = "0"; // User sees "0" initially
+        // Assign stored values (if available), otherwise use 0
+        select.value = storedValues[index] !== undefined ? storedValues[index] : "0";
 
         // Store selected values globally
-        window.storedTimings[index] = 1; // Internally treat 0 as 2
-
-        // Update stored values when dropdown changes
-        select.addEventListener("change", () => {
-            let selectedValue = Number(select.value);
-
-            // If user selects 0, treat it as 2 in the background
-            window.storedTimings[index] = selectedValue === 0 ? 1 : selectedValue;
-
-            // If shape is "circle", ensure both inputs have the same value
-            if (shape === "circle" && index === 0) {
-                window.storedTimings[1] = window.storedTimings[0]; // Sync value
-
-                // Update the second input field to reflect the change
-                const secondInput = document.getElementById("duration-1");
-                if (secondInput) {
-                    secondInput.value = window.storedTimings[0]; // Ensure it visually updates
-                }
-            }
-
-
-            // If shape is "square", set all inputs to the first input's value
-            if (shape === "square" && index === 0) {
-                breathingTexts[shape].forEach((_, i) => {
-                    window.storedTimings[i] = window.storedTimings[0]; // Sync all values
-                    document.getElementById(`duration-${i}`).value = window.storedTimings[0];
-                });
-            }
-
-            if (shape === "vRectangle") {
-                if (index === 0) {
-                    // Apply first input value to 3rd input
-                    window.storedTimings[2] = window.storedTimings[0];
-                    document.getElementById(`duration-2`).value = window.storedTimings[0];
-                } else if (index === 1) {
-                    // Apply second input value to 4th input
-                    window.storedTimings[3] = window.storedTimings[1];
-                    document.getElementById(`duration-3`).value = window.storedTimings[1];
-                }
-            }
-
-
-            console.log("Updated storedTimings:", window.storedTimings);
-        });
+        window.storedTimings[index] = select.value;
 
         // Append elements to wrapper
         wrapper.appendChild(label);
@@ -856,46 +794,20 @@ option {
         timingControls.appendChild(wrapper);
     });
 
-    // If shape is "circle", hide the second input immediately
-    if (shape === "circle") {
-        setTimeout(() => {
-            const secondWrapper = document.getElementById(`wrapper-1`);
-            if (secondWrapper) {
-                secondWrapper.style.display = "none";
-            }
-        }, 100);
-    }
-
-    // If shape is "square", hide all inputs except the first one
-    if (shape === "square") {
-        setTimeout(() => {
-            breathingTexts[shape].forEach((_, i) => {
-                if (i !== 0) {
-                    document.getElementById(`wrapper-${i}`).style.display = "none";
-                }
-            });
-        }, 100);
-    }
-
-    // // If shape is "vRectangle", hide all inputs except the first and third one
-    // if (shape === "vRectangle") {
-    //     setTimeout(() => {
-    //         breathingTexts[shape].forEach((_, i) => {
-    //             if (i !== 0 && i !== 2) {
-    //                 document.getElementById(`wrapper-${i}`).style.display = "none";
-    //             }
-    //         });
-    //     }, 100);
-    // }
-
-
-    
-
-    // Print values globally after 4 seconds
+    // Print stored values globally
     setTimeout(() => {
-        console.log("Global storedTimings after 4 sec:", window.storedTimings);
-    }, 4000);
+        console.log("Loaded storedTimings:", window.storedTimings);
+    }, 1000);
 }
+
+// Call this function when loading the page
+document.addEventListener("DOMContentLoaded", function () {
+    // Example: Fetch the saved timing values from Django context
+    const storedExercise = JSON.parse('{{ exercise.inputs|escapejs }}'); // Convert JSON string to array
+    const selectedShape = '{{ exercise.shape }}'; // Fetch selected shape
+
+    createTimingInputs(selectedShape, storedExercise);
+});
 
     function createShape(shape) {
         
@@ -935,7 +847,7 @@ option {
 
         function startAnimation() {
             stopAnimation();
-            durations = breathingTexts[shape].map((_, index) => parseInt(document.getElementById(`duration-${index}`).value) || 1);
+            durations = breathingTexts[shape].map((_, index) => parseInt(document.getElementById(`duration-${index}`).value) || 2);
   
             let index = 0;
             isAnimating = true;
@@ -2474,161 +2386,12 @@ section {
         window.location.href = "{% url 'home' %}"; // Redirects to home
     }
 </script>
+<!-- The pop up code for the analytics has been shown below end  -->
+<!-- <input type="text" id="exerciseNickname" placeholder="Enter exercise name">
+<button id="saveExerciseButton">Save Exercise</button>
 
-         <style>
-            #guideButton{
-                padding: 12px 16px;
-            font-size: 16px;
-            font-weight: 500;
-            border: 2px solid #FFD700;
-            border-radius: 8px;
-            background: #000;
-            color: #fff;
-            cursor: pointer;
-            outline: none;
-            transition: all 0.3s ease-in-out;
-            width: 120px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(255, 215, 0, 0.2);
-            display: block;
-            margin: 0 auto;
-            }
-        #closePopup {
-            padding: 8px 12px;  /* Smaller padding */
-            font-size: 14px;  /* Slightly smaller font */
-            font-weight: 500;
-            border: 2px solid #C0A000; /* Darker gold */
-            border-radius: 6px;  /* Slightly smaller border */
-            background: #222; /* Dark gray instead of pure black */
-            color: #FFD700; /* Bright gold text */
-            cursor: pointer;
-            outline: none;
-            transition: all 0.3s ease-in-out;
-            width: 100px;  /* Slightly smaller width */
-            text-align: center;
-            box-shadow: 0 3px 5px rgba(255, 215, 0, 0.15);
-            display: block;
-            margin: 10px auto;
-            margin-top: 20px;
-        }
-        
-        #closePopup:hover {
-            background: #333;  /* Slightly lighter on hover */
-            color: #FFC107;  /* More vibrant gold */
-            transform: scale(1.05);
-        }
-        
-            /* Popup Overlay (Hidden by Default) */
-        .popup-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7); /* Darker backdrop for a sleek effect */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-        
-        /* Popup Box */
-        .popup-content {
-            background: linear-gradient(135deg, #1a1a1a, #121212); /* Elegant dark gradient */
-            padding: 25px;
-            width: 420px;
-            border-radius: 12px;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); /* Softer, more premium glow */
-            text-align: center;
-            position: relative;
-            border: 2px solid rgba(212, 175, 55, 0.8); /* Soft golden border */
-            animation: fadeIn 0.3s ease-in-out;
-        }
-        
-        /* Popup Title */
-        .popup-content h2 {
-            color: gold;
-            font-size: 22px;
-            font-weight: bold;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        /* Popup Description */
-        .popup-content p {
-            color: #d4c4a1; /* Softer gold */
-            font-size: 16px;
-            line-height: 1.5;
-            font-weight: 500;
-        }
-        
-        
-        
-        /* Smooth Appearance */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        </style>
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-            const guideButton = document.getElementById("guideButton");
-            const shapeSelector = document.getElementById("shapeSelector");
-            const popup = document.getElementById("shapeGuidePopup");
-            const popupTitle = document.getElementById("popupTitle");
-            const popupDescription = document.getElementById("popupDescription");
-            const closePopup = document.getElementById("closePopup");
-        
-            // Shape-Specific Breathing Instructions
-            const shapeInstructions = {
-                circle: "Breathe in deeply as you trace the circular path. Exhale slowly as you complete the loop.",
-                oval: "Inhale as you move along the longer side, hold for a moment, then exhale as you complete the oval.",
-                square: "Follow box breathing: Inhale for 4 seconds, hold for 4 seconds, exhale for 4 seconds, hold again for 4 seconds.",
-                vRectangle: "Inhale quickly along the short edge, exhale slowly along the longer edge.",
-                triangle: "Inhale for a count of 3, hold for 3, then exhale for 3 as you complete the shape.",
-                reverseTriangle: "Exhale first for 3 seconds, hold, then inhale slowly to complete the triangle path.",
-                diamondShape: "Alternate breathing: Inhale along the rising edges, hold at the peak, exhale along the falling edges."
-            };
-        
-            // Show Popup with the Selected Shape Instructions
-            guideButton.addEventListener("click", function () {
-                const selectedShape = shapeSelector.value;
-        
-                if (shapeInstructions[selectedShape]) {
-                    popupTitle.innerText = selectedShape.charAt(0).toUpperCase() + selectedShape.slice(1) + " Breathing Guide";
-                    popupDescription.innerText = shapeInstructions[selectedShape];
-                } else {
-                    popupTitle.innerText = "Select a Shape";
-                    popupDescription.innerText = "Please select a shape to see the breathing guide.";
-                }
-        
-                popup.style.display = "flex"; // Show popup
-            });
-        
-            // Close Popup
-            closePopup.addEventListener("click", function () {
-                popup.style.display = "none"; // Hide popup
-            });
-        
-            // Close Popup When Clicking Outside
-            popup.addEventListener("click", function (event) {
-                if (event.target === popup) {
-                    popup.style.display = "none";
-                }
-            });
-        });
-        
-        </script>
-                <!-- For guide End  -->
+<input type="hidden" id="csrf_token" value="{{ csrf_token }}"> -->
+
 <!-- To save the Data in django backend --------------------------------------------------- -->
 <script>
     document.getElementById("saveExerciseButton").addEventListener("click", function () {

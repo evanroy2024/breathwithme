@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
-from .models import SilentExercise
+from .models import SilentExercise , SilentSaveExercise
 import json
 
 class SilentExerciseAdmin(admin.ModelAdmin):
@@ -80,3 +80,19 @@ class BookingAdmin(admin.ModelAdmin):
             obj.save()
 
 admin.site.register(Booking, BookingAdmin)
+# admin.site.register(SilentSaveExercise)
+
+
+from django.contrib import admin
+from .models import Exercise, ExercisePhase
+
+class ExercisePhaseInline(admin.TabularInline):  
+    model = ExercisePhase  
+    extra = 1  
+    
+
+class ExerciseAdmin(admin.ModelAdmin):
+    list_display = ("name", "difficulty")
+    inlines = [ExercisePhaseInline]  # Allows adding phases inside the exercise form
+
+admin.site.register(Exercise, ExerciseAdmin)
