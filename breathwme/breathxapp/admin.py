@@ -83,6 +83,9 @@ admin.site.register(Booking, BookingAdmin)
 # admin.site.register(SilentSaveExercise)
 
 
+
+
+# adding exercise for slient exercise update through admin panel
 from django.contrib import admin
 from .models import Exercise, ExercisePhase
 

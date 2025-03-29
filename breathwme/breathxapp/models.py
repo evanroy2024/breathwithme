@@ -61,6 +61,9 @@ class Booking(models.Model):
 
 from django.db import models
 
+from django.db import models
+from django.core.exceptions import ValidationError
+
 class Exercise(models.Model):
     name = models.CharField(max_length=255)
     difficulty = models.CharField(max_length=50, choices=[
@@ -72,31 +75,54 @@ class Exercise(models.Model):
     def __str__(self):
         return self.name
 
+from django.db import models
+from django.core.exceptions import ValidationError
+
 class ExercisePhase(models.Model):
     SHAPE_CHOICES = [
-        ('Circle', 'Circle'),
-        ('Square', 'Square'),
-        ('Rectangle', 'Rectangle'),
-        ('Triangle', 'Triangle'),
-        ('Oval', 'Oval'),
-        ('ReversedTriangle', 'ReversedTriangle'),  
-        ('Quadrilateral','Quadrilateral')
+        ('Circle', 'Circle (1)'),
+        ('Square', 'Square (1)'),
+        ('Rectangle', 'Rectangle (4)'),
+        ('Triangle', 'Triangle (3)'),
+        ('Oval', 'Oval (2)'),
+        ('ReversedTriangle', 'ReversedTriangle (4)'),
+        ('Quadrilateral', 'Quadrilateral (4)')
     ]
-
 
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE, related_name="phases")
     shape = models.CharField(max_length=20, choices=SHAPE_CHOICES)
-    bpm = models.PositiveIntegerField(null=True, blank=True)  # Optional, since hold phases don't need BPM
-    duration = models.PositiveIntegerField(default=1, help_text="Duration in minutes (minimum 1)")
+
+    # Replacing bpm with 4 input fields
+    input1 = models.PositiveIntegerField(null=True, blank=True)
+    input2 = models.PositiveIntegerField(null=True, blank=True)
+    input3 = models.PositiveIntegerField(null=True, blank=True)
+    input4 = models.PositiveIntegerField(null=True, blank=True)
+
     hold_time = models.PositiveIntegerField(default=0, help_text="Time to hold breath (in seconds, 0 if none)")
 
     def clean(self):
-        """Ensure duration is at least 1 minute."""
-        from django.core.exceptions import ValidationError
-        if self.duration < 1:
-            raise ValidationError({'duration': 'Duration must be at least 1 minute.'})
+        """Ensure shape-based input restrictions."""
+        locked_inputs = self.get_locked_inputs()
+        inputs = [self.input1, self.input2, self.input3, self.input4]
+
+        for i, value in enumerate(inputs):
+            if i in locked_inputs and value is not None:
+                raise ValidationError({f'input{i+1}': 'This field is locked and must remain empty.'})
+
+    def get_locked_inputs(self):
+        """Returns which inputs should be locked based on shape selection."""
+        shape_locks = {
+            'Circle': [1, 2, 3],
+            'Square': [1, 2, 3],
+            'Rectangle': [],
+            'Quadrilateral': [],
+            'Triangle': [3],
+            'ReversedTriangle': [3],
+            'Oval': [2, 3]
+        }
+        return shape_locks.get(self.shape, [])
 
     def __str__(self):
-        return f"{self.exercise.name} - {self.shape} ({self.duration} min)"
+        return f"{self.exercise.name} - {self.shape}"
 
 # Making admin user uploads End ----------------------------------------------------
