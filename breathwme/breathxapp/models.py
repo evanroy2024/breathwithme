@@ -75,14 +75,11 @@ class Exercise(models.Model):
     def __str__(self):
         return self.name
 
-from django.db import models
-from django.core.exceptions import ValidationError
-
 class ExercisePhase(models.Model):
     SHAPE_CHOICES = [
         ('Circle', 'Circle (1)'),
         ('Square', 'Square (1)'),
-        ('Rectangle', 'Rectangle (4)'),
+        ('Rectangle', 'Rectangle (2)'),
         ('Triangle', 'Triangle (3)'),
         ('Oval', 'Oval (2)'),
         ('ReversedTriangle', 'ReversedTriangle (4)'),
@@ -100,6 +97,9 @@ class ExercisePhase(models.Model):
 
     hold_time = models.PositiveIntegerField(default=0, help_text="Time to hold breath (in seconds, 0 if none)")
 
+    # New field for cycles
+    cycles = models.PositiveIntegerField(default=1, help_text="Number of cycles to complete (minimum 1)")
+
     def clean(self):
         """Ensure shape-based input restrictions."""
         locked_inputs = self.get_locked_inputs()
@@ -109,12 +109,16 @@ class ExercisePhase(models.Model):
             if i in locked_inputs and value is not None:
                 raise ValidationError({f'input{i+1}': 'This field is locked and must remain empty.'})
 
+        # Validate cycles to ensure it's at least 1
+        if self.cycles < 1:
+            raise ValidationError({'cycles': 'The number of cycles must be at least 1.'})
+
     def get_locked_inputs(self):
         """Returns which inputs should be locked based on shape selection."""
         shape_locks = {
             'Circle': [1, 2, 3],
             'Square': [1, 2, 3],
-            'Rectangle': [],
+            'Rectangle': [3, 4],  # Lock input3 and input4 for Rectangle (allow input1 and input2)
             'Quadrilateral': [],
             'Triangle': [3],
             'ReversedTriangle': [3],
@@ -123,6 +127,6 @@ class ExercisePhase(models.Model):
         return shape_locks.get(self.shape, [])
 
     def __str__(self):
-        return f"{self.exercise.name} - {self.shape}"
+        return f"{self.exercise.name} - {self.shape} - Cycles: {self.cycles}"
 
 # Making admin user uploads End ----------------------------------------------------
