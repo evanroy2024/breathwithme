@@ -60,7 +60,7 @@ class SilentExerciseAdmin(admin.ModelAdmin):
         obj.vibration_cues = json.dumps(obj.vibration_cues)  # Ensure it's saved as a JSON field
         super().save_model(request, obj, form, change)
 
-admin.site.register(SilentExercise, SilentExerciseAdmin)
+# admin.site.register(SilentExercise, SilentExerciseAdmin)
 
 
 from django.contrib import admin
