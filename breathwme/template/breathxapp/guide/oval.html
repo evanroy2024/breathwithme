@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circle - Shape Explanations</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            padding: 30px 0;
+        }
+        .formula {
+            font-family: 'Courier New', monospace;
+            padding: 10px;
+            background-color: #1a1a1a;
+            border-radius: 5px;
+            margin-top: 10px;
+            color: #C0A000;
+        }
+        .card {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            margin-bottom: 20px;
+        }
+        .card:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        }
+        .card-header {
+            background-color: #222222;
+            color: #C0A000;
+            border-bottom: 1px solid #333;
+        }
+        .btn-primary {
+            background-color: #C0A000;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #9A8200;
+        }
+        .bg-dark-subtle {
+            background-color: #1a1a1a;
+        }
+        h1, h2, h3, h4, h5 {
+            color: #C0A000;
+        }
+        .text-highlight {
+            color: #C0A000;
+        }
+        .page-title {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #C0A000;
+            margin-bottom: 1rem;
+        }
+        .example-box {
+            background-color: #1a1a1a;
+            border-left: 4px solid #C0A000;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        p{
+            color: #ffffff;
+        }
+        li{
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Content -->
+    <div class="container py-4">
+        <!-- Title Section -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <h1 class="page-title">
+                    <a href="{% url 'breathxapp:breathfree' %}" style="text-decoration: none; color: inherit;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-arrow-left me-2" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M15 8a.5.5 0 0 1-.5.5H3.707l3.147 3.146a.5.5 0 0 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 0 1 .708.708L3.707 7.5H14.5A.5.5 0 0 1 15 8z"/>
+                        </svg>
+                    </a>
+                    The Oval
+                </h1>
+                <p class="lead mb-4">
+                    The oval represents a smooth and continuous flow — like a breath that never feels rushed. With no corners or edges, oval breathing is all about **gentle transitions** between inhale and exhale, helping you relax deeply and reconnect with your natural rhythm.
+                </p>
+            </div>
+        </div>
+    
+        <div class="row g-4">
+            <!-- What is Oval Breathing -->
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h3>What is Oval Breathing?</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Oval breathing emphasizes a **seamless flow** between inhaling and exhaling — just like tracing the outline of an oval with your breath. It’s not about strict counts but about finding a calm rhythm that feels natural and continuous.</p>
+                        <h5 class="mt-4">Example Pattern:</h5>
+                        <ul>
+                            <li><strong class="text-highlight">Inhale</strong> slowly and deeply</li>
+                            <li><strong class="text-highlight">Exhale</strong> smoothly with no pause</li>
+                            <li>Repeat in a continuous oval flow, no holds or stops</li>
+                        </ul>
+                        <p>This style is ideal for meditation, yoga, and calming nerves without needing to count or control tightly.</p>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Benefits -->
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h3>Why It Works</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong class="text-highlight">Relaxes the Body:</strong> Creates a flowing rhythm that encourages full-body relaxation.</li>
+                            <li><strong class="text-highlight">Eases Anxiety:</strong> Reduces stress without overthinking your breath.</li>
+                            <li><strong class="text-highlight">Great for Meditation:</strong> A favorite technique in yoga and mindfulness practices.</li>
+                            <li><strong class="text-highlight">No Strict Rules:</strong> Perfect for beginners and advanced users alike — follow your body’s rhythm.</li>
+                        </ul>
+    
+                        <div class="example-box mt-4">
+                            <h5>Quick Tip</h5>
+                            <p>Imagine tracing an oval shape with your breath — up the side as you inhale, down the other side as you exhale. Let your breath glide along the curve.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Breathing Guide -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Visual Breathing Guide</h3>
+                    </div>
+                    <div class="card-body text-center">
+                        <p class="mb-4">Follow the smooth expanding and shrinking of the oval. Breathe in as it grows, and exhale as it gently returns.</p>
+                        <div class="breathing-oval mx-auto" style="width: 220px; height: 120px; border: 2px solid #6e8efb; border-radius: 50% / 30%; animation: ovalBreathing 8s infinite ease-in-out;"></div>
+                        <style>
+                            @keyframes ovalBreathing {
+                                0% { transform: scale(1); }
+                                50% { transform: scale(1.1); } /* expand on inhale */
+                                100% { transform: scale(1); }  /* contract on exhale */
+                            }
+                        </style>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Real-Life Uses -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Where It's Used</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-4">
+                            <div class="col-md-4">
+                                <div class="card bg-dark-subtle h-100">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">Yoga & Meditation</h5>
+                                        <p class="card-text">Oval breathing is often used in yoga flows and guided meditations for its calm, natural rhythm.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-dark-subtle h-100">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">Mindfulness</h5>
+                                        <p class="card-text">In mindfulness exercises, it helps keep you anchored to the present without strict control.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-dark-subtle h-100">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">Everyday Peace</h5>
+                                        <p class="card-text">Whether you're on a walk, resting, or just need a break — oval breathing can gently restore calm.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Practice Section -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Try It Now</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-3">Breathe in smoothly for about 5 seconds and exhale for 5–7 seconds with no holding. Let the breath glide like you’re following the curves of an oval — in, out, in, out... flowing and peaceful.</p>
+                        <p class="text-muted">Let your breath become your focus — feel it flow without effort, tension, or pause.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

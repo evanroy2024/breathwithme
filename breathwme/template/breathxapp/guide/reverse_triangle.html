@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circle - Shape Explanations</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            padding: 30px 0;
+        }
+        .formula {
+            font-family: 'Courier New', monospace;
+            padding: 10px;
+            background-color: #1a1a1a;
+            border-radius: 5px;
+            margin-top: 10px;
+            color: #C0A000;
+        }
+        .card {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            margin-bottom: 20px;
+        }
+        .card:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        }
+        .card-header {
+            background-color: #222222;
+            color: #C0A000;
+            border-bottom: 1px solid #333;
+        }
+        .btn-primary {
+            background-color: #C0A000;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #9A8200;
+        }
+        .bg-dark-subtle {
+            background-color: #1a1a1a;
+        }
+        h1, h2, h3, h4, h5 {
+            color: #C0A000;
+        }
+        .text-highlight {
+            color: #C0A000;
+        }
+        .page-title {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #C0A000;
+            margin-bottom: 1rem;
+        }
+        .example-box {
+            background-color: #1a1a1a;
+            border-left: 4px solid #C0A000;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        p{
+            color: #ffffff;
+        }
+        li{
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Content -->
+    <div class="container py-4">
+        <!-- Title Section -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <h1 class="page-title">
+                    <a href="{% url 'breathxapp:breathfree' %}" style="text-decoration: none; color: inherit;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-arrow-left me-2" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M15 8a.5.5 0 0 1-.5.5H3.707l3.147 3.146a.5.5 0 0 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 0 1 .708.708L3.707 7.5H14.5A.5.5 0 0 1 15 8z"/>
+                        </svg>
+                    </a>
+                    The Reverse Triangle
+                </h1>
+                
+                <p class="lead mb-4">
+                    The reverse triangle turns the usual pattern upside down. Instead of inhale-hold-exhale, you begin with **exhale**, then **hold**, and finish with **inhale**. It symbolizes **letting go first**, releasing what you don’t need, and then gently bringing in calm. Ideal for **releasing stress**, quieting the mind, and promoting relaxation.
+                </p>
+            </div>
+        </div>
+    
+        <div class="row g-4">
+            <!-- What is Reverse Triangle Breathing -->
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h3>What is Reverse Triangle Breathing?</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>This breathing method starts with a deep **exhale** — letting go of stress — followed by a pause, and then a slow, calm **inhale**. Each step lasts for the same count, forming an inverted triangle in your mind.</p>
+                        <h5 class="mt-4">Example Pattern (4-4-4):</h5>
+                        <ul>
+                            <li><strong class="text-highlight">Exhale</strong> for 4 seconds</li>
+                            <li><strong class="text-highlight">Hold</strong> for 4 seconds</li>
+                            <li><strong class="text-highlight">Inhale</strong> for 4 seconds</li>
+                        </ul>
+                        <p>Visualize the triangle flipped — down, across, and up — symbolizing release, stillness, and renewal.</p>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Benefits -->
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h3>Why It Works</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong class="text-highlight">Encourages Release:</strong> Starts with exhalation to let go of tension and overthinking.</li>
+                            <li><strong class="text-highlight">Promotes Calm:</strong> The reversed pattern slows the breath and eases nervous energy.</li>
+                            <li><strong class="text-highlight">Grounds the Body:</strong> Helps anchor you in the present moment through mindful breathing.</li>
+                            <li><strong class="text-highlight">Good for Sleep:</strong> Ideal before bed or during restless moments.</li>
+                        </ul>
+    
+                        <div class="example-box mt-4">
+                            <h5>Quick Tip</h5>
+                            <p>Think of your breath like water draining from the top of a triangle — down, pause, and gently refill.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Visual Breathing Guide -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Visual Breathing Guide</h3>
+                    </div>
+                    <div class="card-body text-center">
+                        <p class="mb-4">Let the inverted triangle animation guide your breath: exhale, hold, and inhale.</p>
+                        <div class="triangle-breathing mx-auto" style="width: 0; height: 0; border-left: 80px solid transparent; border-right: 80px solid transparent; border-top: 140px solid #a777e3; animation: trianglePulse 6s infinite;">
+                        </div>
+                        <style>
+                            @keyframes trianglePulse {
+                                0%, 100% { transform: scale(1); opacity: 1; }
+                                50% { transform: scale(1.1); opacity: 0.8; }
+                            }
+                        </style>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Real-Life Uses -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Where It's Used</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-4">
+                            <div class="col-md-4">
+                                <div class="card bg-dark-subtle h-100">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">Bedtime Calm</h5>
+                                        <p class="card-text">Perfect before sleep to let go of thoughts and relax the body.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-dark-subtle h-100">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">Emotional Reset</h5>
+                                        <p class="card-text">Helps release built-up tension after an emotional day.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-dark-subtle h-100">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">Morning Centering</h5>
+                                        <p class="card-text">Begin your day by emptying stress before bringing in fresh energy.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Practice Section -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Try It Now</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-3">Exhale for 4 seconds, hold for 4 seconds, and inhale for 4 seconds. Repeat the reverse triangle flow and feel tension lift away.</p>
+                        <p class="text-muted">Let go before you let in — flip the triangle and reset your mind.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

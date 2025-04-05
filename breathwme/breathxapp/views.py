@@ -151,6 +151,16 @@ def view_saved_exercise(request, exercise_id):
     exercise = get_object_or_404(SilentSaveExercise, id=exercise_id, user=request.user)
     return render(request, "breathxapp/view_saved_exercise.html", {"exercise": exercise})
 
+from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
+from django.http import Http404
+
+@login_required
+def delete_exercise(request, exercise_id):
+    exercise = get_object_or_404(SilentSaveExercise, id=exercise_id, user=request.user)
+    exercise.delete()
+    return redirect('breathxapp:usersavedexercise')
+
 # Making admin user uploads Start ----------------------------------------------------
 from django.shortcuts import render
 from .models import Exercise
@@ -160,3 +170,24 @@ def exercise_overview(request):  # Unique view name
     return render(request, "breathxapp/test/exercise_list.html", {"exercises": exercises})
 
 # Making admin user uploads End ----------------------------------------------------
+
+def circle_guide(request):
+    return render(request, "breathxapp/guide/circle.html")
+
+def square_guide(request):
+    return render(request, "breathxapp/guide/square.html")
+
+def rectangle_guide(request):
+    return render(request, "breathxapp/guide/rectangle.html")
+
+def oval_guide(request):
+    return render(request, "breathxapp/guide/oval.html")
+
+def triangle_guide(request):
+    return render(request, "breathxapp/guide/triangle.html")
+
+def reverse_triangle_guide(request):
+    return render(request, "breathxapp/guide/reverse_triangle.html")
+
+def diamond_guide(request):
+    return render(request, "breathxapp/guide/diamond.html")

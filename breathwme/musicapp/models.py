@@ -83,7 +83,12 @@ class Playlist(models.Model):
 
 
 
+class GlobalPlaylist(models.Model):
+    name = models.CharField(max_length=255)
+    tracks = models.ManyToManyField(MusicTrack, related_name='global_playlists')
 
+    def __str__(self):
+        return self.name
 
 
 

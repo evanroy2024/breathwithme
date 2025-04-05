@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circle - Shape Explanations</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            padding: 30px 0;
+        }
+        .formula {
+            font-family: 'Courier New', monospace;
+            padding: 10px;
+            background-color: #1a1a1a;
+            border-radius: 5px;
+            margin-top: 10px;
+            color: #C0A000;
+        }
+        .card {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            margin-bottom: 20px;
+        }
+        .card:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        }
+        .card-header {
+            background-color: #222222;
+            color: #C0A000;
+            border-bottom: 1px solid #333;
+        }
+        .btn-primary {
+            background-color: #C0A000;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #9A8200;
+        }
+        .bg-dark-subtle {
+            background-color: #1a1a1a;
+        }
+        h1, h2, h3, h4, h5 {
+            color: #C0A000;
+        }
+        .text-highlight {
+            color: #C0A000;
+        }
+        .page-title {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #C0A000;
+            margin-bottom: 1rem;
+        }
+        .example-box {
+            background-color: #1a1a1a;
+            border-left: 4px solid #C0A000;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        p{
+            color: #ffffff;
+        }
+        li{
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Content -->
+    <div class="container py-4">
+        <!-- Title Section -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <h1 class="page-title">The Rectangle</h1>
+                <p class="lead mb-4">
+                    The rectangle represents a breathing rhythm where inhaling and exhaling are different lengths — a calming technique ideal for relaxation, sleep, and anxiety control. Just like its shape, one side is longer, helping you slow down and settle your mind with every breath.
+                </p>
+            </div>
+        </div>
+    
+        <div class="row g-4">
+            <!-- What is Rectangle Breathing -->
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h3>What is Rectangle Breathing?</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Rectangle breathing is a technique where you breathe in for a short count and exhale for a longer one — similar to how a rectangle has different side lengths. This method calms the nervous system and is especially effective for sleep and stress relief.</p>
+                        <h5 class="mt-4">A Common Pattern:</h5>
+                        <ul>
+                            <li><strong class="text-highlight">Inhale</strong> - 4 seconds</li>
+                            <li><strong class="text-highlight">Exhale</strong> - 6 to 8 seconds</li>
+                        </ul>
+                        <p>Repeat this cycle slowly, following the length of each “side” of the rectangle with your breath.</p>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Benefits -->
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h3>Why It Works</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong class="text-highlight">Relieves Stress:</strong> Longer exhalations help activate your parasympathetic nervous system — the “rest and digest” state.</li>
+                            <li><strong class="text-highlight">Improves Sleep:</strong> Slows heart rate and calms the body before bed.</li>
+                            <li><strong class="text-highlight">Balances Emotions:</strong> A great tool to manage anxiety, frustration, or overwhelm.</li>
+                            <li><strong class="text-highlight">Simple and Effective:</strong> No tools needed — just your breath and a bit of focus.</li>
+                        </ul>
+    
+                        <div class="example-box mt-4">
+                            <h5>Quick Tip</h5>
+                            <p>If you ever feel anxious in public, try rectangle breathing quietly. Count in your head — in for 4, out for 6 — and you’ll feel a wave of calm in just a minute.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Breathing Guide -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Visual Breathing Guide</h3>
+                    </div>
+                    <div class="card-body text-center">
+                        <p class="mb-4">Watch the rectangle stretch and shrink as a guide for your breath. Inhale with the short side, exhale with the long side. Let your breathing follow its pace.</p>
+                        <div class="breathing-rectangle mx-auto" style="width: 200px; height: 100px; border: 2px solid #a777e3; animation: rectangleBreathing 10s infinite ease-in-out;"></div>
+                        <style>
+                            @keyframes rectangleBreathing {
+                                0% { transform: scaleX(1); }
+                                25% { transform: scaleX(1.1); } /* Inhale */
+                                50% { transform: scaleX(1.1); } /* Hold */
+                                75% { transform: scaleX(1); }   /* Exhale */
+                                100% { transform: scaleX(1); }  /* Hold */
+                            }
+                        </style>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Real-Life Uses -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Where It's Used</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-4">
+                            <div class="col-md-4">
+                                <div class="card bg-dark-subtle h-100">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">Sleep Preparation</h5>
+                                        <p class="card-text">Practiced before bed, rectangle breathing helps ease you into a restful state and improves sleep quality.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-dark-subtle h-100">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">Anxiety Relief</h5>
+                                        <p class="card-text">Used in therapy and wellness programs to manage anxiety and lower stress levels through longer exhales.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-dark-subtle h-100">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">Office & Daily Calm</h5>
+                                        <p class="card-text">Even at your desk, a few rounds of rectangle breathing can refresh your focus and mood instantly.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Practice Section -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Try It Now</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-3">Complete 6 cycles of rectangle breathing. Inhale for 4 seconds, exhale for 6 or 8 seconds. As you breathe, picture each breath traveling along the sides of a rectangle: short side in, long side out.</p>
+                        <p class="text-muted">Count in your head — In... 2... 3... 4... and Out... 2... 3... 4... 5... 6...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

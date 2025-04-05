@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circle - Shape Explanations</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            padding: 30px 0;
+        }
+        .formula {
+            font-family: 'Courier New', monospace;
+            padding: 10px;
+            background-color: #1a1a1a;
+            border-radius: 5px;
+            margin-top: 10px;
+            color: #C0A000;
+        }
+        .card {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            margin-bottom: 20px;
+        }
+        .card:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        }
+        .card-header {
+            background-color: #222222;
+            color: #C0A000;
+            border-bottom: 1px solid #333;
+        }
+        .btn-primary {
+            background-color: #C0A000;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #9A8200;
+        }
+        .bg-dark-subtle {
+            background-color: #1a1a1a;
+        }
+        h1, h2, h3, h4, h5 {
+            color: #C0A000;
+        }
+        .text-highlight {
+            color: #C0A000;
+        }
+        .page-title {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #C0A000;
+            margin-bottom: 1rem;
+        }
+        .example-box {
+            background-color: #1a1a1a;
+            border-left: 4px solid #C0A000;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        p{
+            color: #ffffff;
+        }
+        li{
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Content -->
+    <div class="container py-4">
+        <!-- Title Section -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <h1 class="page-title">
+                    <a href="{% url 'breathxapp:breathfree' %}" style="text-decoration: none; color: inherit;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-arrow-left me-2" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M15 8a.5.5 0 0 1-.5.5H3.707l3.147 3.146a.5.5 0 0 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 0 1 .708.708L3.707 7.5H14.5A.5.5 0 0 1 15 8z"/>
+                        </svg>
+                    </a>
+                    The Circle
+                </h1>
+                <p class="lead mb-4">A visual and interactive guide for deep breathing exercises. This animated circle helps you synchronize your breath—inhale, hold, and exhale—while promoting mindfulness and relaxation through a calming visual rhythm.</p>
+            </div>
+        </div>
+    
+        <div class="row g-4">
+            <!-- Definition -->
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h3>What It Does</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>This circle isn't just a shape—it's a tool for your breathwork. It gently expands to guide your **inhale**, pauses at full size to indicate a **hold**, and then contracts to signal a calm **exhale**.</p>
+                        <p>The visual animation is based on BPM (Breaths Per Minute), typically set between 4–6 for a relaxing rhythm. This promotes deep diaphragmatic breathing and helps regulate your nervous system.</p>
+    
+                        <h5 class="mt-4">Breathing Pattern:</h5>
+                        <ul>
+                            <li><strong class="text-highlight">Inhale:</strong> Circle expands smoothly (e.g., 4 seconds)</li>
+                            <li><strong class="text-highlight">Hold:</strong> Circle stays full (e.g., 2 seconds)</li>
+                            <li><strong class="text-highlight">Exhale:</strong> Circle contracts back (e.g., 6 seconds)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Benefits -->
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h3>Benefits</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong class="text-highlight">Reduces Anxiety:</strong> Helps calm your mind and lower stress levels</li>
+                            <li><strong class="text-highlight">Improves Focus:</strong> Brings attention back to the present moment</li>
+                            <li><strong class="text-highlight">Boosts Mood:</strong> Promotes the release of calming neurotransmitters</li>
+                            <li><strong class="text-highlight">Lowers Heart Rate:</strong> Slows breathing and promotes a parasympathetic state</li>
+                            <li><strong class="text-highlight">Simple & Effective:</strong> Anyone can do it, anytime, anywhere</li>
+                        </ul>
+    
+                        <div class="example-box mt-4">
+                            <h5>Pro Tip:</h5>
+                            <p>Try 4-7-8 breathing with the circle: Inhale for 4 seconds, hold for 7, and exhale for 8. Repeat for 4 cycles to feel immediate relaxation.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- How It Works -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>How It Works</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>Animated Rhythm</h5>
+                                <p>The circle animation is synced with the inhale and exhale timing. As the shape expands, you breathe in; as it contracts, you breathe out. This visual guidance helps establish a healthy, natural breathing pace.</p>
+    
+                                <div class="example-box mt-3">
+                                    <h6>Example Cycle:</h6>
+                                    <p><strong>Inhale</strong> (4s) → <strong>Hold</strong> (2s) → <strong>Exhale</strong> (6s)</p>
+                                    <p>Total Cycle: 12 seconds → 5 BPM</p>
+                                </div>
+                            </div>
+    
+                            <div class="col-md-6">
+                                <h5>Why Visual Guidance Helps</h5>
+                                <p>Many people unknowingly breathe too fast or shallow. This tool retrains your breathing rhythm using a calm visual anchor. It’s especially effective for meditation, stress relief, and sleep preparation.</p>
+    
+                                <div class="example-box mt-3">
+                                    <h6>Use Case:</h6>
+                                    <p>Try it before a big meeting, after a workout, or while winding down for bed. Even just 60 seconds can bring noticeable calmness.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Bonus Tips -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Pro Tips for Best Experience</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li>Use headphones and calming background music to enhance focus</li>
+                            <li>Sit comfortably with your spine upright</li>
+                            <li>Let your belly rise and fall naturally—avoid shallow chest breathing</li>
+                            <li>Set a timer or follow the on-screen guidance for 2–5 minutes daily</li>
+                            <li>Repeat multiple times a day to train your body to stay calm</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

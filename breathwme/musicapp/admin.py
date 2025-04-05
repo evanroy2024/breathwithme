@@ -26,3 +26,13 @@ class MusicTrackAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Playlist)
+
+
+
+
+from .models import GlobalPlaylist
+@admin.register(GlobalPlaylist)
+class GlobalPlaylistAdmin(admin.ModelAdmin):
+    list_display = ('name', )
+    search_fields = ('name',)
+    filter_horizontal = ('tracks',)

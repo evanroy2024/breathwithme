@@ -61,14 +61,14 @@
             font-size: 20px;
             font-weight: bold;
         }
-        @keyframes moveCircle {
+        /* @keyframes moveCircle {
             0% {
                 transform: rotate(-90deg) translateX(100px) rotate(90deg);
             }
             100% {
                 transform: rotate(270deg) translateX(100px) rotate(-270deg);
             }
-        }
+        } */
 
 
         /* @keyframes moveSquare {
@@ -98,7 +98,7 @@
             }
         } */
 
-        @keyframes moveRectangleH {
+        /* @keyframes moveRectangleH {
             0% {
                 top: -8px;
                 left: 10px;
@@ -123,8 +123,8 @@
                 top: 10px;
                 left: -10px;
             }
-        }
-        @keyframes moveRectangleV {
+        } */
+         /* @keyframes moveRectangleV {
             0% {
                 top: -8px;
                 left: 10px;
@@ -149,8 +149,10 @@
                 top: -10px;
                 left: -10px;
             }
-        }
-    #progressContainer {
+        }  */
+   
+   
+        #progressContainer {
         width: 100%;
         background: rgba(255, 255, 255, 0.1);
         height: 6px;
@@ -492,12 +494,12 @@ option {
     height: 5px;
     background: rgb(0, 0, 0);
 }
-@keyframes moveTriangle {
-    0% { transform: translate(100px, -4px); }     /* Start at the top */
-    33.33% { transform: translate(200px, 191px); } /* Move to bottom-right */
-    66.66% { transform: translate(0px, 191px); }  /* Move to bottom-left */
-    100% { transform: translate(100px, -4px); }   /* Back to the top */
-}
+/* @keyframes moveTriangle {
+    0% { transform: translate(100px, -4px); }     
+    33.33% { transform: translate(200px, 191px); }
+    66.66% { transform: translate(0px, 191px); }  
+    100% { transform: translate(100px, -4px); }  
+} */
 
 
 /* upside down triangle  */
@@ -535,55 +537,147 @@ option {
     background: rgb(0, 0, 0);
 }
 
-@keyframes moveUpsideDownTriangle {
-    0% { transform: translate(5px, -201px); }        /* Start at top-left */
-    33.33% { transform: translate(200px, -201px); }  /* Move to top-right */
-    66.66% { transform: translate(100px, -6px); }    /* Move to bottom */
-    100% { transform: translate(5px, -201px); }      /* Back to top-left */
-}
+/* @keyframes moveUpsideDownTriangle {
+    0% { transform: translate(5px, -201px); }        
+    33.33% { transform: translate(200px, -201px); }  
+    66.66% { transform: translate(100px, -6px); }   
+    100% { transform: translate(5px, -201px); }     
+} */
 
+/* Starting of oval shape --------------------------------------- */
+/* .oval {
+    width: 250px;  
+    height: 150px; 
+    border-radius: 50%;
+    background-color: #4CAF50; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+}
+ */
 
     </style>
 </head>
 
 <body>
  
-  
-   
-
-
-
-
 
 
 <section >
     <div class="cover-line"></div>
 
     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 10vh; text-align: center;">
-        <a href="{% url 'home' %}" style="text-decoration: none; color: white; display: flex; align-items: center; gap: 10px;">
+        <!-- <a href="/" style="text-decoration: none; color: white; display: flex; align-items: center; gap: 10px;"> -->
+        <b style="cursor: pointer;">
             <i class="bi bi-arrow-left" style="font-size: 24px;"></i> 
             <span style="font-size: 20px; font-weight: bold; white-space: nowrap; ">Breathing Exercise</span>
-        </a>
+            <button id="openPopup" >Save</button>
+        </b>
         <hr style="width: 30vw; border: 1px solid white; margin: 2px auto 0; ">
     </div>
+    <!-- Start POP UP  -->
+<!-- Button to trigger popup -->
+<!-- <button id="openPopup">Open Popup</button> -->
+
+<!-- Popup structure -->
+<div class="popup-overlay" id="popupOverlay" style="display: none;">
+    <div class="popup">
+        <h2>Save this exercise?</h2>
+       <p>Your exercise, along with all selected parameters such as shape, will be saved and can be played later from Silent Exercise</p>
+        <input type="text" id="exerciseNickname" placeholder="Enter exercise name">
+        
+        <div class="button-group">
+            <button id="saveExerciseButton" class="save-btn">Save</button>
+            <button class="cancel-btn" onclick="closePopup()">Don’t Save</button>
+        </div>
+
+        <input type="hidden" id="csrf_token" value="{{ csrf_token }}">
+    </div>
+</div>
+
+
+<div id="shapeGuidePopup" class="popup-overlay">
+    <div class="popup-content">
+        <h2 id="popupTitle">Silent Exercise Guide</h2>
+        <ul id="popupDescription">
+            <li>Select a shape to control breathing pattern</li>
+            <li>The exercise time can be adjusted with the +  -</li>
+            <li>Press play then follow the movement </li>
+            <li>If you need a break, press pause .</li>
+            <li>Save a pattern for later if you like the flow </li>
+            <li>Click "Guide" to learn more about each shape</li>
+        </ul>
+        <!-- <span >&times;</span> -->
+        <button id="closePopup">Confirm </button>
+    </div>
+</div>
+    <!-- End POP UP  -->
     <div class="fullcontainer" style="margin-top: 20px;">
         <div class="part1">
             <select id="shapeSelector">
                 <option value="circle">Shape</option>
                 <option value="circle">Circle</option>
+                <option value="oval">Oval</option>
                 <option value="square">Square</option>
-                <option value="hRectangle">Horizontal Rectangle</option>
-                <option value="vRectangle">Vertical Rectangle</option>
+                <!-- <option value="hRectangle">Horizontal Rectangle</option> -->
+                <option value="vRectangle">Rectangle</option>
                 <option value="triangle">Triangle</option>
                 <option value="reverseTriangle">Reverse Triangle</option>
+                <option value="diamondShape">Quadrilateral</option> <!-- Added New Shape -->
             </select>
         </div> 
-    
-        <div class="part2">
-            <div id="timingControls"></div>
-        </div>
+        <button id="guideButton">Guide</button>
+
+        <button id="toggleButton">Breath</button>
+
+ <select id="timeSelector" style="display: none;">
+    <option value="300" selected>5 Minutes (Default)</option>
+    <option value="120">2 Minutes</option>
+    <option value="180">3 Minutes</option>
+    <option value="240">4 Minutes</option>
+    <option value="600">10 Minutes</option>
+    <option value="900">15 Minutes</option>
+    <option value="1200">20 Minutes</option>
+    <option value="1500">25 Minutes</option>
+    <option value="1800">30 Minutes</option>
+    <option value="240">40 Minutes</option>
+    <option value="3000">50 Minutes</option>
+    <option value="6000">60 Minutes</option>
+
+</select>
+
+       
     </div>
 
+    <div class="part2" id="timingContainer" style="display: none;">
+        <div id="timingControls">
+            <p>Timing Controls Content Here</p>
+        </div>
+        <button id="closeButton" style="padding: 8px 12px; font-size: 14px; font-weight: 500; border: 2px solid #FFD700; border-radius: 6px; background: #000; color: #fff; cursor: pointer; outline: none; transition: all 0.3s ease-in-out; width: 100px; text-align: center; box-shadow: 0 3px 5px rgba(255, 215, 0, 0.2); display: block; margin: 8px auto;">
+            Close
+        </button>
+        
+    </div>
+
+    <script>
+        document.getElementById("toggleButton").addEventListener("click", function() {
+            const timingContainer = document.getElementById("timingContainer");
+            timingContainer.style.display = "block";
+    
+            // Show close button
+            document.getElementById("closeButton").style.display = "inline-block";
+        });
+    
+        document.getElementById("closeButton").addEventListener("click", function() {
+            const timingContainer = document.getElementById("timingContainer");
+            timingContainer.style.display = "none";
+    
+            // Hide close button
+            this.style.display = "none";
+        });
+    </script> 
 <div class="shape-container" id="shapeContainer"></div>
 
   <audio id="audioPlayer"></audio>
@@ -599,9 +693,13 @@ option {
   <!-- <button id="playSong">Play</button>
   <button id="stopButton">Stop</button> -->
 <div class="playallbtns">
-  <button id="prevSong">⏮</button>
+  <button id="prevSong" style="display: none;">⏮</button>
+  <button id="decreaseTime">-</button>
+
   <button id="playSong">▶️ </button>
-  <button id="nextSong">⏭</button>
+  <button id="nextSong" style="display: none;">⏭</button>
+  <button id="increaseTime">+</button>
+
 </div>
 <!-- <div class="others">
   <button id="reloadBtn">Customise</button>
@@ -656,12 +754,14 @@ option {
     let durations = [];
   
     const breathingTexts = {
-        circle: ["Inhale","Inhale","Exhale", "Exhale"],
+        circle: ["Inhale","Exhale"],
+        oval: ["Inhale","Exhale"],
         square: ["Inhale", "Hold", "Exhale", "Hold"],
         hRectangle: ["Inhale", "Inhale", "Hold", "Exhale", "Exhale", "Hold"],
-        vRectangle: ["Inhale", "Hold", "Hold", "Exhale", "Hold", "Hold"],
+        vRectangle: ["Inhale","Hold", "Exhale","Hold"],
         triangle: ["Inhale", "Exhale", "Hold"],
-        reverseTriangle: ["Inhale", "Hold", "Exhale"]
+        reverseTriangle: ["Inhale", "Hold", "Exhale"],
+        diamondShape: ["Inhale", "Hold", "Exhale", "Hold"] // Added for Diamond Shape
     };
   
     function createTimingInputs(shape) {
@@ -677,9 +777,20 @@ option {
     breathingTexts[shape].forEach((phase, index) => {
         const wrapper = document.createElement("div");
         wrapper.id = `wrapper-${index}`;
+        wrapper.style.marginBottom = "10px"; // Add spacing between inputs
 
+        // Create label
+        const label = document.createElement("label");
+        label.innerText = phase;
+        label.style.display = "block"; // Make label appear above the input
+        label.style.fontWeight = "bold";
+        label.style.marginBottom = "5px";
+
+        // Create select dropdown
         const select = document.createElement("select");
         select.id = `duration-${index}`;
+        select.style.padding = "5px";
+        select.style.fontSize = "16px";
 
         // Populate dropdown with options
         timingOptions.forEach(time => {
@@ -690,20 +801,96 @@ option {
         });
 
         // Default selected value
-        select.value = "2";
+        select.value = "0"; // User sees "0" initially
 
         // Store selected values globally
-        window.storedTimings[index] = select.value;
+        window.storedTimings[index] = 1; // Internally treat 0 as 2
 
         // Update stored values when dropdown changes
         select.addEventListener("change", () => {
-            window.storedTimings[index] = select.value;
+            let selectedValue = Number(select.value);
+
+            // If user selects 0, treat it as 2 in the background
+            window.storedTimings[index] = selectedValue === 0 ? 1 : selectedValue;
+
+            // If shape is "circle", ensure both inputs have the same value
+            if (shape === "circle" && index === 0) {
+                window.storedTimings[1] = window.storedTimings[0]; // Sync value
+
+                // Update the second input field to reflect the change
+                const secondInput = document.getElementById("duration-1");
+                if (secondInput) {
+                    secondInput.value = window.storedTimings[0]; // Ensure it visually updates
+                }
+            }
+
+
+            // If shape is "square", set all inputs to the first input's value
+            if (shape === "square" && index === 0) {
+                breathingTexts[shape].forEach((_, i) => {
+                    window.storedTimings[i] = window.storedTimings[0]; // Sync all values
+                    document.getElementById(`duration-${i}`).value = window.storedTimings[0];
+                });
+            }
+
+            if (shape === "vRectangle") {
+                if (index === 0) {
+                    // Apply first input value to 3rd input
+                    window.storedTimings[2] = window.storedTimings[0];
+                    document.getElementById(`duration-2`).value = window.storedTimings[0];
+                } else if (index === 1) {
+                    // Apply second input value to 4th input
+                    window.storedTimings[3] = window.storedTimings[1];
+                    document.getElementById(`duration-3`).value = window.storedTimings[1];
+                }
+            }
+
+
             console.log("Updated storedTimings:", window.storedTimings);
         });
 
+        // Append elements to wrapper
+        wrapper.appendChild(label);
         wrapper.appendChild(select);
+
+        // Append wrapper to controls container
         timingControls.appendChild(wrapper);
     });
+
+    // If shape is "circle", hide the second input immediately
+    if (shape === "circle") {
+        setTimeout(() => {
+            const secondWrapper = document.getElementById(`wrapper-1`);
+            if (secondWrapper) {
+                secondWrapper.style.display = "none";
+            }
+        }, 100);
+    }
+
+    // If shape is "square", hide all inputs except the first one
+    if (shape === "square") {
+        setTimeout(() => {
+            breathingTexts[shape].forEach((_, i) => {
+                if (i !== 0) {
+                    document.getElementById(`wrapper-${i}`).style.display = "none";
+                }
+            });
+        }, 100);
+    }
+
+    // // If shape is "vRectangle", hide all inputs except the first and third one
+    // if (shape === "vRectangle") {
+    //     setTimeout(() => {
+    //         breathingTexts[shape].forEach((_, i) => {
+    //             if (i !== 0 && i !== 2) {
+    //                 document.getElementById(`wrapper-${i}`).style.display = "none";
+    //             }
+    //         });
+    //     }, 100);
+    // }
+
+
+    
 
     // Print values globally after 4 seconds
     setTimeout(() => {
@@ -711,7 +898,6 @@ option {
     }, 4000);
 }
 
-  
     function createShape(shape) {
         
         shapeContainer.innerHTML = "";
@@ -734,10 +920,23 @@ option {
         const textElement = document.createElement("span");
         textElement.classList.add("text");
         textElement.innerText = breathingTexts[shape][textIndex];
-  
+        
+            
+        // The Oval Animation Start --------------------------------------------------------------------------------------
+        if (!window.storedTimings || window.storedTimings.length < 2) {
+            console.warn("Not enough values in storedTimings. Using default values.");
+            window.storedTimings = [5, 3]; // Default fallback
+        }
+        console.log("Stored Timings: :::::::::::::::::::::::::::::::::::::::::::", window.storedTimings);
+        // Initialize currentOvalDuration if not set
+        if (!window.currentOvalIndex) {
+            window.currentOvalIndex = 0;
+        }
+        // The Oval Animation End --------------------------------------------------------------------------------------
+
         function startAnimation() {
             stopAnimation();
-            durations = breathingTexts[shape].map((_, index) => parseInt(document.getElementById(`duration-${index}`).value) || 2);
+            durations = breathingTexts[shape].map((_, index) => parseInt(document.getElementById(`duration-${index}`).value) || 1);
   
             let index = 0;
             isAnimating = true;
@@ -746,95 +945,97 @@ function startGoldenLineAnimation() {
     let currentDuration = parseFloat(durations[index]); // Get current duration as a number
     let goldenLineDuration;
 
-    switch (shape) {
-        case "circle":
-            goldenLineDuration = (currentDuration * 2) + "s";
-            break;
-        case "square":
-            goldenLineDuration = (currentDuration * 4) + "s";
-            break;
-        case "hRectangle":
-            goldenLineDuration = (currentDuration * 6) + "s";
-            break;
-        case "vRectangle":
-            goldenLineDuration = (currentDuration * 6) + "s";
-            break;
-        case "triangle":
-            goldenLineDuration = (currentDuration * 3) + "s";
-            break;
-        case "reverseTriangle":
-            goldenLineDuration = (currentDuration * 3) + "s";
-            break;
-    }
+    // switch (shape) {
+    //     case "circle":
+    //         goldenLineDuration = (currentDuration * 2) + "s";
+    //         break;
+    //     case "square":
+    //         goldenLineDuration = (currentDuration * 4) + "s";
+    //         break;
+    //     case "hRectangle":
+    //         goldenLineDuration = (currentDuration * 6) + "s";
+    //         break;
+    //     case "vRectangle":
+    //         goldenLineDuration = (currentDuration * 6) + "s";
+    //         break;
+    //     case "triangle":
+    //         goldenLineDuration = (currentDuration * 3) + "s";
+    //         break;
+    //     case "reverseTriangle":
+    //         goldenLineDuration = (currentDuration * 3) + "s";
+    //         break;
+    // }
 
     // console.log("Golden Line Duration:", goldenLineDuration);
 
     switch (shape) {
-        case "circle":
-            goldenLine.style.animation = `moveCircle ${goldenLineDuration} linear infinite`;
-            break;
-            case "square":
-    console.log("Applying dynamic square animation...");
+        // case "circle":
+        //     goldenLine.style.animation = `moveCircle ${goldenLineDuration} linear infinite`;
+        //     break;
+    //         case "square":
+    // console.log("Applying dynamic square animation...");
 
-    // Ensure storedTimings exists with at least 4 values
-    if (!window.storedTimings || window.storedTimings.length < 4) {
-        console.warn("Not enough values in storedTimings. Using default values.");
-        window.storedTimings = [4, 4, 8, 9]; // Default values if missing
-    }
+    // // Ensure storedTimings exists and has exactly 4 values
+    // if (!window.storedTimings || window.storedTimings.length < 4) {
+    //     console.warn("Not enough values in storedTimings. Using default values.");
+    //     window.storedTimings = [4, 4, 8, 9]; // Default values if missing
+    // }
 
-    // Extract dynamic durations from global values
-    const [side1Duration, side2Duration, side3Duration, side4Duration] = window.storedTimings;
+    // // Extract dynamic durations
+    // const [side1Duration, side2Duration, side3Duration, side4Duration] = window.storedTimings;
 
-    // Calculate total animation duration
-    const totalDuration = side1Duration + side2Duration + side3Duration + side4Duration;
+    // // Total animation duration
+    // const totalDuration = side1Duration + side2Duration + side3Duration + side4Duration;
 
-    // Calculate percentage timings
-    const percent1 = (side1Duration / totalDuration) * 100;
-    const percent2 = percent1 + (side2Duration / totalDuration) * 100;
-    const percent3 = percent2 + (side3Duration / totalDuration) * 100;
-    const percent4 = 100; // Last step always 100%
+    // // Calculate percentage timings
+    // const percent1 = (side1Duration / totalDuration) * 100;
+    // const percent2 = percent1 + (side2Duration / totalDuration) * 100;
+    // const percent3 = percent2 + (side3Duration / totalDuration) * 100;
+    // const percent4 = percent3 + (side4Duration / totalDuration) * 100;
 
-    // Create dynamic keyframes
-    const animationCSS = `
-        @keyframes moveSquare {
-            0% { top: -8px; left: 10px; } /* Start Position */
-            ${percent1}% { top: -10px; left: 192px; } /* Move right */
-            ${percent2}% { top: 190px; left: 195px; } /* Move down */
-            ${percent3}% { top: 195px; left: -8px; } /* Move left */
-            ${percent4}% { top: -10px; left: -10px; } /* Move up (back to start) */
-        }
-    `;
+    // // Ensure the last frame (100%) is identical to the first frame (0%)!
+    // const animationCSS = `
+    //     @keyframes moveSquare {
+    //         0% { top: -8px; left: 10px; } /* Start Position */
+    //         ${percent1}% { top: -10px; left: 192px; } /* Move right */
+    //         ${percent2}% { top: 190px; left: 195px; } /* Move down */
+    //         ${percent3}% { top: 195px; left: -8px; } /* Move left */
+    //         ${percent4}% { top: -8px; left: 10px; } /* Move up (Back to Start) */
+    //         100% { top: -8px; left: 10px; } /* Ensuring Infinite Loop */
+    //     }
+    // `;
 
-    // Remove previous animation style if it exists
-    const existingStyle = document.getElementById("dynamicSquareAnimation");
-    if (existingStyle) existingStyle.remove();
+    // // Remove previous animation if exists
+    // const existingStyle = document.getElementById("dynamicSquareAnimation");
+    // if (existingStyle) existingStyle.remove();
 
-    // Inject the new keyframes dynamically
-    const styleSheet = document.createElement("style");
-    styleSheet.id = "dynamicSquareAnimation";
-    styleSheet.innerHTML = animationCSS;
-    document.head.appendChild(styleSheet);
+    // // Inject new animation
+    // const styleSheet = document.createElement("style");
+    // styleSheet.id = "dynamicSquareAnimation";
+    // styleSheet.innerHTML = animationCSS;
+    // document.head.appendChild(styleSheet);
 
-    // Apply animation with correct total duration
-    goldenLine.style.animation = `moveSquare ${totalDuration}s linear infinite`;
+    // // Apply animation with infinite loop
+    // goldenLine.style.animation = `moveSquare ${totalDuration}s linear infinite`;
 
-    console.log("Updated animation with stored timings:", window.storedTimings);
-    break;
+    // console.log("Updated animation with stored timings:", window.storedTimings);
+    // break;
 
-        case "hRectangle":
-            goldenLine.style.animation = `moveRectangleH ${goldenLineDuration} linear infinite`;
-            break;
-        case "vRectangle":
-            goldenLine.style.animation = `moveRectangleV ${goldenLineDuration} linear infinite`;
-            break;
-        case "triangle":
-            goldenLine.style.animation = `moveTriangle ${goldenLineDuration} linear infinite`;
-            break;
-        case "reverseTriangle":
-            goldenLine.style.animation = `moveUpsideDownTriangle ${goldenLineDuration} linear infinite`;
-            break;
+        // case "hRectangle":
+        //     goldenLine.style.animation = `moveRectangleH ${goldenLineDuration} linear infinite`;
+        //     break;
+        // case "vRectangle":
+        //     goldenLine.style.animation = `moveRectangleV ${goldenLineDuration} linear infinite`;
+        //     break;
+        // case "triangle":
+        //     goldenLine.style.animation = `moveTriangle ${goldenLineDuration} linear infinite`;
+        //     break;
+        // case "reverseTriangle":
+        //     goldenLine.style.animation = `moveUpsideDownTriangle ${goldenLineDuration} linear infinite`;
+        //     break;
     }
 }
+
 let firstRun = true; // Track first execution
 
 // Animate the shape changes (golden line remains untouched)
@@ -873,60 +1074,538 @@ function animateNextPhase() {
     console.log("Global stored timings:", window.storedTimings);
 
     switch (shape) {
-        case "circle":
-            div.style.width = "200px";
-            div.style.height = "200px";
-            div.style.borderRadius = "50%";
-            break;
+    //     case "circle":
+    // div.style.width = "200px";
+    // div.style.height = "200px";
+    // div.style.borderRadius = "50%";
+    // console.log("Applying dynamic circle animation...");
+
+    // // Ensure storedTimings exists and has 2 values
+    // if (!window.storedTimings || window.storedTimings.length < 2) {
+    //     console.warn("Not enough values in storedTimings. Using default values.");
+    //     window.storedTimings = [4, 6]; // Default fallback values
+    // }
+
+    // // Convert values to numbers (since they might be stored as strings)
+    // const circleDurations = window.storedTimings.slice(0, 2).map(Number);
+    // const [half1Duration, half2Duration] = circleDurations;
+    // const totalCircleDuration = half1Duration + half2Duration;
+
+    // console.log("Dynamic Timings for Circle:", circleDurations);
+
+    // // Create dynamic keyframes for circular motion
+    // const circleAnimationCSS = `
+    //     @keyframes moveCircle {
+    //         0% { transform: rotate(-90deg) translateX(100px) rotate(90deg); }
+    //         ${(half1Duration / totalCircleDuration) * 100}% { transform: rotate(90deg) translateX(100px) rotate(-90deg); }
+    //         100% { transform: rotate(270deg) translateX(100px) rotate(-270deg); }
+    //     }
+    // `;
+
+    // // Remove previous animation style if exists
+    // let existingCircleStyle = document.getElementById("dynamicCircleAnimation");
+    // if (existingCircleStyle) existingCircleStyle.remove();
+
+    // // Inject new animation style
+    // let circleStyleSheet = document.createElement("style");
+    // circleStyleSheet.id = "dynamicCircleAnimation";
+    // circleStyleSheet.innerHTML = circleAnimationCSS;
+    // document.head.appendChild(circleStyleSheet);
+
+    // // Ensure the element exists
+    // if (goldenLine) {
+    //     goldenLine.style.position = "absolute"; // Ensure absolute positioning
+
+    //     // Apply the animation with dynamic infinite looping
+    //     goldenLine.style.animation = `moveCircle ${totalCircleDuration}s linear infinite`;
+
+    //     console.log("Circle animation applied with dynamic values:", circleDurations);
+    // } else {
+    //     console.error("goldenLine is not defined or not found in the DOM.");
+    // }
+    // break;
+    case "circle":
+    div.style.width = "200px";
+    div.style.height = "200px";
+    div.style.borderRadius = "50%";
+    console.log("Applying dynamic circle animation...");
+
+    // Ensure storedTimings exists and has at least 1 value
+    if (!window.storedTimings || window.storedTimings.length < 1) {
+        console.warn("Not enough values in storedTimings. Using default value.");
+        window.storedTimings = [4]; // Default fallback value
+    }
+
+    // Convert the first value to a number
+    const firstDuration = Number(window.storedTimings[0]);
+
+    console.log("Dynamic Timing for Circle:", firstDuration);
+
+    // Create keyframes for full-circle motion, starting from 12 o’clock (-90deg)
+    const circleAnimationCSS = `
+        @keyframes moveCircle {
+            0% { transform: rotate(-90deg) translateX(100px) rotate(90deg); }
+            100% { transform: rotate(270deg) translateX(100px) rotate(-270deg); }
+        }
+    `;
+
+    // Remove any existing animation styles
+    let existingCircleStyle = document.getElementById("dynamicCircleAnimation");
+    if (existingCircleStyle) existingCircleStyle.remove();
+
+    // Inject new animation style
+    let circleStyleSheet = document.createElement("style");
+    circleStyleSheet.id = "dynamicCircleAnimation";
+    circleStyleSheet.innerHTML = circleAnimationCSS;
+    document.head.appendChild(circleStyleSheet);
+
+    // Ensure the element exists
+    if (goldenLine) {
+        goldenLine.style.position = "absolute"; // Ensure absolute positioning
+
+        // ✅ **Apply animation using only the first duration**
+        goldenLine.style.animation = `moveCircle ${firstDuration}s linear infinite`;
+
+        console.log("Circle animation applied smoothly using only one timing value:", firstDuration);
+    } else {
+        console.error("goldenLine is not defined or not found in the DOM.");
+    }
+    break;
+
+
+case "oval":
+    div.style.width = "300px";
+    div.style.height = "200px";
+    div.style.borderRadius = "50%";
+    console.log("Applying ultra-smooth & aligned oval animation...");
+
+    const radiusX = 150; 
+    const radiusY = 100;
+
+    const offsetX = -3;
+    const offsetY = 78;  
+
+    let keyframes = `@keyframes moveOval {`;
+    for (let i = 0; i <= 100; i += 2) { 
+        let angle = ((i / 100) * 2 * Math.PI) - (Math.PI / 2);
+        let x = radiusX * Math.cos(angle) + offsetX;
+        let y = radiusY * Math.sin(angle) + offsetY; 
+        keyframes += `${i}% { transform: translate3d(${x}px, ${y}px, 0); }`;
+    }
+    keyframes += `}`;
+
+    let existingOvalStyle = document.getElementById("dynamicOvalAnimation");
+    if (existingOvalStyle) existingOvalStyle.remove();
+
+    let ovalStyleSheet = document.createElement("style");
+    ovalStyleSheet.id = "dynamicOvalAnimation";
+    ovalStyleSheet.innerHTML = keyframes;
+    document.head.appendChild(ovalStyleSheet);
+
+    if (goldenLine) {
+        goldenLine.style.position = "absolute";
+        goldenLine.style.left = `${radiusX + offsetX}px`;
+        goldenLine.style.top = `${radiusY - 85}px`;
+        goldenLine.style.willChange = "transform"; // Helps prevent lag
+
+        // Get current timing from storedTimings
+        let currentOvalDuration = window.storedTimings[window.currentOvalIndex];
+
+        // Reset animation properly
+        goldenLine.style.animation = "none"; // Stop animation
+        void goldenLine.offsetWidth; // Force browser to recalculate styles (reset)
+        goldenLine.style.animation = `moveOval ${currentOvalDuration}s linear infinite`;
+
+        console.log(`Ultra-smooth oval animation applied with ${currentOvalDuration}s duration.`);
+
+        // 🚀 When oval case runs again, switch the timing to next storedTiming
+        window.currentOvalIndex = (window.currentOvalIndex + 1) % window.storedTimings.length;
+    } else {
+        console.error("goldenLine is not defined or not found in the DOM.");
+    }
+    break;
+
         case "square":
             div.style.width = "200px";
             div.style.height = "200px";
-            // goldenLine.style.animation = `moveSquare 8s linear infinite`;
+            
+            console.log("Applying dynamic square animation...");
 
-            break;
-        case "hRectangle":
-            div.style.width = "300px";
-            div.style.height = "150px";
-            break;
-        case "vRectangle":
-            div.style.width = "150px";
-            div.style.height = "300px";
-            break;
-        case "triangle":
-            div.className = "triangle"; // Apply triangle styles
-             // Apply text styles only for the triangle case
-            textElement.style.position = "absolute";
-            textElement.style.color = "white";
-            textElement.style.fontSize = "20px";
-            textElement.style.zIndex = "2";
-            textElement.style.marginTop = "115px";
-            textElement.style.fontWeight = "bold";
-            textElement.style.marginLeft = "-30px";
-            // Apply golden-line styles only for the triangle case
-            goldenLine.style.position = "absolute";
-            goldenLine.style.border = "2px solid gold";
-            goldenLine.style.marginLeft = "-108px";
-            goldenLine.style.zIndex = "2"; // Ensure it stays above the triangle
-            break;
-        case "reverseTriangle":
-            div.className = "upside-down-triangle"; // Apply upside-down triangle styles
-            // Apply text styles only for the upside-down triangle case
-            textElement.style.position = "absolute";
-            textElement.style.color = "white";
-            textElement.style.fontSize = "20px";
-            textElement.style.zIndex = "2";
-            textElement.style.marginTop = "-120px"; // Adjusted for upside-down positioning
-            textElement.style.fontWeight = "bold";
-            textElement.style.marginLeft = "-30px";
+            // Ensure storedTimings exists and has 4 values
+            if (!window.storedTimings || window.storedTimings.length < 4) {
+                console.warn("Not enough values in storedTimings. Using default values.");
+                window.storedTimings = [2, 5, 6, 2]; // Default fallback
+            }
 
-            // Apply golden-line styles only for the upside-down triangle case
-            goldenLine.style.position = "absolute";
-            goldenLine.style.border = "2px solid gold";
-            goldenLine.style.marginLeft = "-108px";
-            goldenLine.style.zIndex = "2"; // Ensure it stays above the triangle
+            // Convert values to numbers (since they might be stored as strings)
+            const sideDurations = window.storedTimings.map(Number);
+            const [side1Duration, side2Duration, side3Duration, side4Duration] = sideDurations;
+            const totalDuration = side1Duration + side2Duration + side3Duration + side4Duration;
 
+            console.log("Dynamic Timings:", sideDurations);
+
+            // Calculate percentage timings
+            const percent1 = (side1Duration / totalDuration) * 100;
+            const percent2 = percent1 + (side2Duration / totalDuration) * 100;
+            const percent3 = percent2 + (side3Duration / totalDuration) * 100;
+            const percent4 = percent3 + (side4Duration / totalDuration) * 100;
+
+            // Create keyframes dynamically
+            const animationCSS = `
+                @keyframes moveSquare {
+                    0% { top: -8px; left: 10px; }
+                    ${percent1}% { top: -10px; left: 192px; }
+                    ${percent2}% { top: 190px; left: 195px; }
+                    ${percent3}% { top: 195px; left: -8px; }
+                    ${percent4}% { top: -8px; left: -4px; }
+                    100% { top: -8px; left: -4px; }
+                }
+            `;
+
+            // Remove previous animation style if exists
+            let existingStyle = document.getElementById("dynamicSquareAnimation");
+            if (existingStyle) existingStyle.remove();
+
+            // Inject new animation style
+            let styleSheet = document.createElement("style");
+            styleSheet.id = "dynamicSquareAnimation";
+            styleSheet.innerHTML = animationCSS;
+            document.head.appendChild(styleSheet);
+
+            // Ensure the element exists
+            if (goldenLine) {
+                goldenLine.style.position = "absolute"; // Ensure absolute positioning
+
+                // Apply the animation with dynamic infinite looping
+                goldenLine.style.animation = `moveSquare ${totalDuration}s linear infinite`;
+
+                console.log("Animation applied with dynamic values:", sideDurations);
+            } else {
+                console.error("goldenLine is not defined or not found in the DOM.");
+            }
             break;
+        
+        
+        
+            case "hRectangle":
+    div.style.width = "300px";
+    div.style.height = "150px";
+
+    console.log("Applying dynamic horizontal rectangle animation...");
+
+    // Ensure storedTimings exists and has 6 values
+    if (!window.storedTimings || window.storedTimings.length < 6) {
+        console.warn("Not enough values in storedTimings. Using default values.");
+        window.storedTimings = [2, 3, 2, 4, 3, 2]; // Default fallback values
     }
+
+    // Convert values to numbers (since they might be stored as strings)
+    const rectDurations = window.storedTimings.slice(0, 6).map(Number);
+
+    // Combine values to form 4 segment durations
+    const segmentDurations = [
+        rectDurations[0] + rectDurations[1],  // First segment
+        rectDurations[2],                     // Second segment
+        rectDurations[3] + rectDurations[4],  // Third segment
+        rectDurations[5]                      // Fourth segment
+    ];
+
+    const totalRectDuration = segmentDurations.reduce((a, b) => a + b, 0);
+
+    console.log("Calculated segment durations for Rectangle:", segmentDurations);
+
+    // Compute animation percentages
+    const percentages = [
+        0,
+        (segmentDurations[0] / totalRectDuration) * 100,
+        ((segmentDurations[0] + segmentDurations[1]) / totalRectDuration) * 100,
+        ((segmentDurations[0] + segmentDurations[1] + segmentDurations[2]) / totalRectDuration) * 100,
+        100
+    ];
+
+    // Create dynamic keyframes with calculated percentages
+    const rectangleAnimationCSS = `
+        @keyframes moveRectangleH {
+            ${percentages[0]}% { top: -8px; left: 10px; }
+            ${percentages[1]}% { top: -10px; left: 292px; }
+            ${percentages[2]}% { top: 140px; left: 295px; }
+            ${percentages[3]}% { top: 140px; left: -8px; }
+            ${percentages[4]}% { top: 10px; left: -10px; }
+        }
+    `;
+
+    // Remove previous animation style if exists
+    let existingRectangleStyle = document.getElementById("dynamicRectangleHAnimation");
+    if (existingRectangleStyle) existingRectangleStyle.remove();
+
+    // Inject new animation style
+    let rectangleStyleSheet = document.createElement("style");
+    rectangleStyleSheet.id = "dynamicRectangleHAnimation";
+    rectangleStyleSheet.innerHTML = rectangleAnimationCSS;
+    document.head.appendChild(rectangleStyleSheet);
+
+    // Ensure the element exists
+    if (goldenLine) {
+        goldenLine.style.animation = `moveRectangleH ${totalRectDuration}s linear infinite`;
+        console.log("Horizontal Rectangle animation applied with updated timing.");
+    } else {
+        console.error("goldenLine is not defined or not found in the DOM.");
+    }
+    break;
+    
+    case "vRectangle":
+    div.style.width = "150px";
+    div.style.height = "300px";
+
+    console.log("Applying dynamic vertical rectangle animation...");
+
+    // Ensure storedTimings exists and has exactly 4 values
+    if (!window.storedTimings || window.storedTimings.length < 4) {
+        console.warn("Not enough values in storedTimings. Using default values.");
+        window.storedTimings = [3, 2, 4, 5]; // Default fallback values
+    }
+
+    // Convert values to numbers (in case they are stored as strings)
+    const vRectangleDurations = window.storedTimings.slice(0, 4).map(Number);
+
+    // Calculate total duration (sum of all edges)
+    const vRectangleTotalTime = vRectangleDurations.reduce((a, b) => a + b, 0);
+
+    // Calculate animation percentages based on durations
+    const vRectanglePercents = [
+        0,
+        (vRectangleDurations[0] / vRectangleTotalTime) * 100,
+        ((vRectangleDurations[0] + vRectangleDurations[1]) / vRectangleTotalTime) * 100,
+        ((vRectangleDurations[0] + vRectangleDurations[1] + vRectangleDurations[2]) / vRectangleTotalTime) * 100,
+        100
+    ];
+
+    console.log("Calculated segment durations:", vRectangleDurations);
+    console.log("Calculated animation keyframe percentages:", vRectanglePercents);
+
+    // Create dynamic keyframes with correct movement durations
+    const vRectangleAnimationCSS = `
+        @keyframes moveVerticalRectangle {
+            ${vRectanglePercents[0]}% { top: 295px; left: -8px; }  /* Start at Point D */
+            ${vRectanglePercents[1]}% { top: -10px; left: -10px; }  /* Move to Point A */
+            ${vRectanglePercents[2]}% { top: -8px; left: 141px; }   /* Move to Point B */
+            ${vRectanglePercents[3]}% { top: 292px; left: 140px; }  /* Move to Point C */
+            ${vRectanglePercents[4]}% { top: 295px; left: -8px; }  /* Back to Point D */
+        }
+    `;
+
+    // Remove previous animation style if exists
+    let existingVRectangleStyle = document.getElementById("dynamicVRectangleAnimation");
+    if (existingVRectangleStyle) existingVRectangleStyle.remove();
+
+    // Inject new animation style
+    let vRectangleStyleSheet = document.createElement("style");
+    vRectangleStyleSheet.id = "dynamicVRectangleAnimation";
+    vRectangleStyleSheet.innerHTML = vRectangleAnimationCSS;
+    document.head.appendChild(vRectangleStyleSheet);
+
+    // Apply animation
+    if (goldenLine) {
+        goldenLine.style.animation = `moveVerticalRectangle ${vRectangleTotalTime}s linear infinite`;
+        console.log("Vertical Rectangle animation applied successfully.");
+    } else {
+        console.error("goldenLine is not defined or not found in the DOM.");
+    }
+    break;
+
+    case "triangle":
+    div.className = "triangle"; // Apply triangle styles
+
+    // Apply text styles only for the triangle case
+    textElement.style.position = "absolute";
+    textElement.style.color = "white";
+    textElement.style.fontSize = "20px";
+    textElement.style.zIndex = "2";
+    textElement.style.marginTop = "115px";
+    textElement.style.fontWeight = "bold";
+    textElement.style.marginLeft = "-30px";
+
+    // Apply golden-line styles only for the triangle case
+    goldenLine.style.position = "absolute";
+    goldenLine.style.border = "2px solid gold";
+    goldenLine.style.marginLeft = "-108px";
+    goldenLine.style.zIndex = "2"; // Ensure it stays above the triangle
+
+    // Ensure storedTimings exists and has 3 values (since triangle has 3 sides)
+    if (!window.storedTimings || window.storedTimings.length < 3) {
+        console.warn("Not enough values in storedTimings. Using default values.");
+        window.storedTimings = [3, 4, 5]; // Default fallback
+    }
+
+    // Convert values to numbers (since they might be stored as strings)
+    const triangleDurations = window.storedTimings.map(Number);
+    const [triangleSide1, triangleSide2, triangleSide3] = triangleDurations;
+    const totalTriangleDuration = triangleSide1 + triangleSide2 + triangleSide3;
+
+    console.log("Triangle Dynamic Timings:", triangleDurations);
+
+    // Calculate percentage timings
+    const trianglePercent1 = (triangleSide1 / totalTriangleDuration) * 100;
+    const trianglePercent2 = trianglePercent1 + (triangleSide2 / totalTriangleDuration) * 100;
+    const trianglePercent3 = trianglePercent2 + (triangleSide3 / totalTriangleDuration) * 100;
+
+    // Create keyframes dynamically with the golden line starting from point C
+    const triangleAnimationCSS = `
+        @keyframes moveTriangle {
+            0% { transform: translate(0px, 191px); }     
+            ${trianglePercent1}% { transform: translate(100px, -4px); }
+            ${trianglePercent2}% { transform: translate(200px, 191px); }
+            ${trianglePercent3}% { transform: translate(0px, 191px); }
+            100% { transform: translate(0px, 191px); }
+        }
+    `;
+
+    // Remove previous triangle animation style if exists
+    let existingTriangleStyle = document.getElementById("dynamicTriangleAnimation");
+    if (existingTriangleStyle) existingTriangleStyle.remove();
+
+    // Inject new animation style
+    let triangleStyleSheet = document.createElement("style");
+    triangleStyleSheet.id = "dynamicTriangleAnimation";
+    triangleStyleSheet.innerHTML = triangleAnimationCSS;
+    document.head.appendChild(triangleStyleSheet);
+
+    // Apply the animation with dynamic duration
+    goldenLine.style.animation = `moveTriangle ${totalTriangleDuration}s linear infinite`;
+
+    console.log("Triangle Animation applied with dynamic values:", triangleDurations);
+    break;
+
+
+    case "reverseTriangle":
+    div.className = "upside-down-triangle"; // Apply upside-down triangle styles
+
+    // Apply text styles only for the upside-down triangle case
+    textElement.style.position = "absolute";
+    textElement.style.color = "white";
+    textElement.style.fontSize = "20px";
+    textElement.style.zIndex = "2";
+    textElement.style.marginTop = "-120px"; // Adjusted for upside-down positioning
+    textElement.style.fontWeight = "bold";
+    textElement.style.marginLeft = "-30px";
+
+    // Apply golden-line styles only for the upside-down triangle case
+    goldenLine.style.position = "absolute";
+    goldenLine.style.border = "2px solid gold";
+    goldenLine.style.marginLeft = "-108px";
+    goldenLine.style.zIndex = "2"; // Ensure it stays above the triangle
+
+    // Ensure storedTimings exists and has 3 values (since reverse triangle has 3 sides)
+    if (!window.storedTimings || window.storedTimings.length < 3) {
+        console.warn("Not enough values in storedTimings. Using default values.");
+        window.storedTimings = [3, 4, 5]; // Default fallback
+    }
+
+    // Convert values to numbers (since they might be stored as strings)
+    const reverseTriangleDurations = window.storedTimings.map(Number);
+    const [reverseSide1, reverseSide2, reverseSide3] = reverseTriangleDurations;
+    const totalReverseTriangleDuration = reverseSide1 + reverseSide2 + reverseSide3;
+
+    console.log("Reverse Triangle Dynamic Timings:", reverseTriangleDurations);
+
+    // Calculate percentage timings
+    const reversePercent1 = (reverseSide1 / totalReverseTriangleDuration) * 100;
+    const reversePercent2 = reversePercent1 + (reverseSide2 / totalReverseTriangleDuration) * 100;
+    const reversePercent3 = reversePercent2 + (reverseSide3 / totalReverseTriangleDuration) * 100;
+
+    // Create keyframes dynamically with the golden line starting from point A
+    const reverseTriangleAnimationCSS = `
+        @keyframes moveUpsideDownTriangle {
+            0% { transform: translate(100px, -6px); }        
+            ${reversePercent1}% { transform: translate(5px, -201px); }  
+            ${reversePercent2}% { transform: translate(200px, -201px); }   
+            ${reversePercent3}% { transform: translate(100px, -6px); }     
+            100% { transform: translate(100px, -6px); }
+        }
+    `;
+
+    // Remove previous reverse triangle animation style if exists
+    let existingReverseStyle = document.getElementById("dynamicReverseTriangleAnimation");
+    if (existingReverseStyle) existingReverseStyle.remove();
+
+    // Inject new animation style
+    let reverseStyleSheet = document.createElement("style");
+    reverseStyleSheet.id = "dynamicReverseTriangleAnimation";
+    reverseStyleSheet.innerHTML = reverseTriangleAnimationCSS;
+    document.head.appendChild(reverseStyleSheet);
+
+    // Apply the animation with dynamic duration
+    goldenLine.style.animation = `moveUpsideDownTriangle ${totalReverseTriangleDuration}s linear infinite`;
+
+    console.log("Reverse Triangle Animation applied with dynamic values:", reverseTriangleDurations);
+    break;
+
+    case "diamondShape":
+        div.style.width = "200px";
+        div.style.height = "200px";
+        div.style.transform = "rotate(45deg)"; // Rotate the element to form a diamond
+        textElement.style.transform = "rotate(-45deg)"; // Adjust text to stay upright
+    console.log("Applying dynamic square2 animation...");
+
+    // Ensure storedTimings exists and has 4 values
+    if (!window.storedTimings || window.storedTimings.length < 4) {
+        console.warn("Not enough values in storedTimings. Using default values.");
+        window.storedTimings = [2, 5, 6, 2]; // Default fallback
+    }
+
+    // Convert values to numbers (since they might be stored as strings)
+    const square2Durations = window.storedTimings.map(Number);
+    const [square2Side1, square2Side2, square2Side3, square2Side4] = square2Durations;
+    const square2TotalDuration = square2Side1 + square2Side2 + square2Side3 + square2Side4;
+
+    console.log("Dynamic Timings for square2:", square2Durations);
+
+    // Calculate percentage timings
+    const square2Percent1 = (square2Side1 / square2TotalDuration) * 100;
+    const square2Percent2 = square2Percent1 + (square2Side2 / square2TotalDuration) * 100;
+    const square2Percent3 = square2Percent2 + (square2Side3 / square2TotalDuration) * 100;
+    const square2Percent4 = square2Percent3 + (square2Side4 / square2TotalDuration) * 100;
+
+    // Create keyframes dynamically
+    const square2AnimationCSS = `
+        @keyframes moveSquare2 {
+            0% { top: -8px; left: 10px; }
+            ${square2Percent1}% { top: -10px; left: 192px; }
+            ${square2Percent2}% { top: 190px; left: 195px; }
+            ${square2Percent3}% { top: 195px; left: -8px; }
+            ${square2Percent4}% { top: -8px; left: -4px; }
+            100% { top: -8px; left: -4px; }
+        }
+    `;
+
+    // Remove previous animation style if exists
+    let existingSquare2Style = document.getElementById("dynamicSquare2Animation");
+    if (existingSquare2Style) existingSquare2Style.remove();
+
+    // Inject new animation style
+    let square2StyleSheet = document.createElement("style");
+    square2StyleSheet.id = "dynamicSquare2Animation";
+    square2StyleSheet.innerHTML = square2AnimationCSS;
+    document.head.appendChild(square2StyleSheet);
+
+    // Ensure the element exists
+    if (goldenLine) {
+        goldenLine.style.position = "absolute"; // Ensure absolute positioning
+
+        // Apply the animation with dynamic infinite looping
+        goldenLine.style.animation = `moveSquare2 ${square2TotalDuration}s linear infinite`;
+
+        console.log("Animation applied with dynamic values:", square2Durations);
+    } else {
+        console.error("goldenLine is not defined or not found in the DOM.");
+    }
+    break;
+
+
+
+
+    }
+   
     animationTimeout = setTimeout(() => {
         index = (index + 1) % durations.length;
         animateNextPhase();
@@ -1037,56 +1716,56 @@ stopButton.addEventListener("click", () => {
 });
 
 
-// ------------------------------------------------------------------------------------------------------------------
+// // ------------------------------------------------------------------------------------------------------------------
   
-    function updateProgressBar() {
-        if (audioPlayer.duration) {
-            const percent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
-            progressBar.style.width = percent + "%";
-            progressHandle.style.left = percent + "%";
-        }
-    }
+//     function updateProgressBar() {
+//         if (audioPlayer.duration) {
+//             const percent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+//             progressBar.style.width = percent + "%";
+//             progressHandle.style.left = percent + "%";
+//         }
+//     }
   
-    audioPlayer.addEventListener("timeupdate", updateProgressBar);
+//     audioPlayer.addEventListener("timeupdate", updateProgressBar);
   
-    progressContainer.addEventListener("click", (e) => {
-        const rect = progressContainer.getBoundingClientRect();
-        const clickX = e.clientX - rect.left;
-        const width = rect.width;
-        const seekTime = (clickX / width) * audioPlayer.duration;
-        audioPlayer.currentTime = seekTime;
-        updateProgressBar();
-    });
+//     progressContainer.addEventListener("click", (e) => {
+//         const rect = progressContainer.getBoundingClientRect();
+//         const clickX = e.clientX - rect.left;
+//         const width = rect.width;
+//         const seekTime = (clickX / width) * audioPlayer.duration;
+//         audioPlayer.currentTime = seekTime;
+//         updateProgressBar();
+//     });
   
-    let isDragging = false;
+//     let isDragging = false;
   
-    progressHandle.addEventListener("mousedown", () => {
-        isDragging = true;
-    });
+//     progressHandle.addEventListener("mousedown", () => {
+//         isDragging = true;
+//     });
   
-    document.addEventListener("mouseup", () => {
-        isDragging = false;
-    });
+//     document.addEventListener("mouseup", () => {
+//         isDragging = false;
+//     });
   
-    document.addEventListener("mousemove", (e) => {
-        if (isDragging) {
-            const rect = progressContainer.getBoundingClientRect();
-            const moveX = e.clientX - rect.left;
-            const width = rect.width;
-            let newTime = (moveX / width) * audioPlayer.duration;
-            newTime = Math.max(0, Math.min(newTime, audioPlayer.duration));
-            audioPlayer.currentTime = newTime;
-            updateProgressBar();
-        }
-    });
+//     document.addEventListener("mousemove", (e) => {
+//         if (isDragging) {
+//             const rect = progressContainer.getBoundingClientRect();
+//             const moveX = e.clientX - rect.left;
+//             const width = rect.width;
+//             let newTime = (moveX / width) * audioPlayer.duration;
+//             newTime = Math.max(0, Math.min(newTime, audioPlayer.duration));
+//             audioPlayer.currentTime = newTime;
+//             updateProgressBar();
+//         }
+//     });
   
-    audioPlayer.addEventListener("loadedmetadata", () => {
-        progressBar.style.width = "0%";
-        progressHandle.style.left = "0%";
-    });
+//     audioPlayer.addEventListener("loadedmetadata", () => {
+//         progressBar.style.width = "0%";
+//         progressHandle.style.left = "0%";
+//     });
 
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
 const prevSong = document.getElementById("prevSong");
 const nextSong = document.getElementById("nextSong");
@@ -1122,96 +1801,144 @@ prevSong.addEventListener("click", () => changeTrack(-1));
   <!-- Vibration code start here  -->
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      const playButton = document.getElementById("playSong");
-      const prevButton = document.getElementById("prevSong");
-      const nextButton = document.getElementById("nextSong");
-      const progressBar = document.getElementById("progressBar");
-      const progressHandle = document.getElementById("progressHandle");
-      const timeDisplay = document.getElementById("timeDisplay");
-      const confirmBox = document.getElementById("confirmBox");
-  
-      const totalTime = 300; // 5 minutes (300 seconds)
-      let remainingTime = totalTime;
-      let isPlaying = false;
-      let interval;
-  
-      function formatTime(seconds) {
-          const minutes = Math.floor(seconds / 60);
-          const secs = seconds % 60;
-          return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
-      }
-  
-      function updateProgressBar() {
-          if (remainingTime <= 0) {
-              clearInterval(interval);
-              isPlaying = false;
-              playButton.textContent = "▶️"; 
-              return;
-          }
-  
-          const elapsedTime = totalTime - remainingTime;
-          const progressPercent = (elapsedTime / totalTime) * 100;
-          progressBar.style.width = `${progressPercent}%`;
-          progressHandle.style.left = `${progressPercent}%`;
-          timeDisplay.textContent = formatTime(remainingTime);
-  
-          remainingTime -= 1;
-      }
-  
-      function togglePlayPause() {
-          console.log("Playing status:", isPlaying);
-  
-          const goldenLine = document.querySelector(".golden-line");
-  
-          if (isPlaying) {
-              clearInterval(interval);
-              playButton.textContent = "▶️"; 
-              confirmBox.style.display = "block"; 
-          } else {
-              interval = setInterval(updateProgressBar, 1000);
-              playButton.textContent = "⏸"; 
-              confirmBox.style.display = "none"; 
-          }
-  
-          // Hide golden-line and text when isPlaying is true, show them when false
-          if (isPlaying && goldenLine) {
-              goldenLine.style.display = "none";
-              document.querySelector(".text").style.display = "none";
-          } else if (!isPlaying && goldenLine) {
-              goldenLine.style.display = "block";
-              document.querySelector(".text").style.display = "block";
-          }
-  
-          isPlaying = !isPlaying;
-      }
-  
-      function resetTimer() {
-          clearInterval(interval);
-          remainingTime = totalTime;
-          progressBar.style.width = "0%";
-          progressHandle.style.left = "0%";
-          timeDisplay.textContent = formatTime(totalTime);
-          isPlaying = false;
-          playButton.textContent = "▶️";
-          confirmBox.style.display = "none";
-      }
-  
-      playButton.addEventListener("click", togglePlayPause);
-      prevButton.addEventListener("click", resetTimer);
-      nextButton.addEventListener("click", resetTimer);
-  
-      timeDisplay.textContent = formatTime(totalTime);
-  });
-  
-  document.addEventListener("DOMContentLoaded", function () {
-      const backToBreathButton = document.getElementById("backtobreath");
-  
-      backToBreathButton.addEventListener("click", function () {
-          window.location.href = "{% url 'breathxapp:exercise_list' %}"; // Django URL routing
-      });
-  });
-  </script>
-  
+        const playButton = document.getElementById("playSong");
+        const prevButton = document.getElementById("prevSong");
+        const nextButton = document.getElementById("nextSong");
+        const progressBar = document.getElementById("progressBar");
+        const progressHandle = document.getElementById("progressHandle");
+        const timeDisplay = document.getElementById("timeDisplay");
+        const confirmBox = document.getElementById("confirmBox");
+        const popupOverlay = document.getElementById("popupOverlay");
+        const timeSelector = document.getElementById("timeSelector");
+        const increaseTime = document.getElementById("increaseTime");
+        const decreaseTime = document.getElementById("decreaseTime");
+
+        let totalTime = parseInt(timeSelector.value);
+        let remainingTime = totalTime;
+        let isPlaying = false;
+        let interval;
+        let popupShown = false;
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
+        function updateProgressBar() {
+            if (remainingTime <= 0) {
+                clearInterval(interval);
+                isPlaying = false;
+                playButton.textContent = "▶️";
+                return;
+            }
+
+            if (remainingTime === 1 && !popupShown) {
+                if (popupOverlay) {
+                    popupOverlay.style.display = "flex";
+                }
+                popupShown = true;
+            }
+
+            const elapsedTime = totalTime - remainingTime;
+            const progressPercent = (elapsedTime / totalTime) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+            progressHandle.style.left = `${progressPercent}%`;
+            timeDisplay.textContent = formatTime(remainingTime);
+
+            remainingTime -= 1;
+        }
+
+        function togglePlayPause() {
+            const goldenLine = document.querySelector(".golden-line");
+
+            if (isPlaying) {
+                clearInterval(interval);
+                playButton.textContent = "▶️";
+                confirmBox.style.display = "block";
+            } else {
+                interval = setInterval(updateProgressBar, 1000);
+                playButton.textContent = "⏸";
+                confirmBox.style.display = "none";
+            }
+
+            if (goldenLine) {
+                goldenLine.style.display = isPlaying ? "none" : "block";
+                document.querySelector(".text").style.display = isPlaying ? "none" : "block";
+            }
+
+            isPlaying = !isPlaying;
+        }
+
+        function resetTimer() {
+            clearInterval(interval);
+            totalTime = parseInt(timeSelector.value);
+            remainingTime = totalTime;
+            progressBar.style.width = "0%";
+            progressHandle.style.left = "0%";
+            timeDisplay.textContent = formatTime(totalTime);
+            isPlaying = false;
+            playButton.textContent = "▶️";
+            confirmBox.style.display = "none";
+            popupShown = false;
+        }
+
+        function updateTimeWhileRunning() {
+            const newTime = parseInt(timeSelector.value);
+            const progressFraction = (totalTime - remainingTime) / totalTime;
+
+            totalTime = newTime;
+            remainingTime = Math.round(newTime * (1 - progressFraction));
+
+            if (remainingTime < 1) {
+                remainingTime = 1;
+            }
+
+            const newProgress = ((totalTime - remainingTime) / totalTime) * 100;
+            progressBar.style.width = `${newProgress}%`;
+            progressHandle.style.left = `${newProgress}%`;
+            timeDisplay.textContent = formatTime(remainingTime);
+        }
+
+        function adjustTime(change) {
+            totalTime += change;
+            if (totalTime < 60) totalTime = 60; // Minimum 1 min
+
+            remainingTime += change;
+            if (remainingTime > totalTime) remainingTime = totalTime; 
+
+            const newProgress = ((totalTime - remainingTime) / totalTime) * 100;
+            progressBar.style.width = `${newProgress}%`;
+            progressHandle.style.left = `${newProgress}%`;
+            timeDisplay.textContent = formatTime(remainingTime);
+        }
+
+        playButton.addEventListener("click", togglePlayPause);
+        prevButton.addEventListener("click", resetTimer);
+        nextButton.addEventListener("click", resetTimer);
+        timeSelector.addEventListener("change", updateTimeWhileRunning);
+        increaseTime.addEventListener("click", () => adjustTime(60)); // +1 min
+        decreaseTime.addEventListener("click", () => adjustTime(-60)); // -1 min
+
+        timeDisplay.textContent = formatTime(totalTime);
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const backToBreathButton = document.getElementById("backtobreath");
+        backToBreathButton.addEventListener("click", function () {
+            window.location.href = "{% url 'breathxapp:exercise_list' %}";
+        });
+    });
+
+    function closePopup() {
+        document.getElementById("popupOverlay").style.display = "none";
+        window.location.href = "{% url 'home' %}";
+    }
+
+    
+</script>
+
+
     
 <!-- Vibration code Ends here  -->
   <!-- new code here ------------------------------------------------------------------------------------------------ -->
@@ -1235,13 +1962,6 @@ prevSong.addEventListener("click", () => changeTrack(-1));
     .play-btn { font-size: 18px; color: #1DB954; transition: transform 0.2s; }
     .track-item:hover .play-btn { transform: scale(1.3); }
 </style>
-
-<!-- Trianngle code  -->
-<style>
-
-
-</style>
-
 <style>
     #confirmBox {
     position: fixed;
@@ -1452,9 +2172,7 @@ section {
         .golden-button:active {
             transform: scale(0.98);
         }
-</style>
 
-<style>
 .fullcontainer {
     display: flex;
     justify-content: center; /* Centers everything */
@@ -1511,9 +2229,464 @@ section {
     pointer-events: none; 
     font-weight: bold;
 } */
+#timingContainer {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px 30px;
+    box-shadow: 0px 4px 12px rgba(255, 255, 255, 0.1);
+    z-index: 9999;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    min-width: 300px;
+    text-align: center;
+}
 
+#timingContainer p {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+#timingControls select {
+    padding: 8px 12px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: transparent;
+    color: white;
+    outline: none;
+    cursor: pointer;
+}
+
+#timingControls select:focus {
+    border-color: rgba(255, 255, 255, 0.5);
+}
+#timingControls div {
+    width: 200px;
+}
+
+
+
+/* /////////////////////////////////////////////// */
+#timeSelector{
+    padding: 12px 16px;
+    font-size: 16px;
+    font-weight: 500;
+    border: 2px solid #FFD700;
+    border-radius: 8px;
+    background: #000;
+    color: #fff;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+    width: 120px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(255, 215, 0, 0.2);
+    display: block;
+    margin: 0 auto;
+}
+   
+#increaseTime, #decreaseTime {
+    background: linear-gradient(145deg, #1c1c1c, #222); /* Subtle gradient */
+    border: 1px solid #333;
+    border-radius: 6px; /* Square shape with slightly rounded corners */
+    width: 30px; /* Small like a play button */
+    height: 30px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #ddd;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 1px 1px 3px #111, -1px -1px 3px #2a2a2a; /* Realistic shadow */
+    margin-top: 5px;
+}
+
+#increaseTime:hover, #decreaseTime:hover {
+    background: #292929;
+    border-color: #444;
+}
+
+#increaseTime:active, #decreaseTime:active {
+    background: #131313;
+    border-color: #555;
+    transform: scale(0.95);
+    box-shadow: inset 1px 1px 3px #111, inset -1px -1px 3px #2a2a2a;
+}
+
+#toggleButton {
+    padding: 12px 16px;
+    font-size: 16px;
+    font-weight: 500;
+    border: 2px solid #FFD700;
+    border-radius: 8px;
+    background: #000;
+    color: #fff;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+    width: 120px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(255, 215, 0, 0.2);
+    display: block;
+    margin: 0 auto;
+}
+#shapeSelector, #timingControls input {
+    width: 120px;
+    height: 50px;
+}
+</style>
+<style>
+    /* Background Overlay */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* Smooth dark overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Popup Box */
+.popup {
+    background: #1e1e2f; /* Dark mode feel */
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    z-index: 10000;
+    width: 350px;
+    max-width: 90%;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Popup Heading */
+.popup h2 {
+    color: #ffffff;
+    font-size: 20px;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+/* Input Field */
+.popup input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 16px;
+    border: 2px solid #6e8efb;
+    border-radius: 8px;
+    outline: none;
+    background: #2a2a3a;
+    color: #ffffff;
+    transition: 0.3s;
+}
+
+.popup input::placeholder {
+    color: #bbb;
+}
+
+.popup input:focus {
+    border-color: #a777e3;
+}
+
+/* Button Group */
+.button-group {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+/* Buttons */
+.popup button {
+    padding: 12px 18px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Save Button */
+.save-btn {
+    background: linear-gradient(135deg, #6e8efb, #a777e3);
+    color: white;
+    box-shadow: 0 4px 10px rgba(110, 142, 251, 0.3);
+}
+
+.save-btn:hover {
+    background: linear-gradient(135deg, #5a7ae6, #955fd4);
+    box-shadow: 0 6px 15px rgba(110, 142, 251, 0.5);
+}
+
+/* Cancel Button */
+.cancel-btn {
+    background: #444;
+    color: white;
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+}
+
+.cancel-btn:hover {
+    background: #333;
+    box-shadow: 0 6px 15px rgba(255, 255, 255, 0.2);
+}
+
+/* Fade-In Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
 </style>
+<style>
+    #guideButton{
+        padding: 12px 16px;
+    font-size: 16px;
+    font-weight: 500;
+    border: 2px solid #FFD700;
+    border-radius: 8px;
+    background: #000;
+    color: #fff;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+    width: 120px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(255, 215, 0, 0.2);
+    display: block;
+    margin: 0 auto;
+    }
+#closePopup {
+    padding: 8px 12px;  /* Smaller padding */
+    font-size: 14px;  /* Slightly smaller font */
+    font-weight: 500;
+    border: 2px solid #C0A000; /* Darker gold */
+    border-radius: 6px;  /* Slightly smaller border */
+    background: #222; /* Dark gray instead of pure black */
+    color: #FFD700; /* Bright gold text */
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+    width: 100px;  /* Slightly smaller width */
+    text-align: center;
+    box-shadow: 0 3px 5px rgba(255, 215, 0, 0.15);
+    display: block;
+    margin: 10px auto;
+    margin-top: 20px;
+}
+
+#closePopup:hover {
+    background: #333;  /* Slightly lighter on hover */
+    color: #FFC107;  /* More vibrant gold */
+    transform: scale(1.05);
+}
+
+    /* Popup Overlay (Hidden by Default) */
+.popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* Darker backdrop for a sleek effect */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+/* Popup Box */
+.popup-content {
+    background: linear-gradient(135deg, #1a1a1a, #121212); /* Elegant dark gradient */
+    padding: 25px;
+    width: 420px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); /* Softer, more premium glow */
+    text-align: center;
+    position: relative;
+    border: 2px solid rgba(212, 175, 55, 0.8); /* Soft golden border */
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Popup Title */
+.popup-content h2 {
+    color: gold;
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Popup Description */
+.popup-content p {
+    color: #d4c4a1; /* Softer gold */
+    font-size: 16px;
+    line-height: 1.5;
+    font-weight: 500;
+}
+
+
+
+/* Smooth Appearance */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+</style>
+
+<!-- The POP Up Code for analytics has been shown below  -->
+
+
+      
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+            const guideButton = document.getElementById("guideButton");
+            const shapeSelector = document.getElementById("shapeSelector");
+            const popup = document.getElementById("shapeGuidePopup");
+            const popupTitle = document.getElementById("popupTitle");
+            const popupDescription = document.getElementById("popupDescription");
+            const closePopup = document.getElementById("closePopup");
+        
+            // Shape-Specific Breathing Instructions
+            const shapeInstructions = {
+                circle: "Breathe in deeply as you trace the circular path. Exhale slowly as you complete the loop.",
+                oval: "Inhale as you move along the longer side, hold for a moment, then exhale as you complete the oval.",
+                square: "Follow box breathing: Inhale for 4 seconds, hold for 4 seconds, exhale for 4 seconds, hold again for 4 seconds.",
+                vRectangle: "Inhale quickly along the short edge, exhale slowly along the longer edge.",
+                triangle: "Inhale for a count of 3, hold for 3, then exhale for 3 as you complete the shape.",
+                reverseTriangle: "Exhale first for 3 seconds, hold, then inhale slowly to complete the triangle path.",
+                diamondShape: "Alternate breathing: Inhale along the rising edges, hold at the peak, exhale along the falling edges."
+            };
+        
+            // Show Popup with the Selected Shape Instructions
+            guideButton.addEventListener("click", function () {
+                const selectedShape = shapeSelector.value;
+        
+                if (shapeInstructions[selectedShape]) {
+                    popupTitle.innerText = selectedShape.charAt(0).toUpperCase() + selectedShape.slice(1) + " Breathing Guide";
+                    popupDescription.innerText = shapeInstructions[selectedShape];
+                } else {
+                    popupTitle.innerText = "Select a Shape";
+                    popupDescription.innerText = "Please select a shape to see the breathing guide.";
+                }
+        
+                popup.style.display = "flex"; // Show popup
+            });
+        
+            // Close Popup
+            closePopup.addEventListener("click", function () {
+                popup.style.display = "none"; // Hide popup
+            });
+        
+            // Close Popup When Clicking Outside
+            popup.addEventListener("click", function (event) {
+                if (event.target === popup) {
+                    popup.style.display = "none";
+                }
+            });
+        });
+        
+        </script>
+                <!-- For guide End  -->
+<!-- To save the Data in django backend --------------------------------------------------- -->
+<script>
+    document.getElementById("openPopup").addEventListener("click", function() {
+        document.getElementById("popupOverlay").style.display = "flex";
+
+        // Trigger the play/pause button when the popup is shown
+        document.getElementById("playSong").click();  // Simulate the click on play button to stop the timer
+    });
+
+    function closePopup() {
+        document.getElementById("popupOverlay").style.display = "none";
+        document.getElementById("playSong").click(); // This will press the play button
+    }
+</script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Add event listener for Save button
+        document.getElementById("saveExerciseButton").addEventListener("click", function () {
+            const nickname = document.getElementById("exerciseNickname").value; 
+            const shape = shapeSelector.value; 
+            const inputs = window.storedTimings || []; 
+
+            if (!nickname.trim()) {
+                alert("Please enter a nickname for the exercise.");
+                return;
+            }
+
+            const csrfToken = document.getElementById("csrf_token").value; // Get CSRF token
+
+            fetch("{% url 'breathxapp:save_exercise' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": csrfToken,
+                },
+                body: new URLSearchParams({
+                    nickname: nickname,
+                    shape: shape,
+                    inputs: JSON.stringify(inputs), // Convert inputs to JSON
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Exercise saved successfully!");
+                    closePopup(); // Close the popup
+                } else {
+                    alert("Failed to save exercise: " + (data.error || "Unknown error"));
+                }
+            })
+            .catch(error => console.error("Error:", error));
+
+            // Automatically simulate clicking the play button when Save is pressed
+            document.getElementById("playSong").click(); // This will press the play button
+        });
+
+        // Add event listener for Don't Save button (assuming you have one for don't save)
+        // const dontSaveButton = document.getElementById("dontSaveExerciseButton");
+        // if (dontSaveButton) {
+        //     dontSaveButton.addEventListener("click", function () {
+        //         // Automatically simulate clicking the play button when Don't Save is pressed
+        //         document.getElementById("playSong").click(); // This will press the play button
+        //     });
+        // }
+    });
+</script>
+
+
+<!-- To save the Data in django backend --------------------------------------------------- -->
 
 </body>
 

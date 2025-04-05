@@ -7,6 +7,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meditation Guide</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
     <style>
         body {
             display: flex;
@@ -571,8 +573,13 @@ option {
     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 10vh; text-align: center;">
         <!-- <a href="/" style="text-decoration: none; color: white; display: flex; align-items: center; gap: 10px;"> -->
         <b style="cursor: pointer;">
-            <i class="bi bi-arrow-left" id="openPopup" style="font-size: 24px;"></i> 
+            <i class="bi bi-arrow-left" style="font-size: 24px;"></i> 
             <span style="font-size: 20px; font-weight: bold; white-space: nowrap; ">Breathing Exercise</span>
+            <!-- Include Font Awesome for icons -->
+
+<!-- Your Save button with an icon -->
+
+
         </b>
         <hr style="width: 30vw; border: 1px solid white; margin: 2px auto 0; ">
     </div>
@@ -583,9 +590,38 @@ option {
 <!-- Popup structure -->
 <div class="popup-overlay" id="popupOverlay" style="display: none;">
     <div class="popup">
-        <h2>Save the exercise or don’t save?</h2>
-        <button class="save-btn" onclick="closePopup()">Save</button>
-        <button class="cancel-btn" onclick="closePopup()">Don’t Save</button>
+        <h2>Save this exercise?</h2>
+       <p>Your exercise, along with all selected parameters such as shape, will be saved and can be played later from Silent Exercise</p>
+        <input type="text" id="exerciseNickname" placeholder="Enter exercise name">
+        
+        <div class="button-group">
+            <button id="saveExerciseButton" class="save-btn">Save</button>
+            <button class="cancel-btn" onclick="closePopup()">Don’t Save</button>
+        </div>
+
+        <input type="hidden" id="csrf_token" value="{{ csrf_token }}">
+    </div>
+</div>
+
+
+<div id="shapeGuidePopup" class="popup-overlay">
+    <div class="popup-content">
+        <h2 id="popupTitle">Silent Exercise Guide</h2>
+        <ul id="popupDescription">
+            <li>Select a shape to control breathing pattern</li>
+            <li>The exercise time can be adjusted with the + -</li>
+            <li>Press play then follow the movement</li>
+            <li>If you need a break, press pause.</li>
+            <li>Save a pattern for later if you like the flow</li>
+            <li>Click "Guide" to learn more about each shape</li>
+        </ul>
+
+        <!-- ✅ Add the link here -->
+
+
+        <button id="closePopup">Confirm</button>
+        <a id="shapeLink" href="#" target="_blank" style="display: none; margin-top: 10px;">Explore More – Click Here</a>
+
     </div>
 </div>
 
@@ -604,7 +640,12 @@ option {
                 <option value="diamondShape">Quadrilateral</option> <!-- Added New Shape -->
             </select>
         </div> 
+        <!-- <button id="guideButton">Guide</button> -->
+
         <button id="toggleButton">Breath</button>
+        <button id="openPopup"><i class="fas fa-save"></i></button>
+        <button id="guideButton"><i class="fas fa-question-circle"></i></button>
+
  <select id="timeSelector" style="display: none;">
     <option value="300" selected>5 Minutes (Default)</option>
     <option value="120">2 Minutes</option>
@@ -777,14 +818,14 @@ option {
         select.value = "0"; // User sees "0" initially
 
         // Store selected values globally
-        window.storedTimings[index] = 2; // Internally treat 0 as 2
+        window.storedTimings[index] = 1; // Internally treat 0 as 2
 
         // Update stored values when dropdown changes
         select.addEventListener("change", () => {
             let selectedValue = Number(select.value);
 
             // If user selects 0, treat it as 2 in the background
-            window.storedTimings[index] = selectedValue === 0 ? 2 : selectedValue;
+            window.storedTimings[index] = selectedValue === 0 ? 1 : selectedValue;
 
             // If shape is "circle", ensure both inputs have the same value
             if (shape === "circle" && index === 0) {
@@ -851,16 +892,17 @@ option {
         }, 100);
     }
 
-    // // If shape is "vRectangle", hide all inputs except the first and third one
-    // if (shape === "vRectangle") {
-    //     setTimeout(() => {
-    //         breathingTexts[shape].forEach((_, i) => {
-    //             if (i !== 0 && i !== 2) {
-    //                 document.getElementById(`wrapper-${i}`).style.display = "none";
-    //             }
-    //         });
-    //     }, 100);
-    // }
+    // If shape is "vRectangle", hide all inputs except the first and third one
+    if (shape === "vRectangle") {
+    setTimeout(() => {
+        breathingTexts[shape].forEach((_, i) => {
+            if (i !== 0 && i !== 1) {
+                document.getElementById(`wrapper-${i}`).style.display = "none";
+            }
+        });
+    }, 100);
+}
+
 
 
     
@@ -909,7 +951,7 @@ option {
 
         function startAnimation() {
             stopAnimation();
-            durations = breathingTexts[shape].map((_, index) => parseInt(document.getElementById(`duration-${index}`).value) || 2);
+            durations = breathingTexts[shape].map((_, index) => parseInt(document.getElementById(`duration-${index}`).value) || 1);
   
             let index = 0;
             isAnimating = true;
@@ -1143,26 +1185,38 @@ function animateNextPhase() {
     } else {
         console.error("goldenLine is not defined or not found in the DOM.");
     }
+
+    // Create and add the 12 o'clock red vertical line
+    const clockLine = document.createElement('div');
+    clockLine.style.position = 'absolute';
+    clockLine.style.top = '0';
+    clockLine.style.left = '50%';
+    clockLine.style.width = '3px';
+    clockLine.style.height = '10px'; // Adjust the height as needed
+    clockLine.style.top = '-5px';  // Adjust the value to move the line higher or lower
+    clockLine.style.backgroundColor = "#FFD700";   // Set color to red
+    clockLine.style.transform = 'translateX(-50%)';
+    div.appendChild(clockLine);  // Add the line to the circle container
+
     break;
 
-
-case "oval":
+    case "oval":
     div.style.width = "300px";
     div.style.height = "200px";
     div.style.borderRadius = "50%";
     console.log("Applying ultra-smooth & aligned oval animation...");
 
-    const radiusX = 150; 
+    const radiusX = 150;
     const radiusY = 100;
 
     const offsetX = -3;
-    const offsetY = 78;  
+    const offsetY = 78;
 
     let keyframes = `@keyframes moveOval {`;
-    for (let i = 0; i <= 100; i += 2) { 
+    for (let i = 0; i <= 100; i += 2) {
         let angle = ((i / 100) * 2 * Math.PI) - (Math.PI / 2);
         let x = radiusX * Math.cos(angle) + offsetX;
-        let y = radiusY * Math.sin(angle) + offsetY; 
+        let y = radiusY * Math.sin(angle) + offsetY;
         keyframes += `${i}% { transform: translate3d(${x}px, ${y}px, 0); }`;
     }
     keyframes += `}`;
@@ -1193,12 +1247,23 @@ case "oval":
 
         // 🚀 When oval case runs again, switch the timing to next storedTiming
         window.currentOvalIndex = (window.currentOvalIndex + 1) % window.storedTimings.length;
+
+        // Add vertical line at the 12 o'clock position
+        const clockLine = document.createElement("div");
+        clockLine.style.position = "absolute";
+        clockLine.style.left = `${radiusX + offsetX - 2}px`;  // Slightly adjust to center the line
+        clockLine.style.top = `${offsetY - radiusY + 15}px`; // Position it at the top of the oval
+        clockLine.style.width = "4px"; // Line width
+        clockLine.style.height = "10px"; // Line height
+        clockLine.style.backgroundColor = "#FFD700"; // Gold color
+        clockLine.style.zIndex = "10"; // Ensure it appears above the golden line
+        div.appendChild(clockLine); // Append the line to the oval container
     } else {
         console.error("goldenLine is not defined or not found in the DOM.");
     }
     break;
 
-        case "square":
+    case "square":
             div.style.width = "200px";
             div.style.height = "200px";
             
@@ -1907,6 +1972,8 @@ prevSong.addEventListener("click", () => changeTrack(-1));
         document.getElementById("popupOverlay").style.display = "none";
         window.location.href = "{% url 'home' %}";
     }
+
+    
 </script>
 
 
@@ -1933,13 +2000,6 @@ prevSong.addEventListener("click", () => changeTrack(-1));
     .play-btn { font-size: 18px; color: #1DB954; transition: transform 0.2s; }
     .track-item:hover .play-btn { transform: scale(1.3); }
 </style>
-
-<!-- Trianngle code  -->
-<style>
-
-
-</style>
-
 <style>
     #confirmBox {
     position: fixed;
@@ -2150,14 +2210,12 @@ section {
         .golden-button:active {
             transform: scale(0.98);
         }
-</style>
 
-<style>
 .fullcontainer {
     display: flex;
     justify-content: center; /* Centers everything */
     align-items: center; /* Aligns both items in the middle */
-    gap: 20px; /* Space between elements */
+    gap: 10px; /* Space between elements */
 }
 
 .part1, .part2 {
@@ -2322,80 +2380,423 @@ section {
     height: 50px;
 }
 </style>
-
-
-<!-- The POP Up Code for analytics has been shown below  -->
-
-<script>
-    document.getElementById("openPopup").addEventListener("click", function() {
-        document.getElementById("popupOverlay").style.display = "flex";
-    });
-
-    function closePopup() {
-        document.getElementById("popupOverlay").style.display = "none";
-        window.location.href = "{% url 'home' %}"; // Redirects to home
-    }
-</script>
 <style>
-    .popup-overlay {
+    /* Background Overlay */
+.popup-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.8); /* Darker overlay */
+    background: rgba(0, 0, 0, 0.7); /* Smooth dark overlay */
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 9999;
+    transition: opacity 0.3s ease-in-out;
 }
 
+/* Popup Box */
 .popup {
-    background: #222; /* Dark grey popup */
-    padding: 20px;
-    border-radius: 10px;
+    background: #1e1e2f; /* Dark mode feel */
+    padding: 25px;
+    border-radius: 12px;
     text-align: center;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     z-index: 10000;
-    color: white;
+    width: 350px;
+    max-width: 90%;
+    animation: fadeIn 0.3s ease-in-out;
 }
 
+/* Popup Heading */
 .popup h2 {
-    color: #fff;
+    color: #ffffff;
+    font-size: 20px;
     margin-bottom: 15px;
+    font-weight: 600;
 }
 
-.popup button {
-    margin: 10px;
-    padding: 12px 20px;
-    border: none;
-    cursor: pointer;
+/* Input Field */
+.popup input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
     font-size: 16px;
-    border-radius: 5px;
+    border: 2px solid #6e8efb;
+    border-radius: 8px;
+    outline: none;
+    background: #2a2a3a;
+    color: #ffffff;
     transition: 0.3s;
 }
 
+.popup input::placeholder {
+    color: #bbb;
+}
+
+.popup input:focus {
+    border-color: #a777e3;
+}
+
+/* Button Group */
+.button-group {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+/* Buttons */
+.popup button {
+    padding: 12px 18px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Save Button */
 .save-btn {
-    background: #6e8efb; /* Bluish */
+    background: linear-gradient(135deg, #6e8efb, #a777e3);
     color: white;
+    box-shadow: 0 4px 10px rgba(110, 142, 251, 0.3);
 }
 
 .save-btn:hover {
-    background: #5a7ae6;
+    background: linear-gradient(135deg, #5a7ae6, #955fd4);
+    box-shadow: 0 6px 15px rgba(110, 142, 251, 0.5);
 }
 
+/* Cancel Button */
 .cancel-btn {
-    background: #a777e3; /* Purple */
+    background: #444;
     color: white;
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
 }
 
 .cancel-btn:hover {
-    background: #955fd4;
+    background: #333;
+    box-shadow: 0 6px 15px rgba(255, 255, 255, 0.2);
+}
+
+/* Fade-In Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+</style>
+<style>
+        #openPopup {
+    padding: 12px 16px;
+    font-size: 16px;
+    font-weight: 500;
+    border: 2px solid #FFD700;
+    border-radius: 8px;
+    background: #000;
+    color: #fff;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+    width: 50px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(255, 215, 0, 0.2);
+    display: block;
+    margin: 0 auto;
+}
+    #guideButton{
+        padding: 12px 16px;
+    font-size: 16px;
+    font-weight: 500;
+    border: 2px solid #FFD700;
+    border-radius: 8px;
+    background: #000;
+    color: #fff;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+    width: 120px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(255, 215, 0, 0.2);
+    display: block;
+    margin: 0 auto;
+    }
+#closePopup {
+    padding: 8px 12px;  /* Smaller padding */
+    font-size: 14px;  /* Slightly smaller font */
+    font-weight: 500;
+    border: 2px solid #C0A000; /* Darker gold */
+    border-radius: 6px;  /* Slightly smaller border */
+    background: #222; /* Dark gray instead of pure black */
+    color: #FFD700; /* Bright gold text */
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+    width: 100px;  /* Slightly smaller width */
+    text-align: center;
+    box-shadow: 0 3px 5px rgba(255, 215, 0, 0.15);
+    display: block;
+    margin: 10px auto;
+    margin-top: 20px;
+}
+
+#closePopup:hover {
+    background: #333;  /* Slightly lighter on hover */
+    color: #FFC107;  /* More vibrant gold */
+    transform: scale(1.05);
+}
+
+    /* Popup Overlay (Hidden by Default) */
+.popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* Darker backdrop for a sleek effect */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+/* Popup Box */
+.popup-content {
+    background: linear-gradient(135deg, #1a1a1a, #121212); /* Elegant dark gradient */
+    padding: 25px;
+    width: 420px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); /* Softer, more premium glow */
+    text-align: center;
+    position: relative;
+    border: 2px solid rgba(212, 175, 55, 0.8); /* Soft golden border */
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Popup Title */
+.popup-content h2 {
+    color: gold;
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Popup Description */
+.popup-content p {
+    color: #d4c4a1; /* Softer gold */
+    font-size: 16px;
+    line-height: 1.5;
+    font-weight: 500;
+}
+
+
+
+/* Smooth Appearance */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 </style>
 
-<!-- The pop up code for the analytics has been shown below end  -->
+<!-- The POP Up Code for analytics has been shown below  -->
+
+
+      
+<!-- Explore Link -->
+<a id="shapeLink" href="#" style="display: none; font-weight: 500; text-decoration: underline; color: #007bff; cursor: pointer;">
+    Explore More – Click Here
+</a>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const guideButton = document.getElementById("guideButton");
+        const shapeSelector = document.getElementById("shapeSelector");
+        const popup = document.getElementById("shapeGuidePopup");
+        const popupTitle = document.getElementById("popupTitle");
+        const popupDescription = document.getElementById("popupDescription");
+        const closePopup = document.getElementById("closePopup");
+        const shapeLink = document.getElementById("shapeLink");
+    
+        // Shape-Specific Instructions
+        const shapeInstructions = {
+            circle: "Breathe in deeply as you trace the circular path. Exhale slowly as you complete the loop.",
+            oval: "Inhale as you move along the longer side, hold for a moment, then exhale as you complete the oval.",
+            square: "Follow box breathing: Inhale for 4 seconds, hold for 4 seconds, exhale for 4 seconds, hold again for 4 seconds.",
+            vRectangle: "Inhale quickly along the short edge, exhale slowly along the longer edge.",
+            triangle: "Inhale for a count of 3, hold for 3, then exhale for 3 as you complete the shape.",
+            reverseTriangle: "Exhale first for 3 seconds, hold, then inhale slowly to complete the triangle path.",
+            diamondShape: "Alternate breathing: Inhale along the rising edges, hold at the peak, exhale along the falling edges."
+        };
+    
+        // Django URLs for each shape
+        const shapeUrls = {
+            circle: "{% url 'breathxapp:circle_guide' %}",
+            oval: "{% url 'breathxapp:oval_guide' %}",
+            square: "{% url 'breathxapp:square_guide' %}",
+            vRectangle: "{% url 'breathxapp:rectangle_guide' %}",
+            triangle: "{% url 'breathxapp:triangle_guide' %}",
+            reverseTriangle: "{% url 'breathxapp:reverse_triangle_guide' %}",
+            diamondShape: "{% url 'breathxapp:diamond_guide' %}"
+        };
+    
+        guideButton.addEventListener("click", function () {
+            const selectedShape = shapeSelector.value;
+    
+            if (selectedShape && shapeInstructions[selectedShape]) {
+                popupTitle.innerText = selectedShape.charAt(0).toUpperCase() + selectedShape.slice(1) + " Breathing Guide";
+                popupDescription.innerHTML = `<li>${shapeInstructions[selectedShape]}</li>`;
+    
+                // Show and set link
+                if (shapeUrls[selectedShape]) {
+                    shapeLink.href = shapeUrls[selectedShape];
+                    shapeLink.style.display = "inline-block";
+                } else {
+                    shapeLink.style.display = "none";
+                }
+            } else {
+                // Default content: Silent Exercise Guide
+                popupTitle.innerText = "Silent Exercise Guide";
+                popupDescription.innerHTML = `
+                    <li>Select a shape to control breathing pattern</li>
+                    <li>The exercise time can be adjusted with the +  -</li>
+                    <li>Press play then follow the movement</li>
+                    <li>If you need a break, press pause.</li>
+                    <li>Save a pattern for later if you like the flow</li>
+                    <li>Click "Guide" to learn more about each shape</li>
+                `;
+    
+                // ✅ Hide the link in default case
+                shapeLink.style.display = "none";
+            }
+    
+            popup.style.display = "flex";
+        });
+    
+        // Close popup
+        closePopup.addEventListener("click", function () {
+            popup.style.display = "none";
+        });
+    
+        // Click outside popup to close
+        popup.addEventListener("click", function (event) {
+            if (event.target === popup) {
+                popup.style.display = "none";
+            }
+        });
+    });
+    </script>
+    
+
+                <!-- For guide End  -->
+<!-- To save the Data in django backend --------------------------------------------------- -->
+<script>
+    document.getElementById("openPopup").addEventListener("click", function() {
+        document.getElementById("popupOverlay").style.display = "flex";
+
+        // Trigger the play/pause button when the popup is shown
+        document.getElementById("playSong").click();  // Simulate the click on play button to stop the timer
+    });
+
+    function closePopup() {
+        document.getElementById("popupOverlay").style.display = "none";
+        document.getElementById("playSong").click(); // This will press the play button
+    }
+</script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Add event listener for Save button
+        document.getElementById("saveExerciseButton").addEventListener("click", function () {
+            const nickname = document.getElementById("exerciseNickname").value; 
+            const shape = shapeSelector.value; 
+            const inputs = window.storedTimings || []; 
+
+            if (!nickname.trim()) {
+                alert("Please enter a nickname for the exercise.");
+                return;
+            }
+
+            const csrfToken = document.getElementById("csrf_token").value; // Get CSRF token
+
+            fetch("{% url 'breathxapp:save_exercise' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": csrfToken,
+                },
+                body: new URLSearchParams({
+                    nickname: nickname,
+                    shape: shape,
+                    inputs: JSON.stringify(inputs), // Convert inputs to JSON
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Exercise saved successfully!");
+                    closePopup(); // Close the popup
+                } else {
+                    alert("Failed to save exercise: " + (data.error || "Unknown error"));
+                }
+            })
+            .catch(error => console.error("Error:", error));
+
+            // Automatically simulate clicking the play button when Save is pressed
+            document.getElementById("playSong").click(); // This will press the play button
+        });
+
+        // Add event listener for Don't Save button (assuming you have one for don't save)
+        // const dontSaveButton = document.getElementById("dontSaveExerciseButton");
+        // if (dontSaveButton) {
+        //     dontSaveButton.addEventListener("click", function () {
+        //         // Automatically simulate clicking the play button when Don't Save is pressed
+        //         document.getElementById("playSong").click(); // This will press the play button
+        //     });
+        // }
+    });
+</script>
+
+<style>
+    #guideButton{
+        padding: 12px 16px;
+    font-size: 16px;
+    font-weight: 500;
+    border: 2px solid #FFD700;
+    border-radius: 8px;
+    background: #000;
+    color: #fff;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+    width: 50px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(255, 215, 0, 0.2);
+    display: block;
+    margin: 0 auto;
+    }
+</style>
+<!-- To save the Data in django backend --------------------------------------------------- -->
+
 </body>
 
 </html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circle - Shape Explanations</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            padding: 30px 0;
+        }
+        .formula {
+            font-family: 'Courier New', monospace;
+            padding: 10px;
+            background-color: #1a1a1a;
+            border-radius: 5px;
+            margin-top: 10px;
+            color: #C0A000;
+        }
+        .card {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            margin-bottom: 20px;
+        }
+        .card:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        }
+        .card-header {
+            background-color: #222222;
+            color: #C0A000;
+            border-bottom: 1px solid #333;
+        }
+        .btn-primary {
+            background-color: #C0A000;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #9A8200;
+        }
+        .bg-dark-subtle {
+            background-color: #1a1a1a;
+        }
+        h1, h2, h3, h4, h5 {
+            color: #C0A000;
+        }
+        .text-highlight {
+            color: #C0A000;
+        }
+        .page-title {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #C0A000;
+            margin-bottom: 1rem;
+        }
+        .example-box {
+            background-color: #1a1a1a;
+            border-left: 4px solid #C0A000;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        p{
+            color: #ffffff;
+        }
+        li{
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Content -->
+    <div class="container py-4">
+        <!-- Title Section -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <h1 class="page-title">
+                    <a href="{% url 'breathxapp:breathfree' %}" style="text-decoration: none; color: inherit;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-arrow-left me-2" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M15 8a.5.5 0 0 1-.5.5H3.707l3.147 3.146a.5.5 0 0 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 0 1 .708.708L3.707 7.5H14.5A.5.5 0 0 1 15 8z"/>
+                        </svg>
+                    </a>
+                    The Square
+                </h1>
+                <p class="lead mb-4">
+                    A symbol of balance, stability, and control — the square is often used as a guide for breathing exercises known as "box breathing" or "square breathing." It helps calm the mind, reduce stress, and bring a sense of structure and relaxation by evenly pacing your breaths.
+                </p>
+            </div>
+        </div>
+    
+        <div class="row g-4">
+            <!-- Definition -->
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h3>What is Square Breathing?</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Square breathing, also called box breathing, is a simple technique where each side of the square represents a part of your breath cycle: <strong>inhale, hold, exhale, hold</strong>. Each step is timed evenly, promoting calm and focus.</p>
+                        <h5 class="mt-4">How It Works:</h5>
+                        <ul>
+                            <li><strong class="text-highlight">Inhale</strong> - Breathe in for 4 seconds</li>
+                            <li><strong class="text-highlight">Hold</strong> - Hold your breath for 4 seconds</li>
+                            <li><strong class="text-highlight">Exhale</strong> - Slowly breathe out for 4 seconds</li>
+                            <li><strong class="text-highlight">Hold</strong> - Pause again for 4 seconds</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Properties -->
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h3>Benefits of Square Breathing</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong class="text-highlight">Reduces Stress:</strong> Activates the parasympathetic nervous system to calm your body.</li>
+                            <li><strong class="text-highlight">Improves Focus:</strong> Encourages mindfulness and present-moment awareness.</li>
+                            <li><strong class="text-highlight">Balances the Breath:</strong> Each phase of breathing is equally timed.</li>
+                            <li><strong class="text-highlight">Enhances Performance:</strong> Used by athletes, military, and professionals to regain control under pressure.</li>
+                            <li><strong class="text-highlight">Easy to Practice:</strong> Can be done anywhere, anytime without special equipment.</li>
+                        </ul>
+    
+                        <div class="example-box mt-4">
+                            <h5>Did You Know?</h5>
+                            <p>The Navy SEALs use square breathing before high-pressure missions to stay sharp and focused. It’s also widely adopted in yoga, therapy, and meditation practices.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Breathing Guide -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Visual Guide</h3>
+                    </div>
+                    <div class="card-body text-center">
+                        <p class="mb-4">Follow the animation below and breathe in sync with the square. One full cycle takes 16 seconds. Let your breath flow with the edges of the square.</p>
+                        <div class="breathing-square mx-auto" style="width: 150px; height: 150px; border: 2px solid #6e8efb; animation: squareBreathing 16s infinite;"></div>
+                        <style>
+                            @keyframes squareBreathing {
+                                0% { transform: scale(1); }
+                                25% { transform: scale(1.1); } /* Inhale */
+                                50% { transform: scale(1.1); } /* Hold */
+                                75% { transform: scale(1); }   /* Exhale */
+                                100% { transform: scale(1); }  /* Hold */
+                            }
+                        </style>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Real-Life Uses -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Where It's Used</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-4">
+                            <div class="col-md-4">
+                                <div class="card bg-dark-subtle h-100">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">Yoga & Meditation</h5>
+                                        <p class="card-text">Square breathing is integrated into many yoga and meditation practices to enhance awareness and breath control.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-dark-subtle h-100">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">Therapy & Counseling</h5>
+                                        <p class="card-text">Used by therapists to help patients regulate emotions and manage anxiety or panic attacks.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-dark-subtle h-100">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">Military & High-Performance Fields</h5>
+                                        <p class="card-text">Professionals use it to prepare for high-stress situations, maintain focus, and stay calm under pressure.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Practice Section -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Practice Challenge</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-3">Try completing 5 rounds of square breathing (5 cycles of 16 seconds each). Breathe along with the animated square above. As you go, reflect on how your body feels — is your heart rate slowing? Is your mind clearer?</p>
+                        <p class="text-muted">Remember: breathe in... 2... 3... 4... hold... 2... 3... 4... exhale... 2... 3... 4... hold... 2... 3... 4...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

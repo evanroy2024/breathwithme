@@ -35,31 +35,49 @@ from django.shortcuts import render, get_object_or_404
 from .models import MusicTrack, Playlist, Category
 from django.contrib.auth.decorators import login_required
 
+# @login_required
+# def all_musics(request):
+#     # Fetch all categories
+#     categories = Category.objects.all()
+
+#     # If a category is selected, filter tracks by that category
+#     category_id = request.GET.get('category', None)
+#     if category_id:
+#         tracks = MusicTrack.objects.filter(category_id=category_id)
+#     else:
+#         tracks = MusicTrack.objects.all()  # Show all tracks if no category is selected
+
+#     playlists = Playlist.objects.filter(user=request.user)  # Get playlists for the logged-in user
+#     selected_playlist = None
+#     playlist_id = request.GET.get('playlist')
+#     if playlist_id:
+#         selected_playlist = get_object_or_404(Playlist, id=playlist_id, user=request.user)
+#         tracks = selected_playlist.tracks.all()  # Get tracks in the selected playlist
+
+#     return render(request, 'musicapp/all_musics.html', {
+#         'tracks': tracks,
+#         'playlists': playlists,
+#         'selected_playlist': selected_playlist,
+#         'categories': categories,
+#     })
+
 @login_required
 def all_musics(request):
-    # Fetch all categories
     categories = Category.objects.all()
-
-    # If a category is selected, filter tracks by that category
-    category_id = request.GET.get('category', None)
-    if category_id:
-        tracks = MusicTrack.objects.filter(category_id=category_id)
-    else:
-        tracks = MusicTrack.objects.all()  # Show all tracks if no category is selected
-
-    playlists = Playlist.objects.filter(user=request.user)  # Get playlists for the logged-in user
-    selected_playlist = None
-    playlist_id = request.GET.get('playlist')
-    if playlist_id:
-        selected_playlist = get_object_or_404(Playlist, id=playlist_id, user=request.user)
-        tracks = selected_playlist.tracks.all()  # Get tracks in the selected playlist
-
+    playlists = Playlist.objects.filter(user=request.user)
     return render(request, 'musicapp/all_musics.html', {
-        'tracks': tracks,
         'playlists': playlists,
-        'selected_playlist': selected_playlist,
         'categories': categories,
     })
+
+from.models import GlobalPlaylist
+@login_required
+def admin_playLists(request):
+    playlists = playlists = GlobalPlaylist.objects.all()
+    return render(request, 'musicapp/admin_playlist_musics.html', {
+        'playlists': playlists,
+    })
+
 
 # Creating play list Start 
 

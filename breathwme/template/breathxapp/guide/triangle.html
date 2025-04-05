@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circle - Shape Explanations</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            padding: 30px 0;
+        }
+        .formula {
+            font-family: 'Courier New', monospace;
+            padding: 10px;
+            background-color: #1a1a1a;
+            border-radius: 5px;
+            margin-top: 10px;
+            color: #C0A000;
+        }
+        .card {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            margin-bottom: 20px;
+        }
+        .card:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        }
+        .card-header {
+            background-color: #222222;
+            color: #C0A000;
+            border-bottom: 1px solid #333;
+        }
+        .btn-primary {
+            background-color: #C0A000;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #9A8200;
+        }
+        .bg-dark-subtle {
+            background-color: #1a1a1a;
+        }
+        h1, h2, h3, h4, h5 {
+            color: #C0A000;
+        }
+        .text-highlight {
+            color: #C0A000;
+        }
+        .page-title {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #C0A000;
+            margin-bottom: 1rem;
+        }
+        .example-box {
+            background-color: #1a1a1a;
+            border-left: 4px solid #C0A000;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        p{
+            color: #ffffff;
+        }
+        li{
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Content -->
+    <div class="container py-4">
+        <!-- Title Section -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <h1 class="page-title">
+                    <a href="{% url 'breathxapp:breathfree' %}" style="text-decoration: none; color: inherit;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-arrow-left me-2" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M15 8a.5.5 0 0 1-.5.5H3.707l3.147 3.146a.5.5 0 0 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 0 1 .708.708L3.707 7.5H14.5A.5.5 0 0 1 15 8z"/>
+                        </svg>
+                    </a>
+                    The Triangle
+                </h1>
+                <p class="lead mb-4">
+                    The triangle represents **balance and structure** — a strong foundation for breathing. Triangle breathing uses equal parts of inhale, hold, and exhale, forming a mental triangle that brings focus and calm. It’s great for **reducing anxiety**, improving **mental clarity**, and helping you feel centered.
+                </p>
+            </div>
+        </div>
+    
+        <div class="row g-4">
+            <!-- What is Triangle Breathing -->
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h3>What is Triangle Breathing?</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Triangle breathing follows a **3-part pattern** — inhale, hold, exhale — all for the same amount of time. It’s often used to calm the nervous system and sharpen focus.</p>
+                        <h5 class="mt-4">Example Pattern (4-4-4):</h5>
+                        <ul>
+                            <li><strong class="text-highlight">Inhale</strong> for 4 seconds</li>
+                            <li><strong class="text-highlight">Hold</strong> for 4 seconds</li>
+                            <li><strong class="text-highlight">Exhale</strong> for 4 seconds</li>
+                        </ul>
+                        <p>Visualize each side of a triangle as you breathe — up, across, and down.</p>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Benefits -->
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h3>Why It Works</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong class="text-highlight">Reduces Stress:</strong> Slows your heart rate and calms the mind.</li>
+                            <li><strong class="text-highlight">Enhances Focus:</strong> Helps in staying present and aware.</li>
+                            <li><strong class="text-highlight">Builds Balance:</strong> The equal pattern fosters inner stability and control.</li>
+                            <li><strong class="text-highlight">Easy to Remember:</strong> Simple 3-part cycle — great for quick grounding.</li>
+                        </ul>
+    
+                        <div class="example-box mt-4">
+                            <h5>Quick Tip</h5>
+                            <p>Visualize a triangle forming in your mind — breathe in along one side, hold across the top, exhale down the other side.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Breathing Guide -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Visual Breathing Guide</h3>
+                    </div>
+                    <div class="card-body text-center">
+                        <p class="mb-4">Follow the triangle — inhale, hold, and exhale. Let the animation guide your rhythm.</p>
+                        <div class="triangle-breathing mx-auto" style="width: 0; height: 0; border-left: 80px solid transparent; border-right: 80px solid transparent; border-bottom: 140px solid #6e8efb; animation: trianglePulse 6s infinite;">
+                        </div>
+                        <style>
+                            @keyframes trianglePulse {
+                                0%, 100% { transform: scale(1); opacity: 1; }
+                                50% { transform: scale(1.1); opacity: 0.8; }
+                            }
+                        </style>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Real-Life Uses -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Where It's Used</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-4">
+                            <div class="col-md-4">
+                                <div class="card bg-dark-subtle h-100">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">Anxiety Relief</h5>
+                                        <p class="card-text">Used in cognitive behavioral therapy (CBT) and mindfulness to manage anxious thoughts.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-dark-subtle h-100">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">Work & Study Focus</h5>
+                                        <p class="card-text">A quick reset tool before exams, meetings, or problem-solving sessions.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-dark-subtle h-100">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">Daily Mindfulness</h5>
+                                        <p class="card-text">Just 3–5 minutes a day can improve emotional regulation and peace of mind.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Practice Section -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Try It Now</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-3">Breathe in for 4 seconds, hold for 4 seconds, and exhale for 4 seconds. Repeat the triangle rhythm and feel the tension melt away.</p>
+                        <p class="text-muted">Imagine drawing a triangle with your breath — steady, strong, and balanced.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
