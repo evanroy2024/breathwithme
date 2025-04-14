@@ -135,16 +135,14 @@ Home - Meditation Dashboard
 </style>
 
 <div class="container">
+  <!-- Header Section -->
   <div class="header">
     <span class="back-arrow">&#8592;</span>
-    <h1>Referal & Rewards</h1>
+    <h1>Referral & Rewards</h1>
   </div>
-  <!-- <div class="section">
-   
-    
-  
-  </div> -->
-  <div class="referral-section">
+
+  <!-- Referral Section (Initially visible) -->
+  <div id="referral-section" class="referral-section">
     <h2>Your Referral Link</h2>
     <div class="referral-box">
         <input type="text" id="referralLink" value="{{ referral_link }}" readonly>
@@ -158,15 +156,129 @@ Home - Meditation Dashboard
             <li>💎 <b>25 coins</b> unlock a <span class="premium">Free Premium Plan</span>.</li>
             <li>💰 Earn <b>20% commission</b> when anyone buys a plan.</li>
         </ul>
+    </div>
 
-    </div>
+   
+
+    <!-- Coins Button -->
     <div class="button-container">
-        <button class="go-btn" onclick="window.location.href='{% url 'referal:mycoins' %}'">My Coins</button>
+        <button class="qr-btn" onclick="showQRCode()">QR Code</button>
+      <button class="go-btn" onclick="window.location.href='{% url 'referal:mycoins' %}'">My Coins</button>
     </div>
-    
+  </div>
+
+  <!-- QR Code Section (Initially Hidden) -->
+  <div id="qr-code-section" class="qr-code-section" style="display: none;">
+    <h3>Share this QR code:</h3>
+    <img src="{% url 'referal:generate_qr_code' %}" alt="Referral QR Code" width="200">
+    <div class="button-container">
+      <button class="qr-btn" onclick="hideQRCode()">Hide QR Code</button>
+    </div>
+  </div>
 </div>
-  
-</div>
+
+<!-- JavaScript for QR Code Toggle -->
+<script>
+  function showQRCode() {
+    // Hide referral section and show QR code section
+    document.getElementById('referral-section').style.display = 'none';
+    document.getElementById('qr-code-section').style.display = 'block';
+  }
+
+  function hideQRCode() {
+    // Hide QR code section and show referral section
+    document.getElementById('qr-code-section').style.display = 'none';
+    document.getElementById('referral-section').style.display = 'block';
+  }
+
+  // Function to copy referral link to clipboard
+  function copyToClipboard() {
+    var copyText = document.getElementById('referralLink');
+    copyText.select();
+    document.execCommand("copy");
+    alert("Referral link copied to clipboard!");
+  }
+</script>
+
+<style>
+
+
+
+
+  .referral-box {
+    display: flex;
+  }
+
+  .referral-box input {
+    width: 70%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+
+  .referral-box .copy-btn {
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .referral-rules ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  .referral-rules li {
+    margin-bottom: 10px;
+  }
+
+  .premium {
+    color: gold;
+  }
+
+  .button-container {
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .go-btn {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .qr-btn {
+    margin-right: 20px;
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #fff;
+    border: none;
+    padding: 14px 24px;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 18px;
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 4px 10px rgba(212, 175, 55, 0.3);
+  }
+
+  .qr-code-section {
+    text-align: center;
+    margin-top: 20px;
+  }
+</style>
+
 <style>
 
 /* Button Wrapper to Center */

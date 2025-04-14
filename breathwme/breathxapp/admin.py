@@ -99,3 +99,6 @@ class ExerciseAdmin(admin.ModelAdmin):
     inlines = [ExercisePhaseInline]  # Allows adding phases inside the exercise form
 
 admin.site.register(Exercise, ExerciseAdmin)
+
+
+

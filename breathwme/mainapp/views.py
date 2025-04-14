@@ -46,6 +46,7 @@ def generate_otp():
     return str(random.randint(100000, 999999))  # Ensure OTP is stored as a string
 
 # Register view with referral code support
+
 def register(request):
     referral_code = request.GET.get("ref")  # Get referral code from URL
 
@@ -88,8 +89,6 @@ def register(request):
         return redirect("otp_varify")  # Redirect to OTP verification page
 
     return render(request, "user/register.html")
-
-
 # OTP verification view with referral rewards
 def otp_varify(request):
     if request.method == "POST":
@@ -112,12 +111,13 @@ def otp_varify(request):
             referral_code = request.session.get("referral_code")
             if referral_code:
                 try:
-                    referrer = ReferralLink.objects.get(code=referral_code).user  # Find referrer
+                    # Find the user who referred using the referral code
+                    referrer = ReferralLink.objects.get(code=referral_code).user
                     digital_coin, created = DigitalCoin.objects.get_or_create(user=referrer)
-                    digital_coin.amount += 5  # Reward referrer with 5 coins
+                    digital_coin.amount += 5  # Reward the referrer with 5 coins
                     digital_coin.save()
                 except ReferralLink.DoesNotExist:
-                    pass  # Ignore if referral code is invalid
+                    pass  # Ignore if the referral code does not exist or is invalid
 
             # Clear session data after successful registration
             request.session.flush()
@@ -128,7 +128,7 @@ def otp_varify(request):
         messages.error(request, "Invalid OTP. Please try again.")
 
     return render(request, "user/otp.html")
-
+   
 def signin(request):
     if request.method == "POST":
         email = request.POST.get('email')

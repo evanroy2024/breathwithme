@@ -35,6 +35,8 @@ urlpatterns = [
     path('breathwmeadmin/', include('breathwmeadmin.urls', namespace='breathwmeadmin')),
     path('activityapp/', include('activityapp.urls', namespace='activityapp')),
     path('referal/', include('referal.urls', namespace='referal')),
+    path('testapp/', include('testapp.urls', namespace='testapp')),
+
 
     # path(r'^ws/', include(routing.websocket_urlpatterns)),  # Include WebSocket URLs
 

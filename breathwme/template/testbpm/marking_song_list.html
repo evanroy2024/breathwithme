@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Marking Song List</title>
+</head>
+<body>
+  <h1>🎧 Marking Song List</h1>
+  <ul>
+    {% for song in songs %}
+      <li>
+        {{ song.title }}
+        — <a href="{% url 'testapp:marking_beats' song.id %}">Mark Beats</a>
+      </li>
+    {% empty %}
+      <li>No songs uploaded yet.</li>
+    {% endfor %}
+  </ul>
+</body>
+</html>

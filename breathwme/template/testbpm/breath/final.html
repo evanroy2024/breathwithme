@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Breathing Exercise</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #121212;
+      color: white;
+      font-family: 'Arial', sans-serif;
+      overflow: hidden;
+    }
+
+    .container {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .shape-container {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      margin: 40px 0;
+    }
+
+    .breathing-circle {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.5s ease, box-shadow 0.5s ease;
+    }
+
+    .breathing-square {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.5s ease, box-shadow 0.5s ease;
+      display: none; /* Hidden by default */
+    }
+
+    .breathing-text {
+      font-size: 32px;
+      font-weight: bold;
+      color: white;
+      opacity: 0.9;
+      text-align: center;
+      z-index: 10;
+      transition: transform 0.5s ease, opacity 0.5s ease;
+    }
+
+    .marker-ball {
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      background-color: white;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) translate(0, -150px);
+      box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.7);
+      z-index: 5;
+    }
+
+    .pulsate {
+      animation: pulsate 2s infinite ease-in-out;
+    }
+
+    @keyframes pulsate {
+      0% { transform: scale(1); box-shadow: 0 0 10px 2px rgba(90, 200, 250, 0.5); }
+      50% { transform: scale(1.1); box-shadow: 0 0 20px 5px rgba(90, 200, 250, 0.8); }
+      100% { transform: scale(1); box-shadow: 0 0 10px 2px rgba(90, 200, 250, 0.5); }
+    }
+
+    .inhale-animation {
+      box-shadow: 0 0 30px rgba(64, 224, 208, 0.5);
+    }
+
+    .exhale-animation {
+      box-shadow: 0 0 30px rgba(138, 43, 226, 0.5);
+    }
+
+    .hold-animation {
+      box-shadow: 0 0 30px rgba(255, 165, 0, 0.5);
+    }
+
+    .title {
+      margin-bottom: 20px;
+      font-size: 24px;
+      text-align: center;
+    }
+
+    .controls {
+      margin-top: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .select-group {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 10px;
+    }
+
+    audio {
+      margin-bottom: 20px;
+      width: 300px;
+    }
+    
+    .waiting {
+      color: #aaa;
+      font-style: italic;
+    }
+
+    .timer {
+      margin-top: 10px;
+      font-size: 16px;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">Breathing Exercise</h1>
+    
+    <div class="shape-container" id="shapeContainer">
+      <div class="breathing-circle" id="breathingCircle">
+        <div class="breathing-text" id="breathText">Waiting...</div>
+      </div>
+      <div class="breathing-square" id="breathingSquare">
+        <div class="breathing-text" id="breathTextSquare">Waiting...</div>
+      </div>
+      <div class="marker-ball" id="markerBall"></div>
+    </div>
+    
+    <div class="controls">
+      <div class="select-group">
+        <div class="pattern-select">
+          <label for="breathPattern">Breathing Pattern:</label>
+          <select id="breathPattern">
+            <option value="default">Default (1 beat)</option>
+            <option value="halfBar">Half Bar (2 beats)</option>
+            <option value="fullBar">Full Bar (4 beats)</option>
+            <option value="twoBar">Two Bar (8 beats)</option>
+          </select>
+        </div>
+        
+        <div class="shape-select">
+          <label for="shapeType">Shape:</label>
+          <select id="shapeType">
+            <option value="circle">Circle (Inhale/Exhale)</option>
+            <option value="square">Square (Inhale/Hold/Exhale/Hold)</option>
+          </select>
+        </div>
+      </div>
+      
+      <audio id="audio" controls>
+        <source src="{{ song.song.url }}" type="audio/mpeg">
+      </audio>
+      <div class="timer" id="timer">00:00</div>
+    </div>
+  </div>
+
+<script>
+  const breathText = document.getElementById("breathText");
+  const breathTextSquare = document.getElementById("breathTextSquare");
+  const breathingCircle = document.getElementById("breathingCircle");
+  const breathingSquare = document.getElementById("breathingSquare");
+  const audio = document.getElementById("audio");
+  const markerBall = document.getElementById("markerBall");
+  const timer = document.getElementById("timer");
+  const patternSelect = document.getElementById("breathPattern");
+  const shapeSelect = document.getElementById("shapeType");
+
+  // Beat times from Django
+  const beatTimes = {{ song.beat_times|safe }};
+  
+  // Different states for circle and square
+  const circleStates = ["Inhale", "Exhale"];
+  const squareStates = ["Inhale", "Hold", "Exhale", "Hold"];
+  
+  let stateIndex = 0;
+  let timeoutIds = [];
+  let animationFrameId = null;
+  let isPaused = true;
+
+  // Pattern multipliers
+  const patterns = {
+    "default": 1,  // Each beat is one state
+    "halfBar": 2,  // Every 2 beats is one state
+    "fullBar": 4,  // Every 4 beats is one state
+    "twoBar": 8    // Every 8 beats is one state
+  };
+
+  // Switch between circle and square
+  shapeSelect.addEventListener("change", function() {
+    if (this.value === "circle") {
+      breathingCircle.style.display = "flex";
+      breathingSquare.style.display = "none";
+    } else {
+      breathingCircle.style.display = "none";
+      breathingSquare.style.display = "flex";
+    }
+  });
+
+  // Position the ball on the shape's edge properly
+  function calculatePosition(progress) {
+    const shape = shapeSelect.value;
+    const radius = 150; // Shape radius/half-width in pixels
+    let x, y;
+    
+    if (shape === "circle") {
+      // Convert progress (0-1) to angle in radians
+      const angle = progress * 2 * Math.PI - Math.PI/2; // Start from top (-90 degrees)
+      
+      // Calculate x and y coordinates on the circle
+      x = radius * Math.cos(angle);
+      y = radius * Math.sin(angle);
+    } else {
+      // For square - we need to determine which edge we're on
+      // Progress 0-0.25 = top edge, 0.25-0.5 = right edge, etc.
+      const side = Math.floor(progress * 4);
+      const sideProgress = (progress * 4) - side; // Progress along this side (0-1)
+      
+      switch(side) {
+        case 0: // Top edge (left to right)
+          x = -radius + (sideProgress * 2 * radius);
+          y = -radius;
+          break;
+        case 1: // Right edge (top to bottom)
+          x = radius;
+          y = -radius + (sideProgress * 2 * radius);
+          break;
+        case 2: // Bottom edge (right to left)
+          x = radius - (sideProgress * 2 * radius);
+          y = radius;
+          break;
+        case 3: // Left edge (bottom to top)
+        default:
+          x = -radius;
+          y = radius - (sideProgress * 2 * radius);
+          break;
+      }
+    }
+    
+    // Apply the transformation - position from center
+    markerBall.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px)`;
+  }
+
+  // Initialize ball at the top of the shape
+  calculatePosition(0);
+
+  // Update timer display
+  function updateTimer(currentTime) {
+    const minutes = Math.floor(currentTime / 60);
+    const seconds = Math.floor(currentTime % 60);
+    timer.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  // Function to determine current breath state based on time and pattern
+  function getCurrentBreathState(currentTime) {
+    if (currentTime < beatTimes[0]) {
+      return "Waiting...";
+    }
+    
+    // Get current pattern multiplier
+    const patternMultiplier = patterns[patternSelect.value];
+    
+    // Find which beat group we're currently in
+    let beatGroupIndex = -1;
+    
+    for (let i = 0; i < beatTimes.length; i += patternMultiplier) {
+      if (currentTime >= beatTimes[i]) {
+        beatGroupIndex = Math.floor(i / patternMultiplier);
+      } else {
+        break;
+      }
+    }
+    
+    // Return the appropriate state based on shape
+    if (beatGroupIndex >= 0) {
+      const shape = shapeSelect.value;
+      if (shape === "circle") {
+        return circleStates[beatGroupIndex % 2];
+      } else {
+        return squareStates[beatGroupIndex % 4];
+      }
+    } else {
+      return "Waiting...";
+    }
+  }
+
+  // Animation loop for smooth marker movement and synced breath changes
+  function animateMarker() {
+    if (isPaused) return;
+    
+    const currentTime = audio.currentTime;
+    updateTimer(currentTime);
+    
+    // Update breath text based on current time and pattern
+    const currentState = getCurrentBreathState(currentTime);
+    const textElements = [breathText, breathTextSquare];
+    
+    textElements.forEach(element => {
+      if (currentState === "Waiting...") {
+        element.innerText = currentState;
+        element.classList.add("waiting");
+      } else {
+        element.innerText = currentState;
+        element.classList.remove("waiting");
+      }
+    });
+    
+    // Get current pattern multiplier
+    const patternMultiplier = patterns[patternSelect.value];
+    
+    // Find the current and next beat group
+    let currentBeatGroupIndex = -1;
+    let nextBeatGroupIndex = -1;
+    
+    for (let i = 0; i < beatTimes.length; i += patternMultiplier) {
+      if (currentTime >= beatTimes[i]) {
+        currentBeatGroupIndex = Math.floor(i / patternMultiplier);
+      } else {
+        nextBeatGroupIndex = Math.floor(i / patternMultiplier);
+        break;
+      }
+    }
+    
+    // Handle case where we're past the last beat group
+    if (nextBeatGroupIndex < 0 || currentBeatGroupIndex < 0) {
+      // If at the end or not started yet
+      if (currentBeatGroupIndex >= 0) {
+        calculatePosition(1); // Position at the end of the shape
+      } else {
+        calculatePosition(0); // Position at the beginning of the shape
+      }
+      animationFrameId = requestAnimationFrame(animateMarker);
+      return;
+    }
+    
+    // Calculate the start and end beat times for current group
+    const currentGroupStartIndex = currentBeatGroupIndex * patternMultiplier;
+    const nextGroupStartIndex = nextBeatGroupIndex * patternMultiplier;
+    
+    const currentGroupStartTime = beatTimes[currentGroupStartIndex];
+    const nextGroupStartTime = beatTimes[nextGroupStartIndex];
+    
+    // Calculate progress within the current beat group
+    const groupDuration = nextGroupStartTime - currentGroupStartTime;
+    const progress = groupDuration > 0 ? (currentTime - currentGroupStartTime) / groupDuration : 0;
+    
+    // For the square, we need to map to the appropriate state
+    let mappedProgress = progress;
+    if (shapeSelect.value === "square") {
+      // For square, the current state determines which edge we're on
+      const stateInCycle = currentBeatGroupIndex % 4;
+      mappedProgress = (stateInCycle + progress) / 4;
+    }
+    
+    // Calculate position along the shape (full circle/square per cycle)
+    calculatePosition(mappedProgress);
+    
+    // Apply appropriate animation based on current state
+    updateShapeAnimation(currentState);
+    
+    animationFrameId = requestAnimationFrame(animateMarker);
+  }
+
+  // Update shape animation based on state
+  function updateShapeAnimation(state) {
+    // Remove all animations first
+    breathingCircle.classList.remove("pulsate", "inhale-animation", "exhale-animation", "hold-animation");
+    breathingSquare.classList.remove("pulsate", "inhale-animation", "exhale-animation", "hold-animation");
+    
+    // Apply appropriate animation
+    if (state === "Inhale") {
+      breathingCircle.classList.add("inhale-animation");
+      breathingSquare.classList.add("inhale-animation");
+    } else if (state === "Exhale") {
+      breathingCircle.classList.add("exhale-animation");
+      breathingSquare.classList.add("exhale-animation");
+    } else if (state === "Hold") {
+      breathingSquare.classList.add("hold-animation");
+    }
+  }
+
+  audio.onplay = () => {
+    isPaused = false;
+    
+    // Remove all animations from the shapes
+    breathingCircle.classList.remove("pulsate", "inhale-animation", "exhale-animation", "hold-animation");
+    breathingSquare.classList.remove("pulsate", "inhale-animation", "exhale-animation", "hold-animation");
+    
+    // Clear any previous timers
+    timeoutIds.forEach(id => clearTimeout(id));
+    timeoutIds = [];
+    
+    // Start animation loop which will handle both ball movement and text updates
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+    }
+    animationFrameId = requestAnimationFrame(animateMarker);
+  };
+
+  // On pause, just set isPaused flag
+  audio.onpause = () => {
+    isPaused = true;
+    
+    // Cancel the animation frame but don't reset position or text
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+    }
+    
+    // Clear any scheduled timeouts if any
+    timeoutIds.forEach(id => clearTimeout(id));
+    timeoutIds = [];
+  };
+
+  audio.onended = () => {
+    timeoutIds.forEach(id => clearTimeout(id));
+    timeoutIds = [];
+    stateIndex = 0;
+    
+    // Reset text in both shapes
+    const textElements = [breathText, breathTextSquare];
+    textElements.forEach(element => {
+      element.innerText = "Waiting...";
+      element.classList.add("waiting");
+    });
+    
+    // Remove all animations from the shapes
+    breathingCircle.classList.remove("pulsate", "inhale-animation", "exhale-animation", "hold-animation");
+    breathingSquare.classList.remove("pulsate", "inhale-animation", "exhale-animation", "hold-animation");
+    
+    isPaused = true;
+    
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+    }
+    
+    // Reset marker position to top
+    calculatePosition(0);
+  };
+
+  // Handle seeking in the audio
+  audio.onseeked = () => {
+    // Update everything based on new position
+    const currentTime = audio.currentTime;
+    updateTimer(currentTime);
+    
+    const currentState = getCurrentBreathState(currentTime);
+    const textElements = [breathText, breathTextSquare];
+    
+    textElements.forEach(element => {
+      if (currentState === "Waiting...") {
+        element.innerText = currentState;
+        element.classList.add("waiting");
+      } else {
+        element.innerText = currentState;
+        element.classList.remove("waiting");
+      }
+    });
+    
+    // Update shape animation
+    updateShapeAnimation(currentState);
+    
+    // If not paused, ensure animation is running
+    if (!isPaused && !animationFrameId) {
+      animationFrameId = requestAnimationFrame(animateMarker);
+    }
+  };
+
+  // When breathing pattern or shape changes, update the visualization
+  patternSelect.addEventListener("change", updateOnPatternOrShapeChange);
+  shapeSelect.addEventListener("change", updateOnPatternOrShapeChange);
+
+  function updateOnPatternOrShapeChange() {
+    if (!isPaused) {
+      // Force update of the breathing state and animation
+      const currentTime = audio.currentTime;
+      
+      const currentState = getCurrentBreathState(currentTime);
+      const textElements = [breathText, breathTextSquare];
+      
+      textElements.forEach(element => {
+        if (currentState === "Waiting...") {
+          element.innerText = currentState;
+          element.classList.add("waiting");
+        } else {
+          element.innerText = currentState;
+          element.classList.remove("waiting");
+        }
+      });
+      
+      // Update shape animation
+      updateShapeAnimation(currentState);
+    }
+  }
+
+  // Initialize the timer
+  updateTimer(0);
+</script>
+</body>
+</html>

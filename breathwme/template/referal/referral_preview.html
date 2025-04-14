@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>You've been referred! | Join Now</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #121212;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #f1f1f1;
+        }
+        .page-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+        .header-gradient {
+            background: linear-gradient(135deg, #B8860B 0%, #DAA520 50%, #FFD700 100%);
+            height: 120px;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+        .footer-gradient {
+            background: linear-gradient(135deg, #704214 0%, #483C32 100%);
+            height: 120px;
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            z-index: 0;
+        }
+        .card {
+            box-shadow: 0 10px 25px -5px rgba(184, 134, 11, 0.3), 0 10px 10px -5px rgba(184, 134, 11, 0.2);
+            z-index: 10;
+            max-width: 450px;
+            width: 100%;
+        }
+        .btn-gradient {
+            background: linear-gradient(135deg, #B8860B 0%, #DAA520 100%);
+            transition: all 0.4s ease;
+        }
+        .btn-gradient:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(218, 165, 32, 0.5);
+        }
+        @keyframes shimmer {
+            0% { background-position: -100% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .gold-shine {
+            background: linear-gradient(90deg, 
+                rgba(218, 165, 32, 0.1), 
+                rgba(255, 215, 0, 0.3), 
+                rgba(218, 165, 32, 0.1));
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite linear;
+        }
+        .username-badge {
+            background: rgba(25, 22, 18, 0.9);
+            border: 2px solid #B8860B;
+            border-radius: 12px;
+            padding: 8px 16px;
+            display: inline-block;
+            margin-top: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        .username-badge::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                transparent, 
+                transparent, 
+                transparent, 
+                rgba(255, 215, 0, 0.2)
+            );
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+        @keyframes shine {
+            0% { left: -100%; top: -100%; }
+            20% { left: 100%; top: 100%; }
+            100% { left: 100%; top: 100%; }
+        }
+        .confetti {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            opacity: 0.7;
+            z-index: 5;
+        }
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100px) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.7; }
+            100% { transform: translateY(500px) rotate(720deg); opacity: 0; }
+        }
+        .gold-text {
+            background: linear-gradient(90deg, #B8860B, #FFD700, #DAA520);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+        .glow {
+            box-shadow: 0 0 15px rgba(218, 165, 32, 0.5);
+        }
+        .hover-scale {
+            transition: transform 0.3s ease;
+        }
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .gold-border {
+            border: 1px solid rgba(218, 165, 32, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="header-gradient"></div>
+    <div class="footer-gradient"></div>
+    <div id="confetti-container"></div>
+    
+    <div class="page-container">
+        <div class="card bg-gray-900 rounded-xl overflow-hidden border border-yellow-700 gold-border">
+            <div class="gold-shine bg-gray-900 text-white p-6 text-center relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-900 rounded-full -mr-16 -mt-16 opacity-20"></div>
+                <div class="absolute bottom-0 left-0 w-24 h-24 bg-yellow-800 rounded-full -ml-12 -mb-12 opacity-20"></div>
+                
+                <div class="mb-4 text-5xl relative z-10 floating">
+                    <i class="fas fa-crown text-yellow-500"></i>
+                </div>
+                
+                <!-- Prominent Username Display -->
+                <div class="username-badge glow pulse">
+                    <span class="text-yellow-600 text-sm font-medium">YOU WERE INVITED BY</span>
+                    <h2 class="text-2xl font-bold gold-text">{{ ref_user.username }}</h2>
+                </div>
+                
+                <p class="text-lg text-yellow-200 relative z-10 mt-3">
+                    Join now to unlock <span class="gold-text">exclusive rewards!</span>
+                </p>
+            </div>
+            
+            <div class="p-6">
+                <div class="bg-gray-800 rounded-lg p-4 mb-6 border gold-border hover-scale">
+                    <div class="flex items-center mb-3">
+                        <div class="w-8 h-8 rounded-full bg-yellow-900 flex items-center justify-center mr-2">
+                            <i class="fas fa-gift text-yellow-500 text-sm"></i>
+                        </div>
+                        <h3 class="gold-text">Premium Invitation Benefits</h3>
+                    </div>
+                    <ul class="text-gray-300 text-sm pl-10 list-disc">
+                        <li class="mb-2">Receive a <span class="text-yellow-500 font-semibold">golden welcome bonus</span></li>
+                        <li class="mb-2">Both you and <span class="text-yellow-500 font-semibold">{{ ref_user.username }}</span> get rewards</li>
+                        <li>Unlock VIP status for your first month</li>
+                    </ul>
+                </div>
+                
+                <div class="text-center">
+                    <a href="/register/?ref={{ ref_code }}" class="block">
+                        <button class="btn-gradient text-gray-900 font-bold py-3 px-8 rounded-full w-full text-lg pulse">
+                            Accept {{ ref_user.username }}'s VIP Invitation
+                        </button>
+                    </a>
+                    <p class="text-xs text-gray-400 mt-4">
+                        Exclusive Referral Code: <span class="font-mono font-semibold text-yellow-500">{{ ref_code }}</span>
+                    </p>
+                </div>
+            </div>
+            
+            <div class="bg-gray-950 p-4 text-center border-t gold-border">
+                <div class="flex justify-center space-x-6 mb-3">
+                    <a href="#" class="text-gray-500 hover:text-yellow-500 transition-colors text-lg">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="#" class="text-gray-500 hover:text-yellow-500 transition-colors text-lg">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="text-gray-500 hover:text-yellow-500 transition-colors text-lg">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+                <p class="text-gray-500 text-xs">
+                    &copy; 2025 Your Company. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.getElementById('confetti-container');
+            // Gold-themed confetti
+            const shapes = ['circle', 'square', 'triangle'];
+            const colors = ['#B8860B', '#DAA520', '#FFD700', '#D4AF37', '#CFB53B'];
+            
+            for (let i = 0; i < 40; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                
+                // Randomly select shape
+                const shape = shapes[Math.floor(Math.random() * shapes.length)];
+                if (shape === 'circle') {
+                    confetti.style.borderRadius = '50%';
+                } else if (shape === 'triangle') {
+                    confetti.style.width = '0';
+                    confetti.style.height = '0';
+                    confetti.style.borderLeft = '8px solid transparent';
+                    confetti.style.borderRight = '8px solid transparent';
+                    confetti.style.borderBottom = '16px solid ' + colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.backgroundColor = 'transparent';
+                } else {
+                    // It's a square by default
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                }
+                
+                // If not a triangle, set the background color
+                if (shape !== 'triangle') {
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                }
+                
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.animationDelay = Math.random() * 5 + 's';
+                confetti.style.animationDuration = Math.random() * 3 + 3 + 's';
+                confetti.style.animationName = 'confetti-fall';
+                confetti.style.animationIterationCount = 'infinite';
+                confetti.style.animationTimingFunction = 'ease-in-out';
+                
+                container.appendChild(confetti);
+            }
+            
+            // Add shine effect to username
+            const usernameElement = document.querySelector('.username-badge');
+            setInterval(() => {
+                usernameElement.classList.add('glow');
+                setTimeout(() => {
+                    usernameElement.classList.remove('glow');
+                }, 1000);
+            }, 3000);
+        });
+    </script>
+</body>
+</html>

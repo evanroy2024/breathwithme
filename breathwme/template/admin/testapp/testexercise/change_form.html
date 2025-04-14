@@ -1,0 +1,12 @@
+{% extends "admin/change_form.html" %}
+
+{% block content %}
+  {{ block.super }}
+
+  <!-- Add the 'Add Pattern' button only at the bottom without interfering with other buttons -->
+  {% if add_pattern_button %}
+    <div style="text-align: center; margin-top: 20px;">
+      {{ add_pattern_button|safe }}
+    </div>
+  {% endif %}
+{% endblock %}

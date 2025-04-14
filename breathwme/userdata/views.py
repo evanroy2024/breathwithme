@@ -51,3 +51,7 @@ def upload_userdata(request):
             messages.error(request, f"Error: {e}")  # Show error message
 
     return render(request, "user/upload_userdata.html", {"user_data": user_data})  # Pass existing data to form
+
+
+
+# For activity log ----------------------------------------------------------------------------------------------------------------

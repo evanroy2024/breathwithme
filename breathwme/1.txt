@@ -9,5 +9,9 @@ pip install django-embed-video
 pip install channels
 pip install daphne
 
+pip install librosa           -   For beat detection 
+pip install ffmpeg-python   -   For beat detection 
+
+pip install qrcode[pil]    - For QR generation 
 
 To run websocket - daphne breathwme.asgi:application

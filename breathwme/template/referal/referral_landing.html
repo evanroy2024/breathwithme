@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Join via QR</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f8ff;
+            text-align: center;
+            padding: 40px;
+        }
+        .card {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            max-width: 400px;
+            margin: auto;
+        }
+        .card h2 {
+            color: #333;
+        }
+        .card p {
+            margin-top: 15px;
+            font-size: 18px;
+            color: #666;
+        }
+        .btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background: #155fc2;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>You're invited by {{ referred_user.username }}</h2>
+        <p>Join for free using their QR code!</p>
+        <a href="/register/" class="btn">Register Now</a>
+    </div>
+</body>
+</html>
