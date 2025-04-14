@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'breathwmeadmin',
     'channels',
     'embed_video',
+    'testapp',
 ]
 
 MIDDLEWARE = [
