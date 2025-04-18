@@ -147,7 +147,7 @@
 <body>
   <div class="container">
     <h1 class="title">
-      <span class="back-arrow">←</span>
+      <span class="back-arrow" onclick="window.location.href='{% url 'testapp:song_list' %}'">←</span>
       Breathing Exercise
     </h1>
     
@@ -164,33 +164,58 @@
     
     <div class="controls">
       <div class="select-group">
+        <div class="main-three-btn">
         <div class="pattern-select">
-          <label for="breathPattern">Breathing Pattern:</label>
+          <label for="breathPattern">Breathing </label>
           <select id="breathPattern">
-            <option value="default">Default (1 beat)</option>
-            <option value="halfBar">Half Bar (2 beats)</option>
-            <option value="fullBar">Full Bar (4 beats)</option>
-            <option value="twoBar">Two Bar (8 beats)</option>
+            <option value="default">Default (1 )</option>
+            <option value="halfBar">Half Bar (2 )</option>
+            <option value="fullBar">Full Bar (4)</option>
+            <option value="twoBar">Two Bar (8)</option>
           </select>
         </div>
         
         <div class="shape-select">
-          <label for="shapeType">Shape:</label>
-          <select id="shapeType">
-            <option value="circle">Circle (Inhale/Exhale)</option>
-            <option value="square">Square (Inhale/Hold/Exhale/Hold)</option>
+          <label >Vibration :</label>
+          <select id="VibrationType">
+            <option value="2">Turn On </option>
+            <option value="3">Turn off </option>
           </select>
+        </div> 
+
+        <div class="shape-select">
+          <label >Voice :</label>
+
+          <select onchange="speechEnabled = this.value === 'on';">
+            <option value="on">Turn On</option>
+            <option value="off">Turn Off</option>
+          </select>
+          
         </div>
       </div>
+     
+        <div id="shapeOverlay">
+          <div class="shape-box">
+            <label for="shapeType">Choose a Shape:</label>
+            <select id="shapeType">
+              <option value="circle">Select Shape</option>
+              <option value="circle">Circle (Inhale/Exhale)</option>
+              <option value="square">Square (Inhale/Hold/Exhale/Hold)</option>
+            </select>
+          </div>
+        </div>
+        
+      </div>
+      
       
       <audio id="audio" controls controlsList="nodownload" >
         <source src="{{ song.song.url }}" type="audio/mpeg">
       </audio>
       
 <div style="display: none;" class="timer" id="timer">00:00</div>
-
-  <button onclick="window.location.href='{% url 'testapp:song_list' %}'">Songs</button>
-
+<div class="song-vibration-btn">
+  <button onclick="window.location.href='{% url 'testapp:song_list' %}'">Music List</button>
+</div>
     </div>
   </div>
 
@@ -324,6 +349,11 @@
   }
 
   // Animation loop for smooth marker movement and synced breath changes
+  // Add this near the top with your other variables
+const synth = window.speechSynthesis;
+let lastSpokenState = "";
+let speechEnabled = true; // Add this line
+
   function animateMarker() {
     if (isPaused) return;
     
@@ -333,7 +363,25 @@
     // Update breath text based on current time and pattern
     const currentState = getCurrentBreathState(currentTime);
     const textElements = [breathText, breathTextSquare];
+
+    // Add speech functionality - speak state when it changes
+
+if (speechEnabled && currentState !== lastSpokenState && currentState !== "Waiting...") {
+    // Create a new speech utterance
+    const utterance = new SpeechSynthesisUtterance(currentState);
+    utterance.rate = 0.8; // Slightly slower speech
+    utterance.volume = 1.0;
     
+    // Cancel any previous speech
+    synth.cancel();
+    
+    // Speak the new state
+    synth.speak(utterance);
+    
+    // Update last spoken state
+    lastSpokenState = currentState;
+}
+
     textElements.forEach(element => {
       if (currentState === "Waiting...") {
         element.innerText = currentState;
@@ -343,6 +391,22 @@
         element.classList.remove("waiting");
       }
     });
+
+    // Audio Code start   ------------------------------------------------------
+audio.onended = () => {
+    timeoutIds.forEach(id => clearTimeout(id));
+    timeoutIds = [];
+    stateIndex = 0;
+    lastSpokenState = ""; // Reset the last spoken state
+    
+    // Rest of your existing onended code...
+};
+
+// Also reset lastSpokenState when seeking
+audio.onseeked = () => {
+    lastSpokenState = ""; // Reset so the current state will be spoken
+};
+    // Audio Code End   ------------------------------------------------------
     
     // Get current pattern multiplier
     const patternMultiplier = patterns[patternSelect.value];
@@ -698,6 +762,103 @@ audio::-webkit-media-controls-play-button {
   border-radius: 2px;
 }
 
+</style>
+
+<!-- Shape selector button display settings  -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const shapeSelect = document.getElementById('shapeType');
+    const overlay = document.getElementById('shapeOverlay');
+
+    shapeSelect.addEventListener('change', () => {
+      if (shapeSelect.value !== '') {
+        overlay.style.display = 'none';
+      }
+    });
+  });
+</script>
+
+<style>
+  .controls {
+  min-width: 350px;
+}
+  #shapeOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100dvh;
+    width: 100vw;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(6px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+  }
+
+  .shape-box {
+    background: #1e1e1e;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+    text-align: center;
+    color: #fff;
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  .shape-box label {
+    font-size: 18px;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  .shape-box select {
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    background-color: #2c2c2c;
+    color: #fff;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  .shape-box select:hover {
+    background-color: #383838;
+  }
+</style>
+
+  
+<style>
+  .main-three-btn {
+    display: flex;
+    align-items: center; /* Aligns items vertically */
+    gap: 10px; /* Adds spacing between the elements */
+  }
+
+  .main-three-btn div {
+    display: flex;
+    flex-direction: column; /* Stack the label and select */
+  }
+
+  label {
+    margin-bottom: 5px; /* Adds space between label and select */
+    font-weight: bold;
+  }
+
+  select {
+    padding: 5px;
+    font-size: 14px;
+  }
+  .main-three-btn div {
+    width: 120px;
+}
+.back-arrow:hover{
+  cursor: pointer;
+}
 </style>
 </body>
 </html>

@@ -913,6 +913,10 @@ option {
     }, 4000);
 }
 
+
+// Adding code for colors start here -------------------------------------------------------------------------------------------------
+
+// Adding code for colors End here ------------------------------------------------------------------------------------------------------
     function createShape(shape) {
         
         shapeContainer.innerHTML = "";
@@ -937,27 +941,6 @@ option {
         textElement.innerText = breathingTexts[shape][textIndex];
         
             
-        // The Oval Animation Start --------------------------------------------------------------------------------------
-       // ✅ ADD THIS BEFORE switch or your shape function
-
-// // Fallback defaults
-// if (!window.storedTimings || window.storedTimings.length < 2) {
-//     console.warn("Not enough values in storedTimings. Using default values.");
-//     window.storedTimings = [5, 3];
-// }
-
-// // Detect changes in timing values
-// if (!window.previousStoredTimings || JSON.stringify(window.previousStoredTimings) !== JSON.stringify(window.storedTimings)) {
-//     window.currentOvalIndex = 0; // Reset to first timing
-//     window.previousStoredTimings = [...window.storedTimings]; // Save current values
-// }
-
-// // Make sure index is defined
-// if (typeof window.currentOvalIndex === "undefined") {
-//     window.currentOvalIndex = 0;
-// }
-
-        // The Oval Animation End --------------------------------------------------------------------------------------
 
         function startAnimation() {
             stopAnimation();
@@ -970,94 +953,10 @@ function startGoldenLineAnimation() {
     let currentDuration = parseFloat(durations[index]); // Get current duration as a number
     let goldenLineDuration;
 
-    // switch (shape) {
-    //     case "circle":
-    //         goldenLineDuration = (currentDuration * 2) + "s";
-    //         break;
-    //     case "square":
-    //         goldenLineDuration = (currentDuration * 4) + "s";
-    //         break;
-    //     case "hRectangle":
-    //         goldenLineDuration = (currentDuration * 6) + "s";
-    //         break;
-    //     case "vRectangle":
-    //         goldenLineDuration = (currentDuration * 6) + "s";
-    //         break;
-    //     case "triangle":
-    //         goldenLineDuration = (currentDuration * 3) + "s";
-    //         break;
-    //     case "reverseTriangle":
-    //         goldenLineDuration = (currentDuration * 3) + "s";
-    //         break;
-    // }
-
-    // console.log("Golden Line Duration:", goldenLineDuration);
+   
 
     switch (shape) {
-        // case "circle":
-        //     goldenLine.style.animation = `moveCircle ${goldenLineDuration} linear infinite`;
-        //     break;
-    //         case "square":
-    // console.log("Applying dynamic square animation...");
-
-    // // Ensure storedTimings exists and has exactly 4 values
-    // if (!window.storedTimings || window.storedTimings.length < 4) {
-    //     console.warn("Not enough values in storedTimings. Using default values.");
-    //     window.storedTimings = [4, 4, 8, 9]; // Default values if missing
-    // }
-
-    // // Extract dynamic durations
-    // const [side1Duration, side2Duration, side3Duration, side4Duration] = window.storedTimings;
-
-    // // Total animation duration
-    // const totalDuration = side1Duration + side2Duration + side3Duration + side4Duration;
-
-    // // Calculate percentage timings
-    // const percent1 = (side1Duration / totalDuration) * 100;
-    // const percent2 = percent1 + (side2Duration / totalDuration) * 100;
-    // const percent3 = percent2 + (side3Duration / totalDuration) * 100;
-    // const percent4 = percent3 + (side4Duration / totalDuration) * 100;
-
-    // // Ensure the last frame (100%) is identical to the first frame (0%)!
-    // const animationCSS = `
-    //     @keyframes moveSquare {
-    //         0% { top: -8px; left: 10px; } /* Start Position */
-    //         ${percent1}% { top: -10px; left: 192px; } /* Move right */
-    //         ${percent2}% { top: 190px; left: 195px; } /* Move down */
-    //         ${percent3}% { top: 195px; left: -8px; } /* Move left */
-    //         ${percent4}% { top: -8px; left: 10px; } /* Move up (Back to Start) */
-    //         100% { top: -8px; left: 10px; } /* Ensuring Infinite Loop */
-    //     }
-    // `;
-
-    // // Remove previous animation if exists
-    // const existingStyle = document.getElementById("dynamicSquareAnimation");
-    // if (existingStyle) existingStyle.remove();
-
-    // // Inject new animation
-    // const styleSheet = document.createElement("style");
-    // styleSheet.id = "dynamicSquareAnimation";
-    // styleSheet.innerHTML = animationCSS;
-    // document.head.appendChild(styleSheet);
-
-    // // Apply animation with infinite loop
-    // goldenLine.style.animation = `moveSquare ${totalDuration}s linear infinite`;
-
-    // console.log("Updated animation with stored timings:", window.storedTimings);
-    // break;
-
-        // case "hRectangle":
-        //     goldenLine.style.animation = `moveRectangleH ${goldenLineDuration} linear infinite`;
-        //     break;
-        // case "vRectangle":
-        //     goldenLine.style.animation = `moveRectangleV ${goldenLineDuration} linear infinite`;
-        //     break;
-        // case "triangle":
-        //     goldenLine.style.animation = `moveTriangle ${goldenLineDuration} linear infinite`;
-        //     break;
-        // case "reverseTriangle":
-        //     goldenLine.style.animation = `moveUpsideDownTriangle ${goldenLineDuration} linear infinite`;
-        //     break;
+     
     }
 }
 
@@ -1070,27 +969,6 @@ function animateNextPhase() {
     let currentDuration = parseFloat(durations[index]); // Get current duration as a number
     let goldenLineDuration;
 
-    // switch (shape) {
-    //     case "circle":
-    //         goldenLineDuration = (currentDuration * 2) + "s";
-    //         break;
-    //     case "square":
-    //         goldenLineDuration = (currentDuration * 4) + "s";
-    //         break;
-    //     case "hRectangle":
-    //         goldenLineDuration = (currentDuration * 6) + "s";
-    //         break;
-    //     case "vRectangle":
-    //         goldenLineDuration = (currentDuration * 6) + "s";
-    //         break;
-    //     case "triangle":
-    //         goldenLineDuration = (currentDuration * 3) + "s";
-    //         break;
-    //     case "reverseTriangle":
-    //         goldenLineDuration = (currentDuration * 3) + "s";
-    //         break;
-    // }
-
     goldenLine.style.animationDuration = goldenLineDuration;
     
     textElement.innerText = breathingTexts[shape][index];
@@ -1099,56 +977,7 @@ function animateNextPhase() {
     console.log("Global stored timings:", window.storedTimings);
 
     switch (shape) {
-    //     case "circle":
-    // div.style.width = "200px";
-    // div.style.height = "200px";
-    // div.style.borderRadius = "50%";
-    // console.log("Applying dynamic circle animation...");
-
-    // // Ensure storedTimings exists and has 2 values
-    // if (!window.storedTimings || window.storedTimings.length < 2) {
-    //     console.warn("Not enough values in storedTimings. Using default values.");
-    //     window.storedTimings = [4, 6]; // Default fallback values
-    // }
-
-    // // Convert values to numbers (since they might be stored as strings)
-    // const circleDurations = window.storedTimings.slice(0, 2).map(Number);
-    // const [half1Duration, half2Duration] = circleDurations;
-    // const totalCircleDuration = half1Duration + half2Duration;
-
-    // console.log("Dynamic Timings for Circle:", circleDurations);
-
-    // // Create dynamic keyframes for circular motion
-    // const circleAnimationCSS = `
-    //     @keyframes moveCircle {
-    //         0% { transform: rotate(-90deg) translateX(100px) rotate(90deg); }
-    //         ${(half1Duration / totalCircleDuration) * 100}% { transform: rotate(90deg) translateX(100px) rotate(-90deg); }
-    //         100% { transform: rotate(270deg) translateX(100px) rotate(-270deg); }
-    //     }
-    // `;
-
-    // // Remove previous animation style if exists
-    // let existingCircleStyle = document.getElementById("dynamicCircleAnimation");
-    // if (existingCircleStyle) existingCircleStyle.remove();
-
-    // // Inject new animation style
-    // let circleStyleSheet = document.createElement("style");
-    // circleStyleSheet.id = "dynamicCircleAnimation";
-    // circleStyleSheet.innerHTML = circleAnimationCSS;
-    // document.head.appendChild(circleStyleSheet);
-
-    // // Ensure the element exists
-    // if (goldenLine) {
-    //     goldenLine.style.position = "absolute"; // Ensure absolute positioning
-
-    //     // Apply the animation with dynamic infinite looping
-    //     goldenLine.style.animation = `moveCircle ${totalCircleDuration}s linear infinite`;
-
-    //     console.log("Circle animation applied with dynamic values:", circleDurations);
-    // } else {
-    //     console.error("goldenLine is not defined or not found in the DOM.");
-    // }
-    // break;
+   
     case "circle":
     div.style.width = "200px";
     div.style.height = "200px";
@@ -2782,14 +2611,7 @@ section {
             document.getElementById("playSong").click(); // This will press the play button
         });
 
-        // Add event listener for Don't Save button (assuming you have one for don't save)
-        // const dontSaveButton = document.getElementById("dontSaveExerciseButton");
-        // if (dontSaveButton) {
-        //     dontSaveButton.addEventListener("click", function () {
-        //         // Automatically simulate clicking the play button when Don't Save is pressed
-        //         document.getElementById("playSong").click(); // This will press the play button
-        //     });
-        // }
+       
     });
 </script>
 
@@ -2813,6 +2635,56 @@ section {
     }
 </style>
 <!-- To save the Data in django backend --------------------------------------------------- -->
+<style>
+    .shape {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    background-color: #000;
+    overflow: visible;
+}
+
+/* Seamless glow effect around the shape */
+.shape::before {
+    content: '';
+    position: absolute;
+    inset: -1px; /* Reduced to minimize gap */
+    border-radius: inherit;
+    background: transparent;
+    z-index: -1;
+    animation: colorShift 12s ease-in-out infinite;
+}
+
+@keyframes colorShift {
+    0%, 100% {
+        box-shadow: 0 0 25px 12px rgba(41, 121, 255, 0.4); /* Professional blue */
+    }
+    25% {
+        box-shadow: 0 0 25px 12px rgba(94, 53, 177, 0.4); /* Deep purple */
+    }
+    50% {
+        box-shadow: 0 0 25px 12px rgba(0, 150, 136, 0.4); /* Teal */
+    }
+    75% {
+        box-shadow: 0 0 25px 12px rgba(63, 81, 181, 0.4); /* Indigo */
+    }
+}
+
+/* Shape-specific adjustments */
+.circle::before {
+    border-radius: 50%;
+}
+
+.square::before {
+    border-radius: 0;
+}
+
+.triangle::before {
+    border-radius: 0;
+}
+</style>
 
 </body>
 
