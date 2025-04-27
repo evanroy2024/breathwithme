@@ -571,17 +571,13 @@ option {
     <div class="cover-line"></div>
 
     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 10vh; text-align: center;">
-        <!-- <a href="/" style="text-decoration: none; color: white; display: flex; align-items: center; gap: 10px;"> -->
-        <b style="cursor: pointer;">
-            <i class="bi bi-arrow-left" style="font-size: 24px; margin-left: 20px;" onclick="window.location.href='{% url 'breathxapp:exercise_list' %}'"></i> 
-            <span style="font-size: 20px; font-weight: bold; white-space: nowrap; ">Breathing Exercise</span>
+        <b style="cursor: pointer; margin-bottom: 10px;">
+            <i style="margin-left: -100px;" class="bi bi-arrow-left" style="font-size: 24px; margin-left: 0px;" onclick="window.location.href='{% url 'breathxapp:exercise_list' %}'"></i> 
+            <span style="font-size: 20px; font-weight: bold; white-space: nowrap; margin-left: 120px; ">Breathing Exercise</span>
             <!-- Include Font Awesome for icons -->
-
-<!-- Your Save button with an icon -->
-
-
         </b>
-        <hr style="width: 30vw; border: 1px solid white; margin: 2px auto 0; ">
+        <hr style="width: 30vw; height: 6px; background: linear-gradient(135deg, #6e8efb, #a777e3); border: none; margin: 2px auto 0; border-radius: 8px; box-shadow: 0 0 20px #c9d4ff, 0 0 40px #d5c9ff, 0 0 60px #c9d4ff;">
+ 
     </div>
     <!-- Start POP UP  -->
 <!-- Button to trigger popup -->
@@ -627,24 +623,7 @@ option {
 
     <!-- End POP UP  -->
     <div class="fullcontainer" style="margin-top: 20px;">
-        <div class="part1">
-            <select id="shapeSelector">
-                <option value="circle">Shape</option>
-                <option value="circle">Circle</option>
-                <option value="oval">Oval</option>
-                <option value="square">Square</option>
-                <!-- <option value="hRectangle">Horizontal Rectangle</option> -->
-                <option value="vRectangle">Rectangle</option>
-                <option value="triangle">Triangle</option>
-                <option value="reverseTriangle">Reverse Triangle</option>
-                <option value="diamondShape">Quadrilateral</option> <!-- Added New Shape -->
-            </select>
-        </div> 
-        <!-- <button id="guideButton">Guide</button> -->
-
-        <button id="toggleButton">Breath</button>
-        <button id="openPopup"><i class="fas fa-save"></i></button>
-        <button id="guideButton"><i class="fas fa-question-circle"></i></button>
+        
 
  <select id="timeSelector" style="display: none;">
     <option value="300" selected>5 Minutes (Default)</option>
@@ -675,46 +654,43 @@ option {
         
     </div>
 
-    <script>
-        document.getElementById("toggleButton").addEventListener("click", function() {
-            const timingContainer = document.getElementById("timingContainer");
-            timingContainer.style.display = "block";
-    
-            // Show close button
-            document.getElementById("closeButton").style.display = "inline-block";
-        });
-    
-        document.getElementById("closeButton").addEventListener("click", function() {
-            const timingContainer = document.getElementById("timingContainer");
-            timingContainer.style.display = "none";
-    
-            // Hide close button
-            this.style.display = "none";
-        });
-    </script> 
 <div class="shape-container" id="shapeContainer"></div>
 
   <audio id="audioPlayer"></audio>
+<!-- Start ---------------------------------------------------------------------- -->
 
-  <!-- Progress Bar -->
-  <div id="progressContainer">
-    <div id="progressBar"></div>
-    <div id="progressHandle"></div>
+<div class="breathing-controls">
+    <!-- Progress Bar -->
+    <div id="progressContainer">
+      <div id="progressBar"></div>
+      <div id="progressHandle"></div>
+    </div>
+    
+    <div class="controls-wrapper">
+      
+      <div class="buttons-container">
+        <button id="playSong" class="control-btn">▶️</button>
+
+        <select id="shapeSelector" class="control-btn">
+          <option value="circle">Shape</option>
+          <option value="circle">Circle</option>
+          <option value="oval">Oval</option>
+          <option value="square">Square</option>
+          <option value="vRectangle">Rectangle</option>
+          <option value="triangle">Triangle</option>
+          <option value="reverseTriangle">Reverse Triangle</option>
+          <option value="diamondShape">Quadrilateral</option>
+        </select>
+        
+        <button id="toggleButton" class="control-btn">Breath</button>
+        <button id="openPopup" class="control-btn"><i class="fas fa-save"></i></button>
+        <button id="guideButton" class="control-btn"><i class="fas fa-question-circle"></i></button>
+      </div>
+    </div>
   </div>
-  <div id="timeDisplay">0:00</div> <!-- This will show the countdown -->
-
   
-  <!-- <button id="playSong">Play</button>
-  <button id="stopButton">Stop</button> -->
-<div class="playallbtns">
-  <button id="prevSong" style="display: none;">⏮</button>
-  <button id="decreaseTime">-</button>
 
-  <button id="playSong">▶️ </button>
-  <button id="nextSong" style="display: none;">⏭</button>
-  <button id="increaseTime">+</button>
-
-</div>
+<!-- End---------------------------------------------------------------------- -->
 <!-- <div class="others">
   <button id="reloadBtn">Customise</button>
   <button id="goBackToPart3">Songs</button>
@@ -2685,7 +2661,127 @@ section {
     border-radius: 0;
 }
 </style>
+<style>
+    .breathing-controls {
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 15px;
+      background: #111;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    }
+    
+    #progressContainer {
+      height: 6px;
+      background-color: #333;
+      border-radius: 3px;
+      position: relative;
+      margin-bottom: 15px;
+      width: 100%;
+      max-width: 420px;
+    }
+    
+    #progressBar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3a86ff, #8338ec);
+      border-radius: 3px;
+      transition: width 0.1s linear;
+    }
+    
+    #progressHandle {
+      width: 12px;
+      height: 12px;
+      background-color: #fff;
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      left: 0%;
+      box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    }
+    
+    .controls-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    #timeDisplay {
+      font-size: 16px;
+      font-weight: 600;
+      color: #ccc;
+      padding: 0 10px;
+      min-width: 45px;
+    }
+    
+    .buttons-container {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    
+    
+    
+    .control-btn:hover {
+      background-color: #333;
+      transform: translateY(-2px);
+    }
 
+    
+    #shapeSelector {
+      appearance: none;
+      padding-right: 24px;
+      background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px top 50%;
+      background-size: 10px auto;
+    }
+
+    #playSong {
+  padding: 12px 16px;
+  font-size: 16px;
+  font-weight: 500;
+  border: 2px solid #FFD700;
+  border-radius: 8px;
+  background: #000;
+  color: #fff;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.3s ease-in-out;
+  width: 50px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(255, 215, 0, 0.2);
+  display: block;
+  margin: 0 auto;
+  padding: 12px 1px;
+}
+
+#playSong:hover {
+  background: rgba(255, 215, 0, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 10px rgba(255, 215, 0, 0.3);
+}
+  </style>
+  
+  <script>
+    document.getElementById("toggleButton").addEventListener("click", function() {
+        const timingContainer = document.getElementById("timingContainer");
+        timingContainer.style.display = "block";
+
+        // Show close button
+        document.getElementById("closeButton").style.display = "inline-block";
+    });
+
+    document.getElementById("closeButton").addEventListener("click", function() {
+        const timingContainer = document.getElementById("timingContainer");
+        timingContainer.style.display = "none";
+
+        // Hide close button
+        this.style.display = "none";
+    });
+</script> 
 </body>
 
 </html>

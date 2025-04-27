@@ -99,21 +99,23 @@ def create_playlist(request):
             return redirect('musicapp:view_playlist', playlist_id=playlist.id)  # Redirect to view the playlist
     return render(request, 'musicapp/playlist/create_playlist.html')
 
-# View to add tracks to the playlist
+from testapp.models import TestExercise
 @login_required
 def add_tracks_to_playlist(request, playlist_id):
     playlist = get_object_or_404(Playlist, id=playlist_id, user=request.user)
-    tracks = MusicTrack.objects.all()  # Get all available tracks
+    tracks = TestExercise.objects.all()  # Changed from MusicTrack to TestExercise
 
     if request.method == 'POST':
-        selected_tracks = request.POST.getlist('tracks')  # Get list of selected tracks
+        selected_tracks = request.POST.getlist('tracks')
         for track_id in selected_tracks:
-            track = get_object_or_404(MusicTrack, id=track_id)
+            track = get_object_or_404(TestExercise, id=track_id)
             playlist.tracks.add(track)
         return redirect('musicapp:view_playlist', playlist_id=playlist.id)
 
-    return render(request, 'musicapp/playlist/add_tracks_to_playlist.html', {'playlist': playlist, 'tracks': tracks})
-
+    return render(request, 'musicapp/playlist/add_tracks_to_playlist.html', {
+        'playlist': playlist,
+        'tracks': tracks
+    })
 # View to see the playlist and its tracks
 @login_required
 def view_playlist(request, playlist_id):

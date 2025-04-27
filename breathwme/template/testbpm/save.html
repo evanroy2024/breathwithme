@@ -1,109 +1,790 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Manual Beat Marker</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      text-align: center;
-      padding: 30px;
-    }
-    canvas {
-      width: 100%;
-      height: 100px;
-      background: #f2f2f2;
-      margin: 20px 0;
-    }
-    #beats {
-      margin-top: 20px;
-      font-size: 18px;
-    }
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      margin-top: 15px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breathing Beats</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <h1>Mark Beats for "{{ song.title }}"</h1>
+<div class="song-library-container">
+    <!-- Background elements -->
+    <div class="animated-bg-circles">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
+        <div class="circle circle-3"></div>
+    </div>
+    
+    <div class="sound-wave-container">
+        <div class="sound-wave"></div>
+    </div>
+    
+    <!-- Content -->
+    <header class="page-header">
+        <h1 class="glow-text">
+            Choose Your Breathing Beats
+            <div class="underline-animated"></div>
+        </h1>
+        <p class="header-subtitle">Select a song to begin your breathing exercise journey</p>
+    </header>
 
-  <audio id="audio" controls>
-    <source src="{{ song.song.url }}" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
+    <div class="song-list-wrapper">
+        <div class="search-filter-bar">
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" placeholder="Search songs..." class="search-input">
+            </div>
+            <div class="filter-button">
+                <i class="fas fa-filter"></i>
+                <span>Filter</span>
+            </div>
+        </div>
+        
+        <div class="song-list-container">
+            <ul class="song-list">
+                {% for song in songs %}
+                <li class="song-item">
+                    <a href="{% url 'testapp:exercise_page' song.pk %}" class="song-link">
+                        <div class="song-card">
+                            <div class="song-icon pulse-animation">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <div class="song-title">{{ song.title }}</div>
+                                <div class="song-meta">
+                                    <span class="song-duration">
+                                        <i class="far fa-clock"></i> 5 min
+                                    </span>
+                                    <span class="song-category">
+                                        <i class="fas fa-tag"></i> Relaxation
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="song-arrow">
+                                <i class="fas fa-play"></i>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                {% empty %}
+                <li class="no-songs">
+                    <div class="empty-state">
+                        <i class="fas fa-wind empty-icon"></i>
+                        <p>No breathing melodies available yet</p>
+                        <p class="empty-subtitle">Check back soon for new breathing exercises</p>
+                    </div>
+                </li>
+                {% endfor %}
+                
+                <!-- Demo songs for preview -->
+                <li class="song-item">
+                    <a href="#" class="song-link">
+                        <div class="song-card">
+                            <div class="song-icon pulse-animation">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <div class="song-title">Ocean Waves Meditation</div>
+                                <div class="song-meta">
+                                    <span class="song-duration">
+                                        <i class="far fa-clock"></i> 5 min
+                                    </span>
+                                    <span class="song-category">
+                                        <i class="fas fa-tag"></i> Sleep
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="song-arrow">
+                                <i class="fas fa-play"></i>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li class="song-item">
+                    <a href="#" class="song-link">
+                        <div class="song-card">
+                            <div class="song-icon pulse-animation">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <div class="song-title">Forest Whispers</div>
+                                <div class="song-meta">
+                                    <span class="song-duration">
+                                        <i class="far fa-clock"></i> 7 min
+                                    </span>
+                                    <span class="song-category">
+                                        <i class="fas fa-tag"></i> Focus
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="song-arrow">
+                                <i class="fas fa-play"></i>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li class="song-item">
+                    <a href="#" class="song-link">
+                        <div class="song-card">
+                            <div class="song-icon pulse-animation">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <div class="song-title">Mountain Stream Clarity</div>
+                                <div class="song-meta">
+                                    <span class="song-duration">
+                                        <i class="far fa-clock"></i> 10 min
+                                    </span>
+                                    <span class="song-category">
+                                        <i class="fas fa-tag"></i> Meditation
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="song-arrow">
+                                <i class="fas fa-play"></i>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li class="song-item">
+                    <a href="#" class="song-link">
+                        <div class="song-card">
+                            <div class="song-icon pulse-animation">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="song-info">
+                                <div class="song-title">Starlight Resonance</div>
+                                <div class="song-meta">
+                                    <span class="song-duration">
+                                        <i class="far fa-clock"></i> 8 min
+                                    </span>
+                                    <span class="song-category">
+                                        <i class="fas fa-tag"></i> Deep Breathing
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="song-arrow">
+                                <i class="fas fa-play"></i>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="load-more-container">
+                <button class="load-more-btn">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>Load More</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="footer-info">
+        <div class="breathing-tip">
+            <i class="fas fa-lungs"></i>
+            <span>Pro Tip: Find a quiet space to fully immerse in your breathing exercise</span>
+        </div>
+    </footer>
+</div>
 
-  <canvas id="waveform"></canvas>
-
-  <p><strong>Press <kbd>SPACEBAR</kbd> to mark beats.</strong></p>
-  
-  <div id="beats">Marked Beats: <span id="beat-list">[]</span></div>
-  
-  <button onclick="saveBeats()">💾 Save Beats</button>
-
-  <script>
-    const audio = document.getElementById("audio");
-    const beatList = document.getElementById("beat-list");
-    const canvas = document.getElementById("waveform");
-    const ctx = canvas.getContext("2d");
-
-    let beats = [];
-
-    // SPACEBAR to mark
-    window.addEventListener("keydown", (e) => {
-      if (e.code === "Space" && !e.repeat && !audio.paused) {
-        e.preventDefault();
-        const currentTime = parseFloat(audio.currentTime.toFixed(2));
-        beats.push(currentTime);
-        beatList.innerText = JSON.stringify(beats);
-        drawBeats();
-      }
-    });
-
-    function saveBeats() {
-      fetch("{% url 'testapp:save_beat_times' song.id %}", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": "{{ csrf_token }}"
-        },
-        body: JSON.stringify({ beat_times: beats })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.status === "success") {
-          alert("✅ Beats saved successfully!");
-        } else {
-          alert("❌ Failed to save beats.");
+<style>
+    /* Base styles and resets */
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+    
+    body {
+        margin: 0;
+        font-family: 'Nunito', 'Segoe UI', system-ui, -apple-system, sans-serif;
+        line-height: 1.5;
+        overflow-x: hidden;
+    }
+    
+    /* Main container styles */
+    .song-library-container {
+        min-height: 100vh;
+        background-color: #121212;
+        background-image: radial-gradient(circle at 10% 20%, rgba(91, 55, 185, 0.05) 0%, rgba(15, 15, 15, 0.1) 90%);
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+        padding: 2rem 1rem;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    /* Background elements */
+    .animated-bg-circles {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 0;
+        pointer-events: none;
+    }
+    
+    .circle {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(60px);
+    }
+    
+    .circle-1 {
+        width: 350px;
+        height: 350px;
+        background: rgba(111, 66, 193, 0.15);
+        top: -100px;
+        right: -100px;
+        animation: float 20s ease-in-out infinite;
+    }
+    
+    .circle-2 {
+        width: 450px;
+        height: 450px;
+        background: rgba(64, 162, 227, 0.1);
+        bottom: -150px;
+        left: -150px;
+        animation: float 25s ease-in-out infinite reverse;
+    }
+    
+    .circle-3 {
+        width: 250px;
+        height: 250px;
+        background: rgba(127, 205, 251, 0.08);
+        top: 40%;
+        left: 60%;
+        animation: pulse 18s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+        0% { transform: translate(0, 0) rotate(0deg); }
+        33% { transform: translate(40px, 20px) rotate(2deg); }
+        66% { transform: translate(-20px, 40px) rotate(-2deg); }
+        100% { transform: translate(0, 0) rotate(0deg); }
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); opacity: 0.5; }
+        50% { transform: scale(1.4); opacity: 0.2; }
+        100% { transform: scale(1); opacity: 0.5; }
+    }
+    
+    /* Sound wave animation */
+    .sound-wave-container {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 80px;
+        z-index: 0;
+        opacity: 0.25;
+        overflow: hidden;
+        pointer-events: none;
+    }
+    
+    .sound-wave {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 200%;
+        height: 100%;
+        background: linear-gradient(to bottom, transparent 0%, rgba(111, 66, 193, 0.3) 50%, rgba(76, 201, 240, 0.3) 100%);
+        clip-path: polygon(
+            0% 100%,
+            2% 95%, 4% 90%, 6% 85%, 8% 80%, 10% 75%, 
+            12% 70%, 14% 65%, 16% 70%, 18% 75%, 20% 80%,
+            22% 85%, 24% 90%, 26% 85%, 28% 80%, 30% 75%,
+            32% 70%, 34% 65%, 36% 70%, 38% 75%, 40% 80%,
+            42% 85%, 44% 90%, 46% 85%, 48% 80%, 50% 75%,
+            52% 70%, 54% 75%, 56% 80%, 58% 85%, 60% 90%,
+            62% 85%, 64% 80%, 66% 75%, 68% 70%, 70% 75%,
+            72% 80%, 74% 85%, 76% 90%, 78% 85%, 80% 80%,
+            82% 75%, 84% 70%, 86% 75%, 88% 80%, 90% 85%,
+            92% 90%, 94% 85%, 96% 80%, 98% 75%, 100% 70%
+        );
+        animation: wave 20s linear infinite;
+    }
+    
+    @keyframes wave {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+    }
+    
+    /* Header styles */
+    .page-header {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .glow-text {
+        color: #fff;
+        font-size: 2rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        text-shadow: 0 0 15px rgba(111, 66, 193, 0.6),
+                    0 0 30px rgba(111, 66, 193, 0.3);
+        margin: 0;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        position: relative;
+    }
+    
+    .header-subtitle {
+        color: rgba(255, 255, 255, 0.7);
+        margin-top: 0.75rem;
+        font-size: 1rem;
+        font-weight: 300;
+    }
+    
+    .underline-animated {
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        height: 3px;
+        width: 100%;
+        background: linear-gradient(90deg, transparent, #7e57c2, #4cc9f0, transparent);
+        background-size: 200% 100%;
+        animation: moveGradient 4s linear infinite;
+    }
+    
+    @keyframes moveGradient {
+        0% { background-position: 0% 0; }
+        100% { background-position: 200% 0; }
+    }
+    
+    /* Search and filter bar */
+    .search-filter-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        background: rgba(18, 18, 18, 0.8);
+        backdrop-filter: blur(10px);
+        padding: 0.75rem 0;
+        border-radius: 12px;
+    }
+    
+    .search-container {
+        position: relative;
+        flex-grow: 1;
+        margin-right: 1rem;
+    }
+    
+    .search-input {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #fff;
+        border-radius: 25px;
+        padding: 0.6rem 1rem 0.6rem 2.6rem;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        outline: none;
+    }
+    
+    .search-input:focus {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(111, 66, 193, 0.5);
+        box-shadow: 0 0 0 2px rgba(111, 66, 193, 0.2);
+    }
+    
+    .search-input::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(255, 255, 255, 0.5);
+        pointer-events: none;
+    }
+    
+    .filter-button {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(111, 66, 193, 0.2);
+        color: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(111, 66, 193, 0.3);
+        border-radius: 25px;
+        padding: 0.6rem 1.2rem;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.25s ease;
+    }
+    
+    .filter-button:hover {
+        background: rgba(111, 66, 193, 0.3);
+    }
+    
+    /* Song list container */
+    .song-list-wrapper {
+        position: relative;
+        z-index: 1;
+        max-width: 800px;
+        margin: 0 auto;
+        width: 100%;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .song-list-container {
+        overflow-y: auto;
+        flex-grow: 1;
+        position: relative;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(111, 66, 193, 0.5) rgba(30, 30, 30, 0.5);
+        padding-right: 0.5rem;
+    }
+    
+    .song-list-container::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .song-list-container::-webkit-scrollbar-track {
+        background: rgba(30, 30, 30, 0.5);
+        border-radius: 10px;
+    }
+    
+    .song-list-container::-webkit-scrollbar-thumb {
+        background: rgba(111, 66, 193, 0.5);
+        border-radius: 10px;
+    }
+    
+    .song-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .song-item {
+        transition: all 0.3s ease;
+    }
+    
+    .song-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+    
+    .song-card {
+        background: rgba(30, 30, 30, 0.6);
+        backdrop-filter: blur(10px);
+        padding: 1rem;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .song-card::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(111, 66, 193, 0.1), rgba(76, 201, 240, 0.05));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 0;
+    }
+    
+    .song-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        border-color: rgba(111, 66, 193, 0.3);
+    }
+    
+    .song-card:hover::after {
+        opacity: 1;
+    }
+    
+    .song-icon {
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
+        background: linear-gradient(135deg, #7e57c2, #4cc9f0);
+        color: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        position: relative;
+        z-index: 1;
+        box-shadow: 0 4px 12px rgba(111, 66, 193, 0.3);
+    }
+    
+    .pulse-animation {
+        position: relative;
+    }
+    
+    .pulse-animation::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: rgba(111, 66, 193, 0.5);
+        z-index: -1;
+        animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+    }
+    
+    @keyframes pulse-ring {
+        0% { transform: scale(0.85); opacity: 0.6; }
+        50% { transform: scale(1.2); opacity: 0; }
+        100% { transform: scale(0.85); opacity: 0; }
+    }
+    
+    .song-info {
+        flex-grow: 1;
+        position: relative;
+        z-index: 1;
+        overflow: hidden;
+    }
+    
+    .song-title {
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #fff;
+        margin-bottom: 0.25rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .song-meta {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.6);
+    }
+    
+    .song-duration, .song-category {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+    
+    .song-arrow {
+        color: #fff;
+        background: linear-gradient(135deg, #7e57c2, #4cc9f0);
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        transition: all 0.3s ease;
+        position: relative;
+        z-index: 1;
+        box-shadow: 0 4px 12px rgba(111, 66, 193, 0.3);
+    }
+    
+    .song-card:hover .song-arrow {
+        transform: scale(1.15);
+    }
+    
+    /* Load more button */
+    .load-more-container {
+        display: flex;
+        justify-content: center;
+        margin: 1.5rem 0;
+    }
+    
+    .load-more-btn {
+        background: rgba(111, 66, 193, 0.2);
+        color: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(111, 66, 193, 0.3);
+        border-radius: 25px;
+        padding: 0.6rem 1.5rem;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .load-more-btn:hover {
+        background: rgba(111, 66, 193, 0.3);
+        transform: translateY(-2px);
+    }
+    
+    .load-more-btn i {
+        font-size: 0.9rem;
+    }
+    
+    /* Empty state styling */
+    .no-songs {
+        width: 100%;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: rgba(30, 30, 30, 0.6);
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+    
+    .empty-icon {
+        font-size: 3rem;
+        color: #7e57c2;
+        margin-bottom: 1.5rem;
+        opacity: 0.7;
+    }
+    
+    .empty-subtitle {
+        color: rgba(255, 255, 255, 0.5);
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Footer info */
+    .footer-info {
+        margin-top: 1.5rem;
+        text-align: center;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .breathing-tip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(30, 30, 30, 0.6);
+        backdrop-filter: blur(5px);
+        padding: 0.75rem 1.25rem;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .breathing-tip i {
+        color: #4cc9f0;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .song-library-container {
+            padding: 1.5rem 0.875rem;
         }
-      });
+        
+        .page-header {
+            margin-bottom: 1.25rem;
+        }
+        
+        .glow-text {
+            font-size: 1.7rem;
+        }
+        
+        .header-subtitle {
+            font-size: 0.95rem;
+            padding: 0 1rem;
+        }
+        
+        .search-filter-bar {
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 0.75rem 0.5rem;
+        }
+        
+        .search-container {
+            width: 100%;
+            margin-right: 0;
+        }
+        
+        .filter-button {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .song-meta {
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        
+        .breathing-tip {
+            padding: 0.75rem 1rem;
+            font-size: 0.85rem;
+            flex-direction: column;
+            text-align: center;
+        }
     }
-
-    // Optional: Draw fake waveform and mark beats
-    function drawBeats() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const width = canvas.width;
-      const height = canvas.height;
-      const beatColor = "#FF4B2B";
-
-      beats.forEach(time => {
-        const x = (time / audio.duration) * width;
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, height);
-        ctx.strokeStyle = beatColor;
-        ctx.lineWidth = 2;
-        ctx.stroke();
-      });
+    
+    @media (max-width: 480px) {
+        .song-library-container {
+            padding: 1.25rem 0.75rem;
+        }
+        
+        .glow-text {
+            font-size: 1.4rem;
+        }
+        
+        .header-subtitle {
+            font-size: 0.85rem;
+        }
+        
+        .song-card {
+            padding: 0.875rem;
+        }
+        
+        .song-icon {
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            font-size: 1rem;
+        }
+        
+        .song-title {
+            font-size: 0.95rem;
+        }
+        
+        .song-meta {
+            font-size: 0.75rem;
+        }
+        
+        .song-arrow {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+        }
+        
+        .empty-state {
+            padding: 2.5rem 1rem;
+        }
+        
+        .empty-icon {
+            font-size: 2.5rem;
+        }
     }
-
-    // Resize canvas properly
-    function resizeCanvas() {
-      canvas.width = window.innerWidth - 60;
-      drawBeats();
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-  </script>
+</style>
 </body>
 </html>

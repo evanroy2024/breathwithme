@@ -588,59 +588,6 @@ option {
 </div>
 
 
-<!-- 
-<div class="part3">
-    
-    <div class="container mt-4">
-        <div class="header">
-            <i class="bi bi-music-note-beamed"></i> Liked Songs
-        </div>
-
-        <div class="filters d-flex gap-2 mb-3">
-            <select id="playlistFilter">
-                <option value="all" {% if selected_playlist == "all" or not selected_playlist %}selected{% endif %}>All Playlists</option>
-                {% for playlist in playlists %}
-                <option value="{{ playlist.id }}" {% if selected_playlist == playlist.id|stringformat:"s" %}selected{% endif %}>{{ playlist.name }}</option>
-                {% endfor %}
-            </select>
-
-            <select id="categoryFilter">
-                <option value="all">All Categories</option>
-                {% for category in categories %}
-                <option value="{{ category.id }}">{{ category.name }}</option>
-                {% endfor %}
-            </select>
-
-            <select id="timeFilter">
-                <option value="all">All Time</option>
-                <option value="latest">Latest</option>
-                <option value="oldest">Oldest</option>
-            </select>
-        </div>
-
-        <div id="trackList">
-            {% for track in tracks %}
-            <div class="track-item d-flex align-items-center bg-transparent border-0"
-                data-url="{{ track.file.url }}"
-                data-title="{{ track.title }}"
-                data-artist="{{ track.artist }}"
-                data-category="{{ track.category.id }}"
-                data-timestamps="{{ track.timestamps|default:'' }}"
-                data-vibrationset="{{ track.vibrationset }}">
-
-                <img src="{% if track.image %}{{ track.image.url }}{% else %}{% static 'music/songimg.png' %}{% endif %}" alt="{{ track.title }}">
-                <div class="track-info">
-                    <div class="track-title">{{ track.title }}</div>
-                    <div class="track-artist">{{ track.artist }}</div>
-                </div>
-                <i class="bi bi-play-circle-fill play-btn"></i>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-</div> -->
-
-
     
 </div>
 
@@ -772,13 +719,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const shapeContainer = document.getElementById("shapeContainer");
     const shapeSelector = document.getElementById("shapeSelector");
     const timingControls = document.getElementById("timingControls");
-    // const playSong = document.getElementById("playSong");
-    // const stopButton = document.getElementById("stopButton");
-    // const progressContainer = document.getElementById("progressContainer");
-    // const progressBar = document.getElementById("progressBar");
-    // const progressHandle = document.getElementById("progressHandle");
-    // const audioPlayer = document.getElementById("audioPlayer");
-  
     let textIndex = 0;
     let interval;
     let isAnimating = false;
@@ -786,10 +726,11 @@ document.addEventListener("DOMContentLoaded", function () {
     let durations = [];
   
     const breathingTexts = {
-        circle: ["Inhale","Inhale","Exhale", "Exhale"],
+        circle: ["Inhale","Exhale"],
         square: ["Inhale", "Hold", "Exhale", "Hold"],
-        hRectangle: ["Inhale", "Hold", "Hold", "Exhale", "Hold", "Hold"],
-        vRectangle: ["Inhale", "Inhale", "Hold", "Exhale", "Exhale", "Hold"],
+        oval:["Inhale","Exhale",],
+        diamondShape: ["Inhale", "Hold", "Exhale", "Hold"],// Added for Diamond Shape
+        hRectangle: ["Inhale", "Hold", "Exhale","Hold"],
         triangle: ["Inhale", "Exhale", "Hold"],
         reverseTriangle: ["Inhale", "Hold", "Exhale"]
     };
@@ -1110,115 +1051,6 @@ playSong.addEventListener("click", () => {
     createTimingInputs(shapeSelector.value);
 
 
-// ------------------------------------------------------------------------------------------------------------------
-document.addEventListener("DOMContentLoaded", function () {
-    const trackList = document.getElementById("trackList");
-    const playSong = document.getElementById("playSong");
-    const audioPlayer = document.getElementById("audioPlayer");
-
-    let selectedTrack = null;
-    let timestamps = [];
-    let isPlaying = false;
-
-    // Song selection logic
-    trackList.addEventListener("click", (event) => {
-        const trackItem = event.target.closest(".track-item");
-        if (!trackItem) return;
-
-        selectedTrack = trackItem.dataset.url;
-        setTimestamps(trackItem);
-
-        // Highlight selected song
-        document.querySelectorAll(".track-item").forEach(item => item.style.fontWeight = "normal");
-        trackItem.style.fontWeight = "bold";
-    });
-
-    // Play/Pause button logic
-    const stopButton = document.getElementById("stopButton");
-    const confirmBox = document.getElementById("confirmBox");
-
-
-    playSong.addEventListener("click", () => {
-        if (!selectedTrack) {
-            alert("Please select a song first!");
-            return;
-        }
-        
-        if (!isPlaying) {
-            audioPlayer.src = selectedTrack;
-            audioPlayer.play();
-            playSong.textContent = "⏸";
-            isPlaying = true;
-            startAnimation(); // ✅ Start animation when 
-            confirmBox.style.display = "none"; // Hide confirmation box when playing
-        } else {
-            
-            audioPlayer.pause();
-            confirmBox.style.display = "flex"; // Show confirmation box when paused
-            playSong.textContent = "▶️";
-            isPlaying = false;
-        }
-        
-    });
-// Hide the confirmation box and stop the animation when the stop button is clicked
-stopButton.addEventListener("click", () => {
-    confirmBox.style.display = "none";
-    stopAnimation(); // Call your function to stop animation
-});
-    function setTimestamps(trackItem) {
-        let rawTimestamps = trackItem.dataset.timestamps;
-        timestamps = rawTimestamps ? rawTimestamps.split(",").map(Number) : [];
-
-        console.log("Loaded timestamps:", timestamps);
-        // Select the element (assuming trackItem is the target element)
-
-// Store the value globally
-        window.vibrationSet = trackItem ? trackItem.dataset.vibrationset : "Not found";
-
-// Now you can print it anywhere in the script
-        console.log("Vibration Set:", window.vibrationSet);
-
-
-
-    }
-
-    // ===== VIBRATION CODE STARTS HERE =====
-
-    audioPlayer.addEventListener("timeupdate", function () {
-    let currentTime = Math.floor(audioPlayer.currentTime);
-
-    if (window.timestamps && window.timestamps.includes(currentTime)) {
-        navigator.vibrate(1000);
-        console.log('vibrating')
-        window.timestamps = window.timestamps.filter(t => t !== currentTime);
-    }
-});
-
-    // Ensure window.calculatedTiming exists and is a valid number
-// audioPlayer.addEventListener("timeupdate", function () {
-//     let currentTime = Math.floor(audioPlayer.currentTime);
-
-//     if (window.vibrationSet === "Default") {
-//         if (window.calculatedTiming && !isNaN(window.calculatedTiming)) {
-//             if (currentTime % window.calculatedTiming === 0 && currentTime !== 0) {
-//                 navigator.vibrate(1000);
-//             }
-//         } else {
-//             console.warn("window.calculatedTiming is not defined or invalid");
-//         }
-//     }
-// });
-
-    // ===== VIBRATION CODE ENDS HERE =====
-
-    // // Handle song ending
-    // audioPlayer.addEventListener("ended", function () {
-    //     isPlaying = false;
-    //     playSong.textContent = "▶️";
-    //     stopAnimation(); // ✅ Stop animation when song ends
-    //     console.log("Song ended");
-    // });
-});
 
 // ------------------------------------------------------------------------------------------------------------------
   
@@ -1269,38 +1101,6 @@ stopButton.addEventListener("click", () => {
     });
 
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    
-    const prevSong = document.getElementById("prevSong");
-const nextSong = document.getElementById("nextSong");
-const trackSelector = document.getElementById("trackSelector");
-
-const trackItems = document.querySelectorAll(".track-item");
-
-let currentIndex = 0; // Start from the first song
-
-function changeTrack(direction) {
-    let newIndex = currentIndex + direction;
-
-    if (newIndex >= 0 && newIndex < trackItems.length) {
-        currentIndex = newIndex;
-        playSelectedTrack();
-    }
-}
-function playSelectedTrack() {
-    const selectedTrack = trackItems[currentIndex];
-
-    if (selectedTrack) {
-        audioPlayer.src = selectedTrack.dataset.url;
-        audioPlayer.play();
-        playSong.textContent = "⏸";
-        startAnimation();
-    }
-}
-
-// Next & Previous button event listeners
-nextSong.addEventListener("click", () => changeTrack(1));
-prevSong.addEventListener("click", () => changeTrack(-1));
   </script>
   <!-- Vibration code start here  -->
 

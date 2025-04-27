@@ -116,7 +116,7 @@ class ExercisePhase(models.Model):
     def get_locked_inputs(self):
         """Returns which inputs should be locked based on shape selection."""
         shape_locks = {
-            'Circle': [1, 2, 3],
+            'Circle': [ 2, 3],
             'Square': [1, 2, 3],
             'Rectangle': [3, 4],  # Lock input3 and input4 for Rectangle (allow input1 and input2)
             'Quadrilateral': [],

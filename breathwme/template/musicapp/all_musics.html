@@ -268,17 +268,18 @@
     // <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
     const playlists = {
-        {% for playlist in playlists %}
-            "{{ playlist.id }}": [
-                {% for track in playlist.tracks.all %}
-                {
-                    title: "{{ track.title|escapejs }}",
-                    url: "{{ track.file.url }}"
-                },
-                {% endfor %}
-            ],
-        {% endfor %}
-    };
+    {% for playlist in playlists %}
+        "{{ playlist.id }}": [
+            {% for track in playlist.tracks.all %}
+            {
+                title: "{{ track.title|escapejs }}",
+                url: "{{ track.song.url }}"  // Update this line to use 'song' instead of 'file'
+            },
+            {% endfor %}
+        ],
+    {% endfor %}
+};
+
 
     const playButtons = document.querySelectorAll('.play-playlist-btn');
     const audio = document.getElementById('audio-player');

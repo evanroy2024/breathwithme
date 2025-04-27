@@ -72,10 +72,11 @@ class MusicTrack(models.Model):
     def __str__(self):
         return self.title
 
+from testapp.models import TestExercise  # Import TestExercise from testapp
 class Playlist(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)  # Connect playlist to user
     name = models.CharField(max_length=255)
-    tracks = models.ManyToManyField(MusicTrack, related_name='playlists')  # Many-to-many relationship
+    tracks = models.ManyToManyField(TestExercise, related_name='playlists')  # Many-to-many relationship
 
     def __str__(self):
         return self.name
@@ -83,7 +84,7 @@ class Playlist(models.Model):
 
 class GlobalPlaylist(models.Model):
     name = models.CharField(max_length=255)
-    tracks = models.ManyToManyField(MusicTrack, related_name='global_playlists')
+    tracks = models.ManyToManyField(TestExercise, related_name='global_playlists')
 
     def __str__(self):
         return self.name

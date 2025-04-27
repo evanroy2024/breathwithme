@@ -2,7 +2,7 @@
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
-from testapp.models import TestExercise  # Import TestExercise from testapp
+from testapp.models import TestExercise, Category # Import TestExercise from testapp
 
 @admin.register(TestExercise)
 class TestExerciseAdmin(admin.ModelAdmin):
@@ -29,3 +29,7 @@ class TestExerciseAdmin(admin.ModelAdmin):
             add_pattern_url
         )
         return super().change_view(request, object_id, form_url, extra_context=extra_context)
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name')
+    search_fields = ('name',)

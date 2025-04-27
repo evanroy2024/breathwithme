@@ -30,36 +30,81 @@ from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from .models import SilentExercise
 
+from django.shortcuts import render, get_object_or_404
+from .models import Exercise
+
 def exercise_list(request):
-    """Display the list of all exercises."""
-    exercises = SilentExercise.objects.all()
+    """Display all exercises."""
+    exercises = Exercise.objects.all()
     return render(request, 'breathxapp/exercise_list.html', {'exercises': exercises})
 
-from .models import SilentExercise
+# def play_exercise(request, exercise_id):
+#     """Display a single exercise with all its phases."""
+#     exercise = get_object_or_404(Exercise, id=exercise_id)
+#     phases = exercise.phases.all()  # related_name="phases" in ForeignKey
+
+#     context = {
+#         'exercise': exercise,
+#         'phases': phases
+#     }
+#     return render(request, 'breathxapp/play_exercise.html', context)
+# views.py
 from django.shortcuts import render, get_object_or_404
-from breathxapp.models import SilentExercise
+from django.http import JsonResponse
+from .models import Exercise, ExercisePhase
+
+# def exercise_list(request):
+#     """View to list all exercises"""
+#     exercises = Exercise.objects.all()
+#     return render(request, 'breathxapp/exercises/exercise_list.html', {'exercises': exercises})
 
 def play_exercise(request, exercise_id):
-    """Fetch exercise details and return JSON response."""
-    exercise = get_object_or_404(SilentExercise, id=exercise_id)
+    """View to play/visualize a specific exercise"""
+    exercise = get_object_or_404(Exercise, pk=exercise_id)
+    phases = exercise.phases.all()
+    
+    # Convert phases data to JSON-friendly format for JavaScript
+    phases_data = []
+    for phase in phases:
+        # Get breathing phases based on shape
+        breathing_phases = get_breathing_phases_for_shape(phase.shape)
+        
+        # Collect the input values based on shape
+        inputs = [phase.input1, phase.input2, phase.input3, phase.input4]
+        
+        # Only include valid inputs based on shape
+        locked_inputs = phase.get_locked_inputs()
+        valid_inputs = []
+        for i, value in enumerate(inputs):
+            if i not in locked_inputs and value is not None:
+                valid_inputs.append(value)
+        
+        phases_data.append({
+            'id': phase.id,
+            'shape': phase.shape,
+            'inputs': valid_inputs,
+            'hold_time': phase.hold_time,
+            'cycles': phase.cycles,
+            'breathing_phases': breathing_phases
+        })
+    
+    return render(request, 'breathxapp/exercises/exercise_play.html', {
+        'exercise': exercise,
+        'phases_data': phases_data
+    })
 
-    # Convert vibration cues string to a list
-
-    context = {
-        'exercise': {
-            'id': exercise.id,
-            'name': exercise.name,
-            'total_time': exercise.total_time,
-            'breaths': exercise.breaths,
-            'skill_level': exercise.skill_level,
-            'shape': exercise.shape,
-            'vibration_pattern': exercise.vibration_pattern,
-        }
+def get_breathing_phases_for_shape(shape):
+    """Helper function to get breathing phases for each shape"""
+    phases_map = {
+        'Circle': ["Inhale", "Exhale"],
+        'Square': ["Inhale", "Hold", "Exhale", "Hold"],
+        'Oval': ["Inhale", "Exhale"],
+        'Rectangle': ["Inhale", "Hold", "Exhale", "Hold"],
+        'Triangle': ["Inhale", "Exhale", "Hold"],
+        'ReversedTriangle': ["Inhale", "Hold", "Exhale"],
+        'Quadrilateral': ["Inhale", "Hold", "Exhale", "Hold"]
     }
-
-    return render(request, 'breathxapp/play_exercise.html', context)
-
-
+    return phases_map.get(shape, [])
 
 # MEtting booking start here --------------------------------------------------------------------------------
 from django.shortcuts import render, redirect

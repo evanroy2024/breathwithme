@@ -27,42 +27,78 @@ Breathing Exercise Songs
     </header>
 
     <div class="song-list-wrapper">
-        <ul class="song-list">
-            {% for song in songs %}
-            <li class="song-item">
-                <a href="{% url 'testapp:exercise_page' song.pk %}" class="song-link">
-                    <div class="song-card">
-                        <div class="song-icon pulse-animation">
-                            <i class="fas fa-music"></i>
-                        </div>
-                        <div class="song-info">
-                            <div class="song-title">{{ song.title }}</div>
-                            <div class="song-duration">
-                                <i class="far fa-clock"></i> 5 min
+        <div class="search-filter-bar">
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" placeholder="Search songs..." class="search-input">
+            </div>
+            
+        </div>
+        
+        <div class="song-list-container">
+            <ul class="song-list">
+                {% for song in songs %}
+                    <li class="song-item">
+                        <a href="{% url 'testapp:exercise_page' song.pk %}" class="song-link">
+                            <div class="song-card">
+                                <div class="song-icon pulse-animation">
+                                    <i class="fas fa-music"></i>
+                                </div>
+                                <div class="song-info">
+                                    <div class="song-title">{{ song.title }}</div>
+                                    <div class="song-meta">
+                                        <span class="song-duration">
+                                            <i class="far fa-clock"></i> 5 min
+                                        </span>
+                                        <span class="song-category">
+                                            <i class="fas fa-tag"></i> Relaxation
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="song-arrow">
+                                    <i class="fas fa-play"></i>
+                                </div>
                             </div>
+                        </a>
+                    </li>
+                {% empty %}
+                    <li class="no-songs">
+                        <div class="empty-state">
+                            <i class="fas fa-wind empty-icon"></i>
+                            <p>No breathing melodies available yet</p>
+                            <p class="empty-subtitle">Check back soon for new breathing exercises</p>
                         </div>
-                        <div class="song-arrow">
-                            <i class="fas fa-play"></i>
-                        </div>
-                    </div>
-                </a>
-            </li>
-            {% empty %}
-            <li class="no-songs">
-                <div class="empty-state">
-                    <i class="fas fa-wind empty-icon"></i>
-                    <p>No breathing melodies available yet</p>
-                    <p class="empty-subtitle">Check back soon for new breathing exercises</p>
-                </div>
-            </li>
-            {% endfor %}
-        </ul>
+                    </li>
+                {% endfor %}
+            </ul>
+            
+            <div class="load-more-container">
+                <button class="load-more-btn">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>Load More</span>
+                </button>
+            </div>
+        </div>
     </div>
     
-    
+
 </div>
 
 <style>
+    /* Base styles and resets */
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+    
+    body {
+        margin: 0;
+        font-family: 'Nunito', 'Segoe UI', system-ui, -apple-system, sans-serif;
+        line-height: 1.5;
+        overflow-x: hidden;
+    }
+    
     /* Main container styles */
     .song-library-container {
         min-height: 100vh;
@@ -71,8 +107,7 @@ Breathing Exercise Songs
         color: #fff;
         position: relative;
         overflow: hidden;
-        padding: 2rem 1.5rem;
-        font-family: 'Nunito', 'Segoe UI', sans-serif;
+        padding: 2rem 1rem;
         display: flex;
         flex-direction: column;
     }
@@ -178,14 +213,14 @@ Breathing Exercise Songs
     /* Header styles */
     .page-header {
         text-align: center;
-        margin-bottom: 2.5rem;
+        margin-bottom: 1.5rem;
         position: relative;
         z-index: 1;
     }
     
     .glow-text {
         color: #fff;
-        font-size: 2.2rem;
+        font-size: 2rem;
         font-weight: 700;
         letter-spacing: 0.5px;
         text-shadow: 0 0 15px rgba(111, 66, 193, 0.6),
@@ -197,15 +232,10 @@ Breathing Exercise Songs
         position: relative;
     }
     
-    .header-icon {
-        color: #7e57c2;
-        font-size: 1.8rem;
-    }
-    
     .header-subtitle {
         color: rgba(255, 255, 255, 0.7);
         margin-top: 0.75rem;
-        font-size: 1.1rem;
+        font-size: 1rem;
         font-weight: 300;
     }
     
@@ -225,23 +255,118 @@ Breathing Exercise Songs
         100% { background-position: 200% 0; }
     }
     
-    /* Song list styles */
+    /* Search and filter bar */
+    .search-filter-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        background: rgba(18, 18, 18, 0.8);
+        backdrop-filter: blur(10px);
+        padding: 0.75rem 0;
+        border-radius: 12px;
+    }
+    
+    .search-container {
+        position: relative;
+        flex-grow: 1;
+        margin-right: 1rem;
+    }
+    
+    .search-input {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #fff;
+        border-radius: 25px;
+        padding: 0.6rem 1rem 0.6rem 2.6rem;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        outline: none;
+    }
+    
+    .search-input:focus {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(111, 66, 193, 0.5);
+        box-shadow: 0 0 0 2px rgba(111, 66, 193, 0.2);
+    }
+    
+    .search-input::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(255, 255, 255, 0.5);
+        pointer-events: none;
+    }
+    
+    .filter-button {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(111, 66, 193, 0.2);
+        color: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(111, 66, 193, 0.3);
+        border-radius: 25px;
+        padding: 0.6rem 1.2rem;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.25s ease;
+    }
+    
+    .filter-button:hover {
+        background: rgba(111, 66, 193, 0.3);
+    }
+    
+    /* Song list container */
     .song-list-wrapper {
         position: relative;
         z-index: 1;
-        max-width: 900px;
+        max-width: 800px;
         margin: 0 auto;
         width: 100%;
         flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .song-list-container {
+        overflow-y: auto;
+        flex-grow: 1;
+        position: relative;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(111, 66, 193, 0.5) rgba(30, 30, 30, 0.5);
+        padding-right: 0.5rem;
+    }
+    
+    .song-list-container::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .song-list-container::-webkit-scrollbar-track {
+        background: rgba(30, 30, 30, 0.5);
+        border-radius: 10px;
+    }
+    
+    .song-list-container::-webkit-scrollbar-thumb {
+        background: rgba(111, 66, 193, 0.5);
+        border-radius: 10px;
     }
     
     .song-list {
         list-style: none;
         padding: 0;
         margin: 0;
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
     }
     
     .song-item {
@@ -257,14 +382,14 @@ Breathing Exercise Songs
     .song-card {
         background: rgba(30, 30, 30, 0.6);
         backdrop-filter: blur(10px);
-        padding: 1.25rem;
-        border-radius: 16px;
+        padding: 1rem;
+        border-radius: 12px;
         display: flex;
         align-items: center;
         gap: 1rem;
         border: 1px solid rgba(255, 255, 255, 0.05);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
     }
@@ -278,14 +403,14 @@ Breathing Exercise Songs
         height: 100%;
         background: linear-gradient(135deg, rgba(111, 66, 193, 0.1), rgba(76, 201, 240, 0.05));
         opacity: 0;
-        transition: opacity 0.4s ease;
+        transition: opacity 0.3s ease;
         z-index: 0;
     }
     
     .song-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-        border-color: rgba(111, 66, 193, 0.4);
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        border-color: rgba(111, 66, 193, 0.3);
     }
     
     .song-card:hover::after {
@@ -293,16 +418,16 @@ Breathing Exercise Songs
     }
     
     .song-icon {
-        width: 50px;
-        height: 50px;
-        min-width: 50px;
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
         background: linear-gradient(135deg, #7e57c2, #4cc9f0);
         color: #fff;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.2rem;
+        font-size: 1.1rem;
         position: relative;
         z-index: 1;
         box-shadow: 0 4px 12px rgba(111, 66, 193, 0.3);
@@ -333,10 +458,11 @@ Breathing Exercise Songs
         flex-grow: 1;
         position: relative;
         z-index: 1;
+        overflow: hidden;
     }
     
     .song-title {
-        font-size: 1.1rem;
+        font-size: 1.05rem;
         font-weight: 600;
         color: #fff;
         margin-bottom: 0.25rem;
@@ -345,9 +471,14 @@ Breathing Exercise Songs
         text-overflow: ellipsis;
     }
     
-    .song-duration {
-        font-size: 0.85rem;
+    .song-meta {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.8rem;
         color: rgba(255, 255, 255, 0.6);
+    }
+    
+    .song-duration, .song-category {
         display: flex;
         align-items: center;
         gap: 0.35rem;
@@ -356,14 +487,14 @@ Breathing Exercise Songs
     .song-arrow {
         color: #fff;
         background: linear-gradient(135deg, #7e57c2, #4cc9f0);
-        width: 36px;
-        height: 36px;
-        min-width: 36px;
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         transition: all 0.3s ease;
         position: relative;
         z-index: 1;
@@ -374,14 +505,44 @@ Breathing Exercise Songs
         transform: scale(1.15);
     }
     
+    /* Load more button */
+    .load-more-container {
+        display: flex;
+        justify-content: center;
+        margin: 1.5rem 0;
+    }
+    
+    .load-more-btn {
+        background: rgba(111, 66, 193, 0.2);
+        color: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(111, 66, 193, 0.3);
+        border-radius: 25px;
+        padding: 0.6rem 1.5rem;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .load-more-btn:hover {
+        background: rgba(111, 66, 193, 0.3);
+        transform: translateY(-2px);
+    }
+    
+    .load-more-btn i {
+        font-size: 0.9rem;
+    }
+    
     /* Empty state styling */
     .no-songs {
-        grid-column: 1 / -1;
+        width: 100%;
     }
     
     .empty-state {
         text-align: center;
-        padding: 4rem 2rem;
+        padding: 3rem 2rem;
         background: rgba(30, 30, 30, 0.6);
         border-radius: 16px;
         border: 1px solid rgba(255, 255, 255, 0.05);
@@ -389,7 +550,7 @@ Breathing Exercise Songs
     }
     
     .empty-icon {
-        font-size: 3.5rem;
+        font-size: 3rem;
         color: #7e57c2;
         margin-bottom: 1.5rem;
         opacity: 0.7;
@@ -403,7 +564,7 @@ Breathing Exercise Songs
     
     /* Footer info */
     .footer-info {
-        margin-top: 2.5rem;
+        margin-top: 1.5rem;
         text-align: center;
         position: relative;
         z-index: 1;
@@ -427,57 +588,68 @@ Breathing Exercise Songs
     }
     
     /* Responsive adjustments */
-    @media (max-width: 900px) {
-        .song-list {
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        }
-    }
-    
     @media (max-width: 768px) {
         .song-library-container {
-            padding: 1.5rem 1rem;
+            padding: 1.5rem 0.875rem;
+        }
+        
+        .page-header {
+            margin-bottom: 1.25rem;
         }
         
         .glow-text {
-            font-size: 1.8rem;
+            font-size: 1.7rem;
         }
         
         .header-subtitle {
-            font-size: 1rem;
+            font-size: 0.95rem;
+            padding: 0 1rem;
         }
         
-        .song-list {
-            grid-template-columns: 1fr;
-            max-width: 450px;
-            margin: 0 auto;
+        .search-filter-bar {
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 0.75rem 0.5rem;
+        }
+        
+        .search-container {
+            width: 100%;
+            margin-right: 0;
+        }
+        
+        .filter-button {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .song-meta {
+            flex-direction: column;
+            gap: 0.25rem;
         }
         
         .breathing-tip {
             padding: 0.75rem 1rem;
             font-size: 0.85rem;
             flex-direction: column;
-            gap: 0.5rem;
+            text-align: center;
         }
     }
     
     @media (max-width: 480px) {
+        .song-library-container {
+            padding: 1.25rem 0.75rem;
+        }
+        
         .glow-text {
-            font-size: 1.5rem;
-            flex-direction: column;
-            gap: 0.5rem;
+            font-size: 1.4rem;
         }
         
         .header-subtitle {
-            font-size: 0.9rem;
-            padding: 0 0.5rem;
-        }
-        
-        .page-header {
-            margin-bottom: 1.75rem;
+            font-size: 0.85rem;
         }
         
         .song-card {
-            padding: 1rem;
+            padding: 0.875rem;
         }
         
         .song-icon {
@@ -488,40 +660,50 @@ Breathing Exercise Songs
         }
         
         .song-title {
-            font-size: 1rem;
+            font-size: 0.95rem;
+        }
+        
+        .song-meta {
+            font-size: 0.75rem;
         }
         
         .song-arrow {
-            width: 32px;
-            height: 32px;
-            min-width: 32px;
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
         }
         
         .empty-state {
-            padding: 3rem 1rem;
+            padding: 2.5rem 1rem;
         }
         
-        .footer-info {
-            margin-top: 2rem;
-        }
-    }
-    
-    /* Support for very small screens */
-    @media (max-width: 360px) {
-        .song-library-container {
-            padding: 1.25rem 0.75rem;
-        }
-        
-        .glow-text {
-            font-size: 1.3rem;
-        }
-        
-        .song-card {
-            padding: 0.875rem;
+        .empty-icon {
+            font-size: 2.5rem;
         }
     }
 </style>
+<script>
+    // Get the search input and song list
+const searchInput = document.querySelector('.search-input');
+const songItems = document.querySelectorAll('.song-item');
 
+// Event listener for input in the search box
+searchInput.addEventListener('input', function () {
+    const searchQuery = searchInput.value.toLowerCase();
+
+    songItems.forEach(item => {
+        const songTitle = item.querySelector('.song-title').textContent.toLowerCase();
+
+        // If the song title includes the search query, show it; otherwise, hide it
+        if (songTitle.includes(searchQuery)) {
+            item.style.display = 'block'; // Show the song
+        } else {
+            item.style.display = 'none'; // Hide the song
+        }
+    });
+});
+
+</script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Smooth 3D hover effect for song cards

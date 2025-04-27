@@ -207,14 +207,323 @@
         
       </div>
       
-      
-      <audio id="audio" controls controlsList="nodownload" >
+      <!-- <form method="get" onchange="this.submit()" id="song-switcher">
+        <label for="songSelect">Choose another song:</label>
+        <select name="song_id" id="songSelect">
+          {% for s in all_songs %}
+            <option value="{{ s.id }}" {% if s.id == song.id %}selected{% endif %}>{{ s.title }}</option>
+          {% endfor %}
+        </select>
+      </form> -->
+      <!-- muscic selection starts  -->
+      <!-- Button to open the modal -->
+<!-- Category selection starts -->
+<!-- Button to open the modal -->
+
+<!-- Modal structure (hidden by default) -->
+<!-- Modal structure (hidden by default) ---------------------------------------------------------------->
+<div id="uniqueModal" class="unique-modal">
+  <div class="unique-modal-content">
+    <span class="unique-close" onclick="closeUniqueModal()">&times;</span>
+
+    <div class="dark-category-container">
+      <form method="get" id="category-switcher" class="dark-category-form">
+        <label for="categorySelect" class="dark-category-label">Choose a category:</label>
+        <div class="dark-select-wrapper">
+          <select name="category_id" id="categorySelect" class="dark-category-select">
+            <option value="">All Categories</option>
+            {% for category in categories %}
+              <option value="{{ category.id }}" {% if selected_category_id == category.id|stringformat:"s" %}selected{% endif %}>
+                {{ category.name }}
+              </option>
+            {% endfor %}
+          </select>
+          <span class="dark-select-arrow">▼</span>
+        </div>
+      </form>
+    </div>
+
+    <!-- Song listing starts -->
+    <div id="song-list" class="dark-song-list">
+      {% for song in all_songs %}
+        <div class="dark-song-item">
+          <a href="?song_id={{ song.id }}&category_id={{ selected_category_id|default:'' }}" class="dark-song-link">
+            <div class="dark-song-icon">♫</div>
+            <div class="dark-song-title">{{ song.title }}</div>
+            <div class="dark-song-arrow">→</div>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+
+    <script>
+      // JavaScript to handle category change and update song list via AJAX
+      document.getElementById('categorySelect').addEventListener('change', function() {
+        var categoryId = this.value;
+        
+        // Update the URL with the new category (without reloading)
+        var url = new URL(window.location);
+        url.searchParams.set('category_id', categoryId);
+        window.history.pushState({}, '', url);
+        
+        // Send the AJAX request to the same URL with the selected category_id
+        fetch('?category_id=' + categoryId, {
+          method: 'GET',
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          // Update the song list with the new songs
+          var songListDiv = document.getElementById('song-list');
+          songListDiv.innerHTML = data.song_options.join('');
+        })
+        .catch(error => console.log('Error fetching song list:', error));
+      });
+    </script>
+  </div>
+</div>
+
+<style>
+  /* Modal Styles - Updated for Dark Theme */
+  .unique-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+  }
+
+  .unique-modal-content {
+    background-color: #121212;
+    color: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    width: 80%;
+    max-width: 600px;
+    margin: auto;
+    position: relative;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  .unique-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 30px;
+    color: #ffffff;
+    cursor: pointer;
+    transition: color 0.3s;
+    z-index: 10;
+  }
+
+  .unique-close:hover {
+    color: #565bc0;
+  }
+
+  /* Category Selector Styles */
+  .dark-category-container {
+    padding: 0 0 15px 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #2a2a2a;
+  }
+  
+  .dark-category-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .dark-category-label {
+    color: #ffffff;
+    font-size: 18px;
+    margin-bottom: 12px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+  
+  .dark-select-wrapper {
+    position: relative;
+    width: 100%;
+  }
+  
+  .dark-category-select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #383838;
+    background-color: #1e1e1e;
+    color: #ffffff;
+    border-radius: 8px;
+    font-size: 16px;
+    appearance: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .dark-category-select:hover {
+    background-color: #2a2a2a;
+  }
+  
+  .dark-category-select:focus {
+    outline: none;
+    border-color: #565bc0;
+    box-shadow: 0 0 0 2px rgba(86, 91, 192, 0.3);
+  }
+  
+  .dark-select-arrow {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #ffffff;
+    pointer-events: none;
+    font-size: 12px;
+  }
+  
+  /* Song List Styles */
+  .dark-song-list {
+    max-height: 50vh;
+    overflow-y: auto;
+    border-radius: 8px;
+    background-color: #1a1a1a;
+  }
+  
+  .dark-song-item {
+    border-bottom: 1px solid #2a2a2a;
+    transition: background-color 0.2s ease;
+  }
+  
+  .dark-song-item:last-child {
+    border-bottom: none;
+  }
+  
+  .dark-song-item:hover {
+    background-color: #2a2a2a;
+  }
+  
+  .dark-song-link {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    color: #ffffff;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    width: 100%;
+  }
+  
+  .dark-song-icon {
+    font-size: 18px;
+    margin-right: 16px;
+    color: #565bc0;
+    min-width: 24px;
+    text-align: center;
+  }
+  
+  .dark-song-title {
+    font-size: 16px;
+    font-weight: 400;
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: 0.3px;
+  }
+  
+  .dark-song-arrow {
+    margin-left: 12px;
+    opacity: 0;
+    transition: all 0.3s ease;
+    font-weight: 300;
+    font-size: 18px;
+  }
+  
+  .dark-song-link:hover .dark-song-arrow {
+    opacity: 1;
+    transform: translateX(3px);
+  }
+
+  /* Scrollbar Styling */
+  .dark-song-list::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .dark-song-list::-webkit-scrollbar-track {
+    background: #1a1a1a;
+  }
+
+  .dark-song-list::-webkit-scrollbar-thumb {
+    background-color: #3a3a3a;
+    border-radius: 6px;
+  }
+
+  .dark-song-list::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+  
+  /* Media Queries for Responsiveness */
+  @media (max-width: 768px) {
+    .unique-modal-content {
+      width: 90%;
+      padding: 20px;
+    }
+    
+    .dark-song-link {
+      padding: 12px 14px;
+    }
+    
+    .dark-song-title {
+      font-size: 15px;
+    }
+    
+    .dark-song-icon {
+      font-size: 16px;
+      margin-right: 12px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .unique-modal-content {
+      width: 95%;
+      padding: 15px;
+    }
+    
+    .dark-category-select {
+      padding: 10px 14px;
+    }
+    
+    .dark-song-link {
+      padding: 10px 12px;
+    }
+    
+    .dark-song-title {
+      font-size: 14px;
+    }
+    
+    .dark-song-icon {
+      margin-right: 10px;
+      font-size: 14px;
+    }
+  }
+</style>
+
+<!-- Song selection ends -->
+      <!-- music selection Ends  -->
+      <audio id="audio" controls controlsList="nodownload">
         <source src="{{ song.song.url }}" type="audio/mpeg">
       </audio>
       
+      
 <div style="display: none;" class="timer" id="timer">00:00</div>
 <div class="song-vibration-btn">
-  <button onclick="window.location.href='{% url 'testapp:song_list' %}'">Music List</button>
+  <button id="uniqueOpenModalButton" onclick="openUniqueModal()">Open Song and Category Selector</button>
+
 </div>
     </div>
   </div>
@@ -860,5 +1169,72 @@ audio::-webkit-media-controls-play-button {
   cursor: pointer;
 }
 </style>
+
+
+<!-- Music selection Starts  -->
+ <!-- <style>
+  /* CSS for the Modal (Unique Styles) */
+.unique-modal {
+  display: none;  /* Hidden by default */
+  position: fixed; /* Fixed in the center */
+  z-index: 1000; /* Overlays on top of everything */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Background overlay */
+  justify-content: center;
+  align-items: center;
+}
+
+.unique-modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  width: 60%; /* Set width as per your design */
+  max-width: 600px; /* Maximum width */
+  margin: auto;
+  position: relative;
+}
+
+.unique-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 30px;
+  color: #aaa;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.unique-close:hover {
+  color: #000;
+}
+
+ </style> -->
+ <script>
+  // JavaScript to handle opening and closing the modal
+
+function openUniqueModal() {
+  document.getElementById('uniqueModal').style.display = 'flex';
+}
+
+function closeUniqueModal() {
+  document.getElementById('uniqueModal').style.display = 'none';
+}
+
+// Close the modal if the user clicks outside of the modal content
+window.onclick = function(event) {
+  if (event.target == document.getElementById('uniqueModal')) {
+    closeUniqueModal();
+  }
+};
+
+
+
+ </script>
+
 </body>
+
+
 </html>
