@@ -1033,16 +1033,19 @@ function animateAlongEdge(timestamp, edgePoints) {
     const elapsedTime = timestamp - animationStartTime;
     const progress = Math.min(elapsedTime / animationDuration, 1);
     
-    // Calculate current position on the edge
-    const pointIndex = Math.floor(progress * (edgePoints.length - 1));
+    // Calculate exact position with interpolation
+    const exactIndex = progress * (edgePoints.length - 1);
+    const lowerIndex = Math.floor(exactIndex);
+    const upperIndex = Math.min(lowerIndex + 1, edgePoints.length - 1);
+    const interpolationFactor = exactIndex - lowerIndex;
     
-    if (pointIndex >= 0 && pointIndex < edgePoints.length) {
-        const point = edgePoints[pointIndex];
-        
-        // Position the ball
-        ball.style.left = `${point.x}px`;
-        ball.style.top = `${point.y}px`;
-    }
+    // Interpolate between points for smoother movement
+    const x = edgePoints[lowerIndex].x + (edgePoints[upperIndex].x - edgePoints[lowerIndex].x) * interpolationFactor;
+    const y = edgePoints[lowerIndex].y + (edgePoints[upperIndex].y - edgePoints[lowerIndex].y) * interpolationFactor;
+    
+    // Position the ball
+    ball.style.left = `${x}px`;
+    ball.style.top = `${y}px`;
     
     // Continue animation if not complete
     if (progress < 1) {
@@ -1050,20 +1053,33 @@ function animateAlongEdge(timestamp, edgePoints) {
     }
 }
 
-// Updated circular animation function for full circle for each breathing phase
-function startCircularAnimation(phase, pathPoints, duration) {
-    // Show the ball
-    ball.style.display = 'block';
+// Animation loop for circular shapes
+function animateCircular(timestamp, pathPoints) {
+    if (!animationStartTime) animationStartTime = timestamp;
+    if (!isRunning) return;
     
-    // Convert duration to milliseconds
-    animationDuration = duration * 1000;
-    animationStartTime = null;
+    const elapsedTime = timestamp - animationStartTime;
+    const progress = Math.min(elapsedTime / animationDuration, 1);
     
-    // Start animation loop
-    cancelAnimationFrame(animationId);
-    animationId = requestAnimationFrame((timestamp) => animateCircular(timestamp, pathPoints));
+    // Calculate exact position with interpolation
+    const exactIndex = progress * (pathPoints.length - 1);
+    const lowerIndex = Math.floor(exactIndex);
+    const upperIndex = Math.min(lowerIndex + 1, pathPoints.length - 1);
+    const interpolationFactor = exactIndex - lowerIndex;
+    
+    // Interpolate between points for smoother movement
+    const x = pathPoints[lowerIndex].x + (pathPoints[upperIndex].x - pathPoints[lowerIndex].x) * interpolationFactor;
+    const y = pathPoints[lowerIndex].y + (pathPoints[upperIndex].y - pathPoints[lowerIndex].y) * interpolationFactor;
+    
+    // Position the ball
+    ball.style.left = `${x}px`;
+    ball.style.top = `${y}px`;
+    
+    // Continue animation if not complete
+    if (progress < 1) {
+        animationId = requestAnimationFrame((timestamp) => animateCircular(timestamp, pathPoints));
+    }
 }
-
 // Updated animation loop for circular shapes - always do full circle
 function animateCircular(timestamp, pathPoints) {
     if (!animationStartTime) animationStartTime = timestamp;
