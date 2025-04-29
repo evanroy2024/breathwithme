@@ -104,11 +104,13 @@
             border: 4px solid #fcc419;
             position: relative;
         }
-        .triangle {
+                .triangle {
             position: relative;
             width: 250px;
             height: 216px; /* Height for equilateral triangle */
         }
+
+        /* Outer green triangle */
         .triangle:before {
             content: '';
             position: absolute;
@@ -118,15 +120,30 @@
             height: 0;
             border-left: 125px solid transparent;
             border-right: 125px solid transparent;
-            border-bottom: 216px solid transparent;
-            border-bottom-color: #51cf66;
+            border-bottom: 216px solid #51cf66;
             z-index: 1;
+        }
+
+        /* Inner black triangle (creating outline effect) */
+        .triangle:after {
+            content: '';
+            position: absolute;
+            top: 4px; /* Controls border thickness */
+            left: 4px;
+            width: 0;
+            height: 0;
+            border-left: 121px solid transparent;
+            border-right: 121px solid transparent;
+            border-bottom: 210px solid #121212; /* Should match background color */
+            z-index: 2;
         }
         .reversedtriangle {
             position: relative;
             width: 250px;
             height: 216px; /* Height for equilateral triangle */
         }
+
+        /* Outer green reversed triangle */
         .reversedtriangle:before {
             content: '';
             position: absolute;
@@ -136,9 +153,22 @@
             height: 0;
             border-left: 125px solid transparent;
             border-right: 125px solid transparent;
-            border-top: 216px solid transparent;
-            border-top-color: #20c997;
+            border-top: 220px solid #20c997;
             z-index: 1;
+        }
+
+        /* Inner black reversed triangle (creating outline effect) */
+        .reversedtriangle:after {
+            content: '';
+            position: absolute;
+            top: 4px; /* Creates space for the top edge */
+            left: 4px;
+            width: 0;
+            height: 0;
+            border-left: 121px solid transparent;
+            border-right: 121px solid transparent;
+            border-top: 205px solid black; /* Should match background color */
+            z-index: 2;
         }
         .quadrilateral {
             width: 200px;
@@ -236,7 +266,7 @@
                         <i class="fas fa-redo"></i>
                     </button>
                     <button class="control-btn voice-btn" id="voice-toggle-button" onclick="toggleVoice()" aria-label="Enable Voice">
-                        <i class="fas fa-microphone"></i>
+                        <i class="fas fa-microphone-alt-slash"></i>
                     </button>
                 </div>
                 
@@ -871,57 +901,58 @@ function createShapePath(shape) {
             }
             break;
             
-        case 'triangle':
-            // Create points for an equilateral triangle
-            const triWidth = shapeRect.width;
-            const triHeight = shapeRect.height;
-            
-            // Calculate the three points of the triangle
-            const triLeft = offsetX;
-            const triTop = offsetY;
-            
-            // Define the three vertices precisely
-            const point1 = { x: triLeft + triWidth/2, y: triTop }; // Top
-            const point2 = { x: triLeft, y: triTop + triHeight }; // Bottom-left
-            const point3 = { x: triLeft + triWidth, y: triTop + triHeight }; // Bottom-right
-            
-            // Left edge (top to bottom-left)
-            const triLeftEdge = createLinePoints(point1, point2, 100);
-            
-            // Bottom edge (bottom-left to bottom-right)
-            const triBottomEdge = createLinePoints(point2, point3, 100);
-            
-            // Right edge (bottom-right to top)
-            const triRightEdge = createLinePoints(point3, point1, 100);
-            
-            edges = [triLeftEdge, triBottomEdge, triRightEdge];
-            points = [...triLeftEdge, ...triBottomEdge, ...triRightEdge];
-            break;
-            
-        case 'reversedtriangle':
-            // Create points for a reversed equilateral triangle
-            const revTriWidth = shapeRect.width;
-            const revTriHeight = shapeRect.height;
-            
-            // Calculate the three points of the triangle
-            const revTriLeft = offsetX;
-            const revTriTop = offsetY;
-            
-            const revPoint1 = { x: revTriLeft + revTriWidth/2, y: revTriTop + revTriHeight }; // Bottom
-            const revPoint2 = { x: revTriLeft, y: revTriTop }; // Top-left
-            const revPoint3 = { x: revTriLeft + revTriWidth, y: revTriTop }; // Top-right
-            
-            // Right edge (bottom to top-right)
-            const revRightSegmentPoints = createLinePoints(revPoint1, revPoint3, 100);
-            // Top edge (top-right to top-left)
-            const revTopSegmentPoints = createLinePoints(revPoint3, revPoint2, 100);
-            // Left edge (top-left to bottom)
-            const revLeftSegmentPoints = createLinePoints(revPoint2, revPoint1, 100);
-            
-            edges = [revRightSegmentPoints, revTopSegmentPoints, revLeftSegmentPoints];
-            points = [...revRightSegmentPoints, ...revTopSegmentPoints, ...revLeftSegmentPoints];
-            break;
-            
+            case 'triangle':
+    // Create points for an equilateral triangle
+    const triWidth = shapeRect.width;
+    const triHeight = shapeRect.height;
+    
+    // Calculate the three points of the triangle
+    const triLeft = offsetX;
+    const triTop = offsetY;
+    
+    // Define the three vertices precisely
+    const point1 = { x: triLeft + triWidth/2, y: triTop }; // Top
+    const point2 = { x: triLeft, y: triTop + triHeight }; // Bottom-left
+    const point3 = { x: triLeft + triWidth, y: triTop + triHeight }; // Bottom-right
+    
+    // RIGHT edge (top to bottom-right) - CLOCKWISE DIRECTION
+    const triRightEdge = createLinePoints(point1, point3, 100);
+    
+    // Bottom edge (bottom-right to bottom-left) - CLOCKWISE DIRECTION
+    const triBottomEdge = createLinePoints(point3, point2, 100);
+    
+    // Left edge (bottom-left to top) - CLOCKWISE DIRECTION
+    const triLeftEdge = createLinePoints(point2, point1, 100);
+    
+    edges = [triRightEdge, triBottomEdge, triLeftEdge];
+    points = [...triRightEdge, ...triBottomEdge, ...triLeftEdge];
+    break;
+    
+case 'reversedtriangle':
+    // Create points for a reversed equilateral triangle
+    const revTriWidth = shapeRect.width;
+    const revTriHeight = shapeRect.height;
+    
+    // Calculate the three points of the triangle
+    const revTriLeft = offsetX;
+    const revTriTop = offsetY;
+    
+    const revPoint1 = { x: revTriLeft + revTriWidth/2, y: revTriTop + revTriHeight }; // Bottom
+    const revPoint2 = { x: revTriLeft, y: revTriTop }; // Top-left
+    const revPoint3 = { x: revTriLeft + revTriWidth, y: revTriTop }; // Top-right
+    
+    // LEFT edge (bottom to top-left) - CLOCKWISE DIRECTION
+    const revLeftSegmentPoints = createLinePoints(revPoint1, revPoint2, 100);
+    
+    // Top edge (top-left to top-right) - CLOCKWISE DIRECTION
+    const revTopSegmentPoints = createLinePoints(revPoint2, revPoint3, 100);
+    
+    // Right edge (top-right to bottom) - CLOCKWISE DIRECTION
+    const revRightSegmentPoints = createLinePoints(revPoint3, revPoint1, 100);
+    
+    edges = [revLeftSegmentPoints, revTopSegmentPoints, revRightSegmentPoints];
+    points = [...revLeftSegmentPoints, ...revTopSegmentPoints, ...revRightSegmentPoints];
+    break;
         case 'quadrilateral':
             // Create points for a diamond (rotated square)
             const diamondSize = Math.min(shapeRect.width, shapeRect.height);
@@ -1053,34 +1084,21 @@ function animateAlongEdge(timestamp, edgePoints) {
     }
 }
 
-// Animation loop for circular shapes
-function animateCircular(timestamp, pathPoints) {
-    if (!animationStartTime) animationStartTime = timestamp;
-    if (!isRunning) return;
+// Fix for the function that's referenced but not properly implemented
+function startCircularAnimation(phase, pathPoints, duration) {
+    // Show the ball
+    ball.style.display = 'block';
     
-    const elapsedTime = timestamp - animationStartTime;
-    const progress = Math.min(elapsedTime / animationDuration, 1);
+    // Convert duration to milliseconds
+    animationDuration = duration * 1000;
+    animationStartTime = null;
     
-    // Calculate exact position with interpolation
-    const exactIndex = progress * (pathPoints.length - 1);
-    const lowerIndex = Math.floor(exactIndex);
-    const upperIndex = Math.min(lowerIndex + 1, pathPoints.length - 1);
-    const interpolationFactor = exactIndex - lowerIndex;
-    
-    // Interpolate between points for smoother movement
-    const x = pathPoints[lowerIndex].x + (pathPoints[upperIndex].x - pathPoints[lowerIndex].x) * interpolationFactor;
-    const y = pathPoints[lowerIndex].y + (pathPoints[upperIndex].y - pathPoints[lowerIndex].y) * interpolationFactor;
-    
-    // Position the ball
-    ball.style.left = `${x}px`;
-    ball.style.top = `${y}px`;
-    
-    // Continue animation if not complete
-    if (progress < 1) {
-        animationId = requestAnimationFrame((timestamp) => animateCircular(timestamp, pathPoints));
-    }
+    // Start animation loop
+    cancelAnimationFrame(animationId);
+    animationId = requestAnimationFrame((timestamp) => animateCircular(timestamp, pathPoints));
 }
-// Updated animation loop for circular shapes - always do full circle
+
+// Make sure the circular animation function properly uses the pathPoints
 function animateCircular(timestamp, pathPoints) {
     if (!animationStartTime) animationStartTime = timestamp;
     if (!isRunning) return;
@@ -1088,11 +1106,8 @@ function animateCircular(timestamp, pathPoints) {
     const elapsedTime = timestamp - animationStartTime;
     const progress = Math.min(elapsedTime / animationDuration, 1);
     
-    // Always animate the full circle (0 to 1)
-    const positionRatio = progress;
-    
-    // Calculate point index based on position ratio
-    const pointIndex = Math.floor(positionRatio * (pathPoints.length - 1));
+    // Calculate position along the circular path
+    const pointIndex = Math.floor(progress * (pathPoints.length - 1));
     
     if (pointIndex >= 0 && pointIndex < pathPoints.length) {
         const point = pathPoints[pointIndex];
@@ -1108,84 +1123,141 @@ function animateCircular(timestamp, pathPoints) {
     }
 }
 
-// Add CSS for the glowing effect
-function addGlowStyles() {
-    const styleTag = document.createElement('style');
-    styleTag.textContent = `
-        .shape-container {
-            position: relative;
-            transition: background-color 0.5s ease;
+// Add glowing effect Start --------------------------------------------------------------
+// Updated function to apply glowing effect with animation
+function applyGlowEffect() {
+    const phase = phasesData[currentPhaseIndex];
+    if (!phase) return;
+    
+    const shape = phase.shape.toLowerCase();
+    
+    // Define specific colors for each shape using the color values you specified
+    const blueGlow = 'rgb(52, 152, 219)';
+    const blueBorder = 'rgb(0, 153, 255)';
+    
+    // Add transition property for smooth animation to shape and ball
+    shapeElement.style.transition = "filter 0.8s ease, box-shadow 0.8s ease, border 0.8s ease";
+    ball.style.transition = "background-color 0.8s ease, box-shadow 0.8s ease";
+    
+    if (shape === 'triangle') {
+        // For triangle, apply glow to the :before pseudo-element
+        shapeElement.style.filter = `drop-shadow(0 0 10px ${blueGlow}) drop-shadow(0 0 20px ${blueGlow})`;
+        // Update the triangle border color
+        updateTriangleGlowColor(blueBorder);
+    } 
+    else if (shape === 'reversedtriangle') {
+        // For reversed triangle, apply glow to the :before pseudo-element
+        shapeElement.style.filter = `drop-shadow(0 0 10px ${blueGlow}) drop-shadow(0 0 20px ${blueGlow})`;
+        // Update the reversed triangle border color
+        updateReversedTriangleGlowColor(blueBorder);
+    }
+    else {
+        // For regular shapes, use box-shadow with the specific blue
+        shapeElement.style.boxShadow = `0 0 15px ${blueGlow}, 0 0 30px ${blueGlow}`;
+        shapeElement.style.border = `2px solid ${blueBorder}`;
+    }
+    
+    // Apply matching color to the ball
+    ball.style.backgroundColor = blueBorder;
+    ball.style.boxShadow = `0 0 10px ${blueGlow}, 0 0 20px ${blueGlow}`;
+}
+
+// Function to update triangle glow intensity based on breathing phase with animation
+function updateGlowIntensity(breathingPhase) {
+    const phase = phasesData[currentPhaseIndex];
+    if (!phase) return;
+    
+    const shape = phase.shape.toLowerCase();
+    
+    // Use the specific blue colors you requested
+    const blueGlow = 'rgb(52, 152, 219)';
+    const blueBorder = 'rgb(0, 153, 255)';
+    
+    // Ensure transitions are set for smooth animation
+    shapeElement.style.transition = "filter 1.2s ease, box-shadow 1.2s ease";
+    ball.style.transition = "box-shadow 1.2s ease";
+    
+    // Adjust glow intensity based on breathing phase
+    if (breathingPhase.toLowerCase().includes('inhale')) {
+        // Stronger glow for inhale
+        if (shape === 'triangle' || shape === 'reversedtriangle') {
+            shapeElement.style.filter = `drop-shadow(0 0 15px ${blueGlow}) drop-shadow(0 0 30px ${blueGlow})`;
+        } else {
+            shapeElement.style.boxShadow = `0 0 25px ${blueGlow}, 0 0 40px ${blueGlow}`;
         }
-        
-        #shape-element {
-            transition: box-shadow 0.5s ease, border 0.5s ease, filter 0.5s ease;
+        ball.style.boxShadow = `0 0 15px ${blueGlow}, 0 0 30px ${blueGlow}`;
+    } else {
+        // Softer glow for exhale
+        if (shape === 'triangle' || shape === 'reversedtriangle') {
+            shapeElement.style.filter = `drop-shadow(0 0 8px ${blueGlow}) drop-shadow(0 0 15px ${blueGlow})`;
+        } else {
+            shapeElement.style.boxShadow = `0 0 10px ${blueGlow}, 0 0 20px ${blueGlow}`;
         }
-        
-        /* Special styling for triangular shapes */
-        .triangle, .reversedtriangle {
-            filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.5));
-            border: none !important; /* Remove border as it won't follow the triangle shape */
-        }
-        
-        /* Define triangle shape using CSS */
-        .triangle {
-            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-        }
-        
-        .reversedtriangle {
-            clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
-        }
-        
-        #ball {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            position: absolute;
-            transform: translate(-50%, -50%);
-            transition: box-shadow 0.5s ease, background-color 0.5s ease;
-        }
-        
-        .controls {
-            margin-top: 20px;
-        }
-        
-        button {
-            padding: 8px 16px;
-            margin: 0 5px;
-            border-radius: 4px;
-            border: none;
-            background-color: #3498db;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        button:hover {
-            background-color: #2980b9;
-            box-shadow: 0 0 8px rgba(52, 152, 219, 0.8);
-        }
-        
-        button:disabled {
-            background-color: #95a5a6;
-            cursor: not-allowed;
-        }
-        
-        .phase-info, #phase-progress, #cycle-progress {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 8px 0;
-            font-weight: bold;
-        }
-        
-        .phase-info {
-            font-size: 1.5em;
-            color: #2c3e50;
+        ball.style.boxShadow = `0 0 8px ${blueGlow}, 0 0 15px ${blueGlow}`;
+    }
+}
+
+// Helper function to dynamically update triangle CSS with transitions
+function updateTriangleGlowColor(color) {
+    // Create or update the style element for triangle
+    let styleEl = document.getElementById('triangle-glow-style');
+    if (!styleEl) {
+        styleEl = document.createElement('style');
+        styleEl.id = 'triangle-glow-style';
+        document.head.appendChild(styleEl);
+    }
+    
+    // Set the CSS with the current color and transition
+    styleEl.textContent = `
+        .triangle:before {
+            border-bottom-color: ${color} !important;
+            transition: border-bottom-color 0.8s ease !important;
         }
     `;
-    document.head.appendChild(styleTag);
 }
-// Call to add the styles
-addGlowStyles();
+
+// Helper function to dynamically update reversed triangle CSS with transitions
+function updateReversedTriangleGlowColor(color) {
+    // Create or update the style element for reversed triangle
+    let styleEl = document.getElementById('reversed-triangle-glow-style');
+    if (!styleEl) {
+        styleEl = document.createElement('style');
+        styleEl.id = 'reversed-triangle-glow-style';
+        document.head.appendChild(styleEl);
+    }
+    
+    // Set the CSS with the current color and transition
+    styleEl.textContent = `
+        .reversedtriangle:before {
+            border-top-color: ${color} !important;
+            transition: border-top-color 0.8s ease !important;
+        }
+    `;
+}
+
+// Add this initialization function to set up transitions when the app first loads
+function initializeTransitions() {
+    // Add initial transitions to shape element
+    shapeElement.style.transition = "filter 0.8s ease, box-shadow 0.8s ease, border 0.8s ease";
+    
+    // Add initial transitions to ball
+    ball.style.transition = "background-color 0.8s ease, box-shadow 0.8s ease";
+    
+    // Set up the pseudo-element transitions
+    const initialStyle = document.createElement('style');
+    initialStyle.id = 'initial-transitions';
+    initialStyle.textContent = `
+        .triangle:before, .reversedtriangle:before {
+            transition: border-color 0.8s ease !important;
+        }
+    `;
+    document.head.appendChild(initialStyle);
+}
+
+// Call this function when your app initializes, after elements are created
+// For example, add this to your window.onload or initialization function
+// initializeTransitions();
+// Add Glowing effect End ------------------------------------------------------------------
 
 // Wait for DOM to be fully loaded before calculating initial paths
 window.addEventListener('load', () => {

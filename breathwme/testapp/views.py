@@ -9,7 +9,8 @@ def song_list(request):
 #     song = get_object_or_404(TestExercise, pk=selected_song_id)
 #     all_songs = TestExercise.objects.all()
 #     return render(request, 'testbpm/exercise_page.html', {'song': song, 'all_songs': all_songs})
-from musicapp.models import Playlist
+from musicapp.models import Playlist 
+from .models import Breathnameset
 
 def exercise_page(request, pk):
     # Get the selected song, or use the provided pk as default
@@ -46,14 +47,15 @@ def exercise_page(request, pk):
             </div>
             ''')
         return JsonResponse({'song_options': song_options})
-    
+    names = Breathnameset.objects.all()
     # Return the rendered page
     return render(request, 'testbpm/exercise_page.html', {
         'song': song,
         'all_songs': all_songs,
         'categories': categories,
         'playlists': playlists,
-        'selected_category_id': selected_category_id,  # Pass this to the template
+        'selected_category_id': selected_category_id,  # Pass this to the 
+        'names': names,
     })
 def filter_playlists(request):
     category_id = request.GET.get('category_id')

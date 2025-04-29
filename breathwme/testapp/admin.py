@@ -2,7 +2,9 @@
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
-from testapp.models import TestExercise, Category # Import TestExercise from testapp
+from testapp.models import TestExercise, Category , Breathnameset # Import TestExercise from testapp
+
+admin.site.register(Breathnameset)
 
 @admin.register(TestExercise)
 class TestExerciseAdmin(admin.ModelAdmin):

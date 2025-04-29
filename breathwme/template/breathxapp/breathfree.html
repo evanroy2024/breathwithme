@@ -2613,54 +2613,46 @@ section {
 <!-- To save the Data in django backend --------------------------------------------------- -->
 <style>
     .shape {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    background-color: #000;
-    overflow: visible;
-}
-
-/* Seamless glow effect around the shape */
-.shape::before {
-    content: '';
-    position: absolute;
-    inset: -1px; /* Reduced to minimize gap */
-    border-radius: inherit;
-    background: transparent;
-    z-index: -1;
-    animation: colorShift 12s ease-in-out infinite;
-}
-
-@keyframes colorShift {
-    0%, 100% {
-        box-shadow: 0 0 25px 12px rgba(41, 121, 255, 0.4); /* Professional blue */
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        background-color: #000;
+        overflow: visible;
     }
-    25% {
-        box-shadow: 0 0 25px 12px rgba(94, 53, 177, 0.4); /* Deep purple */
+    
+    /* Subtle breathing glow using fixed blue color */
+    .shape::before {
+        content: '';
+        position: absolute;
+        inset: -3px;
+        border-radius: inherit;
+        background: transparent;
+        z-index: -1;
+        border: 2px solid rgb(0, 153, 255);
+        animation: blueBreathing 5s ease-in-out infinite;
     }
-    50% {
-        box-shadow: 0 0 25px 12px rgba(0, 150, 136, 0.4); /* Teal */
+    
+    @keyframes blueBreathing {
+        0%, 100% {
+            box-shadow: 0 0 10px 4px rgba(52, 152, 219, 0.3);
+        }
+        50% {
+            box-shadow: 0 0 30px 12px rgba(52, 152, 219, 0.6);
+        }
     }
-    75% {
-        box-shadow: 0 0 25px 12px rgba(63, 81, 181, 0.4); /* Indigo */
+    
+    /* Shape-specific */
+    .circle::before {
+        border-radius: 50%;
     }
-}
-
-/* Shape-specific adjustments */
-.circle::before {
-    border-radius: 50%;
-}
-
-.square::before {
-    border-radius: 0;
-}
-
-.triangle::before {
-    border-radius: 0;
-}
-</style>
+    .square::before,
+    .triangle::before {
+        border-radius: 0;
+    }
+    </style>
+    
 <style>
     .breathing-controls {
       width: 100%;
@@ -2785,14 +2777,4 @@ section {
 </body>
 
 </html>
-
-
-
-
-
-
-
-
-
-
 

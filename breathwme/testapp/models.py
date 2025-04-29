@@ -25,3 +25,9 @@ class TestExercise(models.Model):
 
     def __str__(self):
         return self.title
+
+class Breathnameset(models.Model):
+    name1 = models.CharField(max_length=100)
+    name2 = models.CharField(max_length=100)
+    name3 = models.CharField(max_length=100)
+    name4 = models.CharField(max_length=100)

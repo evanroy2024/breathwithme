@@ -168,18 +168,21 @@
         <div class="pattern-select">
           <label for="breathPattern">Breathing </label>
           <select id="breathPattern">
-            <option value="default">Default (1 )</option>
-            <option value="halfBar">Half Bar (2 )</option>
-            <option value="fullBar">Full Bar (4)</option>
-            <option value="twoBar">Two Bar (8)</option>
+            {% for item in names %}
+            <option value="default">{{ item.name1 }}</option>
+            <option value="halfBar">{{ item.name2 }}</option>
+            <option value="fullBar">{{ item.name3 }}</option>
+            <option value="twoBar">{{ item.name4 }}</option>
+            {% endfor %}
+
           </select>
         </div>
         
         <div class="shape-select">
           <label >Vibration :</label>
           <select id="VibrationType">
-            <option value="2">Turn On </option>
-            <option value="3">Turn off </option>
+            <option value="2">Turn Off </option>
+            <option value="3">Turn On </option>
           </select>
         </div> 
 
@@ -188,8 +191,9 @@
 
           <select onchange="speechEnabled = this.value === 'on';">
             <option value="on">Turn On</option>
-            <option value="off">Turn Off</option>
+            <option value="off" selected>Turn Off</option>
           </select>
+          
           
         </div>
       </div>
@@ -661,7 +665,7 @@
   // Add this near the top with your other variables
 const synth = window.speechSynthesis;
 let lastSpokenState = "";
-let speechEnabled = true; // Add this line
+let speechEnabled = false; // Add this line
 
   function animateMarker() {
     if (isPaused) return;
