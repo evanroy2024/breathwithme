@@ -360,6 +360,8 @@ from django.shortcuts import render
 
 # View for Subscription Expired Page
 def subscription_expired(request):
-    return render(request, 'subscription_expired.html')
+    userdata = Userdata.objects.filter(user=request.user).first()
+    username = request.user.username if request.user.is_authenticated else None
+    return render(request, 'user/home.html', {'username': username,'userdata': userdata})
 
 # //////////////////////////////////// SubscriptionPlan CHECK End ////////////////////////////////////////
