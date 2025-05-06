@@ -100,7 +100,7 @@ def get_breathing_phases_for_shape(shape):
         'Square': ["Inhale", "Hold", "Exhale", "Hold"],
         'Oval': ["Inhale", "Exhale"],
         'Rectangle': ["Inhale", "Hold", "Exhale", "Hold"],
-        'Triangle': ["Inhale", "Exhale", "Hold"],
+        'Triangle': ["Inhale", "Hold" ,"Exhale"],
         'ReversedTriangle': ["Inhale", "Hold", "Exhale"],
         'Quadrilateral': ["Inhale", "Hold", "Exhale", "Hold"]
     }
@@ -192,9 +192,27 @@ def usersavedexercise(request):
 from django.shortcuts import render, get_object_or_404
 from .models import SilentSaveExercise
 
+import ast
+
 def view_saved_exercise(request, exercise_id):
     exercise = get_object_or_404(SilentSaveExercise, id=exercise_id, user=request.user)
-    return render(request, "breathxapp/view_saved_exercise.html", {"exercise": exercise})
+
+    # Convert string to list safely
+    inputs = ast.literal_eval(exercise.inputs)  # Now [4, 5, 6, 7]
+
+    # Get individual values safely
+    val1 = inputs[0] if len(inputs) > 0 else None
+    val2 = inputs[1] if len(inputs) > 1 else None
+    val3 = inputs[2] if len(inputs) > 2 else None
+    val4 = inputs[3] if len(inputs) > 3 else None
+
+    return render(request, "breathxapp/view_saved_exercise.html", {
+        "exercise": exercise,
+        "val1": val1,
+        "val2": val2,
+        "val3": val3,
+        "val4": val4
+    })
 
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required

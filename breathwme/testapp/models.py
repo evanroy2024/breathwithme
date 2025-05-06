@@ -31,3 +31,4 @@ class Breathnameset(models.Model):
     name2 = models.CharField(max_length=100)
     name3 = models.CharField(max_length=100)
     name4 = models.CharField(max_length=100)
+    name5 = models.CharField(max_length=100)

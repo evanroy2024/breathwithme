@@ -169,10 +169,11 @@
           <label for="breathPattern">Breathing </label>
           <select id="breathPattern">
             {% for item in names %}
-            <option value="default">{{ item.name1 }}</option>
+            <option value="default" >{{ item.name1 }}</option>
             <option value="halfBar">{{ item.name2 }}</option>
-            <option value="fullBar">{{ item.name3 }}</option>
+            <option value="fullBar" selected>{{ item.name3 }}</option>
             <option value="twoBar">{{ item.name4 }}</option>
+            <option value="fourBar">{{ item.name5 }}</option>
             {% endfor %}
 
           </select>
@@ -543,6 +544,8 @@
   const patternSelect = document.getElementById("breathPattern");
   const shapeSelect = document.getElementById("shapeType");
 
+  // Set the default selection to fullBar
+  // patternSelect.value = 'fullBar';
   // Beat times from Django
   const beatTimes = {{ song.beat_times|safe }};
   
@@ -560,7 +563,8 @@
     "default": 1,  // Each beat is one state
     "halfBar": 2,  // Every 2 beats is one state
     "fullBar": 4,  // Every 4 beats is one state
-    "twoBar": 8    // Every 8 beats is one state
+    "twoBar": 8,    // Every 8 beats is one state
+    "fourBar": 16 
   };
 
   // Switch between circle and square
