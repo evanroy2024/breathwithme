@@ -661,13 +661,19 @@ function updateTimingControls() {
     // Then hide entire controls based on shape
     switch (shape) {
         case 'circle':
-        case 'oval':
             // Only inhale and exhale controls visible
             holdInControl.style.display = 'none';
             holdOutControl.style.display = 'none';
             
             // For circle, hide exhale input (but keep control visible)
             exhaleTimeInput.parentElement.style.display = 'none';
+            break;
+        case 'oval':
+            // Only inhale and exhale controls visible
+            holdInControl.style.display = 'none';
+            holdOutControl.style.display = 'none';
+            
+            // For circle, hide exhale input (but keep control visible)
             break;
             
         case 'triangle':
@@ -2037,47 +2043,46 @@ off {
 
     </script>
 <!-- Buttons Coming gone  -->
-
 <script>
-                document.getElementById("breath-close").addEventListener("click", function() {
-  document.getElementById("breath-option").style.display = "none";
+  document.getElementById("breath-close").addEventListener("click", function() {
+document.getElementById("breath-option").style.display = "none";
 });
 // For the save exercise 
 const saveButton = document.getElementById("save-exercise-button-id");
 const popupOverlay = document.getElementById("popupOverlay");
 
 saveButton.addEventListener("click", () => {
-  // Toggle visibility
-  if (popupOverlay.style.display === "none" || popupOverlay.style.display === "") {
-    popupOverlay.style.display = "flex";
-  } else {
-    popupOverlay.style.display = "none";
-  }
+// Toggle visibility
+if (popupOverlay.style.display === "none" || popupOverlay.style.display === "") {
+popupOverlay.style.display = "flex";
+} else {
+popupOverlay.style.display = "none";
+}
 });
 
 function closePopup() {
-  popupOverlay.style.display = "none";
+popupOverlay.style.display = "none";
 }
 const guideButton = document.getElementById("guide-button-id");
 const guideContainer = document.querySelector(".guide-container");
 
 guideButton.addEventListener("click", (e) => {
-  // Prevent the click event from propagating to the document click event
-  e.stopPropagation();
+// Prevent the click event from propagating to the document click event
+e.stopPropagation();
 
-  // Toggle the visibility of the guide container
-  guideContainer.style.display =
-    guideContainer.style.display === "none" || guideContainer.style.display === ""
-      ? "block"
-      : "none";
+// Toggle the visibility of the guide container
+guideContainer.style.display =
+guideContainer.style.display === "none" || guideContainer.style.display === ""
+? "block"
+: "none";
 });
 
 // Close the guide container when clicking anywhere else on the document
 document.addEventListener("click", (e) => {
-  // Check if the click is outside the guide container or button
-  if (!guideContainer.contains(e.target) && e.target !== guideButton) {
-    guideContainer.style.display = "none";  // Hide the guide container
-  }
+// Check if the click is outside the guide container or button
+if (!guideContainer.contains(e.target) && e.target !== guideButton) {
+guideContainer.style.display = "none";  // Hide the guide container
+}
 });
 
 </script>
