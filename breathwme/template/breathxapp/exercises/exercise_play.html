@@ -58,8 +58,8 @@
         }
         .shape-container {
             position: relative;
-            width: 300px;
-            height: 300px;
+            width: 400px;
+            height: 400px;
             margin: 20px 0;
             display: flex;
             align-items: center;
@@ -80,21 +80,21 @@
         
         /* Shape styles */
         .circle {
-            width: 250px;
-            height: 250px;
+            width: 300px;
+            height: 300px;
             border-radius: 50%;
             border: 4px solid #4dabf7;
             position: relative;
         }
         .square {
-            width: 250px;
-            height: 250px;
+            width: 300px;
+            height: 300px;
             border: 4px solid #be4bdb;
             position: relative;
         }
         .rectangle {
-            width: 300px;
-            height: 150px;
+            width: 350px;
+            height: 175px;
             border: 4px solid #ff6b6b;
             position: relative;
         }
@@ -105,75 +105,76 @@
             border: 4px solid #fcc419;
             position: relative;
         }
-                .triangle {
-            position: relative;
-            width: 250px;
-            height: 216px; /* Height for equilateral triangle */
-        }
+        .triangle {
+    position: relative;
+    width: 300px;
+    height: 260px; /* Height for equilateral triangle (adjusted proportionally) */
+}
 
-        /* Outer green triangle */
-        .triangle:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0;
-            height: 0;
-            border-left: 125px solid transparent;
-            border-right: 125px solid transparent;
-            border-bottom: 216px solid #51cf66;
-            z-index: 1;
-        }
+/* Outer green triangle */
+.triangle:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-left: 150px solid transparent;
+    border-right: 150px solid transparent;
+    border-bottom: 260px solid #51cf66;
+    z-index: 1;
+}
 
-        /* Inner black triangle (creating outline effect) */
-        .triangle:after {
-            content: '';
-            position: absolute;
-            top: 4px; /* Controls border thickness */
-            left: 4px;
-            width: 0;
-            height: 0;
-            border-left: 121px solid transparent;
-            border-right: 121px solid transparent;
-            border-bottom: 210px solid #121212; /* Should match background color */
-            z-index: 2;
-        }
-        .reversedtriangle {
-            position: relative;
-            width: 250px;
-            height: 216px; /* Height for equilateral triangle */
-        }
+/* Inner black triangle (creating outline effect) */
+.triangle:after {
+    content: '';
+    position: absolute;
+    top: 4px; /* Controls border thickness */
+    left: 4px;
+    width: 0;
+    height: 0;
+    border-left: 146px solid transparent;
+    border-right: 146px solid transparent;
+    border-bottom: 253px solid #121212; /* Should match background color */
+    z-index: 2;
+}
 
-        /* Outer green reversed triangle */
-        .reversedtriangle:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0;
-            height: 0;
-            border-left: 125px solid transparent;
-            border-right: 125px solid transparent;
-            border-top: 220px solid #20c997;
-            z-index: 1;
-        }
+.reversedtriangle {
+    position: relative;
+    width: 300px;
+    height: 260px; /* Height for equilateral triangle (adjusted proportionally) */
+}
 
-        /* Inner black reversed triangle (creating outline effect) */
-        .reversedtriangle:after {
-            content: '';
-            position: absolute;
-            top: 4px; /* Creates space for the top edge */
-            left: 4px;
-            width: 0;
-            height: 0;
-            border-left: 121px solid transparent;
-            border-right: 121px solid transparent;
-            border-top: 205px solid #121212; /* Should match background color */
-            z-index: 2;
-        }
+/* Outer green reversed triangle */
+.reversedtriangle:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-left: 150px solid transparent;
+    border-right: 150px solid transparent;
+    border-top: 255px solid #20c997;
+    z-index: 1;
+}
+
+/* Inner black reversed triangle (creating outline effect) */
+.reversedtriangle:after {
+    content: '';
+    position: absolute;
+    top: 4px; /* Creates space for the top edge */
+    left: 4px;
+    width: 0;
+    height: 0;
+    border-left: 146px solid transparent;
+    border-right: 146px solid transparent;
+    border-top: 246px solid #121212; /* Should match background color */
+    z-index: 2;
+}
         .quadrilateral {
-            width: 200px;
-            height: 200px;
+            width: 300px;
+            height: 300px;
             transform: rotate(45deg);
             border: 4px solid #40c057;
             position: relative;
@@ -555,16 +556,20 @@ startBtn.addEventListener('click', startExercise);
 pauseBtn.addEventListener('click', pauseExercise);
 resetBtn.addEventListener('click', resetExercise);
 
+// 3. Make sure startExercise explicitly applies the glow
 function startExercise() {
     if (!isRunning) {
         isRunning = true;
         startBtn.disabled = true;
         pauseBtn.disabled = false;
         resetBtn.disabled = false;
+        
+        // Explicitly apply glow effect when starting
+        applyGlowEffect();
+        
         runCurrentEdge();
     }
 }
-
 // Make sure to update these functions to stop audio playback
 function pauseExercise() {
     if (isRunning) {
@@ -581,6 +586,7 @@ function pauseExercise() {
         });
     }
 }
+
 
 function resetExercise() {
     isRunning = false;
@@ -604,8 +610,32 @@ function resetExercise() {
     
     lastSpokenPhase = '';
     
+    // Get the current shape before updating display
+    const shape = phasesData[currentPhaseIndex].shape.toLowerCase();
+    
     updateShapeDisplay();
-    applyGlowEffect();
+    
+    // Apply appropriate resetting based on shape type
+    if (shape === 'triangle') {
+        shapeElement.style.filter = "none";
+        shapeElement.style.boxShadow = "none";
+        shapeElement.style.border = "none";
+        updateTriangleGlowColor('transparent');
+    } else if (shape === 'reversedtriangle') {
+        shapeElement.style.filter = "none";
+        shapeElement.style.boxShadow = "none";
+        shapeElement.style.border = "none";
+        updateReversedTriangleGlowColor('transparent');
+    } else {
+        shapeElement.style.boxShadow = "none";
+        shapeElement.style.filter = "none";
+        shapeElement.style.border = "1px solid rgba(200, 200, 200, 0.3)"; // Very subtle neutral border
+    }
+    
+    // Also remove ball glow
+    if (ball) {
+        ball.style.boxShadow = "none";
+    }
 }
 function runCurrentEdge() {
     if (!isRunning) return;
@@ -830,22 +860,6 @@ function updateShapeDisplay() {
     createShapePath(phase.shape);
 }
 
-// New function to apply glowing effect
-function applyGlowEffect() {
-    const phase = phasesData[currentPhaseIndex];
-    if (!phase) return;
-    
-    const shape = phase.shape.toLowerCase();
-    const color = shapeColors[shape] || shapeColors['default'];
-    
-    // Apply glow effect to shape element
-    shapeElement.style.boxShadow = `0 0 15px ${color}, 0 0 30px ${color}`;
-    shapeElement.style.border = `2px solid ${color}`;
-    
-    // Apply matching color to the ball
-    ball.style.backgroundColor = color;
-    ball.style.boxShadow = `0 0 10px ${color}, 0 0 20px ${color}`;
-}
 
 // Function to update glow intensity based on breathing phase
 function updateGlowIntensity(breathingPhase) {
@@ -1361,21 +1375,46 @@ function initializeTransitions() {
 // initializeTransitions();
 // Add Glowing effect End ------------------------------------------------------------------
 
-// Wait for DOM to be fully loaded before calculating initial paths
 window.addEventListener('load', () => {
-    if (phasesData && phasesData.length > 0) {
-        const initialShape = phasesData[0].shape;
-        // Create path for the initial shape after a small delay to ensure DOM is ready
-        setTimeout(() => {
-            createShapePath(initialShape);
-            applyGlowEffect();
-        }, 100);
-    }
+  if (phasesData && phasesData.length > 0) {
+    const initialShape = phasesData[0].shape;
     
-    // Check for browser speech synthesis support
-    if (!window.speechSynthesis) {
-        console.warn("This browser doesn't support speech synthesis. Voice guidance won't work.");
-    }
+    // Create path for the initial shape after a small delay to ensure DOM is ready
+    setTimeout(() => {
+      createShapePath(initialShape);
+      
+      const shape = phasesData[0].shape.toLowerCase();
+      
+      // Make sure shapes are visible but without glow
+      if (shape === 'triangle' || shape === 'reversedtriangle') {
+        // For triangles, keep their border visible but without glow
+        shapeElement.style.boxShadow = "none";
+        shapeElement.style.filter = "none";
+        if (shape === 'triangle') {
+          updateTriangleGlowColor('rgba(0, 153, 255, 0.5)'); // Visible but subtle
+        } else {
+          updateReversedTriangleGlowColor('rgba(0, 153, 255, 0.5)'); // Visible but subtle
+        }
+      } else {
+        // For other shapes, add a visible border
+        shapeElement.style.boxShadow = "none";
+        shapeElement.style.filter = "none";
+        shapeElement.style.border = "1px solid white";
+        shapeElement.style.outline = "none";
+      }
+      
+      // Make sure ball has no glow
+      if (ball) {
+        ball.style.boxShadow = "none";
+        ball.style.border = "none";
+      }
+    }, 100);
+  }
+  
+  // Check for browser speech synthesis support
+  if (!window.speechSynthesis) {
+    console.warn("This browser doesn't support speech synthesis. Voice guidance won't work.");
+  }
 });
 
 // Update paths when window is resized
