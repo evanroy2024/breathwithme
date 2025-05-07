@@ -30,6 +30,7 @@ urlpatterns = [
 
     path('music_player/', views.music_player, name='music_player'),
     path('subscription-expired/', views.subscription_expired, name='subscription_expired'),
+    path('user-subscription/', views.user_subscription_page, name='user_subscription_page'),
 
 
 ]

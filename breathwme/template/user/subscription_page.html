@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Subscription</title>
+    <style>
+        
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --accent-color: #8e44ad;
+            --accent-hover: #9b59b6;
+            --border-color: #333333;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+        
+        header {
+            margin-bottom: 30px;
+        }
+        
+        .header-container {
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .back-button {
+            color: var(--text-primary);
+            margin-right: 15px;
+            padding: 5px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            margin-top: 15px;
+        }
+        
+        .back-button:hover {
+            background: var(--accent-color);
+            transform: translateX(-3px);
+        }
+        
+        header h1 {
+            text-align: left;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #9b59b6, #3498db);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        .card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .card h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(135deg, #9b59b6, #3498db);
+            border-radius: 3px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .label {
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        
+        .value {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        
+        .plan-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .plan-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .plan-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            border-color: var(--accent-color);
+        }
+        
+        .plan-name {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .plan-price {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 15px 0;
+            color: #fff;
+        }
+        
+        .plan-description {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+        
+        .upgrade-button {
+            background: linear-gradient(135deg, #9b59b6, #3498db);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: block;
+        }
+        
+        .upgrade-button:hover {
+            background: linear-gradient(135deg, #8e44ad, #2980b9);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .status-active {
+            background-color: rgba(46, 213, 115, 0.15);
+            color: #2ed573;
+        }
+        
+        .status-inactive {
+            background-color: rgba(255, 71, 87, 0.15);
+            color: #ff4757;
+        }
+        
+        .status-pending {
+            background-color: rgba(255, 165, 2, 0.15);
+            color: #ffa502;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 0;
+        }
+        
+        .empty-state p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--text-secondary);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 10px 0;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .info-row {
+                flex-direction: column;
+                padding: 10px 0;
+            }
+            
+            .label {
+                margin-bottom: 5px;
+            }
+            
+            .plan-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .status-inactive {
+    background-color: rgb(1 255 0 / 15%);
+    color: #ffecec;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-container">
+                <a href="{% url 'home' %}" class="back-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 12H5"></path>
+                        <path d="M12 19l-7-7 7-7"></path>
+                    </svg>
+                </a>
+                <div>
+                    <h1>My Subscription</h1>
+                    <p class="subtitle">Manage your subscription plan and billing</p>
+                </div>
+            </div>
+        </header>
+
+        <div class="card">
+            <h2>Current Subscription</h2>
+            {% if current_subscription %}
+                <div class="status-badge {% if current_subscription.payment_status == 'active' %}status-active{% elif current_subscription.payment_status == 'pending' %}status-pending{% else %}status-inactive{% endif %}">
+                    {{ current_subscription.payment_status|title }}
+                </div>
+                
+                <div class="info-row">
+                    <span class="label">Plan</span>
+                    <span class="value">{{ current_subscription.plan.name }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Start Date</span>
+                    <span class="value">{{ current_subscription.start_date }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">End Date</span>
+                    <span class="value">{{ current_subscription.end_date }}</span>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <p>You don't have an active subscription yet.</p>
+                    <p>Choose from our available plans below to get started.</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="card">
+            <h2>Available Plans</h2>
+            <div class="plan-grid">
+                {% for plan in all_plans %}
+                    <div class="plan-card">
+                        <h3 class="plan-name">{{ plan.name }}</h3>
+                        <div class="plan-price">${{ plan.price }}</div>
+                        <p class="plan-description">{{ plan.description }}</p>
+                        <a href="{% url 'create_payment' plan.id %}" class="upgrade-button">Upgrade Now</a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

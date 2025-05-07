@@ -365,3 +365,15 @@ def subscription_expired(request):
     return render(request, 'user/home.html', {'username': username,'userdata': userdata})
 
 # //////////////////////////////////// SubscriptionPlan CHECK End ////////////////////////////////////////
+
+@login_required
+def user_subscription_page(request):
+    user = request.user
+    current_subscription = Subscription.objects.filter(user=user).order_by('-subscription_date').first()
+    all_plans = SubscriptionPlan.objects.all()
+
+    context = {
+        'current_subscription': current_subscription,
+        'all_plans': all_plans,
+    }
+    return render(request, 'user/subscription_page.html', context)

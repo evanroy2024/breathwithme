@@ -1,5 +1,6 @@
 <!-- templates/exercises/exercise_play.html -->
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -167,7 +168,7 @@
             height: 0;
             border-left: 121px solid transparent;
             border-right: 121px solid transparent;
-            border-top: 205px solid black; /* Should match background color */
+            border-top: 205px solid #121212; /* Should match background color */
             z-index: 2;
         }
         .quadrilateral {
@@ -183,11 +184,11 @@
             position: absolute;
             width: 20px;
             height: 20px;
-            background-color: #eddede;
+            background-color: #ffffff;
             border-radius: 50%;
             transform: translate(-50%, -50%);
             z-index: 20;
-            box-shadow: 0 0 10px rgba(191, 181, 181, 0.6);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
         }
         
         .controls {
@@ -235,18 +236,64 @@
             opacity: 0;
         }
 
-        
+
+.main-heading {
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.back-button {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  margin-right: 15px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.back-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.title {
+  color: white;
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
     </style>
 </head>
 <body>
     <div class="container">
-        <section style="background: #111; padding: 20px; color: white; font-family: Arial, sans-serif; width: 100%; margin-left: -30px;">
-            <div onclick="window.location.href='{% url 'breathxapp:exercise_list' %}'" style="display: flex; align-items: center; gap: 10px;">
-              <span style="font-size: 24px; cursor: pointer;">←</span>
-              <h1 style="margin: 0; font-size: 24px; font-weight: bold;">Breathing Exercise</h1>
+        
+        <div class="main-heading">
+            <div class="header-container">
+              <button class="back-button" onclick="window.location.href='{% url 'breathxapp:exercise_list' %}'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+              </button>
+              <h1 class="title">BreathFree-Meditation</h1>
             </div>
-            <div style="height: 4px; margin-top: 10px; background: linear-gradient(to right, #6e8efb, #a777e3); border-radius: 2px;"></div>
-          </section>
+          </div>
+          <hr style="width: 400px; height: 5px;  background: linear-gradient(to right, #6e8efb, #a777e3); border-radius: 10px;">
+        
+
         <div class="exercise-display">
             <div class="shape-container">
                 <div class="phase-info"></div>
@@ -265,9 +312,15 @@
                     <button class="control-btn reset-btn" id="reset-btn" disabled aria-label="Reset">
                         <i class="fas fa-redo"></i>
                     </button>
-                    <button class="control-btn voice-btn" id="voice-toggle-button" onclick="toggleVoice()" aria-label="Enable Voice">
-                        <i class="fas fa-microphone-alt-slash"></i>
+                  
+                    <!-- Add this button where your other controls are -->
+                    <button id="voice-toggle-btn" class="control-btn">
+                        <i class="fas fa-volume-mute"></i>
                     </button>
+                    <button class="control-btn"  aria-label="Enable Vibration">
+                        <i class="fas fa-bell-slash"></i>
+                    </button>
+                    
                 </div>
                 
                 <div class="progress-row">
@@ -442,6 +495,11 @@ const startBtn = document.getElementById('start-btn');
 const pauseBtn = document.getElementById('pause-btn');
 const resetBtn = document.getElementById('reset-btn');
 
+// JavaScript to add to your script
+// Add this to the Event listeners section
+voiceToggleBtn = document.getElementById('voice-toggle-btn');
+voiceToggleBtn.addEventListener('click', toggleVoice);
+
 // Current state
 let currentPhaseIndex = 0;
 let currentBreathingPhaseIndex = 0;
@@ -478,6 +536,16 @@ const shapeColors = {
     'default': '#3498db' // Default blue
 };
 
+
+// Voice -------------------------------------------------------------------
+const audioFiles = {
+    'Inhale': new Audio("{% static 'voices/inhale.mp3' %}"),
+    'Hold': new Audio("{% static 'voices/hold.mp3' %}"),
+    'Exhale': new Audio("{% static 'voices/exhale.mp3' %}")
+};
+let voiceEnabled = false; // Voice starts off by default
+
+
 // Initialize
 updateShapeDisplay();
 applyGlowEffect();
@@ -497,16 +565,20 @@ function startExercise() {
     }
 }
 
+// Make sure to update these functions to stop audio playback
 function pauseExercise() {
     if (isRunning) {
         isRunning = false;
         clearTimeout(timer);
         cancelAnimationFrame(animationId);
         startBtn.disabled = false;
-        startBtn.textContent = 'Resume';
+        startBtn.innerHTML = '<i class="fas fa-play"></i>';
         
-        // Stop any ongoing speech when paused
-        synth.cancel();
+        // Stop any ongoing audio playback
+        Object.values(audioFiles).forEach(audio => {
+            audio.pause();
+            audio.currentTime = 0;
+        });
     }
 }
 
@@ -524,14 +596,17 @@ function resetExercise() {
     resetBtn.disabled = true;
     ball.style.display = 'none';
     
-    // Stop any ongoing speech when reset
-    synth.cancel();
+    // Stop any ongoing audio playback
+    Object.values(audioFiles).forEach(audio => {
+        audio.pause();
+        audio.currentTime = 0;
+    });
+    
     lastSpokenPhase = '';
     
     updateShapeDisplay();
     applyGlowEffect();
 }
-
 function runCurrentEdge() {
     if (!isRunning) return;
     
@@ -653,42 +728,63 @@ function goToNextEdge(phase) {
     runCurrentEdge();
 }
 
-// Function for speaking the current breathing phase
-function speakBreathingPhase(text) {
-    // Extract just the breathing instruction (inhale, exhale, hold)
-    // No phase numbers, shape names, or other text
-    let speechText = text.toLowerCase();
+
+function toggleVoice() {
+    voiceEnabled = !voiceEnabled;
     
-    // Common breathing instructions to extract
-    const breathingInstructions = ['inhale', 'exhale', 'hold', 'breathe in', 'breathe out', 'retain'];
-    let foundInstruction = null;
-    
-    // Find the first breathing instruction in the text
-    for (const instruction of breathingInstructions) {
-        if (speechText.includes(instruction)) {
-            foundInstruction = instruction;
-            break;
-        }
-    }
-    
-    // Only speak if we found a recognized instruction and it's different from the last one
-    if (foundInstruction && foundInstruction !== lastSpokenPhase) {
-        // Cancel any ongoing speech
-        synth.cancel();
-        
-        // Create a new utterance with just the breathing instruction
-        const utterance = new SpeechSynthesisUtterance(foundInstruction);
-        utterance.rate = 0.9; // Slightly slower for clarity
-        utterance.pitch = 1;
-        utterance.volume = 1;
-        
-        // Speak the instruction
-        synth.speak(utterance);
-        
-        // Update last spoken phase
-        lastSpokenPhase = foundInstruction;
+    // Update button icon
+    if (voiceEnabled) {
+        voiceToggleBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+        voiceToggleBtn.title = 'Disable voice guidance';
+    } else {
+        voiceToggleBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+        voiceToggleBtn.title = 'Enable voice guidance';
     }
 }
+
+// Update the speakBreathingPhase function to only play audio when voice is enabled
+function speakBreathingPhase(text) {
+    if (!voiceEnabled) return; // Skip audio if voice is disabled
+    
+    // Extract just the breathing instruction (inhale, exhale, hold)
+    let speechText = text.toLowerCase();
+    
+    // Check for each breathing instruction
+    if (speechText.includes('inhale') || speechText.includes('breathe in')) {
+        // Stop any currently playing audio
+        Object.values(audioFiles).forEach(audio => {
+            audio.pause();
+            audio.currentTime = 0;
+        });
+        
+        // Play the inhale audio immediately
+        audioFiles['Inhale'].play();
+        lastSpokenPhase = 'inhale';
+    } 
+    else if (speechText.includes('hold') || speechText.includes('retain')) {
+        // Stop any currently playing audio
+        Object.values(audioFiles).forEach(audio => {
+            audio.pause();
+            audio.currentTime = 0;
+        });
+        
+        // Play the hold audio immediately
+        audioFiles['Hold'].play();
+        lastSpokenPhase = 'hold';
+    } 
+    else if (speechText.includes('exhale') || speechText.includes('breathe out')) {
+        // Stop any currently playing audio
+        Object.values(audioFiles).forEach(audio => {
+            audio.pause();
+            audio.currentTime = 0;
+        });
+        
+        // Play the exhale audio immediately
+        audioFiles['Exhale'].play();
+        lastSpokenPhase = 'exhale';
+    }
+}
+
 
 function updateBreathingPhaseDisplay(shape, breathingPhase, duration) {
     // Clear previous classes
@@ -902,6 +998,9 @@ function createShapePath(shape) {
             break;
             
             case 'triangle':
+            document.querySelectorAll('.phase-info').forEach(el => {
+            el.style.top = '55%';  // Set top to 60% for triangle
+        });
     // Create points for an equilateral triangle
     const triWidth = shapeRect.width;
     const triHeight = shapeRect.height;
@@ -929,6 +1028,9 @@ function createShapePath(shape) {
     break;
     
 case 'reversedtriangle':
+    document.querySelectorAll('.phase-info').forEach(el => {
+            el.style.top = '44%';  // Set top to 60% for triangle
+        });
     // Create points for a reversed equilateral triangle
     const revTriWidth = shapeRect.width;
     const revTriHeight = shapeRect.height;
@@ -1158,7 +1260,7 @@ function applyGlowEffect() {
     }
     
     // Apply matching color to the ball
-    ball.style.backgroundColor = blueBorder;
+    ball.style.backgroundColor = '#ffffff'; // white background
     ball.style.boxShadow = `0 0 10px ${blueGlow}, 0 0 20px ${blueGlow}`;
 }
 
@@ -1294,7 +1396,12 @@ window.addEventListener('resize', () => {
     font-size: 1.5em;
     color: #f7fafe;
 }
-
+#voice-toggle-button{
+    display: none;
+}
+#voice-toggle-btn {
+color: #fffefe;
+}
 </style>
 
 <script>

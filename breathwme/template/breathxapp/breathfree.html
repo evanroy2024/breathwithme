@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -147,8 +148,8 @@
         #shape {
             width: 100%;
             height: 100%;
-            stroke: gold;
-            stroke-width: 2;
+            stroke: rgb(255, 255, 255);
+            stroke-width: 1;
             fill: none;
         }
         
@@ -156,7 +157,7 @@
             position: absolute;
             width: 20px;
             height: 20px;
-            background-color: var(--accent);
+            background-color: white;
             border-radius: 50%;
             transform: translate(-50%, -50%);
         }
@@ -231,55 +232,57 @@
     }
 
     /* /////////////////////////////////////////////////////////////////////////////////// */
- /* Add this CSS to your stylesheet */
-
-/* Base glow styles for the SVG shape */
+/* Base glow styles for the SVG container */
 svg {
-  filter: drop-shadow(0 0 6px rgba(110, 142, 251, 0.7));
+  filter: drop-shadow(0 0 5px rgba(110, 142, 251, 0.6));
   transition: filter 0.5s ease-in-out;
 }
 
-/* Different glow effects based on breathing phase */
+/* Moderate glow effects based on breathing phase */
 svg.inhale {
-  filter: drop-shadow(0 0 8px rgba(94, 186, 252, 0.9)) 
-          drop-shadow(0 0 16px rgba(94, 186, 252, 0.8)) 
-          drop-shadow(0 0 30px rgba(0, 119, 255, 0.6));
+  filter: drop-shadow(0 0 5px rgba(94, 186, 252, 0.7)) 
+          drop-shadow(0 0 10px rgba(94, 186, 252, 0.5)) 
+          drop-shadow(0 0 18px rgba(0, 119, 255, 0.4));
 }
 
 svg.exhale {
-  filter: drop-shadow(0 0 8px rgba(99, 242, 172, 0.8)) 
-          drop-shadow(0 0 16px rgba(38, 209, 134, 0.7))
-          drop-shadow(0 0 24px rgba(18, 153, 95, 0.5));
+  filter: drop-shadow(0 0 5px rgba(99, 242, 172, 0.7)) 
+          drop-shadow(0 0 10px rgba(38, 209, 134, 0.5))
+          drop-shadow(0 0 18px rgba(18, 153, 95, 0.4));
 }
 
 svg.hold {
-  filter: drop-shadow(0 0 8px rgba(252, 94, 232, 0.8)) 
-          drop-shadow(0 0 16px rgba(200, 46, 242, 0.7))
-          drop-shadow(0 0 24px rgba(135, 12, 219, 0.6));
+  filter: drop-shadow(0 0 5px rgba(252, 94, 232, 0.7)) 
+          drop-shadow(0 0 10px rgba(200, 46, 242, 0.5))
+          drop-shadow(0 0 18px rgba(135, 12, 219, 0.4));
 }
 
-/* Shape element styles - transparent fill with colored stroke */
+/* Shape element styles - black fill with colored stroke */
 svg circle, svg rect, svg polygon, svg ellipse {
-  fill: transparent;
-  stroke-width: 2;
+  fill: #121212;
+  stroke-width: 0.4;
   transition: all 0.4s ease-in-out;
 }
 
 /* Phase-specific shape styles */
 svg.inhale circle, svg.inhale rect, svg.inhale polygon, svg.inhale ellipse {
-  stroke: rgba(94, 186, 252, 1);
-  stroke-width: 2.5;
+  stroke: rgba(94, 186, 252, 0.4);
 }
 
 svg.exhale circle, svg.exhale rect, svg.exhale polygon, svg.exhale ellipse {
-  stroke: rgba(99, 242, 172, 1);
-  stroke-width: 2;
+  stroke: rgba(99, 242, 172, 0.4);
 }
 
 svg.hold circle, svg.hold rect, svg.hold polygon, svg.hold ellipse {
-  stroke: rgba(252, 94, 232, 1);
-  stroke-width: 2.5;
+  stroke: rgba(252, 94, 232, 0.4);
 }
+body{
+  background-color: #121212;
+}
+.shape-meditation {
+    margin-left: -60px;
+}
+
     </style>
 </head>
 <body>
@@ -312,9 +315,18 @@ svg.hold circle, svg.hold rect, svg.hold polygon, svg.hold ellipse {
     </div>
     
     <div class="container">
-        <h1 class="shape-meditation" >
-            <button class="back-arrow" onclick="window.location.href='{% url 'breathxapp:exercise_list' %}'">←</button>BreathFree-Meditation
-          </h1>
+      <div class="main-heading">
+        <div class="header-container">
+          <button class="back-button" onclick="window.location.href='{% url 'breathxapp:exercise_list' %}'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+          </button>
+          <h1 class="title">BreathFree-Meditation</h1>
+        </div>
+      </div>
+      <hr style="width: 400px; height: 5px;  background: linear-gradient(to right, #6e8efb, #a777e3); border-radius: 10px; margin-bottom: 20px;">
+    
           
 
  
@@ -338,19 +350,111 @@ svg.hold circle, svg.hold rect, svg.hold polygon, svg.hold ellipse {
               <div class="timing-controls" id="timingControls">
                 <div class="timing-input">
                   <label for="inhaleTime">Inhale</label>
-                  <input type="number" id="inhaleTime" min="1" max="20" value="4">
+                  <!-- <input type="number" id="inhaleTime" min="1" max="20" value="4"> -->
+                  <select id="inhaleTime">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4" selected>4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="12">12</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                    <option value="25">25</option>
+                    <option value="30">30</option>
+                    <option value="35">35</option>
+                    <option value="40">40</option>
+                    <option value="45">45</option>
+                    <option value="50">50</option>
+                    <option value="55">55</option>
+                    <option value="60">60</option>
+                  </select>
                 </div>
                 <div class="timing-input" id="holdInControl">
                   <label for="holdInTime">Hold</label>
-                  <input type="number" id="holdInTime" min="0" max="20" value="4">
+                  <!-- <input type="number" id="holdInTime" min="0" max="20" value="4"> -->
+                  <select id="holdInTime">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4" selected>4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="12">12</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                    <option value="25">25</option>
+                    <option value="30">30</option>
+                    <option value="35">35</option>
+                    <option value="40">40</option>
+                    <option value="45">45</option>
+                    <option value="50">50</option>
+                    <option value="55">55</option>
+                    <option value="60">60</option>
+                  </select>
                 </div>
                 <div class="timing-input">
                   <label for="exhaleTime">Exhale</label>
-                  <input type="number" id="exhaleTime" min="1" max="20" value="4">
+                  <!-- <input type="number" id="exhaleTime" min="1" max="20" value="4"> -->
+                  <select id="exhaleTime">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4" selected>4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="12">12</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                    <option value="25">25</option>
+                    <option value="30">30</option>
+                    <option value="35">35</option>
+                    <option value="40">40</option>
+                    <option value="45">45</option>
+                    <option value="50">50</option>
+                    <option value="55">55</option>
+                    <option value="60">60</option>
+                  </select>
                 </div>
                 <div class="timing-input" id="holdOutControl">
                   <label for="holdOutTime">Hold</label>
-                  <input type="number" id="holdOutTime" min="0" max="20" value="4">
+                  <!-- <input type="number" id="holdOutTime" min="0" max="20" value="4"> -->
+                  <select id="holdOutTime">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4" selected>4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="12">12</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                    <option value="25">25</option>
+                    <option value="30">30</option>
+                    <option value="35">35</option>
+                    <option value="40">40</option>
+                    <option value="45">45</option>
+                    <option value="50">50</option>
+                    <option value="55">55</option>
+                    <option value="60">60</option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -462,7 +566,14 @@ function initVoiceButton() {
     voiceButton.addEventListener('click', toggleVoice);
 }
 
-// Toggle voice function
+// Voice -------------------------------------------------------------------
+const audioFiles = {
+    'Inhale': new Audio("{% static 'voices/inhale.mp3' %}"),
+    'Hold': new Audio("{% static 'voices/hold.mp3' %}"),
+    'Exhale': new Audio("{% static 'voices/exhale.mp3' %}")
+};
+
+// Replace the entire toggleVoice function:
 function toggleVoice() {
     voiceEnabled = !voiceEnabled;
     
@@ -480,8 +591,11 @@ function toggleVoice() {
         voiceButton.classList.remove('voice-on');
         voiceButton.classList.add('voice-off');
         
-        // Cancel any ongoing speech
-        speechSynthesis.cancel();
+        // Stop any playing audio
+        for (const phase in audioFiles) {
+            audioFiles[phase].pause();
+            audioFiles[phase].currentTime = 0;
+        }
     }
 }
 
@@ -529,20 +643,16 @@ const drawShape = {
     }
 };
 
-// Initialize the app
+// Replace the entire init function:
 function init() {
     updateTimingControls();
     drawCurrentShape();
     initVoiceButton();
     
-    // Initialize speech synthesis
-    if (speechSynthesis) {
-        // Load voices - needed for some browsers
-        speechSynthesis.onvoiceschanged = function() {
-            // Voices are loaded
-        };
-        // Pre-fetch voices
-        speechSynthesis.getVoices();
+    // Preload audio files
+    for (const phase in audioFiles) {
+        audioFiles[phase].load();
+        audioFiles[phase].preload = 'auto';
     }
     
     // Event listeners
@@ -616,36 +726,32 @@ function syncInputs() {
     }
 }
 
-// Function to speak the current phase
+// Replace the entire speakPhase function:
 function speakPhase(phaseText) {
-    // Only speak if voice is enabled
+    // Only play if voice is enabled
     if (!voiceEnabled) return;
     
-    // Cancel any ongoing speech
-    speechSynthesis.cancel();
-    
-    // Create a new speech utterance
-    const utterance = new SpeechSynthesisUtterance(phaseText);
-    
-    // Set properties for a beautiful voice
-    utterance.rate = 0.9; // Slightly slower rate
-    utterance.pitch = 1.0; // Normal pitch
-    utterance.volume = 1.0; // Full volume
-    
-    // Try to get a female voice if available
-    const voices = speechSynthesis.getVoices();
-    const femaleVoice = voices.find(voice => 
-        voice.name.includes('female') || 
-        voice.name.includes('Female') || 
-        voice.name.includes('Samantha') ||
-        voice.name.includes('Google US English Female'));
-    
-    if (femaleVoice) {
-        utterance.voice = femaleVoice;
+    // Stop any currently playing audio first
+    for (const phase in audioFiles) {
+        audioFiles[phase].pause();
+        audioFiles[phase].currentTime = 0;
     }
     
-    // Speak the text
-    speechSynthesis.speak(utterance);
+    // Play the appropriate audio file
+    if (audioFiles[phaseText]) {
+        // Reset audio to beginning
+        audioFiles[phaseText].currentTime = 0;
+        
+        // Play the audio file immediately
+        const playPromise = audioFiles[phaseText].play();
+        
+        // Handle potential play() promise rejection
+        if (playPromise !== undefined) {
+            playPromise.catch(error => {
+                console.log('Audio play failed:', error);
+            });
+        }
+    }
 }
 
 // Update timing controls based on selected shape
@@ -770,7 +876,7 @@ function startAnimation() {
     }
 }
 
-// Stop the animation
+// Replace the entire stopAnimation function:
 function stopAnimation() {
     if (!isAnimating) return;
     
@@ -779,11 +885,17 @@ function stopAnimation() {
     centerText.textContent = '';
     status.classList.remove('active');
     
-    // Stop any ongoing speech
-    speechSynthesis.cancel();
+    // Remove all glow effect classes
+    shapeElement.classList.remove('inhale', 'exhale', 'hold');
+    
+    // Stop any playing audio
+    for (const phase in audioFiles) {
+        audioFiles[phase].pause();
+        audioFiles[phase].currentTime = 0;
+    }
+    
     lastSpokenPhase = -1;
 }
-
 // Setup animation parameters based on the shape
 function setupAnimationParameters(shape) {
     phaseTimes = [];
@@ -1955,6 +2067,16 @@ off {
     font-size: 13px;
   }
 }
+select {
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #4b5563; /* dark gray border */
+    background-color: #1f2937;  /* dark background */
+    font-size: 16px;
+    color: #f9fafb;             /* light text */
+    width: 100%;
+}
+
 </style>  
 
 <!-- Django BAckend data exercise saVE  -->
@@ -2086,5 +2208,57 @@ guideContainer.style.display = "none";  // Hide the guide container
 });
 
 </script>
+<style>
+  #shapeSelect {
+    margin-top: 8px;
+  border: 1px solid gold ;
+  background: #1e1e1e;
+}
+.shape-meditation {
+    color: #ffffff;
+}
+
+
+
+.main-heading {
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.back-button {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  margin-right: 15px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.back-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.title {
+  color: white;
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+</style>
 </body>
 </html>

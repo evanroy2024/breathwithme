@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -182,8 +183,8 @@
         <div class="shape-select">
           <label >Vibration :</label>
           <select id="VibrationType">
-            <option value="2">Turn Off </option>
-            <option value="3">Turn On </option>
+            <option value="2">Off </option>
+            <option value="3">On </option>
           </select>
         </div> 
 
@@ -191,8 +192,8 @@
           <label >Voice :</label>
 
           <select onchange="speechEnabled = this.value === 'on';">
-            <option value="on">Turn On</option>
-            <option value="off" selected>Turn Off</option>
+            <option value="on">On</option>
+            <option value="off" selected>Off</option>
           </select>
           
           
@@ -567,6 +568,15 @@
     "fourBar": 16 
   };
 
+  
+// Voice -------------------------------------------------------------------
+const audioFiles = {
+    'Inhale': new Audio("{% static 'voices/inhale.mp3' %}"),
+    'Hold': new Audio("{% static 'voices/hold.mp3' %}"),
+    'Exhale': new Audio("{% static 'voices/exhale.mp3' %}")
+};
+
+
   // Switch between circle and square
   shapeSelect.addEventListener("change", function() {
     if (this.value === "circle") {
@@ -683,22 +693,21 @@ let speechEnabled = false; // Add this line
 
     // Add speech functionality - speak state when it changes
 
-if (speechEnabled && currentState !== lastSpokenState && currentState !== "Waiting...") {
-    // Create a new speech utterance
-    const utterance = new SpeechSynthesisUtterance(currentState);
-    utterance.rate = 0.8; // Slightly slower speech
-    utterance.volume = 1.0;
+    if (speechEnabled && currentState !== lastSpokenState && currentState !== "Waiting...") {
+    // Stop any currently playing audio
+    Object.values(audioFiles).forEach(audio => {
+        audio.pause();
+        audio.currentTime = 0;
+    });
     
-    // Cancel any previous speech
-    synth.cancel();
-    
-    // Speak the new state
-    synth.speak(utterance);
+    // Play the appropriate audio file immediately
+    if (audioFiles[currentState]) {
+        audioFiles[currentState].play();
+    }
     
     // Update last spoken state
     lastSpokenState = currentState;
 }
-
     textElements.forEach(element => {
       if (currentState === "Waiting...") {
         element.innerText = currentState;
