@@ -112,7 +112,6 @@ h1 {
     position: relative;
     box-sizing: border-box;
 }
-
 /* Safari-friendly triangle implementations */
 .triangle {
     position: relative;
@@ -137,73 +136,75 @@ h1 {
     -webkit-transform: translateZ(0);
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
-        /* Adding filter for Safari glow */
-    -webkit-filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
-    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+    /* Minimal glow for very thin edges */
+    -webkit-filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.4));
+    filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.4));
 }
 
 .triangle::after {
     content: '';
     position: absolute;
-    top: 4px;
-    left: 4px;
+    /* Position for 1px border */
+    top: 1px;
+    left: 2.5px;
     width: 0;
     height: 0;
-    border-left: 146px solid transparent;
-    border-right: 146px solid transparent;
-    border-bottom: 253px solid #121212;
+    /* Adjusted for 1px border thickness */
+    border-left: 147.5px solid transparent;
+    border-right: 147.5px solid transparent;
+    border-bottom: 258px solid #121212;
     z-index: 2;
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
 }
-
 .reversedtriangle {
-    position: relative;
-    width: 300px;
-    height: 260px;
-    transform-style: preserve-3d;
-    -webkit-transform-style: preserve-3d;
+  position: relative;
+  width: 300px;
+  height: 260px;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
 }
 
 .reversedtriangle::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 0;
-    height: 0;
-    border-left: 150px solid transparent;
-    border-right: 150px solid transparent;
-    border-top: 255px solid #ffffff;
-    z-index: 1;
-    transform: translateZ(0);
-    -webkit-transform: translateZ(0);
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-          /* Adding filter for Safari glow */
-    -webkit-filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
-    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-left: 150px solid transparent;
+  border-right: 150px solid transparent;
+  border-top: 256px solid #ffffff;
+  z-index: 1;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  /* Minimal glow for very thin edges */
+  -webkit-filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.4));
+  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.4));
 }
 
 .reversedtriangle::after {
-    content: '';
-    position: absolute;
-    top: 4px;
-    left: 4px;
-    width: 0;
-    height: 0;
-    border-left: 146px solid transparent;
-    border-right: 146px solid transparent;
-    border-top: 246px solid #121212;
-    z-index: 2;
-    transform: translateZ(0);
-    -webkit-transform: translateZ(0);
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
+  content: '';
+  position: absolute;
+  /* Position for 1px border */
+  top: 1px;
+  left: 2.5px;
+  width: 0;
+  height: 0;
+  /* Adjusted for 1px border thickness */
+  border-left: 147.5px solid transparent;
+  border-right: 147.5px solid transparent;
+  border-top: 253px solid #121212;
+  z-index: 2;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
-
 .quadrilateral {
     width: 300px;
     height: 300px;
@@ -368,8 +369,8 @@ button:hover {
                     <button id="voice-toggle-btn" class="control-btn">
                         <i class="fas fa-volume-mute"></i>
                     </button>
-                    <button aria-label="Vibration" id="vibration-button" style="width: 55px; display: inline-flex; align-items: center; justify-content: center; padding: 0; border: none; border-radius: 60px; ">
-            <img src="https://cdn-icons-png.flaticon.com/128/15674/15674072.png" alt="" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                    <button aria-label="Vibration" id="vibration-button" style="background-color: rgba(30, 30, 35, 0.9); width: 55px; display: inline-flex; align-items: center; justify-content: center; padding: 0; border: none; border-radius: 60px; ">
+            <img src="{% static 'v2.png' %}" alt="" style="max-width: 100%; max-height: 100%; object-fit: contain;">
             </button>
                     
                 </div>
@@ -1289,7 +1290,7 @@ function animateCircular(timestamp, pathPoints) {
     }
 }
 
-// Add glowing effect Start --------------------------------------------------------------
+
 // Updated function to apply glowing effect with animation
 function applyGlowEffect() {
     const phase = phasesData[currentPhaseIndex];
@@ -1306,15 +1307,13 @@ function applyGlowEffect() {
     ball.style.transition = "background-color 0.8s ease, box-shadow 0.8s ease";
     
     if (shape === 'triangle') {
-        // For triangle, apply glow to the :before pseudo-element
+        // For triangle, apply glow effect when exercise starts
         shapeElement.style.filter = `drop-shadow(0 0 10px ${blueGlow}) drop-shadow(0 0 20px ${blueGlow})`;
-        // Update the triangle border color
         updateTriangleGlowColor(blueBorder);
     } 
     else if (shape === 'reversedtriangle') {
-        // For reversed triangle, apply glow to the :before pseudo-element
+        // For reversed triangle, apply glow effect when exercise starts
         shapeElement.style.filter = `drop-shadow(0 0 10px ${blueGlow}) drop-shadow(0 0 20px ${blueGlow})`;
-        // Update the reversed triangle border color
         updateReversedTriangleGlowColor(blueBorder);
     }
     else {
@@ -1328,7 +1327,52 @@ function applyGlowEffect() {
     ball.style.boxShadow = `0 0 10px ${blueGlow}, 0 0 20px ${blueGlow}`;
 }
 
-// Function to update triangle glow intensity based on breathing phase with animation
+// Function to update glow intensity based on breathing phase with animation
+// function updateGlowIntensity(breathingPhase) {
+//     const phase = phasesData[currentPhaseIndex];
+//     if (!phase) return;
+    
+//     const shape = phase.shape.toLowerCase();
+    
+//     // Use different colors based on breathing phase for ALL shapes
+//     let glowColor, borderColor;
+    
+//     if (breathingPhase.toLowerCase().includes('inhale')) {
+//         glowColor = 'rgb(52, 152, 219)';   // Blue glow for inhale
+//         borderColor = 'rgb(0, 153, 255)';  // Blue border for inhale
+//     } else if (breathingPhase.toLowerCase().includes('hold')) {
+//         glowColor = 'rgb(155, 89, 182)';   // Purple glow for hold
+//         borderColor = 'rgb(142, 68, 173)'; // Purple border for hold
+//     } else { // exhale
+//         glowColor = 'rgb(46, 204, 113)';   // Green glow for exhale
+//         borderColor = 'rgb(39, 174, 96)';  // Green border for exhale
+//     }
+    
+//     // Ensure transitions are set for smooth animation
+//     shapeElement.style.transition = "filter 1.2s ease, box-shadow 1.2s ease";
+//     ball.style.transition = "box-shadow 1.2s ease";
+    
+//     // Apply color changes based on shape type
+//     if (shape === 'triangle') {
+//         shapeElement.style.filter = `drop-shadow(0 0 10px ${glowColor}) drop-shadow(0 0 20px ${glowColor})`;
+//         updateTriangleGlowColor(borderColor);
+//     } 
+//     else if (shape === 'reversedtriangle') {
+//         shapeElement.style.filter = `drop-shadow(0 0 10px ${glowColor}) drop-shadow(0 0 20px ${glowColor})`;
+//         updateReversedTriangleGlowColor(borderColor);
+//     }
+//     else {
+//         // For ALL other shapes, CHANGE COLOR instead of just intensity
+//         shapeElement.style.boxShadow = `0 0 15px ${glowColor}, 0 0 30px ${glowColor}`;
+//         shapeElement.style.border = `2px solid ${borderColor}`;
+//     }
+    
+//     // Change ball glow color as well to match the current phase
+//     ball.style.boxShadow = `0 0 10px ${glowColor}, 0 0 20px ${glowColor}`;
+// }
+
+
+// Function to update glow intensity based on breathing phase with animation
 function updateGlowIntensity(breathingPhase) {
     const phase = phasesData[currentPhaseIndex];
     if (!phase) return;
@@ -1336,33 +1380,44 @@ function updateGlowIntensity(breathingPhase) {
     const shape = phase.shape.toLowerCase();
     
     // Use the specific blue colors you requested
-    const blueGlow = 'rgb(52, 152, 219)';
-    const blueBorder = 'rgb(0, 153, 255)';
+    // We change colors based on breathing phase (not intensity)
+    let glowColor, borderColor;
+    
+    if (breathingPhase.toLowerCase().includes('inhale')) {
+        glowColor = 'rgb(52, 152, 219)';   // Blue glow for inhale
+        borderColor = 'rgb(0, 153, 255)';  // Blue border for inhale
+    } else if (breathingPhase.toLowerCase().includes('hold')) {
+        glowColor = 'rgb(155, 89, 182)';   // Purple glow for hold
+        borderColor = 'rgb(142, 68, 173)'; // Purple border for hold
+    } else { // exhale
+        glowColor = 'rgb(46, 204, 113)';   // Green glow for exhale
+        borderColor = 'rgb(39, 174, 96)';  // Green border for exhale
+    }
     
     // Ensure transitions are set for smooth animation
     shapeElement.style.transition = "filter 1.2s ease, box-shadow 1.2s ease";
     ball.style.transition = "box-shadow 1.2s ease";
     
-    // Adjust glow intensity based on breathing phase
-    if (breathingPhase.toLowerCase().includes('inhale')) {
-        // Stronger glow for inhale
-        if (shape === 'triangle' || shape === 'reversedtriangle') {
-            shapeElement.style.filter = `drop-shadow(0 0 15px ${blueGlow}) drop-shadow(0 0 30px ${blueGlow})`;
-        } else {
-            shapeElement.style.boxShadow = `0 0 25px ${blueGlow}, 0 0 40px ${blueGlow}`;
-        }
-        ball.style.boxShadow = `0 0 15px ${blueGlow}, 0 0 30px ${blueGlow}`;
-    } else {
-        // Softer glow for exhale
-        if (shape === 'triangle' || shape === 'reversedtriangle') {
-            shapeElement.style.filter = `drop-shadow(0 0 8px ${blueGlow}) drop-shadow(0 0 15px ${blueGlow})`;
-        } else {
-            shapeElement.style.boxShadow = `0 0 10px ${blueGlow}, 0 0 20px ${blueGlow}`;
-        }
-        ball.style.boxShadow = `0 0 8px ${blueGlow}, 0 0 15px ${blueGlow}`;
+    // For triangles, we change the glow COLOR, not intensity
+    if (shape === 'triangle') {
+        shapeElement.style.filter = `drop-shadow(0 0 10px ${glowColor}) drop-shadow(0 0 20px ${glowColor})`;
+        updateTriangleGlowColor(borderColor);
+    } 
+    else if (shape === 'reversedtriangle') {
+        shapeElement.style.filter = `drop-shadow(0 0 10px ${glowColor}) drop-shadow(0 0 20px ${glowColor})`;
+        updateReversedTriangleGlowColor(borderColor);
     }
+    else {
+        // For other shapes, we also change the glow color (not intensity)
+        shapeElement.style.boxShadow = `0 0 15px ${glowColor}, 0 0 30px ${glowColor}`;
+        shapeElement.style.border = `2px solid ${borderColor}`;
+    }
+    
+    // Change ball glow color as well
+    ball.style.boxShadow = `0 0 10px ${glowColor}, 0 0 20px ${glowColor}`;
 }
 
+// Only modify these two helper functions - leave everything else untouched
 // Helper function to dynamically update triangle CSS with transitions
 function updateTriangleGlowColor(color) {
     // Create or update the style element for triangle
@@ -1378,6 +1433,9 @@ function updateTriangleGlowColor(color) {
         .triangle:before {
             border-bottom-color: ${color} !important;
             transition: border-bottom-color 0.8s ease !important;
+            /* Safari-specific fix directly on the pseudo-element */
+            -webkit-filter: drop-shadow(0 0 8px ${color}) !important;
+            filter: drop-shadow(0 0 8px ${color}) !important;
         }
     `;
 }
@@ -1397,10 +1455,12 @@ function updateReversedTriangleGlowColor(color) {
         .reversedtriangle:before {
             border-top-color: ${color} !important;
             transition: border-top-color 0.8s ease !important;
+            /* Safari-specific fix directly on the pseudo-element */
+            -webkit-filter: drop-shadow(0 0 8px ${color}) !important;
+            filter: drop-shadow(0 0 8px ${color}) !important;
         }
     `;
 }
-
 // Add this initialization function to set up transitions when the app first loads
 function initializeTransitions() {
     // Add initial transitions to shape element
@@ -1420,11 +1480,7 @@ function initializeTransitions() {
     document.head.appendChild(initialStyle);
 }
 
-// Call this function when your app initializes, after elements are created
-// For example, add this to your window.onload or initialization function
-// initializeTransitions();
-// Add Glowing effect End ------------------------------------------------------------------
-
+// Update the window load event to ensure triangles just have a simple white line
 window.addEventListener('load', () => {
   if (phasesData && phasesData.length > 0) {
     const initialShape = phasesData[0].shape;
@@ -1435,22 +1491,40 @@ window.addEventListener('load', () => {
       
       const shape = phasesData[0].shape.toLowerCase();
       
+      // Create a clean style element to override any default glowing effects
+      let cleanStyleEl = document.getElementById('clean-shape-style');
+      if (!cleanStyleEl) {
+          cleanStyleEl = document.createElement('style');
+          cleanStyleEl.id = 'clean-shape-style';
+          document.head.appendChild(cleanStyleEl);
+          cleanStyleEl.textContent = `
+              .triangle:before, .reversedtriangle:before {
+                  filter: none !important;
+                  box-shadow: none !important;
+                  text-shadow: none !important;
+              }
+          `;
+      }
+      
       // Make sure shapes are visible but without glow
-      if (shape === 'triangle' || shape === 'reversedtriangle') {
-        // For triangles, keep their border visible but without glow
-        shapeElement.style.boxShadow = "none";
+      if (shape === 'triangle') {
+        // For triangle, just set a simple white border with no filter/glow
         shapeElement.style.filter = "none";
-        if (shape === 'triangle') {
-          updateTriangleGlowColor('rgba(0, 153, 255, 0.5)'); // Visible but subtle
-        } else {
-          updateReversedTriangleGlowColor('rgba(0, 153, 255, 0.5)'); // Visible but subtle
-        }
-      } else {
+        shapeElement.style.boxShadow = "none";
+        shapeElement.style.textShadow = "none";
+        updateTriangleGlowColor('white');
+      } 
+      else if (shape === 'reversedtriangle') {
+        // For reversed triangle, just set a simple white border with no filter/glow
+        shapeElement.style.filter = "none";
+        shapeElement.style.boxShadow = "none";
+        shapeElement.style.textShadow = "none";
+        updateReversedTriangleGlowColor('white');
+      }
+      else {
         // For other shapes, add a visible border
         shapeElement.style.boxShadow = "none";
-        shapeElement.style.filter = "none";
         shapeElement.style.border = "1px solid white";
-        shapeElement.style.outline = "none";
       }
       
       // Make sure ball has no glow
@@ -1461,13 +1535,9 @@ window.addEventListener('load', () => {
     }, 100);
   }
   
-  // Check for browser speech synthesis support
-  if (!window.speechSynthesis) {
-    console.warn("This browser doesn't support speech synthesis. Voice guidance won't work.");
-  }
+  // Rest of the event listener code...
 });
 
-// Update paths when window is resized
 window.addEventListener('resize', () => {
     // Clear existing paths
     Object.keys(shapePaths).forEach(key => delete shapePaths[key]);
@@ -1542,6 +1612,12 @@ color: #fffefe;
         }
     });
     </script>
+    <style>
+        /* Making page responsive  */
+        .exercise-display {
+    max-height: 500px;
+        }
+    </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
 </body>

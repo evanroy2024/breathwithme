@@ -1,626 +1,592 @@
+<!-- templates/exercises/exercise_play.html -->
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <title>Shape Meditation - Breathing Exercise</title>
+    <title>{{ exercise.name }} - Breathing Exercise</title>
 <style>
-  ```css
-:root {
-    --primary: #7c3aed;
-    --primary-light: #a78bfa;
-    --secondary: #059669;
-    --background: #f3f4f6;
-    --text: #1f2937;
-    --accent: #f97316;
-}
-
-* {
+    /* Original styles remain the same */
+body {
+    font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-
-body {
     background-color: #121212;
-    color: var(--text);
+    color: #e0e0e0;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
     min-height: 100vh;
-    padding: 20px;
-    transition: background-color 0.5s;
-    margin: 0;
-    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
 }
-
-.container {
-    width: 100%;
-    max-width: 800px;
+.header {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+    padding: 15px 20px;
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
-
-h1 {
-    color: var(--primary);
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-.controls {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    margin-bottom: 30px;
-    background-color: white;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.control-group {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-label {
-    font-weight: 600;
-    color: var(--text);
-}
-
-select {
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid #d1d5db;
-    background-color: white;
-    font-size: 16px;
-    color: var(--text);
-    width: 100%;
-    -webkit-appearance: menulist; /* Safari compatible dropdown */
-    appearance: menulist;
-}
-
-.timing-controls {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    width: 100%;
-}
-
-.timing-input {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.timing-input label {
-    min-width: 80px;
-}
-
-input[type="number"] {
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid #d1d5db;
-    font-size: 16px;
-    width: 100%;
-    -webkit-appearance: none; /* Fix for Safari number inputs */
-    appearance: none;
-}
-
-button {
-    background-color: var(--primary);
-    color: white;
+.back-btn {
+    background-color: transparent;
+    color: #e0e0e0;
     border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s;
-    width: 100%;
-    -webkit-appearance: none; /* Fix for Safari buttons */
-    appearance: none;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    -webkit-appearance: none;
 }
-
-button:hover {
-    background-color: var(--primary-light);
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
 }
-
-.meditation-area {
-    width: 100%;
-    aspect-ratio: 1;
-    max-width: 350px;
+h1 {
+    color: #e0e0e0;
+    text-align: center;
+    margin-bottom: 20px;
+}
+.exercise-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+}
+.shape-container {
     position: relative;
-    margin-bottom: 50px;
+    width: 400px;
+    height: 400px;
+    margin: 20px 0;
     display: flex;
     align-items: center;
     justify-content: center;
 }
-
-#shapeContainer {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transform: translateZ(0); /* Force GPU acceleration */
-    -webkit-transform: translateZ(0);
-}
-
-#shape {
-    width: 100%;
-    height: 100%;
-    stroke: rgb(255, 255, 255);
-    stroke-width: 1;
-    fill: none;
-    -webkit-transform-origin: center center; /* Fix for Safari transformations */
-    transform-origin: center center;
-}
-
-#ball {
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    background-color: white;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    -webkit-transform: translate(-50%, -50%);
-    will-change: transform; /* Optimize animations */
-}
-
-.center-text {
+.phase-info {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    -webkit-transform: translate(-50%, -50%);
-    font-size: 28px;
-    font-weight: 700;
-    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
     text-align: center;
     z-index: 10;
-    pointer-events: none;
+    color: #e0e0e0;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
-.instruction {
-    font-size: 24px;
-    font-weight: 600;
-    color: var(--secondary);
-    text-align: center;
-    margin-top: 20px;
-    min-height: 36px;
+/* Shape styles */
+.circle {
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    border: 4px solid #ffffff;
+    position: relative;
+    box-sizing: border-box;
+}
+.square {
+    width: 300px;
+    height: 300px;
+    border: 4px solid #ffffff;
+    position: relative;
+    box-sizing: border-box;
+}
+.rectangle {
+    width: 350px;
+    height: 175px;
+    border: 4px solid #ffffff;
+    position: relative;
+    box-sizing: border-box;
+}
+.oval {
+    width: 300px;
+    height: 150px;
+    border-radius: 50%;
+    border: 4px solid #ffffff;
+    position: relative;
+    box-sizing: border-box;
 }
 
-.status {
-    margin-top: 10px;
-    padding: 8px 16px;
-    background-color: var(--primary-light);
-    color: white;
-    border-radius: 20px;
-    font-weight: 500;
-    opacity: 0;
-    transition: opacity 0.3s;
+/* Safari-friendly triangle implementations */
+.triangle {
+    position: relative;
+    width: 300px;
+    height: 260px;
+    transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
 }
 
-.status.active {
-    opacity: 1;
-}
-
-#breath-option {
-    display: none; /* Hidden by default */
-    margin-top: 20px;
-}
-
-/* SVG and glow effects */
-svg {
-    filter: drop-shadow(0 0 5px rgba(110, 142, 251, 0.6));
-    transition: filter 0.5s ease-in-out;
-    -webkit-filter: drop-shadow(0 0 5px rgba(110, 142, 251, 0.6));
-    -webkit-transition: -webkit-filter 0.5s ease-in-out;
-    transform: translateZ(0); /* Fix Safari rendering issues */
+.triangle::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-left: 150px solid transparent;
+    border-right: 150px solid transparent;
+    border-bottom: 260px solid #ffffff;
+    z-index: 1;
+    transform: translateZ(0);
     -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+        /* Adding filter for Safari glow */
+    -webkit-filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
 }
 
-/* Moderate glow effects based on breathing phase */
-svg.inhale {
-    filter: drop-shadow(0 0 5px rgba(94, 186, 252, 0.7)) 
-            drop-shadow(0 0 10px rgba(94, 186, 252, 0.5)) 
-            drop-shadow(0 0 18px rgba(0, 119, 255, 0.4));
-    -webkit-filter: drop-shadow(0 0 5px rgba(94, 186, 252, 0.7)) 
-                   drop-shadow(0 0 10px rgba(94, 186, 252, 0.5)) 
-                   drop-shadow(0 0 18px rgba(0, 119, 255, 0.4));
+.triangle::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 0;
+    height: 0;
+    border-left: 146px solid transparent;
+    border-right: 146px solid transparent;
+    border-bottom: 253px solid #121212;
+    z-index: 2;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
-svg.exhale {
-    filter: drop-shadow(0 0 5px rgba(99, 242, 172, 0.7)) 
-            drop-shadow(0 0 10px rgba(38, 209, 134, 0.5))
-            drop-shadow(0 0 18px rgba(18, 153, 95, 0.4));
-    -webkit-filter: drop-shadow(0 0 5px rgba(99, 242, 172, 0.7)) 
-                   drop-shadow(0 0 10px rgba(38, 209, 134, 0.5))
-                   drop-shadow(0 0 18px rgba(18, 153, 95, 0.4));
+.reversedtriangle {
+    position: relative;
+    width: 300px;
+    height: 260px;
+    transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
 }
 
-svg.hold {
-    filter: drop-shadow(0 0 5px rgba(252, 94, 232, 0.7)) 
-            drop-shadow(0 0 10px rgba(200, 46, 242, 0.5))
-            drop-shadow(0 0 18px rgba(135, 12, 219, 0.4));
-    -webkit-filter: drop-shadow(0 0 5px rgba(252, 94, 232, 0.7)) 
-                   drop-shadow(0 0 10px rgba(200, 46, 242, 0.5))
-                   drop-shadow(0 0 18px rgba(135, 12, 219, 0.4));
+.reversedtriangle::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-left: 150px solid transparent;
+    border-right: 150px solid transparent;
+    border-top: 255px solid #ffffff;
+    z-index: 1;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+          /* Adding filter for Safari glow */
+    -webkit-filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
 }
 
-/* Shape element styles - black fill with colored stroke */
-svg circle, 
-svg rect, 
-svg polygon, 
-svg ellipse {
-    fill: #121212;
-    stroke-width: 0.4;
-    transition: all 0.4s ease-in-out;
-    -webkit-transition: all 0.4s ease-in-out;
-    vector-effect: non-scaling-stroke; /* Helps with Safari rendering */
+.reversedtriangle::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 0;
+    height: 0;
+    border-left: 146px solid transparent;
+    border-right: 146px solid transparent;
+    border-top: 246px solid #121212;
+    z-index: 2;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
-/* Phase-specific shape styles */
-svg.inhale circle, 
-svg.inhale rect, 
-svg.inhale polygon, 
-svg.inhale ellipse {
-    stroke: rgba(94, 186, 252, 0.4);
+.quadrilateral {
+    width: 300px;
+    height: 300px;
+    transform: rotate(45deg);
+    border: 4px solid #ffffff;
+    position: relative;
+    box-sizing: border-box;
 }
 
-svg.exhale circle, 
-svg.exhale rect, 
-svg.exhale polygon, 
-svg.exhale ellipse {
-    stroke: rgba(99, 242, 172, 0.4);
+/* IMPROVED: Ball styles with enhanced glow effect for Safari compatibility */
+.ball {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 20;
+    /* Enhanced glow effect for Safari compatibility */
+    box-shadow: 0 0 8px 4px rgba(255, 255, 255, 0.9),
+                0 0 15px 8px rgba(255, 255, 255, 0.7),
+                0 0 20px 10px rgba(255, 255, 255, 0.5);
+    /* Safari-specific box-shadow */
+    -webkit-box-shadow: 0 0 8px 4px rgba(255, 255, 255, 0.9),
+                       0 0 15px 8px rgba(255, 255, 255, 0.7),
+                       0 0 20px 10px rgba(255, 255, 255, 0.5);
+    /* Add Safari-specific filter for glow effect */
+    -webkit-filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.9)) brightness(1.2);
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.9)) brightness(1.2);
+    /* Ensure hardware acceleration for animations */
+    -webkit-transform: translate(-50%, -50%) translateZ(0);
+    transform: translate(-50%, -50%) translateZ(0);
+    /* Improve rendering quality on Safari */
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 }
 
-svg.hold circle, 
-svg.hold rect, 
-svg.hold polygon, 
-svg.hold ellipse {
-    stroke: rgba(252, 94, 232, 0.4);
+.controls {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    -webkit-appearance: none;
+}
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+.start-btn {
+    background-color: #40c057;
+    color: #121212;
+}
+.pause-btn {
+    background-color: #fcc419;
+    color: #121212;
+}
+.reset-btn {
+    background-color: #ff6b6b;
+    color: #121212;
+}
+.progress-info {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 1.2rem;
+    color: #e0e0e0;
 }
 
-.shape-meditation {
-    margin-left: 0; /* Fix arbitrary negative margin */
-    transform: translateX(-30px); /* More precise control for positioning */
-    -webkit-transform: translateX(-30px);
+/* Path for debugging - can be removed in production */
+.debug-path {
+    position: absolute;
+    pointer-events: none;
+    z-index: 5;
+    opacity: 0;
 }
 
-@media (max-width: 768px) {
-    .meditation-area {
-        max-width: 90vw;
-    }
-    
-    h1 {
-        font-size: 24px;
-    }
-    
-    .instruction {
-        font-size: 20px;
-    }
-    
-    .shape-meditation {
-        transform: translateX(-20px);
-        -webkit-transform: translateX(-20px);
-    }
+.main-heading {
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
 }
 
-@media (max-width: 480px) {
-    .controls {
-        padding: 15px;
-    }
-    
-    button {
-        padding: 10px 16px;
-    }
-    
-    .meditation-area {
-        max-width: 95vw;
-    }
-    
-    .shape-meditation {
-        transform: translateX(-10px);
-        -webkit-transform: translateX(-10px);
-    }
+.header-container {
+    display: flex;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
+.back-button {
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    margin-right: 15px;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+    -webkit-appearance: none;
+}
+
+.back-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.title {
+    color: white;
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
 </style>
-
-     
 </head>
 <body>
-    <div class="guide-container" style="display: none;">
-        <h2 class="guide-heading">Choose shape to read guide</h2>
-        <div class="guide-buttons">
-          <a href="{% url 'breathxapp:circle_guide' %}" target="_blank">Circle</a>
-          <a href="{% url 'breathxapp:square_guide' %}" target="_blank">Square</a>
-          <a href="{% url 'breathxapp:rectangle_guide' %}" target="_blank">Rectangle</a>
-          <a href="{% url 'breathxapp:triangle_guide' %}" target="_blank">Triangle</a>
-          <a href="{% url 'breathxapp:reverse_triangle_guide' %}" target="_blank">Reverse Triangle</a>
-          <a href="{% url 'breathxapp:diamond_guide' %}" target="_blank">Diamond</a>
-          <a href="oval.html" style="visibility: hidden;" target="_blank">Oval</a>
-          <a href="{% url 'breathxapp:oval_guide' %}" target="_blank">Oval</a>
-        </div>
-      </div>
-      <div class="popup-overlay" id="popupOverlay" style="display: none;">
-        <div class="popup">
-            <h2>Save this exercise?</h2>
-           <p>Your exercise, along with all selected parameters such as shape, will be saved and can be played later from Silent Exercise</p>
-            <input type="text" id="exerciseNickname" placeholder="Enter exercise name">
-            
-            <div class="button-group">
-                <button id="saveExerciseButton" class="save-btn">Save</button>
-                <button class="cancel-btn" onclick="closePopup()">Don’t Save</button>
-            </div>
-    
-            <input type="hidden" id="csrf_token" value="{{ csrf_token }}">
-        </div>
-    </div>
-    
     <div class="container">
-      <div class="main-heading">
-        <div class="header-container">
-          <button class="back-button" onclick="window.location.href='{% url 'breathxapp:exercise_list' %}'">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M19 12H5M12 19l-7-7 7-7"/>
-            </svg>
-          </button>
-          <h1 class="title">BreathFree-Meditation</h1>
-        </div>
-      </div>
-      <hr style="width: 400px; height: 5px;  background: linear-gradient(to right, #6e8efb, #a777e3); border-radius: 10px; margin-bottom: 20px;">
-    
-          
-
- 
-        <div class="meditation-area">
-            <div id="shapeContainer">
-                <svg id="shape" viewBox="0 0 100 100"></svg>
-                <div id="ball"></div>
-                <div class="center-text" id="centerText"></div>
-            </div>
-        </div>
         
-        <div style="display: none;" class="instruction" id="instruction"></div>
-        <div style="display: none;" class="status" id="status"></div>
-
-
-        
-          
-        <div id="breath-option">
-            <div class="control-group">
-              <label>Breathing Timing (seconds)</label>
-              <div class="timing-controls" id="timingControls">
-                <div class="timing-input">
-                  <label for="inhaleTime">Inhale</label>
-                  <!-- <input type="number" id="inhaleTime" min="1" max="20" value="4"> -->
-                  <select id="inhaleTime">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4" selected>4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
-                    <option value="12">12</option>
-                    <option value="15">15</option>
-                    <option value="20">20</option>
-                    <option value="25">25</option>
-                    <option value="30">30</option>
-                    <option value="35">35</option>
-                    <option value="40">40</option>
-                    <option value="45">45</option>
-                    <option value="50">50</option>
-                    <option value="55">55</option>
-                    <option value="60">60</option>
-                  </select>
-                </div>
-                <div class="timing-input" id="holdInControl">
-                  <label for="holdInTime">Hold</label>
-                  <!-- <input type="number" id="holdInTime" min="0" max="20" value="4"> -->
-                  <select id="holdInTime">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4" selected>4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
-                    <option value="12">12</option>
-                    <option value="15">15</option>
-                    <option value="20">20</option>
-                    <option value="25">25</option>
-                    <option value="30">30</option>
-                    <option value="35">35</option>
-                    <option value="40">40</option>
-                    <option value="45">45</option>
-                    <option value="50">50</option>
-                    <option value="55">55</option>
-                    <option value="60">60</option>
-                  </select>
-                </div>
-                <div class="timing-input">
-                  <label for="exhaleTime">Exhale</label>
-                  <!-- <input type="number" id="exhaleTime" min="1" max="20" value="4"> -->
-                  <select id="exhaleTime">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4" selected>4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
-                    <option value="12">12</option>
-                    <option value="15">15</option>
-                    <option value="20">20</option>
-                    <option value="25">25</option>
-                    <option value="30">30</option>
-                    <option value="35">35</option>
-                    <option value="40">40</option>
-                    <option value="45">45</option>
-                    <option value="50">50</option>
-                    <option value="55">55</option>
-                    <option value="60">60</option>
-                  </select>
-                </div>
-                <div class="timing-input" id="holdOutControl">
-                  <label for="holdOutTime">Hold</label>
-                  <!-- <input type="number" id="holdOutTime" min="0" max="20" value="4"> -->
-                  <select id="holdOutTime">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4" selected>4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
-                    <option value="12">12</option>
-                    <option value="15">15</option>
-                    <option value="20">20</option>
-                    <option value="25">25</option>
-                    <option value="30">30</option>
-                    <option value="35">35</option>
-                    <option value="40">40</option>
-                    <option value="45">45</option>
-                    <option value="50">50</option>
-                    <option value="55">55</option>
-                    <option value="60">60</option>
-                  </select>
-                </div>
-              </div>
+        <div class="main-heading">
+            <div class="header-container">
+              <button class="back-button" onclick="window.location.href='{% url 'breathxapp:exercise_list' %}'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+              </button>
+              <h1 class="title">BreathFree-Meditation</h1>
             </div>
-            <button id="breath-close">Close</button>
-
           </div>
+          <hr style="width: 400px; height: 5px;  background: linear-gradient(to right, #6e8efb, #a777e3); border-radius: 10px;">
+        
 
-        <div class="controls" id="controls-row" style="display: flex; flex-direction: row;"> 
-            <div class="control-group">
-                <label for="shapeSelect"></label>
-                <select id="shapeSelect">
-                    <option value="circle">Circle</option>
-                    <option value="square">Square</option>
-                    <option value="rectangle">Rectangle (5:8 ratio)</option>
-                    <option value="triangle">Triangle</option>
-                    <option value="reverseTriangle">Reverse Triangle</option>
-                    <option value="diamond">Diamond</option>
-                    <option value="oval">Oval</option>
-                </select>
+        <div class="exercise-display">
+            <div class="shape-container">
+                <div class="phase-info"></div>
+                <div id="shape-element" class=""></div>
+                <div id="ball" class="ball" style="display: none;"></div>
+                <svg id="debug-path" class="debug-path" width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg"></svg>
             </div>
-        
-            <button id="breathtoggleBtn">Breath</button>
-            <button id="startButton">Start </button>
-            <button id="settings-buttons">Settings</button>
-            <!-- <button id="site-Vibration">Vibration</button> -->
+            <div class="controls-container">
+                <div class="buttons-row">
+                    <button class="control-btn start-btn" id="start-btn" aria-label="Start">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button class="control-btn pause-btn" id="pause-btn" disabled aria-label="Pause">
+                        <i class="fas fa-pause"></i>
+                    </button>
+                    <button class="control-btn reset-btn" id="reset-btn" disabled aria-label="Reset">
+                        <i class="fas fa-redo"></i>
+                    </button>
+                  
+                    <!-- Add this button where your other controls are -->
+                    <button id="voice-toggle-btn" class="control-btn">
+                        <i class="fas fa-volume-mute"></i>
+                    </button>
+                    <button aria-label="Vibration" id="vibration-button" style="background-color: rgba(30, 30, 35, 0.9); width: 55px; display: inline-flex; align-items: center; justify-content: center; padding: 0; border: none; border-radius: 60px; ">
+            <img src="{% static 'v2.png' %}" alt="" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+            </button>
+                    
+                </div>
+                
+                <div class="progress-row">
+                    <div id="phase-progress">Ready to start</div>
+                    <div id="cycle-progress"></div>
+                </div>
+            </div>
+            
+            <style>
+                .controls-container {
+                    background: rgba(18, 18, 20, 0.7);
+                    backdrop-filter: blur(10px);
+                    border-radius: 16px;
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+                    max-width: 400px;
+                    margin: 0 auto;
+                    padding: 20px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
+                }
+                
+                .buttons-row {
+                    display: flex;
+                    justify-content: center;
+                    gap: 16px;
+                }
+                
+                .control-btn {
+                    width: 56px;
+                    height: 56px;
+                    border: none;
+                    border-radius: 50%;
+                    font-size: 18px;
+                    transition: all 0.3s ease;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: rgba(30, 30, 35, 0.9);
+                    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+                    position: relative;
+                }
+                
+                .control-btn::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    border-radius: 50%;
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    box-sizing: border-box;
+                }
+                
+                .control-btn:hover {
+                    transform: translateY(-3px);
+                    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+                }
+                
+                .control-btn:active {
+                    transform: translateY(1px);
+                }
+                
+                .start-btn {
+                    color: #4ade80;
+                }
+                
+                .start-btn:hover {
+                    background: rgba(40, 45, 40, 0.9);
+                }
+                
+                .pause-btn {
+                    color: #fcd34d;
+                }
+                
+                .pause-btn:hover {
+                    background: rgba(45, 42, 35, 0.9);
+                }
+                
+                .reset-btn {
+                    color: #f87171;
+                }
+                
+                .reset-btn:hover {
+                    background: rgba(45, 35, 35, 0.9);
+                }
+                
+                .voice-btn {
+                    color: #60a5fa;
+                }
+                
+                .voice-btn:hover {
+                    background: rgba(35, 40, 45, 0.9);
+                }
+                
+                .control-btn:disabled {
+                    opacity: 0.4;
+                    cursor: not-allowed;
+                    transform: none;
+                    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+                }
+                
+                .progress-row {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                    color: rgba(255, 255, 255, 0.9);
+                    font-family: 'Inter', sans-serif;
+                    text-align: center;
+                }
+                
+                #phase-progress {
+                    font-size: 18px;
+                    font-weight: 500;
+                    letter-spacing: 0.3px;
+                    color: #e4e4e7;
+                }
+                
+                #cycle-progress {
+                    font-size: 16px;
+                    color: #a1a1aa;
+                    letter-spacing: 0.2px;
+                }
+                
+                /* Responsive adjustments */
+                @media (max-width: 480px) {
+                    .controls-container {
+                        padding: 16px;
+                        gap: 16px;
+                    }
+                    
+                    .buttons-row {
+                        gap: 12px;
+                    }
+                    
+                    .control-btn {
+                        width: 48px;
+                        height: 48px;
+                        font-size: 16px;
+                    }
+                    
+                    #phase-progress {
+                        font-size: 16px;
+                    }
+                    
+                    #cycle-progress {
+                        font-size: 14px;
+                    }
+                }
+            </style>
+            
+            <!-- Add this line in the head section of your HTML document -->
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
         </div>
-        
-        <div class="action-buttons" style="display: none;">
-            <button id="voice-start" class="voice-off" aria-label="Voice">
-              <i class="fas fa-volume-mute"></i>
-            </button>
-            <button aria-label="Vibration" id="vibration-button">
-                <i class="fas fa-bell"></i>
-            </button>
-            <button aria-label="Save" id="save-exercise-button-id">
-              <i class="fas fa-save"></i>
-            </button>
-            <button aria-label="Guide" id="guide-button-id">
-              <i class="fas fa-question-circle"></i>
-            </button>
-          </div>
-          <script>
-            const settingsButton = document.getElementById("settings-buttons");
-            const actionButtons = document.querySelector(".action-buttons");
-          
-            settingsButton.addEventListener("click", () => {
-              // Read the current state from the data-toggle attribute
-              const isVisible = settingsButton.getAttribute("data-toggle") === "true";
-              
-              // Toggle visibility based on the current state
-              if (isVisible) {
-                actionButtons.style.display = "none";
-                settingsButton.setAttribute("data-toggle", "false");
-              } else {
-                actionButtons.style.display = "flex";  // Show the buttons
-                settingsButton.setAttribute("data-toggle", "true");
-              }
-            });
-          </script>
-          
-          
-          
     </div>
-
- <!-- Add this Font Awesome link in the head of your HTML -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
-<!-- Replace your existing voice button with this -->
-
+  
 <script>
-    // DOM Elements
-const shapeSelect = document.getElementById('shapeSelect');
-const inhaleTimeInput = document.getElementById('inhaleTime');
-const holdInTimeInput = document.getElementById('holdInTime');
-const exhaleTimeInput = document.getElementById('exhaleTime');
-const holdOutTimeInput = document.getElementById('holdOutTime');
-const holdInControl = document.getElementById('holdInControl');
-const holdOutControl = document.getElementById('holdOutControl');
-const startButton = document.getElementById('startButton');
-const timingControls = document.getElementById('timingControls');
-const shapeElement = document.getElementById('shape');
+// Get exercise phases data from Django
+const phasesData = {{ phases_data|safe }};
+
+// DOM elements
+const shapeElement = document.getElementById('shape-element');
 const ball = document.getElementById('ball');
-const instruction = document.getElementById('instruction');
-const status = document.getElementById('status');
-const centerText = document.getElementById('centerText');
-const voiceButton = document.getElementById('voice-start');
+const debugPath = document.getElementById('debug-path');
+const phaseInfo = document.querySelector('.phase-info');
+const phaseProgress = document.getElementById('phase-progress');
+const cycleProgress = document.getElementById('cycle-progress');
+const startBtn = document.getElementById('start-btn');
+const pauseBtn = document.getElementById('pause-btn');
+const resetBtn = document.getElementById('reset-btn');
 
-// Animation variables
+// JavaScript to add to your script
+// Add this to the Event listeners section
+voiceToggleBtn = document.getElementById('voice-toggle-btn');
+voiceToggleBtn.addEventListener('click', toggleVoice);
+
+// Current state
+let currentPhaseIndex = 0;
+let currentBreathingPhaseIndex = 0;
+let currentEdgeIndex = 0;
+let currentCycle = 1;
+let isRunning = false;
+let timer = null;
 let animationId = null;
-let isAnimating = false;
-let currentPhase = 0;
-let currentTime = 0;
-let phaseTimes = [];
-let points = [];
-let totalTime = 0;
-let phaseNames = [];
-let lastTimestamp = 0;
-let lastSpokenPhase = -1; // Track the last spoken phase
-let speechSynthesis = window.speechSynthesis; // Speech synthesis API
-let voiceEnabled = false; // Voice starts off by default
+let lastSpokenPhase = ''; // Track last spoken phrase to avoid repetition
 
-// Initialize voice button
-function initVoiceButton() {
-    // Add icon to button
-    voiceButton.innerHTML = '<i class="fas fa-volume-mute"></i>';
-    voiceButton.classList.add('voice-off');
-    
-    // Add event listener
-    voiceButton.addEventListener('click', toggleVoice);
-}
+// Ball animation parameters
+let ballPosition = 0;
+let animationStartTime = null;
+let animationDuration = 5000; // Default duration (ms)
+
+// Speech synthesis
+const synth = window.speechSynthesis;
+
+// Path coordinates for each shape
+const shapePaths = {};
+
+// Edge segments for multi-edge shapes
+const shapeEdges = {};
+
+// Shape color mappings for glowing effect
+const shapeColors = {
+    'circle': '#3498db', // Blue
+    'square': '#2ecc71', // Green
+    'rectangle': '#e74c3c', // Red
+    'triangle': '#f39c12', // Orange
+    'reversedtriangle': '#9b59b6', // Purple
+    'quadrilateral': '#1abc9c', // Turquoise
+    'oval': '#d35400', // Dark Orange
+    'default': '#3498db' // Default blue
+};
+
 
 // Voice -------------------------------------------------------------------
 const audioFiles = {
@@ -628,1704 +594,1041 @@ const audioFiles = {
     'Hold': new Audio("{% static 'voices/hold.mp3' %}"),
     'Exhale': new Audio("{% static 'voices/exhale.mp3' %}")
 };
+let voiceEnabled = false; // Voice starts off by default
 
-// Replace the entire toggleVoice function:
+
+// Initialize
+updateShapeDisplay();
+applyGlowEffect();
+
+// Event listeners
+startBtn.addEventListener('click', startExercise);
+pauseBtn.addEventListener('click', pauseExercise);
+resetBtn.addEventListener('click', resetExercise);
+
+// 3. Make sure startExercise explicitly applies the glow
+function startExercise() {
+    if (!isRunning) {
+        isRunning = true;
+        startBtn.disabled = true;
+        pauseBtn.disabled = false;
+        resetBtn.disabled = false;
+        
+        // Explicitly apply glow effect when starting
+        applyGlowEffect();
+        
+        runCurrentEdge();
+    }
+}
+// Make sure to update these functions to stop audio playback
+function pauseExercise() {
+    if (isRunning) {
+        isRunning = false;
+        clearTimeout(timer);
+        cancelAnimationFrame(animationId);
+        startBtn.disabled = false;
+        startBtn.innerHTML = '<i class="fas fa-play"></i>';
+        
+        // Stop any ongoing audio playback
+        Object.values(audioFiles).forEach(audio => {
+            audio.pause();
+            audio.currentTime = 0;
+        });
+    }
+}
+
+
+function resetExercise() {
+    isRunning = false;
+    clearTimeout(timer);
+    cancelAnimationFrame(animationId);
+    currentPhaseIndex = 0;
+    currentBreathingPhaseIndex = 0;
+    currentEdgeIndex = 0;
+    currentCycle = 1;
+    startBtn.disabled = false;
+    startBtn.textContent = 'Start';
+    pauseBtn.disabled = true;
+    resetBtn.disabled = true;
+    ball.style.display = 'none';
+    
+    // Stop any ongoing audio playback
+    Object.values(audioFiles).forEach(audio => {
+        audio.pause();
+        audio.currentTime = 0;
+    });
+    
+    lastSpokenPhase = '';
+    
+    // Get the current shape before updating display
+    const shape = phasesData[currentPhaseIndex].shape.toLowerCase();
+    
+    updateShapeDisplay();
+    
+    // Apply appropriate resetting based on shape type
+    if (shape === 'triangle') {
+        shapeElement.style.filter = "none";
+        shapeElement.style.boxShadow = "none";
+        shapeElement.style.border = "none";
+        updateTriangleGlowColor('transparent');
+    } else if (shape === 'reversedtriangle') {
+        shapeElement.style.filter = "none";
+        shapeElement.style.boxShadow = "none";
+        shapeElement.style.border = "none";
+        updateReversedTriangleGlowColor('transparent');
+    } else {
+        shapeElement.style.boxShadow = "none";
+        shapeElement.style.filter = "none";
+        shapeElement.style.border = "1px solid rgba(200, 200, 200, 0.3)"; // Very subtle neutral border
+    }
+    
+    // Also remove ball glow
+    if (ball) {
+        ball.style.boxShadow = "none";
+    }
+}
+function runCurrentEdge() {
+    if (!isRunning) return;
+    
+    const phase = phasesData[currentPhaseIndex];
+    if (!phase) {
+        // Exercise completed
+        resetExercise();
+        phaseProgress.textContent = 'Exercise completed!';
+        return;
+    }
+    
+    // Update shape display for current phase
+    updateShapeDisplay();
+    applyGlowEffect();
+    
+    // Create path for the current shape if it doesn't exist
+    createShapePath(phase.shape);
+    
+    // Get total number of edges for this shape
+    const totalEdges = getEdgeCount(phase.shape);
+    
+    // Get current breathing phase
+    const breathingPhases = phase.breathing_phases;
+    const currentBreathingPhase = breathingPhases[currentBreathingPhaseIndex];
+    
+    // Determine if this is a circular shape
+    const isCircularShape = ['circle', 'oval'].includes(phase.shape.toLowerCase());
+    
+    // Get duration for current edge/phase
+    let duration;
+    if (isCircularShape) {
+        // For circle/oval, use the specified duration for each full circle
+        duration = phase.inputs[currentBreathingPhaseIndex] || 0;
+    } else {
+        // For other shapes, use the specified duration for each edge
+        duration = phase.inputs[0] || 0;
+    }
+    
+    // Update display
+    updateBreathingPhaseDisplay(phase.shape, currentBreathingPhase, duration);
+    
+    // For multi-edge shapes, we need to determine which edge to animate
+    let edgePoints;
+    
+    if (isCircularShape) {
+        // For circular shapes, use the full path for animation
+        edgePoints = shapePaths[phase.shape];
+    } else {
+        // For shapes with distinct edges, use the appropriate edge
+        edgePoints = shapeEdges[phase.shape][currentEdgeIndex];
+    }
+    
+    // Start ball animation for this edge
+    if (isCircularShape) {
+        // For circular shapes, use full circle animation
+        startCircularAnimation(phase, edgePoints, duration);
+    } else {
+        // For other shapes, we animate along the edge
+        startEdgeAnimation(phase, edgePoints, duration);
+    }
+    
+    // Schedule next edge
+    timer = setTimeout(() => {
+        goToNextEdge(phase);
+    }, duration * 1000);
+}
+
+function getEdgeCount(shape) {
+    switch(shape.toLowerCase()) {
+        case 'circle':
+        case 'oval':
+            return 1; // Circular shapes are treated specially
+        case 'triangle':
+        case 'reversedtriangle':
+            return 3;
+        case 'square':
+        case 'rectangle':
+        case 'quadrilateral':
+            return 4;
+        default:
+            return 1;
+    }
+}
+
+function goToNextEdge(phase) {
+    const isCircularShape = ['circle', 'oval'].includes(phase.shape.toLowerCase());
+    const totalEdges = getEdgeCount(phase.shape);
+    
+    // Update breathing phase index
+    currentBreathingPhaseIndex = (currentBreathingPhaseIndex + 1) % phase.breathing_phases.length;
+    
+    // For non-circular shapes, update edge index
+    if (!isCircularShape) {
+        currentEdgeIndex = (currentEdgeIndex + 1) % totalEdges;
+        
+        // If we've completed all edges, increment cycle
+        if (currentEdgeIndex === 0) {
+            currentCycle++;
+        }
+    } else {
+        // For circular shapes, if we've completed all breathing phases, increment cycle
+        if (currentBreathingPhaseIndex === 0) {
+            currentCycle++;
+        }
+    }
+    
+    // Check if we completed all cycles for this shape
+    if (currentCycle > phase.cycles) {
+        currentCycle = 1;
+        currentEdgeIndex = 0;
+        currentBreathingPhaseIndex = 0;
+        currentPhaseIndex++;
+        
+        // Force shape update for the next phase
+        updateShapeDisplay();
+        applyGlowEffect();
+    }
+    
+    runCurrentEdge();
+}
+
+
 function toggleVoice() {
     voiceEnabled = !voiceEnabled;
     
+    // Update button icon
     if (voiceEnabled) {
-        voiceButton.innerHTML = '<i class="fas fa-volume-up"></i>';
-        voiceButton.classList.remove('voice-off');
-        voiceButton.classList.add('voice-on');
-        
-        // If currently animating, speak the current phase
-        if (isAnimating && currentPhase >= 0) {
-            speakPhase(phaseNames[currentPhase]);
-        }
+        voiceToggleBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+        voiceToggleBtn.title = 'Disable voice guidance';
     } else {
-        voiceButton.innerHTML = '<i class="fas fa-volume-mute"></i>';
-        voiceButton.classList.remove('voice-on');
-        voiceButton.classList.add('voice-off');
+        voiceToggleBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+        voiceToggleBtn.title = 'Enable voice guidance';
+    }
+}
+
+// Update the speakBreathingPhase function to only play audio when voice is enabled
+function speakBreathingPhase(text) {
+    if (!voiceEnabled) return; // Skip audio if voice is disabled
+    
+    // Extract just the breathing instruction (inhale, exhale, hold)
+    let speechText = text.toLowerCase();
+    
+    // Check for each breathing instruction
+    if (speechText.includes('inhale') || speechText.includes('breathe in')) {
+        // Stop any currently playing audio
+        Object.values(audioFiles).forEach(audio => {
+            audio.pause();
+            audio.currentTime = 0;
+        });
         
-        // Stop any playing audio
-        for (const phase in audioFiles) {
-            audioFiles[phase].pause();
-            audioFiles[phase].currentTime = 0;
-        }
-    }
-}
-
-// Shape drawing functions
-const drawShape = {
-    circle: () => {
-        shapeElement.setAttribute('viewBox', '0 0 100 100');
-        shapeElement.innerHTML = '<circle cx="50" cy="50" r="45" />';
-        return getCirclePoints(50, 50, 45);
-    },
-    square: () => {
-        shapeElement.setAttribute('viewBox', '0 0 100 100');
-        shapeElement.innerHTML = '<rect x="10" y="10" width="80" height="80" />';
-        return getSquarePoints(10, 10, 90, 90);
-    },
-    rectangle: () => {
-        shapeElement.setAttribute('viewBox', '0 0 100 100');
-        // 5:8 ratio
-        const width = 80;
-        const height = width * (5/8);
-        const x = 10;
-        const y = (100 - height) / 2;
-        shapeElement.innerHTML = `<rect x="${x}" y="${y}" width="${width}" height="${height}" />`;
-        return getSquarePoints(x, y, x + width, y + height);
-    },
-    triangle: () => {
-        shapeElement.setAttribute('viewBox', '0 0 100 100');
-        shapeElement.innerHTML = '<polygon points="50,10 90,90 10,90" />';
-        return getTrianglePoints(50, 10, 90, 90, 10, 90);
-    },
-    reverseTriangle: () => {
-        shapeElement.setAttribute('viewBox', '0 0 100 100');
-        shapeElement.innerHTML = '<polygon points="10,10 90,10 50,90" />';
-        return getTrianglePoints(10, 10, 90, 10, 50, 90);
-    },
-    diamond: () => {
-        shapeElement.setAttribute('viewBox', '0 0 100 100');
-        shapeElement.innerHTML = '<polygon points="50,10 90,50 50,90 10,50" />';
-        return getDiamondPoints(50, 10, 90, 50, 50, 90, 10, 50);
-    },
-    oval: () => {
-        shapeElement.setAttribute('viewBox', '0 0 100 100');
-        shapeElement.innerHTML = '<ellipse cx="50" cy="50" rx="40" ry="25" />';
-        return getOvalPoints(50, 50, 40, 25);
-    }
-};
-
-// Replace the entire init function:
-function init() {
-    updateTimingControls();
-    drawCurrentShape();
-    initVoiceButton();
-    
-    // Preload audio files
-    for (const phase in audioFiles) {
-        audioFiles[phase].load();
-        audioFiles[phase].preload = 'auto';
-    }
-    
-    // Event listeners
-    shapeSelect.addEventListener('change', () => {
-        updateTimingControls();
-        drawCurrentShape();
-        syncInputs(); // Sync inputs when shape changes
-        if (isAnimating) {
-            stopAnimation();
-            startAnimation();
-        }
-    });
-    
-    // Add event listeners to all inputs to auto-adjust when values change and sync related inputs
-    inhaleTimeInput.addEventListener('input', () => {
-        syncInputs();
-        autoAdjustAnimation();
-    });
-    
-    holdInTimeInput.addEventListener('input', () => {
-        syncInputs();
-        autoAdjustAnimation();
-    });
-    
-    exhaleTimeInput.addEventListener('input', () => {
-        syncInputs();
-        autoAdjustAnimation();
-    });
-    
-    holdOutTimeInput.addEventListener('input', () => {
-        syncInputs();
-        autoAdjustAnimation();
-    });
-    
-    startButton.addEventListener('click', toggleAnimation);
-    
-    // Initial sync
-    syncInputs();
-}
-
-// Sync input values based on the selected shape
-function syncInputs() {
-    const shape = shapeSelect.value;
-    
-    switch (shape) {
-        case 'circle':
-            // For circle: exhaleTime = inhaleTime
-            exhaleTimeInput.value = inhaleTimeInput.value;
-            break;
-            
-        case 'square':
-            // For square: all inputs = inhaleTime
-            holdInTimeInput.value = inhaleTimeInput.value;
-            exhaleTimeInput.value = inhaleTimeInput.value;
-            holdOutTimeInput.value = inhaleTimeInput.value;
-            break;
-            
-        case 'rectangle':
-            // For rectangle: exhaleTime = inhaleTime, holdOutTime = holdInTime
-            exhaleTimeInput.value = inhaleTimeInput.value;
-            holdOutTimeInput.value = holdInTimeInput.value;
-            break;
-            
-        // No changes for other shapes
-        case 'triangle':
-        case 'reverseTriangle':
-        case 'diamond':
-        case 'oval':
-            // No syncing needed
-            break;
-    }
-}
-
-// Replace the entire speakPhase function:
-function speakPhase(phaseText) {
-    // Only play if voice is enabled
-    if (!voiceEnabled) return;
-    
-    // Stop any currently playing audio first
-    for (const phase in audioFiles) {
-        audioFiles[phase].pause();
-        audioFiles[phase].currentTime = 0;
-    }
-    
-    // Play the appropriate audio file
-    if (audioFiles[phaseText]) {
-        // Reset audio to beginning
-        audioFiles[phaseText].currentTime = 0;
+        // Play the inhale audio immediately
+        audioFiles['Inhale'].play();
+        lastSpokenPhase = 'inhale';
+    } 
+    else if (speechText.includes('hold') || speechText.includes('retain')) {
+        // Stop any currently playing audio
+        Object.values(audioFiles).forEach(audio => {
+            audio.pause();
+            audio.currentTime = 0;
+        });
         
-        // Play the audio file immediately
-        const playPromise = audioFiles[phaseText].play();
+        // Play the hold audio immediately
+        audioFiles['Hold'].play();
+        lastSpokenPhase = 'hold';
+    } 
+    else if (speechText.includes('exhale') || speechText.includes('breathe out')) {
+        // Stop any currently playing audio
+        Object.values(audioFiles).forEach(audio => {
+            audio.pause();
+            audio.currentTime = 0;
+        });
         
-        // Handle potential play() promise rejection
-        if (playPromise !== undefined) {
-            playPromise.catch(error => {
-                console.log('Audio play failed:', error);
-            });
-        }
+        // Play the exhale audio immediately
+        audioFiles['Exhale'].play();
+        lastSpokenPhase = 'exhale';
     }
 }
 
-// Update timing controls based on selected shape
-function updateTimingControls() {
-    const shape = shapeSelect.value;
+
+function updateBreathingPhaseDisplay(shape, breathingPhase, duration) {
+    // Clear previous classes
+    shapeElement.className = '';
     
-    // First reset all inputs to be visible
-    inhaleTimeInput.parentElement.style.display = 'flex';
-    holdInTimeInput.parentElement.style.display = 'flex';
-    exhaleTimeInput.parentElement.style.display = 'flex';
-    holdOutTimeInput.parentElement.style.display = 'flex';
+    // Set shape class
+    shapeElement.classList.add(shape.toLowerCase());
     
-    // Then hide entire controls based on shape
-    switch (shape) {
-        case 'circle':
-            // Only inhale and exhale controls visible
-            holdInControl.style.display = 'none';
-            holdOutControl.style.display = 'none';
-            
-            // For circle, hide exhale input (but keep control visible)
-            exhaleTimeInput.parentElement.style.display = 'none';
-            break;
-        case 'oval':
-            // Only inhale and exhale controls visible
-            holdInControl.style.display = 'none';
-            holdOutControl.style.display = 'none';
-            
-            // For circle, hide exhale input (but keep control visible)
-            break;
-            
-        case 'triangle':
-        case 'reverseTriangle':
-            // Inhale, hold, exhale controls visible
-            holdInControl.style.display = 'flex';
-            holdOutControl.style.display = 'none';
-            break;
-            
-        case 'square':
-            // All controls visible but hide specific inputs
-            holdInControl.style.display = 'flex';
-            holdOutControl.style.display = 'flex';
-            
-            // For square, hide all inputs except the first one
-            holdInTimeInput.parentElement.style.display = 'none';
-            exhaleTimeInput.parentElement.style.display = 'none';
-            holdOutTimeInput.parentElement.style.display = 'none';
-            break;
-            
-        case 'rectangle':
-            // All controls visible but hide specific inputs
-            holdInControl.style.display = 'flex';
-            holdOutControl.style.display = 'flex';
-            
-            // For rectangle, only first two inputs are visible
-            exhaleTimeInput.parentElement.style.display = 'none';
-            holdOutTimeInput.parentElement.style.display = 'none';
-            break;
-            
-        case 'diamond':
-            // All controls visible
-            holdInControl.style.display = 'flex';
-            holdOutControl.style.display = 'flex';
-            break;
+    // Update text displays
+    phaseInfo.textContent = breathingPhase;
+    phaseProgress.textContent = `Phase: ${currentPhaseIndex + 1}/${phasesData.length} - ${breathingPhase} (${duration}s)`;
+    cycleProgress.textContent = `Cycle: ${currentCycle}/${phasesData[currentPhaseIndex].cycles}`;
+    
+    // Update glow effect based on breathing phase
+    updateGlowIntensity(breathingPhase);
+    
+    // Speak the breathing phase instruction
+    speakBreathingPhase(breathingPhase);
+}
+
+function updateShapeDisplay() {
+    const phase = phasesData[currentPhaseIndex];
+    if (!phase) return;
+    
+    // Clear previous classes
+    shapeElement.className = '';
+    
+    // Set shape class
+    shapeElement.classList.add(phase.shape.toLowerCase());
+    
+    // Reset text displays
+    if (!isRunning) {
+        phaseInfo.textContent = 'Ready';
+        phaseProgress.textContent = 'Ready to start';
+        cycleProgress.textContent = `Phase: ${currentPhaseIndex + 1}/${phasesData.length}`;
     }
-}
-// Draw the current shape
-function drawCurrentShape() {
-    const shape = shapeSelect.value;
-    points = drawShape[shape]();
-    positionBall(points[0]);
-}
-
-// Position the ball at the given point
-function positionBall(point) {
-    ball.style.left = `${point.x}%`;
-    ball.style.top = `${point.y}%`;
+    
+    // Important: Clear previous paths for this shape to force recalculation
+    delete shapePaths[phase.shape];
+    delete shapeEdges[phase.shape];
+    
+    // Create path for the shape
+    createShapePath(phase.shape);
 }
 
-// Auto-adjust animation when inputs change
-function autoAdjustAnimation() {
-    if (isAnimating) {
-        stopAnimation();
-        startAnimation();
-    }
-}
 
-// Toggle animation
-function toggleAnimation() {
-    if (isAnimating) {
-        stopAnimation();
-        startButton.textContent = 'Start';
-        instruction.textContent = '';
-        status.classList.remove('active');
+// Function to update glow intensity based on breathing phase
+function updateGlowIntensity(breathingPhase) {
+    const phase = phasesData[currentPhaseIndex];
+    if (!phase) return;
+    
+    const shape = phase.shape.toLowerCase();
+    const color = shapeColors[shape] || shapeColors['default'];
+    
+    // Adjust glow intensity based on breathing phase
+    if (breathingPhase.toLowerCase().includes('inhale')) {
+        // Stronger glow for inhale
+        shapeElement.style.boxShadow = `0 0 25px ${color}, 0 0 40px ${color}`;
+        ball.style.boxShadow = `0 0 15px ${color}, 0 0 30px ${color}`;
     } else {
-        startAnimation();
-        startButton.textContent = 'Stop';
+        // Softer glow for exhale
+        shapeElement.style.boxShadow = `0 0 10px ${color}, 0 0 20px ${color}`;
+        ball.style.boxShadow = `0 0 8px ${color}, 0 0 15px ${color}`;
     }
 }
 
-// Start the animation
-function startAnimation() {
-    if (isAnimating) return;
+function createShapePath(shape) {
+    // Don't recreate if already exists
+    if (shapePaths[shape]) return;
     
-    const shape = shapeSelect.value;
-    setupAnimationParameters(shape);
+    // Get shape element dimensions
+    const shapeRect = shapeElement.getBoundingClientRect();
+    const containerRect = document.querySelector('.shape-container').getBoundingClientRect();
     
-    isAnimating = true;
-    currentPhase = 0;
-    currentTime = 0;
+    // Adjust coordinates to be relative to container
+    const offsetX = shapeRect.left - containerRect.left;
+    const offsetY = shapeRect.top - containerRect.top;
     
-    // Start the animation loop
-    lastTimestamp = performance.now();
-    animationId = requestAnimationFrame(animate);
+    // Path points array
+    let points = [];
+    let edges = [];
     
-    // Make sure status is active
-    status.classList.add('active');
-    
-    // Speak the initial phase if voice is enabled
-    if (voiceEnabled) {
-        speakPhase(phaseNames[0]);
-        lastSpokenPhase = 0;
-    }
-}
-
-// Replace the entire stopAnimation function:
-function stopAnimation() {
-    if (!isAnimating) return;
-    
-    cancelAnimationFrame(animationId);
-    isAnimating = false;
-    centerText.textContent = '';
-    status.classList.remove('active');
-    
-    // Remove all glow effect classes
-    shapeElement.classList.remove('inhale', 'exhale', 'hold');
-    
-    // Stop any playing audio
-    for (const phase in audioFiles) {
-        audioFiles[phase].pause();
-        audioFiles[phase].currentTime = 0;
-    }
-    
-    lastSpokenPhase = -1;
-}
-// Setup animation parameters based on the shape
-function setupAnimationParameters(shape) {
-    phaseTimes = [];
-    phaseNames = [];
-    
-    const inhaleTime = parseFloat(inhaleTimeInput.value) || 4;
-    const exhaleTime = parseFloat(exhaleTimeInput.value) || 4;
-    const holdInTime = parseFloat(holdInTimeInput.value) || 4;
-    const holdOutTime = parseFloat(holdOutTimeInput.value) || 4;
-    
-    switch (shape) {
+    switch(shape.toLowerCase()) {
         case 'circle':
-        case 'oval':
-            phaseTimes = [inhaleTime, exhaleTime];
-            phaseNames = ['Inhale', 'Exhale'];
-            break;
+            // Create points around a circle
+            const circleRadius = shapeRect.width / 2;
+            const centerX = offsetX + circleRadius;
+            const centerY = offsetY + circleRadius;
             
-        case 'triangle':
-        case 'reverseTriangle':
-            phaseTimes = [inhaleTime, holdInTime, exhaleTime];
-            phaseNames = ['Inhale', 'Hold', 'Exhale'];
-            break;
-            
-        case 'square':
-        case 'rectangle':
-        case 'diamond':
-            phaseTimes = [inhaleTime, holdInTime, exhaleTime, holdOutTime];
-            phaseNames = ['Inhale', 'Hold', 'Exhale', 'Hold'];
-            break;
-    }
-    
-    totalTime = phaseTimes.reduce((sum, time) => sum + time, 0);
-}
-
-// Add these JavaScript updates
-
-// Replace the animate function with this improved version
-function animate(timestamp) {
-    const deltaTime = (timestamp - lastTimestamp) / 1000; // Convert to seconds
-    lastTimestamp = timestamp;
-    
-    // Update the current time
-    currentTime += deltaTime;
-    
-    // Calculate the phase boundaries
-    let phaseStartTime = 0;
-    for (let i = 0; i < currentPhase; i++) {
-        phaseStartTime += phaseTimes[i];
-    }
-    
-    const phaseEndTime = phaseStartTime + phaseTimes[currentPhase];
-    
-    // Important: Handle phase transitions more carefully
-    if (currentTime >= phaseEndTime) {
-        // Update the phase
-        currentPhase = (currentPhase + 1) % phaseTimes.length;
-        
-        // If we've completed a full cycle
-        if (currentPhase === 0) {
-            currentTime = 0;
-            phaseStartTime = 0;
-        } else {
-            // Recalculate the phase start time for the new phase
-            phaseStartTime = 0;
-            for (let i = 0; i < currentPhase; i++) {
-                phaseStartTime += phaseTimes[i];
+            // Create more points for smoother animation (360 points for a circle - one per degree)
+            // Start from the top (12 o'clock) position: -90 degrees in radians is -Math.PI/2
+            for (let i = 0; i <= 360; i++) {
+                const angle = ((i / 360) * Math.PI * 2) - Math.PI/2; // Start from top (12 o'clock)
+                const x = centerX + Math.cos(angle) * circleRadius;
+                const y = centerY + Math.sin(angle) * circleRadius;
+                points.push({ x, y });
             }
-        }
-        
-        // Speak the new phase if voice is enabled
-        if (voiceEnabled && currentPhase !== lastSpokenPhase) {
-            speakPhase(phaseNames[currentPhase]);
-            lastSpokenPhase = currentPhase;
-        }
-    }
-    
-    // Calculate progress within the current phase (after phase update)
-    const phaseProgress = (currentTime - phaseStartTime) / phaseTimes[currentPhase];
-    
-    // Update the instruction text, center text, and status
-    instruction.textContent = phaseNames[currentPhase];
-    centerText.textContent = phaseNames[currentPhase];
-    status.textContent = phaseNames[currentPhase];
-    
-    // Update glow effect classes based on current phase
-    shapeElement.classList.remove('inhale', 'exhale', 'hold');
-    
-    if (phaseNames[currentPhase] === 'Inhale') {
-        shapeElement.classList.add('inhale');
-    } else if (phaseNames[currentPhase] === 'Exhale') {
-        shapeElement.classList.add('exhale');
-    } else if (phaseNames[currentPhase] === 'Hold') {
-        shapeElement.classList.add('hold');
-    }
-    
-    // Calculate the position of the ball
-    // Use a single smooth calculation for the ball position
-    const currentPoint = getPointsForPhase(currentPhase, phaseProgress);
-    positionBall(currentPoint);
-    
-    // Continue the animation
-    animationId = requestAnimationFrame(animate);
-}
-// In the stopAnimation function, add code to remove the glow classes:
-function stopAnimation() {
-    if (!isAnimating) return;
-    
-    cancelAnimationFrame(animationId);
-    isAnimating = false;
-    centerText.textContent = '';
-    status.classList.remove('active');
-    
-    // Remove all glow effect classes
-    shapeElement.classList.remove('inhale', 'exhale', 'hold');
-    
-    // Stop any ongoing speech
-    speechSynthesis.cancel();
-    lastSpokenPhase = -1;
-}
-// Replace this function in your code
-// Replace or update the getPointsForPhase function with this logic
-function getPointsForPhase(phase, progress) {
-    const shape = shapeSelect.value;
-    const numPhases = phaseTimes.length;
-    
-    // For circle and oval, each phase should complete a full 360-degree cycle
-    if (shape === 'circle' || shape === 'oval') {
-        // For each phase, go full circle from 12 o'clock to 12 o'clock
-        // Start at top (-90 degrees) and make a full 360 rotation
-        const angle = -90 + (progress * 360);
-        const radians = angle * Math.PI / 180;
-        
-        if (shape === 'circle') {
-            const radius = 45;
-            const x = 50 + radius * Math.cos(radians);
-            const y = 50 + radius * Math.sin(radians);
-            return { x, y };
-        } else { // oval
-            const rx = 40;
-            const ry = 25;
-            const x = 50 + rx * Math.cos(radians);
-            const y = 50 + ry * Math.sin(radians);
-            return { x, y };
-        }
-    } else {
-        // Special case for reverseTriangle - adjust the starting point
-        if (shape === 'reverseTriangle') {
-            // For reverse triangle, we want to start from the bottom point (50,90)
-            // Remap the points so phase 0 starts at bottom point
-            const pointsPerPhase = points.length / numPhases;
+            break;
             
-            // Calculate the index for the bottom point (which is at 50,90)
-            const bottomPointIndex = points.findIndex(p => 
-                Math.abs(p.x - 50) < 1 && Math.abs(p.y - 90) < 1
-            );
+        case 'square':
+            // Create points around a square
+            const squareLeft = offsetX;
+            const squareTop = offsetY;
+            const squareRight = offsetX + shapeRect.width;
+            const squareBottom = offsetY + shapeRect.height;
             
-            // If bottom point found, adjust the start index
-            if (bottomPointIndex >= 0) {
-                const adjustedPhase = (phase + (bottomPointIndex / pointsPerPhase)) % numPhases;
-                const startIdx = Math.floor(adjustedPhase * pointsPerPhase) % points.length;
-                const endIdx = Math.floor((adjustedPhase + 1) * pointsPerPhase) % points.length;
-                
-                // If start and end are the same, we need to wrap around
-                if (startIdx === endIdx) {
-                    return points[startIdx];
-                }
-                
-                // For shapes with corners, we need to interpolate between points
-                let startPoint = points[startIdx];
-                let endPoint = (endIdx === 0) ? points[points.length - 1] : points[endIdx];
-                
-                const x = startPoint.x + (endPoint.x - startPoint.x) * progress;
-                const y = startPoint.y + (endPoint.y - startPoint.y) * progress;
-                
-                return { x, y };
+            // Top edge (left to right)
+            const topEdge = [];
+            for (let i = 0; i <= 100; i++) {
+                const x = squareLeft + (squareRight - squareLeft) * (i / 100);
+                topEdge.push({ x, y: squareTop });
             }
-        }
-        
-        // For other polygons, each phase maps to a specific segment of the shape
-        const pointsPerPhase = points.length / numPhases;
-        const startIdx = Math.floor(phase * pointsPerPhase);
-        const endIdx = Math.floor((phase + 1) * pointsPerPhase) % points.length;
-        
-        // If start and end are the same, we need to wrap around
-        if (startIdx === endIdx) {
-            return points[startIdx];
-        }
-        
-        // For shapes with corners, we need to interpolate between points
-        let startPoint = points[startIdx];
-        let endPoint;
-        
-        // Handle the case where endIdx is 0 (wrap around to the beginning)
-        if (endIdx === 0) {
-            endPoint = points[points.length - 1];
-        } else {
-            endPoint = points[endIdx];
-        }
-        
-        const x = startPoint.x + (endPoint.x - startPoint.x) * progress;
-        const y = startPoint.y + (endPoint.y - startPoint.y) * progress;
-        
-        return { x, y };
+            
+            // Right edge (top to bottom)
+            const rightEdge = [];
+            for (let i = 0; i <= 100; i++) {
+                const y = squareTop + (squareBottom - squareTop) * (i / 100);
+                rightEdge.push({ x: squareRight, y });
+            }
+            
+            // Bottom edge (right to left)
+            const bottomEdge = [];
+            for (let i = 0; i <= 100; i++) {
+                const x = squareRight - (squareRight - squareLeft) * (i / 100);
+                bottomEdge.push({ x, y: squareBottom });
+            }
+            
+            // Left edge (bottom to top)
+            const leftEdge = [];
+            for (let i = 0; i <= 100; i++) {
+                const y = squareBottom - (squareBottom - squareTop) * (i / 100);
+                leftEdge.push({ x: squareLeft, y });
+            }
+            
+            // Store edges separately for phase tracking
+            edges = [topEdge, rightEdge, bottomEdge, leftEdge];
+            points = [...topEdge, ...rightEdge, ...bottomEdge, ...leftEdge];
+            break;
+            
+        case 'rectangle':
+            // Create points around a rectangle
+            const rectLeft = offsetX;
+            const rectTop = offsetY;
+            const rectRight = offsetX + shapeRect.width;
+            const rectBottom = offsetY + shapeRect.height;
+            
+            // Top edge (left to right)
+            const rectTopEdge = [];
+            for (let i = 0; i <= 100; i++) {
+                const x = rectLeft + (rectRight - rectLeft) * (i / 100);
+                rectTopEdge.push({ x, y: rectTop });
+            }
+            
+            // Right edge (top to bottom)
+            const rectRightEdge = [];
+            for (let i = 0; i <= 100; i++) {
+                const y = rectTop + (rectBottom - rectTop) * (i / 100);
+                rectRightEdge.push({ x: rectRight, y });
+            }
+            
+            // Bottom edge (right to left)
+            const rectBottomEdge = [];
+            for (let i = 0; i <= 100; i++) {
+                const x = rectRight - (rectRight - rectLeft) * (i / 100);
+                rectBottomEdge.push({ x, y: rectBottom });
+            }
+            
+            // Left edge (bottom to top)
+            const rectLeftEdge = [];
+            for (let i = 0; i <= 100; i++) {
+                const y = rectBottom - (rectBottom - rectTop) * (i / 100);
+                rectLeftEdge.push({ x: rectLeft, y });
+            }
+            
+            // Store edges separately for phase tracking
+            edges = [rectTopEdge, rectRightEdge, rectBottomEdge, rectLeftEdge];
+            points = [...rectTopEdge, ...rectRightEdge, ...rectBottomEdge, ...rectLeftEdge];
+            break;
+            
+        case 'oval':
+            // Create points around an oval
+            const ovalRadiusX = shapeRect.width / 2;
+            const ovalRadiusY = shapeRect.height / 2;
+            const ovalCenterX = offsetX + ovalRadiusX;
+            const ovalCenterY = offsetY + ovalRadiusY;
+            
+            // Create more points for smoother animation (360 points for an oval - one per degree)
+            // Start from the top (12 o'clock) position: -90 degrees in radians is -Math.PI/2
+            for (let i = 0; i <= 360; i++) {
+                const angle = ((i / 360) * Math.PI * 2) - Math.PI/2; // Start from top (12 o'clock)
+                const x = ovalCenterX + Math.cos(angle) * ovalRadiusX;
+                const y = ovalCenterY + Math.sin(angle) * ovalRadiusY;
+                points.push({ x, y });
+            }
+            break;
+            
+            case 'triangle':
+            document.querySelectorAll('.phase-info').forEach(el => {
+            el.style.top = '55%';  // Set top to 60% for triangle
+        });
+    // Create points for an equilateral triangle
+    const triWidth = shapeRect.width;
+    const triHeight = shapeRect.height;
+    
+    // Calculate the three points of the triangle
+    const triLeft = offsetX;
+    const triTop = offsetY;
+    
+    // Define the three vertices precisely
+    const point1 = { x: triLeft + triWidth/2, y: triTop }; // Top
+    const point2 = { x: triLeft, y: triTop + triHeight }; // Bottom-left
+    const point3 = { x: triLeft + triWidth, y: triTop + triHeight }; // Bottom-right
+    
+    // RIGHT edge (top to bottom-right) - CLOCKWISE DIRECTION
+    const triRightEdge = createLinePoints(point1, point3, 100);
+    
+    // Bottom edge (bottom-right to bottom-left) - CLOCKWISE DIRECTION
+    const triBottomEdge = createLinePoints(point3, point2, 100);
+    
+    // Left edge (bottom-left to top) - CLOCKWISE DIRECTION
+    const triLeftEdge = createLinePoints(point2, point1, 100);
+    
+    edges = [triRightEdge, triBottomEdge, triLeftEdge];
+    points = [...triRightEdge, ...triBottomEdge, ...triLeftEdge];
+    break;
+    
+case 'reversedtriangle':
+    document.querySelectorAll('.phase-info').forEach(el => {
+            el.style.top = '44%';  // Set top to 60% for triangle
+        });
+    // Create points for a reversed equilateral triangle
+    const revTriWidth = shapeRect.width;
+    const revTriHeight = shapeRect.height;
+    
+    // Calculate the three points of the triangle
+    const revTriLeft = offsetX;
+    const revTriTop = offsetY;
+    
+    const revPoint1 = { x: revTriLeft + revTriWidth/2, y: revTriTop + revTriHeight }; // Bottom
+    const revPoint2 = { x: revTriLeft, y: revTriTop }; // Top-left
+    const revPoint3 = { x: revTriLeft + revTriWidth, y: revTriTop }; // Top-right
+    
+    // LEFT edge (bottom to top-left) - CLOCKWISE DIRECTION
+    const revLeftSegmentPoints = createLinePoints(revPoint1, revPoint2, 100);
+    
+    // Top edge (top-left to top-right) - CLOCKWISE DIRECTION
+    const revTopSegmentPoints = createLinePoints(revPoint2, revPoint3, 100);
+    
+    // Right edge (top-right to bottom) - CLOCKWISE DIRECTION
+    const revRightSegmentPoints = createLinePoints(revPoint3, revPoint1, 100);
+    
+    edges = [revLeftSegmentPoints, revTopSegmentPoints, revRightSegmentPoints];
+    points = [...revLeftSegmentPoints, ...revTopSegmentPoints, ...revRightSegmentPoints];
+    break;
+        case 'quadrilateral':
+            // Create points for a diamond (rotated square)
+            const diamondSize = Math.min(shapeRect.width, shapeRect.height);
+            const diamondCenterX = offsetX + shapeRect.width / 2;
+            const diamondCenterY = offsetY + shapeRect.height / 2;
+            
+            // Calculate the four points of the rotated square
+            const dTop = { x: diamondCenterX, y: diamondCenterY - diamondSize/2 };
+            const dRight = { x: diamondCenterX + diamondSize/2, y: diamondCenterY };
+            const dBottom = { x: diamondCenterX, y: diamondCenterY + diamondSize/2 };
+            const dLeft = { x: diamondCenterX - diamondSize/2, y: diamondCenterY };
+            
+            // Create path segments with more points for smoother animation
+            // Top-right edge
+            const topRightPoints = createLinePoints(dTop, dRight, 100);
+            // Bottom-right edge
+            const bottomRightPoints = createLinePoints(dRight, dBottom, 100);
+            // Bottom-left edge
+            const bottomLeftPoints = createLinePoints(dBottom, dLeft, 100);
+            // Top-left edge
+            const topLeftPoints = createLinePoints(dLeft, dTop, 100);
+            
+            edges = [topRightPoints, bottomRightPoints, bottomLeftPoints, topLeftPoints];
+            points = [...topRightPoints, ...bottomRightPoints, ...bottomLeftPoints, ...topLeftPoints];
+            break;
+            
+        default:
+            // Default fallback for any unsupported shapes
+            const fallbackRadius = Math.min(shapeRect.width, shapeRect.height) / 2;
+            const fallbackCenterX = offsetX + shapeRect.width / 2;
+            const fallbackCenterY = offsetY + shapeRect.height / 2;
+            
+            for (let i = 0; i <= 100; i++) {
+                const angle = ((i / 100) * Math.PI * 2) - Math.PI/2; // Start from top (12 o'clock)
+                const x = fallbackCenterX + Math.cos(angle) * fallbackRadius;
+                const y = fallbackCenterY + Math.sin(angle) * fallbackRadius;
+                points.push({ x, y });
+            }
     }
+    
+    // Store the path and edges
+    shapePaths[shape] = points;
+    shapeEdges[shape] = edges.length > 0 ? edges : [points];
+    
+    // Debug: Draw path on canvas (uncomment for debugging)
+    // drawDebugPath(points);
 }
 
-// And update the getTrianglePoints function for reverse triangle
-function getTrianglePoints(x1, y1, x2, y2, x3, y3) {
-    // Create more points along each side for smooth animation
+function createLinePoints(start, end, numPoints) {
     const points = [];
-    const numPointsPerSide = 20;
-    
-    // For reverse triangle, the order matters
-    // The point we want to start with should be the first one added
-    
-    // If this is a reverse triangle (where y3 > y1 and y3 > y2)
-    const isReverseTriangle = (y3 > y1 && y3 > y2);
-    
-    if (isReverseTriangle) {
-        // Start with bottom point and go counterclockwise
-        
-        // Side 1: bottom point to top-left
-        for (let i = 0; i <= numPointsPerSide; i++) {
-            points.push({
-                x: x3 + (x1 - x3) * (i / numPointsPerSide),
-                y: y3 + (y1 - y3) * (i / numPointsPerSide)
-            });
-        }
-        
-        // Side 2: top-left to top-right
-        for (let i = 1; i <= numPointsPerSide; i++) {
-            points.push({
-                x: x1 + (x2 - x1) * (i / numPointsPerSide),
-                y: y1 + (y2 - y1) * (i / numPointsPerSide)
-            });
-        }
-        
-        // Side 3: top-right back to bottom point
-        for (let i = 1; i < numPointsPerSide; i++) {
-            points.push({
-                x: x2 + (x3 - x2) * (i / numPointsPerSide),
-                y: y2 + (y3 - y2) * (i / numPointsPerSide)
-            });
-        }
-    } else {
-        // Regular triangle - same as before
-        // Side 1: first point to second point
-        for (let i = 0; i <= numPointsPerSide; i++) {
-            points.push({
-                x: x1 + (x2 - x1) * (i / numPointsPerSide),
-                y: y1 + (y2 - y1) * (i / numPointsPerSide)
-            });
-        }
-        
-        // Side 2: second point to third point
-        for (let i = 1; i <= numPointsPerSide; i++) {
-            points.push({
-                x: x2 + (x3 - x2) * (i / numPointsPerSide),
-                y: y2 + (y3 - y2) * (i / numPointsPerSide)
-            });
-        }
-        
-        // Side 3: third point back to first point
-        for (let i = 1; i < numPointsPerSide; i++) {
-            points.push({
-                x: x3 + (x1 - x3) * (i / numPointsPerSide),
-                y: y3 + (y1 - y3) * (i / numPointsPerSide)
-            });
-        }
-    }
-    
-    return points;
-}
-// Helper functions to generate points for shapes
-function getCirclePoints(cx, cy, r) {
-    const points = [];
-    const numPoints = 60; // More points for smoother circle
-    
-    for (let i = 0; i < numPoints; i++) {
-        const angle = (i / numPoints) * 2 * Math.PI - Math.PI/2; // Start at top
-        const x = cx + r * Math.cos(angle);
-        const y = cy + r * Math.sin(angle);
+    for (let i = 0; i <= numPoints; i++) {
+        const ratio = i / numPoints;
+        const x = start.x + (end.x - start.x) * ratio;
+        const y = start.y + (end.y - start.y) * ratio;
         points.push({ x, y });
     }
-    
     return points;
 }
 
-function getSquarePoints(x1, y1, x2, y2) {
-    // Create more points along each side for smooth animation
-    const points = [];
-    const numPointsPerSide = 15;
-    
-    // Top side: left to right
-    for (let i = 0; i <= numPointsPerSide; i++) {
-        points.push({
-            x: x1 + (x2 - x1) * (i / numPointsPerSide),
-            y: y1
-        });
+// Debug function to visualize the path
+function drawDebugPath(points) {
+    // Clear previous path
+    while (debugPath.firstChild) {
+        debugPath.removeChild(debugPath.firstChild);
     }
     
-    // Right side: top to bottom
-    for (let i = 1; i <= numPointsPerSide; i++) {
-        points.push({
-            x: x2,
-            y: y1 + (y2 - y1) * (i / numPointsPerSide)
-        });
+    if (points.length < 2) return;
+    
+    // Create a path element
+    const pathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    
+    // Build path data
+    let pathData = `M ${points[0].x} ${points[0].y}`;
+    for (let i = 1; i < points.length; i++) {
+        pathData += ` L ${points[i].x} ${points[i].y}`;
+    }
+    pathData += ' Z'; // Close the path
+    
+    // Set path attributes
+    pathElement.setAttribute('d', pathData);
+    pathElement.setAttribute('stroke', 'red');
+    pathElement.setAttribute('stroke-width', '2');
+    pathElement.setAttribute('fill', 'none');
+    
+    // Add path to SVG
+    debugPath.appendChild(pathElement);
+    debugPath.style.opacity = '0.5'; // Make visible for debugging
+}
+
+// Function for edge animation (non-circular shapes)
+function startEdgeAnimation(phase, edgePoints, duration) {
+    // Show the ball
+    ball.style.display = 'block';
+    
+    // Convert duration to milliseconds
+    animationDuration = duration * 1000;
+    animationStartTime = null;
+    
+    // Start animation loop
+    cancelAnimationFrame(animationId);
+    animationId = requestAnimationFrame((timestamp) => animateAlongEdge(timestamp, edgePoints));
+}
+
+// Animation loop for non-circular shapes
+function animateAlongEdge(timestamp, edgePoints) {
+    if (!animationStartTime) animationStartTime = timestamp;
+    if (!isRunning) return;
+    
+    const elapsedTime = timestamp - animationStartTime;
+    const progress = Math.min(elapsedTime / animationDuration, 1);
+    
+    // Calculate exact position with interpolation
+    const exactIndex = progress * (edgePoints.length - 1);
+    const lowerIndex = Math.floor(exactIndex);
+    const upperIndex = Math.min(lowerIndex + 1, edgePoints.length - 1);
+    const interpolationFactor = exactIndex - lowerIndex;
+    
+    // Interpolate between points for smoother movement
+    const x = edgePoints[lowerIndex].x + (edgePoints[upperIndex].x - edgePoints[lowerIndex].x) * interpolationFactor;
+    const y = edgePoints[lowerIndex].y + (edgePoints[upperIndex].y - edgePoints[lowerIndex].y) * interpolationFactor;
+    
+    // Position the ball
+    ball.style.left = `${x}px`;
+    ball.style.top = `${y}px`;
+    
+    // Continue animation if not complete
+    if (progress < 1) {
+        animationId = requestAnimationFrame((timestamp) => animateAlongEdge(timestamp, edgePoints));
+    }
+}
+
+// Fix for the function that's referenced but not properly implemented
+function startCircularAnimation(phase, pathPoints, duration) {
+    // Show the ball
+    ball.style.display = 'block';
+    
+    // Convert duration to milliseconds
+    animationDuration = duration * 1000;
+    animationStartTime = null;
+    
+    // Start animation loop
+    cancelAnimationFrame(animationId);
+    animationId = requestAnimationFrame((timestamp) => animateCircular(timestamp, pathPoints));
+}
+
+// Make sure the circular animation function properly uses the pathPoints
+function animateCircular(timestamp, pathPoints) {
+    if (!animationStartTime) animationStartTime = timestamp;
+    if (!isRunning) return;
+    
+    const elapsedTime = timestamp - animationStartTime;
+    const progress = Math.min(elapsedTime / animationDuration, 1);
+    
+    // Calculate position along the circular path
+    const pointIndex = Math.floor(progress * (pathPoints.length - 1));
+    
+    if (pointIndex >= 0 && pointIndex < pathPoints.length) {
+        const point = pathPoints[pointIndex];
+        
+        // Position the ball
+        ball.style.left = `${point.x}px`;
+        ball.style.top = `${point.y}px`;
     }
     
-    // Bottom side: right to left
-    for (let i = 1; i <= numPointsPerSide; i++) {
-        points.push({
-            x: x2 - (x2 - x1) * (i / numPointsPerSide),
-            y: y2
-        });
+    // Continue animation if not complete
+    if (progress < 1) {
+        animationId = requestAnimationFrame((timestamp) => animateCircular(timestamp, pathPoints));
+    }
+}
+
+
+// Updated function to apply glowing effect with animation
+function applyGlowEffect() {
+    const phase = phasesData[currentPhaseIndex];
+    if (!phase) return;
+    
+    const shape = phase.shape.toLowerCase();
+    
+    // Define specific colors for each shape using the color values you specified
+    const blueGlow = 'rgb(52, 152, 219)';
+    const blueBorder = 'rgb(0, 153, 255)';
+    
+    // Add transition property for smooth animation to shape and ball
+    shapeElement.style.transition = "filter 0.8s ease, box-shadow 0.8s ease, border 0.8s ease";
+    ball.style.transition = "background-color 0.8s ease, box-shadow 0.8s ease";
+    
+    if (shape === 'triangle') {
+        // For triangle, apply glow effect when exercise starts
+        shapeElement.style.filter = `drop-shadow(0 0 10px ${blueGlow}) drop-shadow(0 0 20px ${blueGlow})`;
+        updateTriangleGlowColor(blueBorder);
+    } 
+    else if (shape === 'reversedtriangle') {
+        // For reversed triangle, apply glow effect when exercise starts
+        shapeElement.style.filter = `drop-shadow(0 0 10px ${blueGlow}) drop-shadow(0 0 20px ${blueGlow})`;
+        updateReversedTriangleGlowColor(blueBorder);
+    }
+    else {
+        // For regular shapes, use box-shadow with the specific blue
+        shapeElement.style.boxShadow = `0 0 15px ${blueGlow}, 0 0 30px ${blueGlow}`;
+        shapeElement.style.border = `2px solid ${blueBorder}`;
     }
     
-    // Left side: bottom to top
-    for (let i = 1; i < numPointsPerSide; i++) {
-        points.push({
-            x: x1,
-            y: y2 - (y2 - y1) * (i / numPointsPerSide)
-        });
+    // Apply matching color to the ball
+    ball.style.backgroundColor = '#ffffff'; // white background
+    ball.style.boxShadow = `0 0 10px ${blueGlow}, 0 0 20px ${blueGlow}`;
+}
+
+// Function to update glow intensity based on breathing phase with animation
+// function updateGlowIntensity(breathingPhase) {
+//     const phase = phasesData[currentPhaseIndex];
+//     if (!phase) return;
+    
+//     const shape = phase.shape.toLowerCase();
+    
+//     // Use different colors based on breathing phase for ALL shapes
+//     let glowColor, borderColor;
+    
+//     if (breathingPhase.toLowerCase().includes('inhale')) {
+//         glowColor = 'rgb(52, 152, 219)';   // Blue glow for inhale
+//         borderColor = 'rgb(0, 153, 255)';  // Blue border for inhale
+//     } else if (breathingPhase.toLowerCase().includes('hold')) {
+//         glowColor = 'rgb(155, 89, 182)';   // Purple glow for hold
+//         borderColor = 'rgb(142, 68, 173)'; // Purple border for hold
+//     } else { // exhale
+//         glowColor = 'rgb(46, 204, 113)';   // Green glow for exhale
+//         borderColor = 'rgb(39, 174, 96)';  // Green border for exhale
+//     }
+    
+//     // Ensure transitions are set for smooth animation
+//     shapeElement.style.transition = "filter 1.2s ease, box-shadow 1.2s ease";
+//     ball.style.transition = "box-shadow 1.2s ease";
+    
+//     // Apply color changes based on shape type
+//     if (shape === 'triangle') {
+//         shapeElement.style.filter = `drop-shadow(0 0 10px ${glowColor}) drop-shadow(0 0 20px ${glowColor})`;
+//         updateTriangleGlowColor(borderColor);
+//     } 
+//     else if (shape === 'reversedtriangle') {
+//         shapeElement.style.filter = `drop-shadow(0 0 10px ${glowColor}) drop-shadow(0 0 20px ${glowColor})`;
+//         updateReversedTriangleGlowColor(borderColor);
+//     }
+//     else {
+//         // For ALL other shapes, CHANGE COLOR instead of just intensity
+//         shapeElement.style.boxShadow = `0 0 15px ${glowColor}, 0 0 30px ${glowColor}`;
+//         shapeElement.style.border = `2px solid ${borderColor}`;
+//     }
+    
+//     // Change ball glow color as well to match the current phase
+//     ball.style.boxShadow = `0 0 10px ${glowColor}, 0 0 20px ${glowColor}`;
+// }
+
+
+// Function to update glow intensity based on breathing phase with animation
+function updateGlowIntensity(breathingPhase) {
+    const phase = phasesData[currentPhaseIndex];
+    if (!phase) return;
+    
+    const shape = phase.shape.toLowerCase();
+    
+    // Use the specific blue colors you requested
+    // We change colors based on breathing phase (not intensity)
+    let glowColor, borderColor;
+    
+    if (breathingPhase.toLowerCase().includes('inhale')) {
+        glowColor = 'rgb(52, 152, 219)';   // Blue glow for inhale
+        borderColor = 'rgb(0, 153, 255)';  // Blue border for inhale
+    } else if (breathingPhase.toLowerCase().includes('hold')) {
+        glowColor = 'rgb(155, 89, 182)';   // Purple glow for hold
+        borderColor = 'rgb(142, 68, 173)'; // Purple border for hold
+    } else { // exhale
+        glowColor = 'rgb(46, 204, 113)';   // Green glow for exhale
+        borderColor = 'rgb(39, 174, 96)';  // Green border for exhale
     }
     
-    return points;
-}
-
-function getTrianglePoints(x1, y1, x2, y2, x3, y3) {
-    // Create more points along each side for smooth animation
-    const points = [];
-    const numPointsPerSide = 20;
+    // Ensure transitions are set for smooth animation
+    shapeElement.style.transition = "filter 1.2s ease, box-shadow 1.2s ease";
+    ball.style.transition = "box-shadow 1.2s ease";
     
-    // Side 1: first point to second point
-    for (let i = 0; i <= numPointsPerSide; i++) {
-        points.push({
-            x: x1 + (x2 - x1) * (i / numPointsPerSide),
-            y: y1 + (y2 - y1) * (i / numPointsPerSide)
-        });
+    // For triangles, we change the glow COLOR, not intensity
+    if (shape === 'triangle') {
+        shapeElement.style.filter = `drop-shadow(0 0 10px ${glowColor}) drop-shadow(0 0 20px ${glowColor})`;
+        updateTriangleGlowColor(borderColor);
+    } 
+    else if (shape === 'reversedtriangle') {
+        shapeElement.style.filter = `drop-shadow(0 0 10px ${glowColor}) drop-shadow(0 0 20px ${glowColor})`;
+        updateReversedTriangleGlowColor(borderColor);
     }
-    
-    // Side 2: second point to third point
-    for (let i = 1; i <= numPointsPerSide; i++) {
-        points.push({
-            x: x2 + (x3 - x2) * (i / numPointsPerSide),
-            y: y2 + (y3 - y2) * (i / numPointsPerSide)
-        });
+    else {
+        // For other shapes, we also change the glow color (not intensity)
+        shapeElement.style.boxShadow = `0 0 15px ${glowColor}, 0 0 30px ${glowColor}`;
+        shapeElement.style.border = `2px solid ${borderColor}`;
     }
     
-    // Side 3: third point back to first point
-    for (let i = 1; i < numPointsPerSide; i++) {
-        points.push({
-            x: x3 + (x1 - x3) * (i / numPointsPerSide),
-            y: y3 + (y1 - y3) * (i / numPointsPerSide)
-        });
+    // Change ball glow color as well
+    ball.style.boxShadow = `0 0 10px ${glowColor}, 0 0 20px ${glowColor}`;
+}
+
+// Only modify these two helper functions - leave everything else untouched
+
+// Helper function to dynamically update triangle CSS with transitions
+function updateTriangleGlowColor(color) {
+    // Create or update the style element for triangle
+    let styleEl = document.getElementById('triangle-glow-style');
+    if (!styleEl) {
+        styleEl = document.createElement('style');
+        styleEl.id = 'triangle-glow-style';
+        document.head.appendChild(styleEl);
     }
     
-    return points;
+    // Set the CSS with the current color and transition
+    styleEl.textContent = `
+        .triangle:before {
+            border-bottom-color: ${color} !important;
+            transition: border-bottom-color 0.8s ease !important;
+        }
+        
+        /* Safari-specific fix */
+        @media screen and (-webkit-min-device-pixel-ratio:0) {
+            .triangle {
+                -webkit-filter: drop-shadow(0 0 10px ${color});
+                filter: drop-shadow(0 0 10px ${color});
+            }
+        }
+    `;
 }
 
-function getDiamondPoints(x1, y1, x2, y2, x3, y3, x4, y4) {
-    // Create more points along each side for smooth animation
-    const points = [];
-    const numPointsPerSide = 15;
-    
-    // Side 1: top to right
-    for (let i = 0; i <= numPointsPerSide; i++) {
-        points.push({
-            x: x1 + (x2 - x1) * (i / numPointsPerSide),
-            y: y1 + (y2 - y1) * (i / numPointsPerSide)
-        });
-    }
-    
-    // Side 2: right to bottom
-    for (let i = 1; i <= numPointsPerSide; i++) {
-        points.push({
-            x: x2 + (x3 - x2) * (i / numPointsPerSide),
-            y: y2 + (y3 - y2) * (i / numPointsPerSide)
-        });
-    }
-    
-    // Side 3: bottom to left
-    for (let i = 1; i <= numPointsPerSide; i++) {
-        points.push({
-            x: x3 + (x4 - x3) * (i / numPointsPerSide),
-            y: y3 + (y4 - y3) * (i / numPointsPerSide)
-        });
+// Helper function to dynamically update reversed triangle CSS with transitions
+function updateReversedTriangleGlowColor(color) {
+    // Create or update the style element for reversed triangle
+    let styleEl = document.getElementById('reversed-triangle-glow-style');
+    if (!styleEl) {
+        styleEl = document.createElement('style');
+        styleEl.id = 'reversed-triangle-glow-style';
+        document.head.appendChild(styleEl);
     }
     
-    // Side 4: left to top
-    for (let i = 1; i < numPointsPerSide; i++) {
-        points.push({
-            x: x4 + (x1 - x4) * (i / numPointsPerSide),
-            y: y4 + (y1 - y4) * (i / numPointsPerSide)
-        });
-    }
+    // Set the CSS with the current color and transition
+    styleEl.textContent = `
+        .reversedtriangle:before {
+            border-top-color: ${color} !important;
+            transition: border-top-color 0.8s ease !important;
+        }
+        
+        /* Safari-specific fix */
+        @media screen and (-webkit-min-device-pixel-ratio:0) {
+            .reversedtriangle {
+                -webkit-filter: drop-shadow(0 0 10px ${color});
+                filter: drop-shadow(0 0 10px ${color});
+            }
+        }
+    `;
+}
+// Add this initialization function to set up transitions when the app first loads
+function initializeTransitions() {
+    // Add initial transitions to shape element
+    shapeElement.style.transition = "filter 0.8s ease, box-shadow 0.8s ease, border 0.8s ease";
     
-    return points;
-}
-
-function getOvalPoints(cx, cy, rx, ry) {
-    const points = [];
-    const numPoints = 60; // More points for smoother oval
+    // Add initial transitions to ball
+    ball.style.transition = "background-color 0.8s ease, box-shadow 0.8s ease";
     
-    for (let i = 0; i < numPoints; i++) {
-        const angle = (i / numPoints) * 2 * Math.PI - Math.PI/2; // Start at top
-        const x = cx + rx * Math.cos(angle);
-        const y = cy + ry * Math.sin(angle);
-        points.push({ x, y });
-    }
+    // Set up the pseudo-element transitions
+    const initialStyle = document.createElement('style');
+    initialStyle.id = 'initial-transitions';
+    initialStyle.textContent = `
+        .triangle:before, .reversedtriangle:before {
+            transition: border-color 0.8s ease !important;
+        }
+    `;
+    document.head.appendChild(initialStyle);
+}
+
+// Update the window load event to ensure triangles just have a simple white line
+window.addEventListener('load', () => {
+  if (phasesData && phasesData.length > 0) {
+    const initialShape = phasesData[0].shape;
     
-    return points;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// Initialize the app
-window.addEventListener('load', init);
-</script>
-
-
-<script>
-    const toggleBtn = document.getElementById("breathtoggleBtn");
-    const breathOption = document.getElementById("breath-option");
-  
-    toggleBtn.addEventListener("click", () => {
-      breathOption.style.display = breathOption.style.display === "none" ? "block" : "none";
-    });
-  </script>
-<style>
-    #controls-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 5px; /* Reduced gap between buttons */
-      flex-wrap: nowrap; /* Force all in one row */
-      padding: 10px;
-      max-width: 450px;
-      width: 100%;
-    }
-  
-    .control-group {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-shrink: 0;
-    }
-  
-    .control-group label {
-      white-space: nowrap;
-      font-weight: 500;
-    }
-  
-    #shapeSelect {
-      width: 180px; /* fixed width like buttons */
-      padding: 8px 10px;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-  
-    #controls-row button {
-      min-width: 180px;
-      padding: 10px 15px;
-      font-size: 14px;
-      border: none;
-      border-radius: 8px;
-      background: linear-gradient(135deg, #6e8efb, #a777e3);
-      color: #fff;
-      cursor: pointer;
-      transition: 0.2s;
-      white-space: nowrap;
-    }
-  
-    #controls-row button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    }
-  
-    #controls-row button i {
-      margin-right: 6px;
-    }
-  
-    /* Optional: Responsive fallback for small screens */
-    @media (max-width: 600px) {
-      #controls-row {
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-  
-      .control-group,
-      #controls-row button {
-        width: 100%;
-        justify-content: center;
-      }
-  
-      #shapeSelect {
-        width: 100%;
-      }
-    }
-  
-    /* Dropdown (Select) Styling */
-    #shapeSelect {
-      width: 100%; /* Ensure the dropdown takes up the full width of its container */
-      max-width: 100px; /* Limit the maximum width to 180px */
-      padding: 10px 12px;
-      font-size: 14px;
-      border: none;
-      border-radius: 8px;
-      background: linear-gradient(135deg, #6e8efb, #a777e3);
-      color: #ffffff;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-      appearance: none;
-      cursor: pointer;
-      transition: 0.2s ease-in-out;
-      outline: none;
-    }
-  
-    /* Dropdown options */
-    #shapeSelect option {
-      background-color: #f9f9f9;
-      color: #333;
-      padding: 10px;
-      font-size: 14px;
-    }
-  
-    /* Breathing option container */
-    #breath-option {
-      background: #f7f7f7;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      margin: 20px 0;
-    }
-  
-    /* Control group styling */
-    .control-group {
-      margin-bottom: 20px;
-    }
-  
-    /* Labels */
-    .control-group label {
-      font-size: 16px;
-      font-weight: 500;
-      color: #333;
-      margin-bottom: 10px;
-      display: block;
-    }
-  
-    /* Timing control container using grid */
-    .timing-controls {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
-    }
-  
-    /* Timing input containers */
-    .timing-input {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-  
-    /* Timing input label styling */
-    .timing-input label {
-      font-size: 14px;
-      color: #666;
-    }
-  
-    /* Input styling */
-    .timing-input input {
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      outline: none;
-      background-color: #fff;
-      transition: all 0.3s ease;
-    }
-  
-    /* Focus effect */
-    .timing-input input:focus {
-      border-color: #6e8efb;
-      box-shadow: 0 0 5px rgba(110, 142, 251, 0.5);
-    }
-  
-    /* Space adjustment for last input in a group */
-    .timing-input:last-child {
-      margin-bottom: 0;
-    }
-  
-    /* Responsive adjustments */
-    @media (max-width: 600px) {
-      /* Stack inputs in a single column */
-      .timing-controls {
-        grid-template-columns: 1fr; /* Stack inputs on top of each other */
-      }
-  
-      /* Dropdown (Select) styling for small screens */
-      #shapeSelect {
-        max-width: 100%; /* Make dropdown full width on small screens */
-      }
-  
-      /* Buttons */
-      button {
-        width: 100%; /* Ensure buttons take full width on small screens */
-        margin-bottom: 10px; /* Add space between buttons */
-        padding: 12px 15px; /* Adjust button size */
-      }
-    }
-  
-    #controls-row button {
-      min-width: 100px;
-    }
-
-    #controls-row {
-        border: 2px solid goldenrod;
-        background: rgb(1, 1, 1);
-    }
-    .action-buttons {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  align-items: center;
-  padding: 12px;
-  background: transparent;
-}
-
-.action-buttons button {
-  width: 60px;
-  height: 60px;
-  background: #1e1e1e;
-  border: 2px solid #6e8efb;
-  border-radius: 50%;
-  color: #ffffff;
-  font-size: 20px;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: all 0.3s ease;
-  box-shadow: 0 0 6px rgba(110, 142, 251, 0.4);
-  position: relative;
-}
-
-.action-buttons button:hover {
-  background: #6e8efb;
-  color: #fff;
-  box-shadow: 0 0 12px #6e8efb, 0 0 18px #a777e3;
-  transform: scale(1.08);
-}
-
-.action-buttons button:active {
-  transform: scale(0.95);
-  box-shadow: 0 0 10px #a777e3 inset;
-}
-
-.action-buttons button i {
-  pointer-events: none;
-}
-#controls-row button {
-    background: linear-gradient(135deg, #FFD700, #FFA500);
-
-}
-#controls-row button {
-  width: 80px;
-  height: 41px;
-  background: #1e1e1e; /* Button background */
-  color: #fff;
-  font-size: 14px;
-  border: 5px solid transparent; /* Transparent border to create space */
-  border-radius: 10px; /* Rounded corners */
-  padding: 8px 16px;
-  position: relative;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  background-clip: padding-box; /* Ensure background doesn't cover the border */
-border: 2px solid gold;
-}
-#controls-row{
-    border: 1px solid white;
-    max-width:500px;
-}
-    .shape-meditation {
-  font-size: 1.7rem;
-  color: #FFD700; /* Gold color */
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  position: relative;
-  padding-bottom: 10px;
-  width: auto; /* Ensure it adjusts to content width */
-  white-space: nowrap; /* Prevent the text from wrapping */
-}
-
-.shape-meditation .back-arrow {
-  background: none;
-  border: none;
-  color: #FFD700; /* Gold color */
-  font-size: 1.5rem;
-  margin-right: 10px; /* Space between the arrow and text */
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-
-/* Always visible underline */
-.shape-meditation::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(135deg, #FFD700, #FFA500); /* Gold to orange gradient */
-}
-
-/* Hover effect for back arrow */
-.shape-meditation:hover .back-arrow {
-  transform: translateX(-5px); /* Move the arrow slightly on hover */
-}
-
-/* Styling for the span to align properly */
-.shape-meditation span {
-  display: inline-block;
-}
-#controls-row {
-    border: 1px solid white;
-    max-width: 450px;
-}
-.timing-input label {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 13px;
-    margin-bottom: 6px;
-    text-align: center;
-}
-</style>
+    // Create path for the initial shape after a small delay to ensure DOM is ready
+    setTimeout(() => {
+      createShapePath(initialShape);
       
-<style>
-    /* Action buttons container */
-.action-buttons {
-  gap: 12px;
-  padding: 10px;
-  margin: 0 auto;
-  width: fit-content;
-  background-color: rgba(40, 40, 40, 0.7);
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-}
-
-/* Individual buttons */
-.action-buttons button {
-  width: 30px;
-  height: 42px;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background-color: rgba(60, 60, 60, 0.8);
-  color: #e0e0e0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-}
-
-/* Button hover state */
-.action-buttons button:hover {
-  background-color: rgba(70, 70, 70, 0.9);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  border-color: rgba(255, 255, 255, 0.4);
-}
-
-/* Button active state */
-.action-buttons button:active {
-  transform: translateY(1px);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-off {
-  color: #a0aec0;
-}
-
-/* Voice button - on state */
-.action-buttons button.voice-on {
-  color: #4299e1;
-  background-color: #ebf8ff;
-}
-
-/* Icons within buttons */
-.action-buttons button i {
-  font-size: 16px;
-}
-    /* Popup Overlay - positioned over everything */
-.popup-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.65);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  backdrop-filter: blur(5px);
-}
-
-/* Popup Container */
-.popup {
-  background: linear-gradient(145deg, #1f2233, #292d44);
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3),
-              0 0 0 1px rgba(255, 255, 255, 0.1);
-  width: 90%;
-  max-width: 420px;
-  padding: 30px;
-  text-align: center;
-  animation: fadeIn 0.3s ease-out;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Subtle highlight effect */
-.popup::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #5e72e4, #8a5fff);
-}
-
-/* Typography */
-.popup h2 {
-  margin-top: 5px;
-  margin-bottom: 20px;
-  color: #ffffff;
-  font-size: 24px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-}
-
-.popup p {
-  color: #b4b9c8;
-  font-size: 15px;
-  line-height: 1.5;
-  margin-bottom: 25px;
-}
-
-/* Input field styling */
-.popup input[type="text"] {
-  width: 100%;
-  padding: 12px 15px;
-  background-color: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  color: #ffffff;
-  font-size: 15px;
-  margin-bottom: 25px;
-  transition: all 0.2s ease;
-  box-sizing: border-box;
-}
-
-.popup input[type="text"]:focus {
-  outline: none;
-  border-color: #5e72e4;
-  box-shadow: 0 0 0 2px rgba(94, 114, 228, 0.3);
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-.popup input[type="text"]::placeholder {
-  color: #8e94a3;
-}
-
-/* Button group */
-.button-group {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-}
-
-/* Button styling */
-.popup button {
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: none;
-  flex: 1;
-  max-width: 160px;
-}
-
-.save-btn {
-  background: linear-gradient(135deg, #5e72e4, #8a5fff);
-  color: white;
-  box-shadow: 0 4px 12px rgba(94, 114, 228, 0.3);
-}
-
-.save-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(94, 114, 228, 0.4);
-}
-
-.save-btn:active {
-  transform: translateY(1px);
-}
-
-.cancel-btn {
-  background: rgba(255, 255, 255, 0.08);
-  color: #b4b9c8;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.cancel-btn:hover {
-  background: rgba(255, 255, 255, 0.12);
-  color: #ffffff;
-}
-
-/* Animation */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Responsive adjustments */
-@media (max-width: 480px) {
-  .popup {
-    padding: 25px 20px;
+      const shape = phasesData[0].shape.toLowerCase();
+      
+      // Create a clean style element to override any default glowing effects
+      let cleanStyleEl = document.getElementById('clean-shape-style');
+      if (!cleanStyleEl) {
+          cleanStyleEl = document.createElement('style');
+          cleanStyleEl.id = 'clean-shape-style';
+          document.head.appendChild(cleanStyleEl);
+          cleanStyleEl.textContent = `
+              .triangle:before, .reversedtriangle:before {
+                  filter: none !important;
+                  box-shadow: none !important;
+                  text-shadow: none !important;
+              }
+          `;
+      }
+      
+      // Make sure shapes are visible but without glow
+      if (shape === 'triangle') {
+        // For triangle, just set a simple white border with no filter/glow
+        shapeElement.style.filter = "none";
+        shapeElement.style.boxShadow = "none";
+        shapeElement.style.textShadow = "none";
+        updateTriangleGlowColor('white');
+      } 
+      else if (shape === 'reversedtriangle') {
+        // For reversed triangle, just set a simple white border with no filter/glow
+        shapeElement.style.filter = "none";
+        shapeElement.style.boxShadow = "none";
+        shapeElement.style.textShadow = "none";
+        updateReversedTriangleGlowColor('white');
+      }
+      else {
+        // For other shapes, add a visible border
+        shapeElement.style.boxShadow = "none";
+        shapeElement.style.border = "1px solid white";
+      }
+      
+      // Make sure ball has no glow
+      if (ball) {
+        ball.style.boxShadow = "none";
+        ball.style.border = "none";
+      }
+    }, 100);
   }
   
-  .popup h2 {
-    font-size: 22px;
-  }
-  
-  .button-group {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .popup button {
-    width: 100%;
-    max-width: none;
-  }
-}
-    /* Guide container styling - designed for dark backgrounds */
-.guide-container {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(18, 18, 22, 0.85);
-  border: 1px solid #4d4dff;
-  border-radius: 16px;
-  padding: 30px;
-  width: 90%;
-  max-width: 550px;
-  text-align: center;
-  box-shadow: 0 0 25px rgba(77, 77, 255, 0.2);
-  backdrop-filter: blur(8px);
-  z-index: 9999;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-}
-
-/* Heading styles */
-.guide-heading {
-  font-size: 26px;
-  color: #ffffff;
-  margin-bottom: 25px;
-  font-weight: 500;
-  letter-spacing: 0.5px;
-  position: relative;
-  display: inline-block;
-}
-
-.guide-heading::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 2px;
-  background: #4d4dff;
-}
-
-/* Buttons grid */
-.guide-buttons {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
-  gap: 15px;
-  margin-top: 30px;
-}
-
-/* Button styles */
-.guide-buttons a {
-  display: inline-block;
-  padding: 12px 15px;
-  border-radius: 8px;
-  background: #232328;
-  color: #ffffff;
-  font-weight: 400;
-  text-decoration: none;
-  transition: all 0.25s ease;
-  font-size: 15px;
-  border: 1px solid rgba(77, 77, 255, 0.3);
-}
-
-.guide-buttons a:hover {
-  background: #2a2a30;
-  border-color: #4d4dff;
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 0, 20, 0.3);
-}
-
-/* Responsive adjustments */
-@media (max-width: 550px) {
-  .guide-container {
-    padding: 25px 20px;
-    width: 85%;
-  }
-  
-  .guide-heading {
-    font-size: 22px;
-  }
-  
-  .guide-buttons {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-  
-  .guide-buttons a {
-    padding: 10px;
-    font-size: 14px;
-  }
-}
-
-/* css for breath section -------------------------------------------------------- */
-#breath-option {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 9999;
-  background: rgba(15, 15, 15, 0.85);
-  backdrop-filter: blur(8px);
-  border-radius: 8px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1), 0 0 15px rgba(129, 140, 248, 0.15);
-  padding: 16px 20px;
-  width: 320px;
-  max-width: 90vw;
-  border: 1px solid rgba(129, 140, 248, 0.2);
-}
-
-.control-group {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.control-group > label {
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.2px;
-  margin-bottom: 2px;
-  text-align: center;
-}
-
-.timing-controls {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.timing-input {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex: 1;
-  min-width: calc(50% - 6px);
-  background: rgba(30, 30, 30, 0.6);
-  border-radius: 5px;
-  padding: 8px;
-  transition: all 0.2s ease;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.timing-input:hover {
-  background: rgba(40, 40, 40, 0.8);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-}
-
-.timing-input label {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 13px;
-  margin-bottom: 6px;
-}
-
-.timing-input input {
-  background: rgba(20, 20, 20, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-  color: white;
-  font-size: 13px;
-  font-weight: 500;
-  padding: 5px 8px;
-  width: 60px;
-  text-align: center;
-  transition: all 0.2s ease;
-}
-
-.timing-input input:focus {
-  outline: none;
-  border-color: rgba(129, 140, 248, 0.7);
-  box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.2);
-}
-
-.timing-input input:hover {
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-/* Hide spinner arrows for number inputs */
-.timing-input input::-webkit-outer-spin-button,
-.timing-input input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-.timing-input input[type=number] {
-  -moz-appearance: textfield;
-}
-
-/* Add some accent colors for a nice touch */
-#inhaleTime, #inhaleTime + label {
-  border-color: rgba(129, 140, 248, 0.3);
-}
-
-#exhaleTime, #exhaleTime + label {
-  border-color: rgba(52, 211, 153, 0.3);
-}
-
-#holdInTime, #holdInTime + label, 
-#holdOutTime, #holdOutTime + label {
-  border-color: rgba(251, 191, 36, 0.3);
-}
-
-/* Add subtle glow effect on focus */
-.timing-input:focus-within {
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.05);
-}
-
-/* Responsive adjustments */
-@media (max-width: 480px) {
-  #breath-option {
-    padding: 16px 18px;
-  }
-  
-  .timing-controls {
-    gap: 8px;
-  }
-  
-  .timing-input {
-    min-width: calc(50% - 4px);
-    padding: 8px;
-  }
-  
-  .timing-input input {
-    width: 65px;
-    font-size: 13px;
-  }
-}
-select {
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid #4b5563; /* dark gray border */
-    background-color: #1f2937;  /* dark background */
-    font-size: 16px;
-    color: #f9fafb;             /* light text */
-    width: 100%;
-}
-
-</style>  
-
-<!-- Django BAckend data exercise saVE  -->
-<script>
-    // Store timings during animation
-    window.storedTimings = [];
-    
-    // Function to capture current timings - simplified to just array of values
-    function captureCurrentTimings() {
-        return [
-            parseFloat(document.getElementById('inhaleTime').value) || 4,
-            parseFloat(document.getElementById('holdInTime').value) || 4,
-            parseFloat(document.getElementById('exhaleTime').value) || 4,
-            parseFloat(document.getElementById('holdOutTime').value) || 4
-        ];
-    }
-    
-    // Add this function to your code to setup save functionality
-    function setupSaveExerciseButton() {
-        const saveButton = document.getElementById("saveExerciseButton");
-        
-        if (saveButton) {
-            saveButton.addEventListener("click", saveExercise);
-        } else {
-            console.error("Save exercise button not found!");
-        }
-    }
-    
-    // Separate save function for better organization
-    function saveExercise() {
-        const nickname = document.getElementById("exerciseNickname").value;
-        const shape = shapeSelect.value;
-        
-        // Store current timings as simple array
-        window.storedTimings = captureCurrentTimings();
-        
-        if (!nickname.trim()) {
-            alert("Please enter a nickname for the exercise.");
-            return;
-        }
-        
-        // Get CSRF token
-        const csrfToken = document.getElementById("csrf_token").value;
-        
-        fetch("{% url 'breathxapp:save_exercise' %}", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-                "X-CSRFToken": csrfToken,
-            },
-            body: new URLSearchParams({
-                nickname: nickname,
-                shape: shape,
-                inputs: JSON.stringify(window.storedTimings), // Convert array to JSON
-            }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert("Exercise saved successfully!");
-                closePopup(); // Close the popup
-            } else {
-                alert("Failed to save exercise: " + (data.error || "Unknown error"));
-            }
-        })
-        .catch(error => console.error("Error:", error));
-        
-        // Automatically simulate clicking the play button when Save is pressed
-        const playButton = document.getElementById("playSong");
-        if (playButton) playButton.click();
-    }
-    
-    // Function to close popup
-    function closePopup() {
-        const popup = document.querySelector('.popup-container');
-        if (popup) {
-            popup.style.display = 'none';
-        }
-    }
-    
-    // Add to your initialization function or use the existing DOMContentLoaded
-    document.addEventListener("DOMContentLoaded", function() {
-        // Add event listener for Save button
-        document.getElementById("saveExerciseButton").addEventListener("click", saveExercise);
-    });
-
-    </script>
-<!-- Buttons Coming gone  -->
-<script>
-  document.getElementById("breath-close").addEventListener("click", function() {
-document.getElementById("breath-option").style.display = "none";
-});
-// For the save exercise 
-const saveButton = document.getElementById("save-exercise-button-id");
-const popupOverlay = document.getElementById("popupOverlay");
-
-saveButton.addEventListener("click", () => {
-// Toggle visibility
-if (popupOverlay.style.display === "none" || popupOverlay.style.display === "") {
-popupOverlay.style.display = "flex";
-} else {
-popupOverlay.style.display = "none";
-}
+  // Rest of the event listener code...
 });
 
-function closePopup() {
-popupOverlay.style.display = "none";
-}
-const guideButton = document.getElementById("guide-button-id");
-const guideContainer = document.querySelector(".guide-container");
-
-guideButton.addEventListener("click", (e) => {
-// Prevent the click event from propagating to the document click event
-e.stopPropagation();
-
-// Toggle the visibility of the guide container
-guideContainer.style.display =
-guideContainer.style.display === "none" || guideContainer.style.display === ""
-? "block"
-: "none";
+window.addEventListener('resize', () => {
+    // Clear existing paths
+    Object.keys(shapePaths).forEach(key => delete shapePaths[key]);
+    Object.keys(shapeEdges).forEach(key => delete shapeEdges[key]);
+    
+    // Recreate path for current shape
+    if (phasesData && phasesData.length > 0) {
+        const currentShape = phasesData[currentPhaseIndex].shape;
+        createShapePath(currentShape);
+    }
 });
-
-// Close the guide container when clicking anywhere else on the document
-document.addEventListener("click", (e) => {
-// Check if the click is outside the guide container or button
-if (!guideContainer.contains(e.target) && e.target !== guideButton) {
-guideContainer.style.display = "none";  // Hide the guide container
-}
-});
-
 </script>
 <style>
-  #shapeSelect {
-    margin-top: 8px;
-  border: 1px solid gold ;
-  background: #1e1e1e;
+    .phase-info {
+    font-size: 1.5em;
+    color: #f7fafe;
 }
-.shape-meditation {
-    color: #ffffff;
+#voice-toggle-button{
+    display: none;
 }
-
-
-
-.main-heading {
-  padding: 15px 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  white-space: nowrap;
-}
-
-.header-container {
-  display: flex;
-  align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.back-button {
-  background: transparent;
-  border: none;
-  color: white;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  margin-right: 15px;
-  border-radius: 50%;
-  transition: background-color 0.2s;
-}
-
-.back-button:hover {
-  background-color: rgba(255, 255, 255, 0.2);
-}
-
-.title {
-  color: white;
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
+#voice-toggle-btn {
+color: #fffefe;
 }
 </style>
+
+<script>
+    // Store the original speak method
+    const originalSpeak = window.speechSynthesis.speak;
+    let voiceMuted = true; // Default to muted
+    
+    // Immediately mute on page load
+    (function() {
+        // Override the speak method with an empty function
+        window.speechSynthesis.speak = function() {
+            console.log("Speech attempt blocked");
+            return;
+        };
+    })();
+    
+    function toggleVoice() {
+        const button = document.getElementById('voice-toggle-button');
+        const icon = button.querySelector('i');
+    
+        if (voiceMuted) {
+            // Restore original functionality
+            window.speechSynthesis.speak = originalSpeak;
+            icon.className = "fas fa-microphone"; // 🎤 Icon when active
+            voiceMuted = false;
+        } else {
+            // Cancel any current speech
+            window.speechSynthesis.cancel();
+            
+            // Override the speak method with an empty function
+            window.speechSynthesis.speak = function() {
+                console.log("Speech attempt blocked");
+                return;
+            };
+            
+            icon.className = "fas fa-microphone-slash"; // ❌🎤 Icon when muted
+            voiceMuted = true;
+        }
+    }
+    
+    // Add button if it doesn't exist
+    document.addEventListener('DOMContentLoaded', function() {
+        if (!document.getElementById('voice-toggle-button')) {
+            const button = document.createElement('button');
+            button.id = 'voice-toggle-button';
+            button.innerHTML = '<i class="fas fa-microphone-slash"></i>'; // default icon on load (muted)
+            button.onclick = toggleVoice;
+            document.body.prepend(button);
+        }
+    });
+    </script>
+    <style>
+        /* Making page responsive  */
+        .exercise-display {
+    max-height: 500px;
+        }
+    </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
 </body>
 </html>

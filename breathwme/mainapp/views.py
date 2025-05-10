@@ -21,7 +21,12 @@ def toggle_theme(request):
 
 
 def theme1(request):
-    return render(request, 'mainapp/theme1.html')
+    all_plans = SubscriptionPlan.objects.all()
+
+    context = {
+        'all_plans': all_plans,
+    }
+    return render(request, 'mainapp/theme1.html',{'all_plans':all_plans})
 
 # Starting of Auth here ------------------------------------------------------------------
 from django.contrib.auth.models import User
@@ -377,3 +382,37 @@ def user_subscription_page(request):
         'all_plans': all_plans,
     }
     return render(request, 'user/subscription_page.html', context)
+
+
+# All settings thing --------------------------------------------------------------------------------------------------------
+def user_push_notifications(request):
+    return render(request,'user/settings/push_notifications.html')
+
+def user_email_notifications(request):
+    return render(request,'user/settings/email_notifications.html')
+
+def user_privacy_settings(request):
+    return render(request,'user/settings/user_privacy_settings.html')
+
+from django.contrib.auth import authenticate
+from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
+from django.contrib import messages
+
+def delete_account(request):
+    if request.method == 'POST':
+        # Get the password entered by the user
+        password = request.POST.get('password')
+        
+        # Authenticate user with the entered password
+        user = authenticate(request, username=request.user.username, password=password)
+        
+        if user is not None:
+            # Password is correct, delete user
+            request.user.delete()
+            messages.success(request, "Your account has been deleted successfully.")
+            return redirect('home')  # Redirect to home page or login page after deletion
+        else:
+            messages.error(request, "Incorrect password. Please try again.")
+            return redirect('user_privacy_settings')  # Stay on the settings page if password is wrong
+    return redirect('user_privacy_settings')  # In case the method is not POST

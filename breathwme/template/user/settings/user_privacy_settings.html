@@ -1,0 +1,587 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+Account Privacy - Meditation Dashboard
+{% endblock %}
+
+{% block content %}
+<style>
+  /* General Reset */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Roboto', 'Segoe UI', 'Arial', sans-serif;
+    background-color: #1E1E1E;
+    color: #E0E0E0;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 420px;
+    width: 100%;
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 24px 16px;
+    background-color: #121212;
+    overflow-x: hidden;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Header Styles */
+  .header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .back-arrow {
+    font-size: 24px;
+    margin-right: 16px;
+    cursor: pointer;
+    color: #E0E0E0;
+    height: 40px;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+  }
+
+  .back-arrow:hover, .back-arrow:active {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .header h1 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #FFFFFF;
+  }
+
+  /* Section Styles */
+  .section {
+    margin-bottom: 32px;
+    background-color: #1E1E1E;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #B0B0B0;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Privacy Warning Section */
+  .privacy-section {
+    padding-bottom: 16px;
+  }
+
+  .privacy-text {
+    display: flex;
+    align-items: flex-start;
+    background-color: rgba(255, 75, 43, 0.1);
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .warning-icon {
+    margin-right: 16px;
+    color: #FF4B2B;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .privacy-text p {
+    flex: 1;
+    font-size: 15px;
+    color: #E0E0E0;
+    line-height: 1.5;
+  }
+
+  /* Setting Items */
+  .setting-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #2A2A2A;
+    padding: 18px 16px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    transition: transform 0.2s, background-color 0.2s;
+  }
+
+  .setting-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .setting-item:active {
+    transform: scale(0.98);
+    background-color: #333333;
+  }
+
+  .setting-item .icon {
+    font-size: 20px;
+    margin-right: 16px;
+    color: #7C4DFF; /* Modern purple color */
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .setting-item .text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .setting-item .title {
+    font-size: 16px;
+    font-weight: 500;
+    color: #FFFFFF;
+  }
+
+  .setting-item .description {
+    font-size: 14px;
+    color: #B0B0B0;
+    margin-top: 4px;
+  }
+
+  .setting-item .arrow {
+    font-size: 18px;
+    color: #808080;
+    margin-left: 8px;
+    transition: transform 0.2s;
+  }
+
+  .setting-item:active .arrow {
+    transform: translateX(4px);
+  }
+
+  /* Toggle Switch */
+  .toggle-switch {
+    position: relative;
+    width: 52px;
+    height: 28px;
+    background-color: #383838;
+    border-radius: 28px;
+    padding: 2px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .toggle-slider {
+    position: absolute;
+    height: 24px;
+    width: 24px;
+    border-radius: 50%;
+    background-color: #FFFFFF;
+    transition: transform 0.3s, box-shadow 0.3s;
+    top: 2px;
+    left: 2px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
+
+  input:checked + .toggle-slider {
+    transform: translateX(24px);
+  }
+
+  input:checked ~ .toggle-switch {
+    background-color: #7C4DFF; /* Modern purple color */
+  }
+
+  /* Delete Account Button */
+  .delete-account-btn {
+    width: 100%;
+    background-color: rgba(255, 75, 43, 0.9);
+    color: white;
+    border: none;
+    padding: 16px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 12px;
+    font-weight: 500;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 4px 8px rgba(255, 75, 43, 0.2);
+  }
+
+  .delete-account-btn:hover {
+    background-color: #FF3B1B;
+  }
+
+  .delete-account-btn:active {
+    transform: scale(0.98);
+    background-color: #E13415;
+  }
+
+  /* Modal Styling */
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+
+  .modal.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .modal-content {
+    background-color: #1E1E1E;
+    margin: 16px;
+    padding: 24px;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    transform: translateY(20px);
+    transition: transform 0.3s;
+  }
+
+  .modal.active .modal-content {
+    transform: translateY(0);
+  }
+
+  .modal h3 {
+    color: #FF4B2B;
+    font-size: 20px;
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+
+  .modal p {
+    color: #E0E0E0;
+    margin-bottom: 20px;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .modal form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .modal input {
+    padding: 16px;
+    margin-bottom: 16px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    background-color: #2A2A2A;
+    color: #FFFFFF;
+    font-size: 16px;
+  }
+
+  .modal input::placeholder {
+    color: #808080;
+  }
+
+  .modal input:focus {
+    outline: none;
+    border-color: #7C4DFF;
+    box-shadow: 0 0 0 2px rgba(124, 77, 255, 0.2);
+  }
+
+  .modal-buttons {
+    display: flex;
+    gap: 12px;
+  }
+
+  .modal button {
+    flex: 1;
+    padding: 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+  }
+
+  .modal button[type="submit"] {
+    background-color: #FF4B2B;
+    color: white;
+  }
+
+  .modal button[type="button"] {
+    background-color: #2A2A2A;
+    color: #E0E0E0;
+  }
+
+  .modal button:active {
+    transform: scale(0.98);
+  }
+
+  /* Special Links */
+  .logout-link {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  .logout-title {
+    color: #FF4B2B !important;
+    font-weight: 600;
+  }
+
+  /* Light Mode */
+  .light-mode {
+    background-color: #F5F6FA;
+    color: #333333;
+  }
+
+  .light-mode .container {
+    background-color: #F5F6FA;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .light-mode .header {
+    border-bottom-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .light-mode .back-arrow {
+    color: #333333;
+  }
+
+  .light-mode .header h1 {
+    color: #333333;
+  }
+
+  .light-mode .section {
+    background-color: #FFFFFF;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .light-mode .section-title {
+    color: #555555;
+  }
+
+  .light-mode .privacy-text {
+    background-color: rgba(255, 75, 43, 0.08);
+  }
+
+  .light-mode .privacy-text p {
+    color: #444444;
+  }
+
+  .light-mode .setting-item {
+    background-color: #F0F2F5;
+  }
+
+  .light-mode .setting-item:active {
+    background-color: #E8EAF0;
+  }
+
+  .light-mode .setting-item .title {
+    color: #333333;
+  }
+
+  .light-mode .setting-item .description {
+    color: #666666;
+  }
+
+  .light-mode .toggle-switch {
+    background-color: #D0D0D0;
+  }
+
+  .light-mode .modal-content {
+    background-color: #FFFFFF;
+  }
+
+  .light-mode .modal input {
+    background-color: #F5F6FA;
+    border-color: #E0E0E0;
+    color: #333333;
+  }
+
+  .light-mode .modal input::placeholder {
+    color: #999999;
+  }
+
+  .light-mode .modal p {
+    color: #333333;
+  }
+
+  .light-mode .modal button[type="button"] {
+    background-color: #EEEEEE;
+    color: #333333;
+  }
+</style>
+
+<div class="container">
+  <div class="header">
+    <a href="{% url 'user_settings' %}" class="back-arrow">&#8592;</a>
+    <h1>Account Privacy</h1>
+  </div>
+
+  <!-- Privacy Warning Section -->
+  <div class="section">
+    <div class="privacy-text">
+      <div class="warning-icon">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <p>We're sorry to see you go! If you delete your account, all of your data will be removed permanently and cannot be recovered.</p>
+    </div>
+    
+    <button class="delete-account-btn" onclick="showDeleteModal()">Delete My Account</button>
+  </div>
+
+  <!-- Account Settings Section -->
+  <div class="section">
+    <div class="section-title">Account Settings</div>
+    
+    <div class="setting-item" onclick="window.location.href='{% url 'profile' %}'">
+      <span class="icon">
+        <i class="fas fa-user"></i>
+      </span>
+      <div class="text">
+        <span class="title">Personal Information</span>
+        <span class="description">Manage your profile details</span>
+      </div>
+      <span class="arrow">&#x25B6;</span>
+    </div>
+    
+    <div class="setting-item">
+      <a href="{% url 'logout' %}" class="logout-link">
+        <span class="icon">
+          <i class="fas fa-sign-out-alt"></i>
+        </span>
+        <div class="text">
+          <span class="title logout-title">Logout</span>
+          <span class="description">Sign out of your account</span>
+        </div>
+        <span class="arrow">&#x25B6;</span>
+      </a>
+    </div>
+    
+   
+  </div>
+</div>
+
+<!-- Account Deletion Modal -->
+<div id="delete-account-modal" class="modal">
+  <div class="modal-content">
+    <h3>Confirm Account Deletion</h3>
+    <p>This action cannot be undone. All your data, including meditation history and personal settings, will be permanently deleted.</p>
+    
+    <form id="delete-account-form" method="POST" action="{% url 'delete_account' %}">
+      {% csrf_token %}
+      <input type="password" name="password" id="password" placeholder="Enter your password to confirm" required>
+      
+      <div class="modal-buttons">
+        <button type="button" onclick="closeModal()">Cancel</button>
+        <button type="submit">Delete</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  // Theme Toggle Logic
+  document.addEventListener('DOMContentLoaded', function() {
+    // Check saved theme
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    const themeToggle = document.getElementById('theme-toggle');
+    
+    // Apply saved theme
+    if (savedTheme === 'light') {
+      document.body.classList.add('light-mode');
+      themeToggle.checked = false;
+    } else {
+      document.body.classList.add('dark-mode');
+      themeToggle.checked = true;
+    }
+  });
+  
+  // Toggle between dark and light mode
+  function toggleMode() {
+    const themeToggle = document.getElementById('theme-toggle');
+    
+    if (themeToggle.checked) {
+      document.body.classList.remove('light-mode');
+      document.body.classList.add('dark-mode');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.body.classList.remove('dark-mode');
+      document.body.classList.add('light-mode');
+      localStorage.setItem('theme', 'light');
+    }
+  }
+  
+  // Modal Functions
+  function showDeleteModal() {
+    const modal = document.getElementById('delete-account-modal');
+    modal.style.display = 'flex';
+    setTimeout(() => {
+      modal.classList.add('active');
+    }, 10);
+    document.getElementById('password').focus();
+  }
+  
+  function closeModal() {
+    const modal = document.getElementById('delete-account-modal');
+    modal.classList.remove('active');
+    setTimeout(() => {
+      modal.style.display = 'none';
+    }, 300);
+  }
+  
+  // Close modal when clicking outside
+  window.onclick = function(event) {
+    const modal = document.getElementById('delete-account-modal');
+    if (event.target === modal) {
+      closeModal();
+    }
+  }
+</script>
+<style>
+    .container {
+    background-color: #1E1E1E;
+    border-radius: 20px;
+    }
+    .section:hover{
+        cursor: pointer;
+    }
+</style>
+<!-- Font Awesome for icons -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+{% endblock %}

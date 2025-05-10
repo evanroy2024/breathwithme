@@ -135,34 +135,35 @@ Home - Meditation Dashboard
 </style>
 
 <div class="container">
-  <div class="header">
-    <span class="back-arrow">&#8592;</span>
+  <div class="header" >
+    <span class="back-arrow" onclick="window.location.href='{% url 'home' %}'">&#8592;</span>
     <h1>Settings</h1>
   </div>
   <div class="section">
     <div class="section-title">Preference</div>
-    <div class="setting-item">
+    <div class="setting-item" onclick="window.location.href='{% url 'user_push_notifications' %}'" >
       <span class="icon">&#128276;</span>
       <div class="text">
         <span class="title">Push notifications</span>
       </div>
       <span class="arrow">&#x25B6;</span>
     </div>
-    <div class="setting-item">
+    <div class="setting-item" onclick="window.location.href='{% url 'user_email_notifications' %}'">
       <span class="icon">&#9993;</span>
       <div class="text">
-        <span class="title">Email Updates</span>
+        <span class="title">Email Notification</span>
       </div>
       <span class="arrow">&#x25B6;</span>
     </div>
-    <div class="setting-item">
-      <span class="icon">&#127760;</span>
-      <div class="text">
-        <span class="title">Language</span>
-        <span class="description">English</span>
-      </div>
-      <span class="arrow">&#x25B6;</span>
-    </div>
+    <div class="setting-item" onclick="window.location.href='{% url 'user_privacy_settings' %}'">
+  <span class="icon">&#128274;</span> <!-- lock icon for privacy -->
+  <div class="text">
+    <span class="title">Account Privacy</span>
+    <span class="description">Private</span> <!-- or "Public", depending on the setting -->
+  </div>
+  <span class="arrow">&#x25B6;</span>
+</div>
+
     <div class="setting-item">
       <span class="icon">&#127769;</span>
       <div class="text">
@@ -179,10 +180,10 @@ Home - Meditation Dashboard
 
   <div class="section">
     <div class="section-title">Account Setting</div>
-    <div class="setting-item">
+    <div class="setting-item"  onclick="window.location.href='{% url 'profile' %}'">
       <span class="icon">&#128100;</span>
       <div class="text">
-        <span class="title">Personal Information</span>
+        <span class="title" >Personal Information</span>
       </div>
       <span class="arrow">&#x25B6;</span>
     </div>
@@ -360,7 +361,9 @@ function toggleMode() {
 .light-mode .toggle-switch.active .slider {
     background-color: #ffffff;
 }
-
+.section:hover{
+  cursor: pointer;
+}
 </style>
 
 <!-- Toggle bnutton moving code start  -->

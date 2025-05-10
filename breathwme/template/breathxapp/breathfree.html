@@ -543,7 +543,7 @@ svg.hold ellipse {
               <i class="fas fa-volume-mute"></i>
             </button>
             <button aria-label="Vibration" id="vibration-button" style="width: 50px; display: inline-flex; align-items: center; justify-content: center; padding: 0; border: none; ">
-            <img src="https://cdn-icons-png.flaticon.com/128/15674/15674072.png" alt="" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+            <img src="{% static 'v2.png' %}" alt="" style="max-width: 100%; max-height: 100%; object-fit: contain;">
             </button>
 
             <button aria-label="Save" id="save-exercise-button-id">
@@ -1061,6 +1061,7 @@ function animate(timestamp) {
     // Continue the animation
     animationId = requestAnimationFrame(animate);
 }
+
 // In the stopAnimation function, add code to remove the glow classes:
 function stopAnimation() {
     if (!isAnimating) return;
@@ -2332,6 +2333,11 @@ guideContainer.style.display = "none";  // Hide the guide container
   font-size: 1.5rem;
   font-weight: 600;
   letter-spacing: 0.5px;
+}
+
+.meditation-area {
+    margin-bottom: 20px;
+
 }
 </style>
 </body>

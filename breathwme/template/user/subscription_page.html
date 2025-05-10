@@ -314,19 +314,72 @@
             {% endif %}
         </div>
 
-        <div class="card">
-            <h2>Available Plans</h2>
-            <div class="plan-grid">
-                {% for plan in all_plans %}
-                    <div class="plan-card">
-                        <h3 class="plan-name">{{ plan.name }}</h3>
-                        <div class="plan-price">${{ plan.price }}</div>
-                        <p class="plan-description">{{ plan.description }}</p>
-                        <a href="{% url 'create_payment' plan.id %}" class="upgrade-button">Upgrade Now</a>
-                    </div>
-                {% endfor %}
+ <div class="card">
+    <h2>Available Plans</h2>
+    <div class="plan-grid">
+        {% for plan in all_plans %}
+            <div class="plan-card {% if plan.price == 0 %}locked{% endif %}">
+                <h3 class="plan-name">{{ plan.name }}</h3>
+                <div class="plan-price">${{ plan.price }}</div>
+                <p class="plan-description">{{ plan.description }}</p>
+
+                {% if plan.price == 0 %}
+                    <button class="locked-button" disabled title="Locked Plan">&#128274; Locked</button>
+                {% else %}
+                    <a href="{% url 'create_payment' plan.id %}" class="upgrade-button">Upgrade Now</a>
+                {% endif %}
             </div>
-        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+   .plan-card {
+    border-radius: 8px;
+    padding: 16px;
+    transition: all 0.3s ease;
+}
+
+.plan-card.locked {
+    opacity: 0.6;
+    filter: grayscale(100%);
+    pointer-events: none; /* disables all interactions inside */
+    position: relative;
+}
+
+.plan-card.locked::after {
+    content: "🔒 Locked Plan";
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+}
+
+.upgrade-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 5px;
+    display: inline-block;
+    font-weight: bold;
+}
+
+.locked-button {
+    background-color: #ccc;
+    color: #666;
+    border: none;
+    padding: 10px 15px;
+    cursor: not-allowed;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+</style>
     </div>
 </body>
 </html>

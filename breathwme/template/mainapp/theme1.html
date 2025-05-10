@@ -330,52 +330,35 @@
             <h2 class="pricing-title">Choose Your Plan</h2>
             <p class="pricing-subtitle">Start your mindfulness journey with a plan that fits your needs.</p>
 
-            <div class="pricing-grid">
-                <!-- Basic Plan -->
-                <div class="pricing-card">
-                    <i class="pricing-icon fas fa-leaf"></i>
-                    <h3 class="pricing-plan-title">Basic</h3>
-                    <p class="pricing-plan-desc">Great for beginners.</p>
-                    <p class="pricing-price">$15</p>
-                    <ul class="pricing-features">
-                        <li><i class="fas fa-check"></i> 5 Guided Meditations</li>
-                        <li><i class="fas fa-check"></i> Mindfulness Tips</li>
-                        <li><i class="fas fa-check"></i> Weekly Exercises</li>
-                        <li><i class="fas fa-times unavailable"></i> 1-on-1 Sessions</li>
-                    </ul>
-                    <a href="#" class="pricing-btn">Get Started</a>
-                </div>
-
-                <!-- Standard Plan -->
-                <div class="pricing-card highlight">
-                    <i class="pricing-icon fas fa-spa"></i>
-                    <h3 class="pricing-plan-title">Standard</h3>
-                    <p class="pricing-plan-desc">For regular practitioners.</p>
-                    <p class="pricing-price">$35</p>
-                    <ul class="pricing-features">
-                        <li><i class="fas fa-check"></i> 20 Guided Meditations</li>
-                        <li><i class="fas fa-check"></i> Personalized Plans</li>
-                        <li><i class="fas fa-check"></i> Breathwork Challenges</li>
-                        <li><i class="fas fa-times unavailable"></i> 1-on-1 Sessions</li>
-                    </ul>
-                    <a href="#" class="pricing-btn">Join Now</a>
-                </div>
-
-                <!-- Premium Plan -->
-                <div class="pricing-card">
-                    <i class="pricing-icon fas fa-yin-yang"></i>
-                    <h3 class="pricing-plan-title">Premium</h3>
-                    <p class="pricing-plan-desc">For deep transformation.</p>
-                    <p class="pricing-price">$70</p>
-                    <ul class="pricing-features">
-                        <li><i class="fas fa-check"></i> Unlimited Meditations</li>
-                        <li><i class="fas fa-check"></i> Live 1-on-1 Coaching</li>
-                        <li><i class="fas fa-check"></i> Exclusive Community</li>
-                        <li><i class="fas fa-check"></i> Sleep & Stress Relief</li>
-                    </ul>
-                    <a href="#" class="pricing-btn">Start Now</a>
-                </div>
-            </div>
+           <div class="pricing-grid">
+    {% for plan in all_plans %}
+    <div class="pricing-card {% if forloop.counter == 2 %}highlight{% endif %}">
+        <i class="pricing-icon fas fa-{% if forloop.counter == 1 %}leaf{% elif forloop.counter == 2 %}spa{% else %}yin-yang{% endif %}"></i>
+        <h3 class="pricing-plan-title">{{ plan.name }}</h3>
+        <p class="pricing-plan-desc">{{ plan.description }}</p>
+        <p class="pricing-price">${{ plan.price }}</p>
+        <ul class="pricing-features">
+            {% if forloop.counter == 1 %}
+                <li><i class="fas fa-check"></i> 5 Guided Meditations</li>
+                <li><i class="fas fa-check"></i> Mindfulness Tips</li>
+                <li><i class="fas fa-check"></i> Weekly Exercises</li>
+                <li><i class="fas fa-times unavailable"></i> 1-on-1 Sessions</li>
+            {% elif forloop.counter == 2 %}
+                <li><i class="fas fa-check"></i> 20 Guided Meditations</li>
+                <li><i class="fas fa-check"></i> Personalized Plans</li>
+                <li><i class="fas fa-check"></i> Breathwork Challenges</li>
+                <li><i class="fas fa-times unavailable"></i> 1-on-1 Sessions</li>
+            {% else %}
+                <li><i class="fas fa-check"></i> Unlimited Meditations</li>
+                <li><i class="fas fa-check"></i> Live 1-on-1 Coaching</li>
+                <li><i class="fas fa-check"></i> Exclusive Community</li>
+                <li><i class="fas fa-check"></i> Sleep & Stress Relief</li>
+            {% endif %}
+        </ul>
+        <a href="{% url 'signin' %}" class="pricing-btn">{% if forloop.counter == 1 %}Get Started{% elif forloop.counter == 2 %}Join Now{% else %}Start Now{% endif %}</a>
+    </div>
+    {% endfor %}
+</div>
         </div>
     </section>
 

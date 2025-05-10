@@ -30,7 +30,12 @@ urlpatterns = [
 
     path('music_player/', views.music_player, name='music_player'),
     path('subscription-expired/', views.subscription_expired, name='subscription_expired'),
+
     path('user-subscription/', views.user_subscription_page, name='user_subscription_page'),
 
-
+    # Settings 
+    path('push-notifications/', views.user_push_notifications, name='user_push_notifications'),
+    path('email-notifications/', views.user_email_notifications, name='user_email_notifications'),
+    path('user-privacy-settings/', views.user_privacy_settings, name='user_privacy_settings'),
+    path('delete-account/', views.delete_account, name='delete_account'),
 ]

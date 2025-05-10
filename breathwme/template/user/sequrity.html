@@ -102,13 +102,133 @@ Home - Meditation Dashboard
   .arrow-icon {
     font-size: 16px;
     color: #777; /* Light gray color for arrow */
+    cursor: pointer;
   }
 
+  /* Modal styles */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-content {
+    background-color: #2A2A2A;
+    margin: auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
+  .modal-header h2 {
+    font-size: 18px;
+    color: #E0E0E0;
+  }
+
+  .close-btn {
+    font-size: 22px;
+    color: #aaa;
+    cursor: pointer;
+  }
+
+  .close-btn:hover {
+    color: #fff;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #E0E0E0;
+  }
+
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #444;
+    background-color: #333;
+    color: #E0E0E0;
+  }
+
+  .btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+  }
+
+  .btn-primary {
+    background-color: #0056FF;
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background-color: #0045CC;
+  }
+
+  .btn-cancel {
+    background-color: #555;
+    color: white;
+    margin-right: 10px;
+  }
+
+  .btn-cancel:hover {
+    background-color: #444;
+  }
+
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 15px;
+  }
+
+  /* Toast notification */
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 2000;
+  }
+
+  .toast.show {
+    opacity: 1;
+  }
 </style>
 
 <div class="container">
   <div class="header">
-    <span class="back-arrow">&#8592;</span>
+    <span class="back-arrow" onclick="window.location.href='{% url 'user_settings' %}'">&#8592;</span>
     <h1>Security & Privacy</h1>
   </div>
   <div class="setting-item">
@@ -116,24 +236,58 @@ Home - Meditation Dashboard
     <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
   </div>
   <div class="setting-item">
-    <span class="title">Logout all Devices</span>
+    <span class="title">Visibility</span>
     <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
   </div>
-  <div class="setting-item">
-    <span class="title">Sleep Mode</span>
+   <div class="setting-item">
+    <span class="title">Data Access</span>
     <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
   </div>
-  <div class="setting-item">
-    <span class="title">Subscription</span>
+   <div class="setting-item">
+    <span class="title">Activity Access</span>
+    <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
+  </div>
+ 
+  <div class="setting-item" onclick="window.location.href='#privacy'">
+    <span class="title">Privacy Policy</span>
     <span class="arrow-icon">&#8250;</span>
   </div>
-  <div class="setting-item">
-    <span class="title">Device Management</span>
+  <div class="setting-item" onclick="window.location.href='#terms'">
+    <span class="title">Terms and Conditions</span>
     <span class="arrow-icon">&#8250;</span>
   </div>
 </div>
 
-<!-- JS and css for dakr to light and light to dark start  -->
+<!-- Change Password Modal -->
+<div id="changePasswordModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Change Password</h2>
+      <span class="close-btn" onclick="closeModal('changePasswordModal')">&times;</span>
+    </div>
+    <div class="form-group">
+      <label for="currentPassword">Current Password:</label>
+      <input type="password" id="currentPassword" class="form-control" placeholder="Enter current password">
+    </div>
+    <div class="form-group">
+      <label for="newPassword">New Password:</label>
+      <input type="password" id="newPassword" class="form-control" placeholder="Enter new password">
+    </div>
+    <div class="form-group">
+      <label for="confirmPassword">Confirm New Password:</label>
+      <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm new password">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-cancel" onclick="closeModal('changePasswordModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="changePassword()">Update Password</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast notification element -->
+<div class="toast" id="toastNotification"></div>
+
+<!-- JS and css for dark to light and light to dark start  -->
 <script>
   const savedTheme = localStorage.getItem('theme');
   if (!savedTheme) {
@@ -142,91 +296,170 @@ Home - Meditation Dashboard
   } else {
       document.body.classList.add(savedTheme === 'dark' ? 'dark-mode' : 'light-mode');
   }
+
+  // Toggle switch functionality
+  function toggleSwitch(element) {
+    element.classList.toggle('active');
+    
+    // Save toggle state to localStorage
+    const toggleItems = document.querySelectorAll('.toggle-switch');
+    const toggleStates = [];
+    
+    toggleItems.forEach(item => {
+      toggleStates.push(item.classList.contains('active'));
+    });
+    
+    localStorage.setItem('toggleSettings', JSON.stringify(toggleStates));
+    showToast("Setting saved successfully");
+  }
+
+  // Go back function for back arrow
+  function goBack() {
+    // Show toast notification
+    showToast("Going back to previous page");
+    
+    // In a real app, you would navigate back
+    // window.history.back();
+  }
+
+  // Modal functions
+  function openModal(modalId) {
+    document.getElementById(modalId).style.display = 'flex';
+  }
+
+  function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+  }
+
+  function openChangePasswordModal() {
+    openModal('changePasswordModal');
+  }
+  
+  // Load saved toggle states on page load
+  window.addEventListener('DOMContentLoaded', function() {
+    const savedToggles = localStorage.getItem('toggleSettings');
+    
+    if (savedToggles) {
+      const toggleStates = JSON.parse(savedToggles);
+      const toggleItems = document.querySelectorAll('.toggle-switch');
+      
+      toggleItems.forEach((item, index) => {
+        if (toggleStates[index]) {
+          item.classList.add('active');
+        } else {
+          item.classList.remove('active');
+        }
+      });
+    }
+  });
+
+  // Toast notification function
+  function showToast(message) {
+    const toast = document.getElementById('toastNotification');
+    toast.textContent = message;
+    toast.classList.add('show');
+    
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 3000);
+  }
+
+  // Change Password function
+  function changePassword() {
+    const currentPassword = document.getElementById('currentPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      showToast("Please fill in all password fields");
+      return;
+    }
+    
+    if (newPassword !== confirmPassword) {
+      showToast("New passwords do not match");
+      return;
+    }
+    
+    // In a real app, this would be sent to the backend
+    console.log("Password change requested");
+    
+    closeModal('changePasswordModal');
+    showToast("Password changed successfully");
+  }
 </script>
 
 <style>
   /* Light Mode Styles */
-.light-mode .container {
-    background-color: #fff; /* White background */
-    padding: 20px;
-    font-family: Arial, sans-serif;
-    color: #333; /* Darker text color */
+.light-mode body {
+    background-color: #f5f5f5;
+    color: #333;
 }
 
-.light-mode .header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
+.light-mode .container {
+    background-color: #fff; /* White background */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .light-mode .header .back-arrow {
-    font-size: 24px;
-    margin-right: 15px;
-    cursor: pointer;
-    color: #007bff; /* Blue color for back arrow */
+    color: #0056FF; /* Blue color for back arrow */
 }
 
 .light-mode .header h1 {
-    font-size: 24px;
-    color: #007bff; /* Blue text for the header */
+    color: #333; /* Darker text for header */
 }
 
 .light-mode .setting-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px;
-    border: 1px solid #000; /* Black border for item */
-    margin-bottom: 10px;
-    cursor: pointer;
-    background-color: #fff; /* White background for setting item */
-    transition: background-color 0.3s ease;
-}
-
-.light-mode .setting-item:hover {
-    background-color: #f2f2f2; /* Light gray hover effect */
+    border-bottom: 1px solid #ddd; /* Lighter border */
 }
 
 .light-mode .setting-item .title {
-    font-size: 16px;
-    color: #000; /* Black text for titles */
+    color: #333; /* Darker text for titles */
 }
 
-.light-mode .setting-item .toggle-switch {
-    width: 40px;
-    height: 20px;
+.light-mode .toggle-switch {
     background-color: #ddd;
-    border-radius: 50px;
-    position: relative;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
 }
 
-.light-mode .setting-item .toggle-switch.active {
-    background-color: #4caf50; /* Green color for active state */
+.light-mode .toggle-switch.active {
+    background-color: #0056FF; /* Blue color for active switch */
 }
 
-.light-mode .setting-item .toggle-switch::before {
-    content: '';
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 16px;
-    height: 16px;
-    background-color: white;
-    border-radius: 50%;
-    transition: left 0.3s ease;
+.light-mode .arrow-icon {
+    color: #555; /* Darker gray for arrow */
 }
 
-.light-mode .setting-item .toggle-switch.active::before {
-    left: 22px; /* Move the toggle to the right for active state */
+.light-mode .modal-content {
+    background-color: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-.light-mode .setting-item .arrow-icon {
-    font-size: 20px;
-    color: #007bff; /* Blue color for arrow */
+.light-mode .modal-header h2 {
+    color: #333;
 }
 
+.light-mode .close-btn {
+    color: #666;
+}
+
+.light-mode .close-btn:hover {
+    color: #333;
+}
+
+.light-mode .form-group label {
+    color: #333;
+}
+
+.light-mode .form-group input,
+.light-mode .form-group select {
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+.light-mode .toast {
+    background-color: #333;
+    color: white;
+}
 </style>
 
 {% endblock %}

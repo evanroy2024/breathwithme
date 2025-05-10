@@ -448,7 +448,7 @@ svg.hold ellipse {
                 <i class="fas fa-volume-mute"></i>
               </button>
               <button aria-label="Vibration" id="vibration-button" style="width: 50px; display: inline-flex; align-items: center; justify-content: center; padding: 0;  ">
-            <img src="https://cdn-icons-png.flaticon.com/128/15674/15674072.png" alt="" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+            <img src="{% static 'v2.png' %}" alt="" style="max-width: 100%; max-height: 100%; object-fit: contain;">
             </button>
             <button aria-label="Guide" id="guide-button-id">
                 <i class="fas fa-question-circle"></i>
@@ -988,29 +988,38 @@ function setupAnimationParameters(shape) {
 
 // Add these JavaScript updates
 
-// In the animate function, add this code to update the glow classes:
+
+// Replace the animate function with this improved version
 function animate(timestamp) {
     const deltaTime = (timestamp - lastTimestamp) / 1000; // Convert to seconds
     lastTimestamp = timestamp;
     
+    // Update the current time
     currentTime += deltaTime;
     
-    // Calculate progress within the current phase
+    // Calculate the phase boundaries
     let phaseStartTime = 0;
     for (let i = 0; i < currentPhase; i++) {
         phaseStartTime += phaseTimes[i];
     }
     
     const phaseEndTime = phaseStartTime + phaseTimes[currentPhase];
-    const phaseProgress = (currentTime - phaseStartTime) / phaseTimes[currentPhase];
     
-    // Update the phase if needed
+    // Important: Handle phase transitions more carefully
     if (currentTime >= phaseEndTime) {
+        // Update the phase
         currentPhase = (currentPhase + 1) % phaseTimes.length;
         
         // If we've completed a full cycle
         if (currentPhase === 0) {
             currentTime = 0;
+            phaseStartTime = 0;
+        } else {
+            // Recalculate the phase start time for the new phase
+            phaseStartTime = 0;
+            for (let i = 0; i < currentPhase; i++) {
+                phaseStartTime += phaseTimes[i];
+            }
         }
         
         // Speak the new phase if voice is enabled
@@ -1019,6 +1028,9 @@ function animate(timestamp) {
             lastSpokenPhase = currentPhase;
         }
     }
+    
+    // Calculate progress within the current phase (after phase update)
+    const phaseProgress = (currentTime - phaseStartTime) / phaseTimes[currentPhase];
     
     // Update the instruction text, center text, and status
     instruction.textContent = phaseNames[currentPhase];
@@ -1037,6 +1049,7 @@ function animate(timestamp) {
     }
     
     // Calculate the position of the ball
+    // Use a single smooth calculation for the ball position
     const currentPoint = getPointsForPhase(currentPhase, phaseProgress);
     positionBall(currentPoint);
     
@@ -2347,7 +2360,9 @@ document.addEventListener("click", (e) => {
   min-width: 70px;
   text-align: center;
 }
-
+.meditation-area {
+    margin-bottom: 10px;
+}
           </style>
 </body>
 </html>

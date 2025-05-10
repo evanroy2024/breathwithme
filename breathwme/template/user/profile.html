@@ -154,19 +154,19 @@ Home - Meditation Dashboard
 </div>
 {% endif %}
     
-    <div class="input-group">
-      <label for="full-name">Full name</label>
-      <input type="text" id="full-name" value="{{ userdata.name }}">
-    </div>
-    <div class="input-group">
-      <label for="email">Country</label>
-      <input type="email" id="email" value="{{ userdata.country }}">
-    </div>
-    <div class="input-group password">
-      <label for="password">Password</label>
-      <input type="password" id="password" value="Private Information !">
-      <span class="toggle-password" onclick="togglePasswordVisibility()">&#128065;</span>
-    </div>
+<div class="input-group">
+  <label for="full-name">Full name</label>
+  <input type="text" id="full-name" value="{{ userdata.name }}" readonly title="Read-only">
+</div>
+<div class="input-group">
+  <label for="email">Country</label>
+  <input type="text" id="email" value="{{ userdata.country }}" readonly title="Read-only">
+</div>
+<div class="input-group password">
+  <label for="password">Password</label>
+  <input type="password" id="password" value="Private Information !" readonly title="Read-only">
+  <span class="toggle-password" onclick="togglePasswordVisibility()">&#128065;</span>
+</div>
 
 
 {% else %}

@@ -135,264 +135,55 @@ Home - Meditation Dashboard
 </style>
 
 <div class="container">
-  <!-- Header Section -->
   <div class="header">
-    <span class="back-arrow" onclick="window.location.href='{% url 'home' %}'">&#8592;</span>
-    <h1>Referral & Rewards</h1>
+    <span class="back-arrow" onclick="window.location.href='{% url 'user_settings' %}'">&#8592;</span>
+    <h1>Push Notifcations</h1>
+  </div>
+  <div class="section">
+  <!-- Push Notification Toggle -->
+<div class="setting-item">
+  <div class="setting-label">Push Notifications</div>
+  <label class="toggle-switch">
+    <input type="checkbox" id="push-toggle" onchange="togglePush()">
+    <span class="toggle-slider"></span>
+  </label>
+</div>
+  <div class="rules">
+    <p>• Notifications are optional and can be turned on or off at any time.</p>
+    <p>• We respect your privacy and never share your data.</p>
+    <p>• By enabling notifications, you agree to receive periodic updates.</p>
+    <p>• You can update your preferences from your account settings.</p>
   </div>
 
-  <!-- Referral Section (Initially visible) -->
-  <div id="referral-section" class="referral-section">
-    <h2>Your Referral Link</h2>
-    <div class="referral-box">
-        <input type="text" id="referralLink" value="{{ referral_link }}" readonly>
-        <button onclick="copyToClipboard()" class="copy-btn">Copy</button>
-    </div>
 
-    <div class="referral-rules">
-        <h3>Referral Rewards</h3>
-        <ul>
-            <li>🎉 Get <b>5 coins</b> when a new user signs up using your link.</li>
-            <li>💎 <b>25 coins</b> unlock a <span class="premium">Free Premium Plan</span>.</li>
-            <li>💰 Earn <b>20% commission</b> when anyone buys a plan.</li>
-        </ul>
-    </div>
 
-   
-
-    <!-- Coins Button -->
-    <div class="button-container">
-        <button class="qr-btn" onclick="showQRCode()">QR Code</button>
-      <button class="go-btn" onclick="window.location.href='{% url 'referal:mycoins' %}'">My Coins</button>
-    </div>
-  </div>
-
-  <!-- QR Code Section (Initially Hidden) -->
-  <div id="qr-code-section" class="qr-code-section" style="display: none;">
-    <h3>Share this QR code:</h3>
-    <img src="{% url 'referal:generate_qr_code' %}" alt="Referral QR Code" width="200">
-    <div class="button-container">
-      <button class="qr-btn" onclick="hideQRCode()">Hide QR Code</button>
-    </div>
-  </div>
 </div>
 
-<!-- JavaScript for QR Code Toggle -->
-<script>
-  function showQRCode() {
-    // Hide referral section and show QR code section
-    document.getElementById('referral-section').style.display = 'none';
-    document.getElementById('qr-code-section').style.display = 'block';
-  }
 
-  function hideQRCode() {
-    // Hide QR code section and show referral section
-    document.getElementById('qr-code-section').style.display = 'none';
-    document.getElementById('referral-section').style.display = 'block';
-  }
-
-  // Function to copy referral link to clipboard
-  function copyToClipboard() {
-    var copyText = document.getElementById('referralLink');
-    copyText.select();
-    document.execCommand("copy");
-    alert("Referral link copied to clipboard!");
-  }
-</script>
-
-<style>
-
+  <div class="section">
+    <div class="section-title">Account Setting</div>
+    <div class="setting-item"  onclick="window.location.href='{% url 'profile' %}'">
+      <span class="icon">&#128100;</span>
+      <div class="text">
+        <span class="title">Personal Information</span>
+      </div>
+      <span class="arrow">&#x25B6;</span>
+    </div>
+    <div class="setting-item">
+      <a href="{% url 'logout' %}" class="logout-link">
+        <span class="icon">&#x21AA;</span> <!-- Unicode Logout Icon -->
+        <div class="text" style="margin-right: 200%;">
+          <span class="title"> <b style="color: reds;">Logout</b> </span>
+        </div>
+        <span class="arrow">&#x25B6;</span>
+      </a>
+    </div>
+    
+  </div>
+  
+</div>
 
 
-
-  .referral-box {
-    display: flex;
-  }
-
-  .referral-box input {
-    width: 70%;
-    padding: 10px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-
-  .referral-box .copy-btn {
-    padding: 10px 15px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-
-  .referral-rules ul {
-    list-style-type: none;
-    padding: 0;
-  }
-
-  .referral-rules li {
-    margin-bottom: 10px;
-  }
-
-  .premium {
-    color: gold;
-  }
-
-  .button-container {
-    text-align: center;
-    margin-top: 20px;
-  }
-
-  .go-btn {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-
-  .qr-btn {
-    margin-right: 20px;
-    padding: 10px 20px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    color: #fff;
-    border: none;
-    padding: 14px 24px;
-    cursor: pointer;
-    border-radius: 6px;
-    font-size: 18px;
-    font-weight: 600;
-    text-transform: uppercase;
-    transition: all 0.3s ease-in-out;
-    box-shadow: 0px 4px 10px rgba(212, 175, 55, 0.3);
-  }
-
-  .qr-code-section {
-    text-align: center;
-    margin-top: 20px;
-  }
-</style>
-
-<style>
-
-/* Button Wrapper to Center */
-.button-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 10%;
-}
-
-/* Sleek Golden Button */
-.go-btn {
-    background: linear-gradient(135deg, #b8860b, #d4af37);
-    color: #fff;
-    border: none;
-    padding: 14px 24px;
-    cursor: pointer;
-    border-radius: 6px;
-    font-size: 18px;
-    font-weight: 600;
-    text-transform: uppercase;
-    transition: all 0.3s ease-in-out;
-    box-shadow: 0px 4px 10px rgba(212, 175, 55, 0.3);
-}
-
-/* Hover Effect */
-.go-btn:hover {
-    background: linear-gradient(135deg, #a67c00, #c9a030);
-    transform: translateY(-2px);
-    box-shadow: 0px 6px 14px rgba(212, 175, 55, 0.5);
-}
-
-
-
-.referral-section h2 {
-    font-size: 22px;
-    font-weight: 600;
-    margin-bottom: 20px;
-    color: #f8f8f8;
-}
-
-.referral-box {
-    display: flex;
-    align-items: center;
-    background: #1e1e1e;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.referral-box input {
-    width: 80%;
-    border: none;
-    font-size: 16px;
-    outline: none;
-    padding: 8px;
-    background: transparent;
-    color: #fff;
-    font-weight: 500;
-}
-
-.copy-btn {
-    background: #ff4b2b;
-    color: #fff;
-    border: none;
-    padding: 10px 14px;
-    cursor: pointer;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: bold;
-    transition: 0.3s;
-}
-
-.copy-btn:hover {
-    background: #d8391a;
-}
-
-.referral-rules {
-    margin-top: 20px;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 15px;
-    border-radius: 8px;
-    text-align: left;
-    color: #ccc;
-}
-
-.referral-rules h3 {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 10px;
-    color: #f8f8f8;
-}
-
-.referral-rules ul {
-    list-style: none;
-    padding: 0;
-}
-
-.referral-rules li {
-    margin-bottom: 8px;
-    font-size: 14px;
-    font-weight: 500;
-}
-
-</style>
-<script>
-    function copyToClipboard() {
-        var copyText = document.getElementById("referralLink");
-        copyText.select();
-        copyText.setSelectionRange(0, 99999);
-        document.execCommand("copy");
-        alert("Referral link copied!");
-    }
-</script>
 <script>
 // Check for a saved theme in localStorage (default to dark if not set)
 const savedTheme = localStorage.getItem('theme');
@@ -554,12 +345,80 @@ function toggleMode() {
 }
 
 </style>
+
 <style>
-    
+  .setting-item:hover{
+    cursor: pointer;
+  }
+    /* Style for the toggle switch */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+/* Hide the checkbox input */
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* Create the slider for the toggle */
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #ccc;
+  transition: background-color 0.4s;
+  border-radius: 50px;
+}
+
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  height: 20px;              /* slightly larger than before */
+  width: 20px;
+  border-radius: 50%;
+  background-color: white;
+  transition: transform 0.4s;
+  top: 2px;                  /* centers it vertically in 24px height */
+  left: 2px;                 /* aligns nicely on the left */
+}
+
+
+/* When the checkbox is checked, change the background color and move the circle */
+input:checked + .toggle-slider {
+  background-color: #4CAF50;
+}
+
+
+input:checked + .toggle-slider::before {
+  transform: translateX(26px); /* 50 - 24 = 26 */
+}
+
+.setting-item .toggle-switch {
+    position: relative;
+    width: 45px;
+    height: 24px;
+
+}
+
 </style>
+
+<script>
+function togglePush() {
+  const isChecked = document.getElementById('push-toggle').checked;
+  console.log("Push notifications " + (isChecked ? "enabled" : "disabled"));
+}
+</script>
+
 <!-- Toggle bnutton moving code start  -->
 
 <!-- Toggle bnutton moving code End  -->
 
 {% endblock %}
-
