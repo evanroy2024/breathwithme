@@ -11,7 +11,7 @@ from django.http import HttpResponse
 
 from django.shortcuts import render, get_object_or_404
 
-NGROK_URL = "https://2474-152-58-180-81.ngrok-free.app/"  # Your actual URL
+NGROK_URL = "https://ztechblog.online/"  # Your actual URL
 
 @login_required
 def generate_referral_link(request):
