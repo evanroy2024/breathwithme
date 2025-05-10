@@ -841,6 +841,8 @@ function updateTimingControls() {
             
         case 'triangle':
             document.querySelector('.center-text').style.top = '58%';
+            holdInControl.style.display = 'flex';
+            holdOutControl.style.display = 'none';
             break;
         case 'reverseTriangle':
             // Inhale, hold, exhale controls visible

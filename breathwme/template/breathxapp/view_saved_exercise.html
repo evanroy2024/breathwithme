@@ -1037,6 +1037,20 @@ function animate(timestamp) {
     centerText.textContent = phaseNames[currentPhase];
     status.textContent = phaseNames[currentPhase];
     
+    // Add this section - special positioning for triangle shapes
+    if (shapeSelect.value === 'reverseTriangle') {
+        // Move text 50px higher for reverse triangle
+        centerText.style.top = 'calc(50% - 30px)';
+        centerText.style.transform = 'translate(-50%, -50%)';
+    } else if (shapeSelect.value === 'triangle') {
+        // Move text 50px lower for triangle
+        centerText.style.top = 'calc(50% + 20px)';
+        centerText.style.transform = 'translate(-50%, -50%)';
+    } else {
+        // Reset for other shapes
+        centerText.style.top = '50%';
+        centerText.style.transform = 'translate(-50%, -50%)';
+    }
     // Update glow effect classes based on current phase
     shapeElement.classList.remove('inhale', 'exhale', 'hold');
     
