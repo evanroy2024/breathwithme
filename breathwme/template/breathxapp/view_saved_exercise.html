@@ -630,6 +630,23 @@ const audioFiles = {
     'Exhale': new Audio("{% static 'voices/exhale.mp3' %}")
 };
 
+// For Vibration in React native app ------------------------------------------------------------------------------
+function notifyPhaseChange(phase) {
+  // Always log the phase change
+  console.log("Phase changed to:", phase);
+  
+  // Send a message to the React Native WebView if available
+  if (window.ReactNativeWebView) {
+    window.ReactNativeWebView.postMessage(JSON.stringify({
+      type: 'phaseChange',
+      phase: phase
+    }));
+    console.log("post message sent");
+  } else {
+    console.log("ReactNativeWebView not available - would have sent message:", phase);
+  }
+}
+
 // Replace the entire toggleVoice function:
 function toggleVoice() {
     voiceEnabled = !voiceEnabled;
@@ -1005,7 +1022,7 @@ function animate(timestamp) {
     
     const phaseEndTime = phaseStartTime + phaseTimes[currentPhase];
     
-    // Important: Handle phase transitions more carefully
+     // Update inside the animate function where phase changes
     if (currentTime >= phaseEndTime) {
         // Update the phase
         currentPhase = (currentPhase + 1) % phaseTimes.length;
@@ -1021,6 +1038,9 @@ function animate(timestamp) {
                 phaseStartTime += phaseTimes[i];
             }
         }
+        
+        // Notify React Native about phase change
+        notifyPhaseChange(phaseNames[currentPhase]);
         
         // Speak the new phase if voice is enabled
         if (voiceEnabled && currentPhase !== lastSpokenPhase) {

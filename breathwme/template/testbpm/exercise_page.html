@@ -576,7 +576,22 @@ const audioFiles = {
     'Exhale': new Audio("{% static 'voices/exhale.mp3' %}")
 };
 
-
+// For Vibration in React native app ------------------------------------------------------------------------------
+function notifyPhaseChange(phase) {
+  // Always log the phase change
+  console.log("Phase changed to:", phase);
+  
+  // Send a message to the React Native WebView if available
+  if (window.ReactNativeWebView) {
+    window.ReactNativeWebView.postMessage(JSON.stringify({
+      type: 'phaseChange',
+      phase: phase
+    }));
+    console.log("post message sent");
+  } else {
+    console.log("ReactNativeWebView not available - would have sent message:", phase);
+  }
+}
   // Switch between circle and square
   shapeSelect.addEventListener("change", function() {
     if (this.value === "circle") {
@@ -680,7 +695,7 @@ const audioFiles = {
 const synth = window.speechSynthesis;
 let lastSpokenState = "";
 let speechEnabled = false; // Add this line
-
+let lastNotifiedState = "";
   function animateMarker() {
     if (isPaused) return;
     
@@ -708,6 +723,12 @@ let speechEnabled = false; // Add this line
     // Update last spoken state
     lastSpokenState = currentState;
 }
+     // Only send notification when state actually changes
+    if (currentState !== lastNotifiedState && currentState !== "Waiting...") {
+        notifyPhaseChange(currentState);
+        lastNotifiedState = currentState;
+    }
+    
     textElements.forEach(element => {
       if (currentState === "Waiting...") {
         element.innerText = currentState;

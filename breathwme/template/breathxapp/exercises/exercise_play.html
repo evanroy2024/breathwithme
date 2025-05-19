@@ -597,6 +597,22 @@ const audioFiles = {
 };
 let voiceEnabled = false; // Voice starts off by default
 
+// For Vibration in React native app ------------------------------------------------------------------------------
+function notifyPhaseChange(phase) {
+  // Always log the phase change
+  console.log("Phase changed to:", phase);
+  
+  // Send a message to the React Native WebView if available
+  if (window.ReactNativeWebView) {
+    window.ReactNativeWebView.postMessage(JSON.stringify({
+      type: 'phaseChange',
+      phase: phase
+    }));
+    console.log("post message sent");
+  } else {
+    console.log("ReactNativeWebView not available - would have sent message:", phase);
+  }
+}
 
 // Initialize
 updateShapeDisplay();
@@ -884,6 +900,9 @@ function updateBreathingPhaseDisplay(shape, breathingPhase, duration) {
     
     // Speak the breathing phase instruction
     speakBreathingPhase(breathingPhase);
+    
+    // Send notification for phase change to React Native WebView
+    notifyPhaseChange(breathingPhase);
 }
 
 function updateShapeDisplay() {

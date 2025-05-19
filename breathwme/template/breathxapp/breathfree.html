@@ -524,7 +524,7 @@ svg.hold ellipse {
                 <select id="shapeSelect">
                     <option value="circle">Circle</option>
                     <option value="square">Square</option>
-                    <option value="rectangle">Rectangle </option>
+                    <option value="rectangle">Rectangle (5:8 ratio)</option>
                     <option value="triangle">Triangle</option>
                     <option value="reverseTriangle">Reverse Triangle</option>
                     <option value="diamond">Diamond</option>
@@ -623,6 +623,22 @@ function initVoiceButton() {
     voiceButton.addEventListener('click', toggleVoice);
 }
 
+// For Vibration in React native app ------------------------------------------------------------------------------
+function notifyPhaseChange(phase) {
+  // Always log the phase change
+  console.log("Phase changed to:", phase);
+  
+  // Send a message to the React Native WebView if available
+  if (window.ReactNativeWebView) {
+    window.ReactNativeWebView.postMessage(JSON.stringify({
+      type: 'phaseChange',
+      phase: phase
+    }));
+    console.log("post message sent");
+  } else {
+    console.log("ReactNativeWebView not available - would have sent message:", phase);
+  }
+}
 // Voice -------------------------------------------------------------------
 const audioFiles = {
     'Inhale': new Audio("{% static 'voices/inhale.mp3' %}"),
@@ -1012,7 +1028,7 @@ function animate(timestamp) {
     
     const phaseEndTime = phaseStartTime + phaseTimes[currentPhase];
     
-    // Important: Handle phase transitions more carefully
+      // Update inside the animate function where phase changes
     if (currentTime >= phaseEndTime) {
         // Update the phase
         currentPhase = (currentPhase + 1) % phaseTimes.length;
@@ -1028,6 +1044,9 @@ function animate(timestamp) {
                 phaseStartTime += phaseTimes[i];
             }
         }
+        
+        // Notify React Native about phase change
+        notifyPhaseChange(phaseNames[currentPhase]);
         
         // Speak the new phase if voice is enabled
         if (voiceEnabled && currentPhase !== lastSpokenPhase) {

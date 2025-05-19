@@ -144,10 +144,38 @@ Home - Meditation Dashboard
 <div class="setting-item">
   <div class="setting-label">Push Notifications</div>
   <label class="toggle-switch">
-    <input type="checkbox" id="push-toggle" onchange="togglePush()">
+    <input type="checkbox" id="push-toggle" onchange="togglePush()" {% if user.userpreferancedata.exists %} 
+      {% if user.userpreferancedata.first.push_notification %} checked {% endif %} 
+    {% endif %}>
     <span class="toggle-slider"></span>
   </label>
 </div>
+
+<script>
+  function togglePush() {
+    const isChecked = document.getElementById('push-toggle').checked;
+
+    fetch("{% url 'userdata:update-setting' %}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': document.cookie.match(/csrftoken=([\w-]+)/)[1]
+      },
+      body: JSON.stringify({
+        field: 'push_notification',
+        value: isChecked
+      })
+    }).then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          alert('Error: ' + data.error);
+          // Optionally revert the checkbox
+          document.getElementById('push-toggle').checked = !isChecked;
+        }
+      });
+  }
+</script>
+
   <div class="rules">
     <p>• Notifications are optional and can be turned on or off at any time.</p>
     <p>• We respect your privacy and never share your data.</p>
@@ -409,13 +437,13 @@ input:checked + .toggle-slider::before {
 }
 
 </style>
-
+<!-- 
 <script>
 function togglePush() {
   const isChecked = document.getElementById('push-toggle').checked;
   console.log("Push notifications " + (isChecked ? "enabled" : "disabled"));
 }
-</script>
+</script> -->
 
 <!-- Toggle bnutton moving code start  -->
 
