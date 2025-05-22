@@ -4,6 +4,15 @@ from django.http import JsonResponse
 def main_page(request):
     return render(request, 'mainapp/index.html')
 
+def app_main_page(request):
+    return render(request, 'mainapp/app_main_page.html')
+
+def terms_and_conditions(request):
+    return render(request, 'rules/terms_and_conditions.html')
+
+def privacy_policy(request):
+    return render(request, 'rules/privacy_policy.html')
+
 # Dark to light theme code here start 
 def toggle_theme(request):
     # Get the current theme (default to 'light' if not set)
@@ -94,6 +103,9 @@ def register(request):
         return redirect("otp_varify")  # Redirect to OTP verification page
 
     return render(request, "user/register.html")
+
+
+
 # OTP verification view with referral rewards
 def otp_varify(request):
     if request.method == "POST":
@@ -133,27 +145,33 @@ def otp_varify(request):
         messages.error(request, "Invalid OTP. Please try again.")
 
     return render(request, "user/otp.html")
-   
+from .models import Subscription
+
 def signin(request):
     if request.method == "POST":
         email = request.POST.get('email')
         password = request.POST.get('password')
 
-        # Try to get the user by email, assuming email is used for login
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
             user = None
 
-        # Authenticate user
-        if user and user.check_password(password):  # Check if password matches
-            login(request, user)  # Log the user in
+        if user and user.check_password(password):
+            login(request, user)
             messages.success(request, "You have successfully logged in!")
-            return redirect('home')  # Redirect to the home page after successful login
+
+            # 👉 Check if user has ANY subscription
+            if Subscription.objects.filter(user=user).exists():
+                return redirect('home')
+            else:
+                return redirect('subscriptions')
+
         else:
             messages.error(request, "Invalid email or password. Please try again.")
 
     return render(request, 'user/signin.html')
+
 
 def user_logout(request):
     logout(request)
@@ -217,6 +235,48 @@ def create_payment(request, plan_id):
 
     return redirect('subscriptions')  # Redirect back if payment creation fails
 
+from datetime import datetime, timedelta
+
+# Handle free subscriptions with proper date calculation
+def free_subscription(request, plan_id):
+    if not request.user.is_authenticated:
+        return redirect('login')  # Redirect to login if user is not authenticated
+    
+    try:
+        # Get the selected plan from the database
+        plan = SubscriptionPlan.objects.get(id=plan_id)
+        
+        # Verify that the plan is actually free
+        if plan.price == 0:
+            # Set start date to today
+            start_date = datetime.now().date()
+            
+            # Set end date based on plan duration
+            end_date = None
+            if plan.duration:
+                end_date = start_date + timedelta(days=plan.duration)
+            
+            # Create subscription record in the database
+            subscription = Subscription(
+                user=request.user,
+                plan=plan,
+                payment_status='Completed',
+                payment_transaction_id='FREE',
+                start_date=start_date,
+                end_date=end_date
+            )
+            subscription.save()
+            
+            # Redirect to home page or a success page
+            return redirect('home')  # Redirect to home after successful subscription
+        else:
+            # If someone tries to get a paid plan for free, redirect to subscriptions
+            return redirect('subscriptions')
+            
+    except SubscriptionPlan.DoesNotExist:
+        return redirect('subscriptions')
+    
+      
 # Execute payment after PayPal approval
 def execute_payment(request):
     payment_id = request.session.get('payment_id', None)
@@ -255,13 +315,16 @@ from django.shortcuts import render
 from userdata.models import Userdata
 from django.contrib.auth.decorators import login_required
 from .decorators import check_subscription
+from django.urls import reverse
 
 @check_subscription
-@login_required
 def home(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse('signin'))  # replace 'signin' with your sign-in URL name
+
     userdata = Userdata.objects.filter(user=request.user).first()
-    username = request.user.username if request.user.is_authenticated else None
-    return render(request, 'user/home.html', {'username': username,'userdata': userdata})
+    username = request.user.username
+    return render(request, 'user/home.html', {'username': username, 'userdata': userdata})
 
 from musicapp.models import Playlist
 def library(request):
@@ -367,7 +430,7 @@ from django.shortcuts import render
 def subscription_expired(request):
     userdata = Userdata.objects.filter(user=request.user).first()
     username = request.user.username if request.user.is_authenticated else None
-    return render(request, 'user/home.html', {'username': username,'userdata': userdata})
+    return render(request, 'subscription_expired.html', {'username': username,'userdata': userdata})
 
 # //////////////////////////////////// SubscriptionPlan CHECK End ////////////////////////////////////////
 

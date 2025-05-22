@@ -5,6 +5,8 @@ Home - Meditation Dashboard
 {% endblock %}
 
 {% block content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
 <style>
     /* General Reset */
     * {
@@ -156,9 +158,17 @@ Home - Meditation Dashboard
   <input type="text" id="name" name="name" value="{{ user_data.name|default_if_none:'' }}" required><br><br>
 
   <label for="date_of_birth">Date of Birth:</label>
-  <input type="date" id="date_of_birth" name="date_of_birth"
-         value="{{ user_data.date_of_birth|date:'Y-m-d'|default_if_none:'' }}">
-  <br><br>
+  <!-- Include Flatpickr CSS -->
+
+<!-- Your Date of Birth Input -->
+<input
+  type="text"
+  id="date_of_birth"
+  name="date_of_birth"
+  value="{{ user_data.date_of_birth|date:'Y-m-d'|default_if_none:'' }}"
+  placeholder="Select your birth date"
+/>
+
   
   <label for="city">City:</label>
   <input type="text" id="city" name="city" value="{{ user_data.city|default_if_none:'' }}" required><br><br>
@@ -484,6 +494,22 @@ Home - Meditation Dashboard
     }
     </style>
     
+<!-- Include Flatpickr JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script>
+  flatpickr("#date_of_birth", {
+    dateFormat: "Y-m-d",       // Format saved to your backend
+    altInput: true,            // Show user-friendly date format
+    altFormat: "F j, Y",       // e.g. January 1, 1990
+    maxDate: "today",          // No future dates
+    minDate: "1900-01-01",     // Limit earliest selectable date
+    allowInput: true,          // Allow manual typing too
+    // Enables quick year selection dropdown
+    // If you want, add plugins here for extra features
+  });
+</script>
+
 {% endblock %}
 
 

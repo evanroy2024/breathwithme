@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms and Conditions - Breathe With Me</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #333;
+            position: sticky;
+            top: 0;
+            background: #0a0a0a;
+            z-index: 100;
+        }
+
+        .back-button {
+            background: none;
+            border: none;
+            color: #4a9eff;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.2s ease;
+        }
+
+        .back-button:hover {
+            background: #1a1a1a;
+        }
+
+        .back-arrow {
+            margin-right: 8px;
+            font-size: 20px;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-left: 16px;
+            color: #fff;
+        }
+
+        /* Content */
+        .content {
+            flex: 1;
+            padding: 30px 0;
+        }
+
+        .effective-date {
+            background: #1a1a1a;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border-left: 4px solid #4a9eff;
+        }
+
+        .intro {
+            margin-bottom: 30px;
+            font-size: 16px;
+            color: #b0b0b0;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #4a9eff;
+        }
+
+        .subsection {
+            margin-bottom: 20px;
+        }
+
+        .subsection-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #4a9eff;
+            margin-bottom: 8px;
+        }
+
+        .subsection-content {
+            color: #c0c0c0;
+            margin-left: 16px;
+        }
+
+        ul {
+            margin: 12px 0;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 6px;
+            color: #c0c0c0;
+        }
+
+        .highlight-box {
+            background: #2a1810;
+            border: 1px solid #ff6b35;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .highlight-box h3 {
+            color: #ff6b35;
+            margin-bottom: 12px;
+        }
+
+        .warning-box {
+            background: #331a1a;
+            border: 1px solid #ff4444;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .warning-box h3 {
+            color: #ff4444;
+            margin-bottom: 12px;
+        }
+
+        .contact-info {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .contact-email {
+            color: #4a9eff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .contact-email:hover {
+            text-decoration: underline;
+        }
+
+        .jurisdiction-note {
+            background: #1a1a2a;
+            border: 1px solid #6b46ff;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px 0;
+            font-style: italic;
+            color: #b0b0ff;
+        }
+
+        /* Footer with Confirm Button */
+        .footer {
+            padding: 30px 0;
+            border-top: 1px solid #333;
+            text-align: center;
+        }
+
+        .acknowledge-text {
+            margin-bottom: 20px;
+            color: #b0b0b0;
+            font-size: 14px;
+        }
+
+        .confirm-button {
+            background: linear-gradient(135deg, #4a9eff, #0066cc);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(74, 158, 255, 0.3);
+        }
+
+        .confirm-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 158, 255, 0.4);
+        }
+
+        .confirm-button:active {
+            transform: translateY(0);
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 16px;
+            }
+
+            .header {
+                padding: 16px 0;
+            }
+
+            .header-title {
+                font-size: 20px;
+                margin-left: 12px;
+            }
+
+            .content {
+                padding: 20px 0;
+            }
+
+            .section-title {
+                font-size: 18px;
+            }
+
+            .subsection-title {
+                font-size: 15px;
+            }
+
+            .confirm-button {
+                width: 100%;
+                padding: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-title {
+                font-size: 18px;
+            }
+
+            .section-title {
+                font-size: 16px;
+            }
+
+            .highlight-box,
+            .warning-box,
+            .effective-date,
+            .contact-info,
+            .jurisdiction-note {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <button class="back-button" onclick="goBack()">
+                <span class="back-arrow">←</span>
+            </button>
+            <h1 class="header-title">Terms and Conditions</h1>
+        </header>
+
+        <!-- Content -->
+        <main class="content">
+            <div class="effective-date">
+                <strong>Effective Date: 01 June 2025</strong>
+            </div>
+
+            <div class="intro">
+                Welcome to <strong>Breathe With Me</strong> ("we," "us," or "our"). By accessing or using our Breathing Exercise Application (the "App"), you agree to comply with and be bound by the following Terms and Conditions (the "Terms"). Please read these Terms carefully before using the App. If you do not agree to these Terms, you should not use the App.
+            </div>
+
+            <!-- Section 1 -->
+            <section class="section">
+                <h2 class="section-title">1. Use of the App</h2>
+                
+                <div class="subsection">
+                    <h3 class="subsection-title">1.1 License:</h3>
+                    <div class="subsection-content">
+                        We grant you a limited, non-exclusive, non-transferable, revocable license to access and use the App for personal, non-commercial use, in accordance with these Terms.
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3 class="subsection-title">1.2 Eligibility:</h3>
+                    <div class="subsection-content">
+                        You must be at least 18 years of age or have the consent of a parent or guardian to use the App. By using the App, you represent that you meet these age requirements.
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3 class="subsection-title">1.3 User Account:</h3>
+                    <div class="subsection-content">
+                        You may be required to create an account to use certain features of the App. You agree to provide accurate and complete information and to keep your account information up to date.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2 -->
+            <section class="section">
+                <h2 class="section-title">2. Privacy and Data Collection</h2>
+                
+                <div class="subsection">
+                    <h3 class="subsection-title">2.1 Data Collection:</h3>
+                    <div class="subsection-content">
+                        We may collect personal data, including but not limited to your name, email address, and usage data. Please refer to our Privacy Policy for detailed information on how we collect, use, and protect your data.
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3 class="subsection-title">2.2 Consent:</h3>
+                    <div class="subsection-content">
+                        By using the App, you consent to the collection, use, and sharing of your information as described in our Privacy Policy.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 3 -->
+            <section class="section">
+                <h2 class="section-title">3. Content and Intellectual Property</h2>
+                
+                <div class="subsection">
+                    <h3 class="subsection-title">3.1 Ownership:</h3>
+                    <div class="subsection-content">
+                        All content within the App, including but not limited to text, images, audio, video, and software, is owned by us or our licensors and is protected by intellectual property laws.
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3 class="subsection-title">3.2 Limited Use:</h3>
+                    <div class="subsection-content">
+                        You may use the content provided solely for your personal use in accordance with the functionality of the App. You may not copy, distribute, modify, or create derivative works from any content without our prior written consent.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4 - Important Health Disclaimer -->
+            <section class="section">
+                <h2 class="section-title">4. Breathing Exercises and Health Disclaimer</h2>
+                
+                <div class="highlight-box">
+                    <h3>4.1 Not Medical Advice:</h3>
+                    <p>The breathing exercises and related content provided by the App are intended solely for general wellness purposes. They are not a substitute for professional medical advice, diagnosis, or treatment. You should consult a healthcare professional before starting any new exercise program, especially if you have any pre-existing medical conditions or concerns.</p>
+                </div>
+
+                <div class="subsection">
+                    <h3 class="subsection-title">4.2 User Responsibility:</h3>
+                    <div class="subsection-content">
+                        You are solely responsible for your health and well-being when using the App. If you experience any discomfort, pain, or distress while engaging in breathing exercises, you should immediately stop and seek medical advice.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 5 - Liability Disclaimer -->
+            <section class="section">
+                <h2 class="section-title">5. Disclaimer of Liability</h2>
+                
+                <div class="subsection">
+                    <h3 class="subsection-title">5.1 General Disclaimer:</h3>
+                    <div class="subsection-content">
+                        To the fullest extent permitted by law, the App and all related content are provided "as is" and "as available" without warranties of any kind, either express or implied, including but not limited to the implied warranties of fitness for a particular purpose, merchantability, and non-infringement.
+                    </div>
+                </div>
+
+                <div class="warning-box">
+                    <h3>5.2 No Liability for Health Issues:</h3>
+                    <p>We do not assume any liability for any injuries, health issues, or adverse effects that may arise from using the App or participating in the breathing exercises. By using the App, you acknowledge and accept that you do so at your own risk.</p>
+                </div>
+
+                <div class="subsection">
+                    <h3 class="subsection-title">5.3 Limitation of Liability:</h3>
+                    <div class="subsection-content">
+                        Under no circumstances will we be liable for any direct, indirect, incidental, special, or consequential damages arising from your use or inability to use the App, even if we have been advised of the possibility of such damages.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 6 -->
+            <section class="section">
+                <h2 class="section-title">6. Prohibited Conduct</h2>
+                <div class="subsection">
+                    <h3 class="subsection-title">6.1 You agree not to engage in any of the following prohibited activities:</h3>
+                    <div class="subsection-content">
+                        <ul>
+                            <li>Use the App for any unlawful purpose or in violation of any local, state, or national law.</li>
+                            <li>Interfere with the proper functioning of the App or attempt to bypass security measures.</li>
+                            <li>Engage in fraudulent, harmful, or abusive behavior while using the App.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 7 -->
+            <section class="section">
+                <h2 class="section-title">7. Modification of Terms</h2>
+                <div class="subsection">
+                    <h3 class="subsection-title">7.1</h3>
+                    <div class="subsection-content">
+                        We reserve the right to modify or update these Terms at any time. Any changes will be effective upon posting in the App or on our website. By continuing to use the App after any such changes, you agree to be bound by the updated Terms.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 8 -->
+            <section class="section">
+                <h2 class="section-title">8. Termination</h2>
+                
+                <div class="subsection">
+                    <h3 class="subsection-title">8.1</h3>
+                    <div class="subsection-content">
+                        We may suspend or terminate your access to the App at any time without notice if you violate these Terms or for any other reason at our sole discretion.
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3 class="subsection-title">8.2</h3>
+                    <div class="subsection-content">
+                        Upon termination, your right to use the App will immediately cease, and you must promptly stop using the App.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 9 -->
+            <section class="section">
+                <h2 class="section-title">9. Governing Law</h2>
+                
+                <div class="jurisdiction-note">
+                    <strong>Note:</strong> Please update the jurisdiction information below according to your specific legal requirements.
+                </div>
+
+                <div class="subsection">
+                    <h3 class="subsection-title">9.1</h3>
+                    <div class="subsection-content">
+                        These Terms will be governed by and construed in accordance with the laws of [Insert Jurisdiction], without regard to its conflict of law principles.
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3 class="subsection-title">9.2</h3>
+                    <div class="subsection-content">
+                        Any legal actions arising from or related to these Terms or your use of the App must be brought in the courts located in [Insert Jurisdiction].
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 10 -->
+            <section class="section">
+                <h2 class="section-title">10. Contact Us</h2>
+                <div class="contact-info">
+                    <p>If you have any questions about these Terms and Conditions, please contact us at:</p>
+                    <a href="mailto:info@breathewithmeapp.com" class="contact-email">info@breathewithmeapp.com</a>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer with Confirm Button -->
+        <footer class="footer">
+            <div class="acknowledge-text">
+                By using the App, you acknowledge that you have read, understood, and agreed to these Terms and Conditions.
+            </div>
+            <button class="confirm-button" onclick="confirmTerms()">
+                  Confirm and Accept
+            </button>
+        </footer>
+    </div>
+
+    <script>
+        function goBack() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                // Fallback if no history
+                alert('Going back to previous page...');
+            }
+        }
+
+       function confirmTerms() {
+    // Redirect back to the previous page
+    window.history.back();
+}
+
+// Smooth scrolling for better UX
+document.addEventListener('DOMContentLoaded', function() {
+    // Add smooth scroll behavior
+    document.documentElement.style.scrollBehavior = 'smooth';
+});
+
+    </script>
+</body>
+</html>

@@ -66,3 +66,16 @@ class HabitPreference(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s Habit Preferences"
+
+
+
+class UserSettingsPreference(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="userpreferancedata")
+    email_notification = models.BooleanField(default=False)
+    push_notification = models.BooleanField(default=False)
+    visibility = models.BooleanField(default=False)
+    data_access = models.BooleanField(default=False)
+    activity_access = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.user.username}'s Settings Preference"

@@ -1,8 +1,9 @@
+# urls.py
 from django.urls import path
-from .views import user_dashboard
+from .views import track_activity
 
-app_name = 'breathxapp'
+app_name = 'activatyapp'
 
 urlpatterns = [
-    path('dashboard/', user_dashboard, name='user_dashboard'),
+    path("track-activity/", track_activity, name="track-activity"),
 ]

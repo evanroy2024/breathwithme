@@ -208,10 +208,6 @@ def view_saved_exercise(request, exercise_id):
 
     return render(request, "breathxapp/view_saved_exercise.html", {
         "exercise": exercise,
-        "val1": val1,
-        "val2": val2,
-        "val3": val3,
-        "val4": val4
     })
 
 from django.shortcuts import redirect

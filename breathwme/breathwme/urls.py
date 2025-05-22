@@ -37,6 +37,8 @@ urlpatterns = [
     path('referal/', include('referal.urls', namespace='referal')),
     path('testapp/', include('testapp.urls', namespace='testapp')),
 
+    path('push_notifications/', include('userupdates.urls')),
+
 
     # path(r'^ws/', include(routing.websocket_urlpatterns)),  # Include WebSocket URLs
 

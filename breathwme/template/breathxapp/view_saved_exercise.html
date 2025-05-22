@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+     <!-- Add this Font Awesome link in the head of your HTML -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
     <title>Shape Meditation - Breathing Exercise</title>
     <style>
  
@@ -447,7 +450,7 @@ svg.hold ellipse {
             <button id="voice-start" class="voice-off" aria-label="Voice">
                 <i class="fas fa-volume-mute"></i>
               </button>
-              <button aria-label="Vibration" id="vibration-button" style="width: 50px; display: inline-flex; align-items: center; justify-content: center; padding: 0;  ">
+              <button aria-label="Vibration" id="vibration-button-set" style="width: 50px; display: inline-flex; align-items: center; justify-content: center; padding: 0;  ">
             <img src="{% static 'v2.png' %}" alt="" style="max-width: 100%; max-height: 100%; object-fit: contain;">
             </button>
             <button aria-label="Guide" id="guide-button-id">
@@ -505,12 +508,54 @@ svg.hold ellipse {
     </select>
     <div id="timerDisplay">00:00</div>
   </div>
+  
 </div>
 
+  <!-- Section for guide  -->
+         <section class="guide-container-end" style="
+  padding: 1.5rem;
+  color: #e0e0e0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  background-color: #1a1a1a;
+  border-radius: 12px;
+  margin: 1rem auto;
+  max-width: 100%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+">
 
 
- <!-- Add this Font Awesome link in the head of your HTML -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <div class="tip-box" style="
+    background-color: rgba(57, 229, 255, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+    border: 1px solid rgba(57, 229, 255, 0.2);
+  ">
+    <div style="
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    ">
+      <span style="
+        color: #39e5ff;
+        font-size: 1.2rem;
+        margin-right: 0.5rem;
+      ">💡</span>
+      <h4 style="
+        color: #39e5ff;
+        font-size: 1rem;
+        margin: 0;
+        font-weight: 500;
+      ">Pro Tip</h4>
+    </div>
+    <p style="
+      line-height: 1.6;
+      color: #cdcdcd;
+      font-size: 0.95rem;
+      margin: 0;
+    ">Try practicing at the same time each day to build a consistent habit. Even 5 minutes of focused breathing can help reduce stress and improve mindfulness.</p>
+  </div>
+</section>
 
 <!-- Replace your existing voice button with this -->
 
@@ -631,21 +676,44 @@ const audioFiles = {
 };
 
 // For Vibration in React native app ------------------------------------------------------------------------------
-function notifyPhaseChange(phase) {
-  // Always log the phase change
-  console.log("Phase changed to:", phase);
-  
-  // Send a message to the React Native WebView if available
-  if (window.ReactNativeWebView) {
-    window.ReactNativeWebView.postMessage(JSON.stringify({
-      type: 'phaseChange',
-      phase: phase
-    }));
-    console.log("post message sent");
+
+// For Vibration in React native app ------------------------------------------------------------------------------
+// Add vibration state variable
+let vibrationEnabled = true;
+
+// Modify your existing notifyPhaseChange function
+function notifyPhaseChange(phase) { 
+  // Always log the phase change 
+  console.log("Phase changed to:", phase); 
+   
+  // Only send message if vibration is enabled
+  if (vibrationEnabled) {
+    // Send a message to the React Native WebView if available 
+    if (window.ReactNativeWebView) { 
+      window.ReactNativeWebView.postMessage(JSON.stringify({ 
+        type: 'phaseChange', 
+        phase: phase 
+      })); 
+      console.log("post message sent"); 
+    } else { 
+      console.log("ReactNativeWebView not available - would have sent message:", phase); 
+    } 
   } else {
-    console.log("ReactNativeWebView not available - would have sent message:", phase);
+    console.log("Vibration disabled - message not sent");
   }
 }
+
+// Add click event to your existing button
+document.getElementById('vibration-button-set').addEventListener('click', function() {
+  vibrationEnabled = !vibrationEnabled;
+  
+  // Toggle visual state
+  if (vibrationEnabled) {
+    this.classList.remove('off');
+  } else {
+    this.classList.add('off');
+  }
+});
 
 // Replace the entire toggleVoice function:
 function toggleVoice() {
@@ -2171,7 +2239,30 @@ off {
   }
 }
 
+#vibration-button-set {
+  position: relative;
+}
 
+#vibration-button-set::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60%;
+  height: 3px;
+  background-color: #ff4444;
+  transform: translate(-50%, -50%) rotate(45deg);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+#vibration-button-set.off::after {
+  opacity: 1;
+}
+
+#vibration-button-set.off img {
+  filter: grayscale(100%) opacity(0.5);
+}
 </style>  
 
 <!-- Django BAckend data exercise saVE  -->
@@ -2397,6 +2488,29 @@ document.addEventListener("click", (e) => {
 .meditation-area {
     margin-bottom: 10px;
 }
+.guide-container-end{
+  display: none;
+}
+@media screen and (max-width: 668px) {
+.guide-container-end{
+  display: block;
+}
+}
           </style>
+
+              <!-- For activity Page ----------------------------------------------- -->
+     <script>
+    let startTime = Date.now();
+
+    window.addEventListener("beforeunload", function () {
+        let duration = Math.round((Date.now() - startTime) / 1000);
+
+        navigator.sendBeacon("/activityapp/track-activity/", JSON.stringify({
+            url: window.location.pathname,
+            duration: duration
+        }));
+    });
+</script>
+
 </body>
 </html>

@@ -54,4 +54,29 @@ def upload_userdata(request):
 
 
 
-# For activity log ----------------------------------------------------------------------------------------------------------------
+# For User Settings log ----------------------------------------------------------------------------------------------------------------
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+import json
+
+from .models import UserSettingsPreference
+from django.views.decorators.http import require_POST
+from django.db.models import F
+
+@login_required
+@require_POST
+def update_setting(request):
+    data = json.loads(request.body)
+    field = data.get('field')
+    value = data.get('value')
+
+    allowed_fields = ['email_notification', 'push_notification', 'visibility', 'data_access', 'activity_access']
+    if field not in allowed_fields:
+        return JsonResponse({'error': 'Invalid field'}, status=400)
+
+    updated = UserSettingsPreference.objects.filter(user=request.user).update(**{field: value})
+    if not updated:
+        return JsonResponse({'error': 'Settings preference does not exist'}, status=404)
+
+    return JsonResponse({'success': True})

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - Breathe With Me</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #333;
+            position: sticky;
+            top: 0;
+            background: #0a0a0a;
+            z-index: 100;
+        }
+
+        .back-button {
+            background: none;
+            border: none;
+            color: #4a9eff;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.2s ease;
+        }
+
+        .back-button:hover {
+            background: #1a1a1a;
+        }
+
+        .back-arrow {
+            margin-right: 8px;
+            font-size: 20px;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-left: 16px;
+            color: #fff;
+        }
+
+        /* Content */
+        .content {
+            flex: 1;
+            padding: 30px 0;
+        }
+
+        .effective-date {
+            background: #1a1a1a;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border-left: 4px solid #4a9eff;
+        }
+
+        .intro {
+            margin-bottom: 30px;
+            font-size: 16px;
+            color: #b0b0b0;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #4a9eff;
+        }
+
+        .subsection {
+            margin-bottom: 20px;
+        }
+
+        .subsection-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #4a9eff;
+            margin-bottom: 8px;
+        }
+
+        .subsection-content {
+            color: #c0c0c0;
+            margin-left: 16px;
+        }
+
+        ul {
+            margin: 12px 0;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 6px;
+            color: #c0c0c0;
+        }
+
+        .highlight-box {
+            background: #2a1810;
+            border: 1px solid #ff6b35;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .highlight-box h3 {
+            color: #ff6b35;
+            margin-bottom: 12px;
+        }
+
+        .contact-info {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .contact-email {
+            color: #4a9eff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .contact-email:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer with Confirm Button */
+        .footer {
+            padding: 30px 0;
+            border-top: 1px solid #333;
+            text-align: center;
+        }
+
+        .acknowledge-text {
+            margin-bottom: 20px;
+            color: #b0b0b0;
+            font-size: 14px;
+        }
+
+        .confirm-button {
+            background: linear-gradient(135deg, #4a9eff, #0066cc);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(74, 158, 255, 0.3);
+        }
+
+        .confirm-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 158, 255, 0.4);
+        }
+
+        .confirm-button:active {
+            transform: translateY(0);
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 16px;
+            }
+
+            .header {
+                padding: 16px 0;
+            }
+
+            .header-title {
+                font-size: 20px;
+                margin-left: 12px;
+            }
+
+            .content {
+                padding: 20px 0;
+            }
+
+            .section-title {
+                font-size: 18px;
+            }
+
+            .subsection-title {
+                font-size: 15px;
+            }
+
+            .confirm-button {
+                width: 100%;
+                padding: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-title {
+                font-size: 18px;
+            }
+
+            .section-title {
+                font-size: 16px;
+            }
+
+            .highlight-box,
+            .effective-date,
+            .contact-info {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <button class="back-button" onclick="goBack()">
+                <span class="back-arrow">←</span>
+            </button>
+            <h1 class="header-title">Privacy Policy</h1>
+        </header>
+
+        <!-- Content -->
+        <main class="content">
+            <div class="effective-date">
+                <strong>Effective Date: 01 June 2025</strong>
+            </div>
+
+            <div class="intro">
+                At <strong>Breathe With Me</strong> ("we," "us," or "our"), we are committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your personal information when you use our Breathing Exercise Application (the "App"). By accessing or using the App, you consent to the practices described in this Privacy Policy. If you do not agree with this policy, please do not use the App.
+            </div>
+
+            <!-- Section 1 -->
+            <section class="section">
+                <h2 class="section-title">1. Information We Collect</h2>
+                <p>We may collect the following types of information when you use the App:</p>
+                
+                <div class="subsection">
+                    <h3 class="subsection-title">1.1 Personal Information:</h3>
+                    <div class="subsection-content">
+                        When you create an account or use certain features of the App, we may collect personal information such as:
+                        <ul>
+                            <li>Name</li>
+                            <li>Email address</li>
+                            <li>Age or date of birth</li>
+                            <li>Gender (optional)</li>
+                            <li>Health-related data, such as breathing patterns or progress (only if you choose to share this information)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3 class="subsection-title">1.2 Usage Data:</h3>
+                    <div class="subsection-content">
+                        We may collect information about your use of the App, including:
+                        <ul>
+                            <li>Device information (e.g., model, operating system, version)</li>
+                            <li>Usage patterns (e.g., frequency and duration of breathing exercises)</li>
+                            <li>IP address</li>
+                            <li>Interaction with features and content within the App</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3 class="subsection-title">1.3 Cookies and Tracking Technologies:</h3>
+                    <div class="subsection-content">
+                        We may use cookies and similar tracking technologies to collect information about your use of the App. Cookies help us improve your experience by remembering your preferences and settings.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2 -->
+            <section class="section">
+                <h2 class="section-title">2. How We Use Your Information</h2>
+                <p>We may use the information we collect for the following purposes:</p>
+                
+                <div class="subsection">
+                    <h3 class="subsection-title">2.1 To Provide and Improve Services:</h3>
+                    <div class="subsection-content">
+                        To deliver the features and functionality of the App, including personalized breathing exercises, progress tracking, and other related services.
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3 class="subsection-title">2.2 To Communicate with You:</h3>
+                    <div class="subsection-content">
+                        To send you account-related information, updates about the App, and customer support communications.
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3 class="subsection-title">2.3 To Analyze Usage:</h3>
+                    <div class="subsection-content">
+                        To understand how you use the App and identify areas for improvement, troubleshooting, or new feature development.
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3 class="subsection-title">2.4 To Ensure Legal Compliance:</h3>
+                    <div class="subsection-content">
+                        To comply with applicable legal obligations and resolve disputes.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 3 -->
+            <section class="section">
+                <h2 class="section-title">3. How We Share Your Information</h2>
+                <p>We value your privacy and will not sell or rent your personal information to third parties. However, we may share your information in the following circumstances:</p>
+                
+                <div class="subsection">
+                    <h3 class="subsection-title">3.1 Service Providers:</h3>
+                    <div class="subsection-content">
+                        We may share your information with trusted third-party service providers who assist in the operation of the App, such as cloud storage providers, analytics services, and customer support tools. These providers are bound by contractual obligations to protect your data.
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3 class="subsection-title">3.2 Legal Requirements:</h3>
+                    <div class="subsection-content">
+                        We may disclose your personal information if required to do so by law, or if we believe in good faith that such action is necessary to comply with legal processes or protect our rights, property, or safety.
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3 class="subsection-title">3.3 Business Transfers:</h3>
+                    <div class="subsection-content">
+                        In the event of a merger, acquisition, or sale of all or part of our business, your information may be transferred to the new owner or successor organization.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4 -->
+            <section class="section">
+                <h2 class="section-title">4. Data Retention</h2>
+                <p>We will retain your personal information only for as long as necessary to fulfill the purposes for which it was collected, comply with legal obligations, resolve disputes, and enforce agreements.</p>
+            </section>
+
+            <!-- Section 5 -->
+            <section class="section">
+                <h2 class="section-title">5. Data Security</h2>
+                <p>We take reasonable measures to protect the security of your personal information and ensure that it is stored securely. However, no data transmission or storage system can be guaranteed to be 100% secure. We cannot ensure or warrant the security of your information transmitted to or from the App.</p>
+            </section>
+
+            <!-- Section 6 -->
+            <section class="section">
+                <h2 class="section-title">6. Your Rights and Choices</h2>
+                
+                <div class="subsection">
+                    <h3 class="subsection-title">6.1 Access and Update:</h3>
+                    <div class="subsection-content">
+                        You may access, correct, or update your personal information by logging into your account or contacting us directly.
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3 class="subsection-title">6.2 Opt-Out:</h3>
+                    <div class="subsection-content">
+                        You can opt-out of receiving promotional emails from us by following the unsubscribe instructions in the email or by contacting us directly.
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3 class="subsection-title">6.3 Data Deletion:</h3>
+                    <div class="subsection-content">
+                        You may request the deletion of your personal information by contacting us. Please note that some data may be retained for legal or operational reasons.
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3 class="subsection-title">6.4 Do Not Track:</h3>
+                    <div class="subsection-content">
+                        The App does not respond to "Do Not Track" signals from your browser.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 7 -->
+            <section class="section">
+                <h2 class="section-title">7. Children's Privacy</h2>
+                <p>The App is not intended for children under the age of 18, and we do not knowingly collect personal information from children under 18. If we learn that we have inadvertently collected information from a child under 18, we will take steps to delete that information as soon as possible.</p>
+            </section>
+
+            <!-- Section 8 - Important Disclaimer -->
+            <section class="section">
+                <h2 class="section-title">8. Disclaimer of Liability</h2>
+                
+                <div class="highlight-box">
+                    <h3>8.1 No Medical Advice:</h3>
+                    <p>The App provides breathing exercises and wellness content for general informational and wellness purposes only. The information provided through the App is not intended as medical advice, diagnosis, or treatment. Always seek the advice of a healthcare professional before starting any new exercise routine or making any health-related decisions.</p>
+                </div>
+
+                <div class="subsection">
+                    <h3 class="subsection-title">8.2 User Responsibility:</h3>
+                    <div class="subsection-content">
+                        You are solely responsible for any health issues or discomfort that may arise from using the App. We disclaim any liability for injuries, health issues, or adverse effects related to your use of the App. If you experience any distress, you should discontinue use immediately and consult a healthcare provider.
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3 class="subsection-title">8.3 Limitations of Liability:</h3>
+                    <div class="subsection-content">
+                        We are not liable for any damages resulting from your use or inability to use the App, including but not limited to direct, indirect, incidental, special, or consequential damages. Your use of the App is at your own risk.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 9 -->
+            <section class="section">
+                <h2 class="section-title">9. Changes to This Privacy Policy</h2>
+                <p>We may update this Privacy Policy from time to time. Any changes will be effective immediately upon posting in the App or on our website. By continuing to use the App after the changes, you agree to the updated Privacy Policy.</p>
+            </section>
+
+            <!-- Section 10 -->
+            <section class="section">
+                <h2 class="section-title">10. Contact Us</h2>
+                <div class="contact-info">
+                    <p>If you have any questions or concerns about this Privacy Policy or our practices, please contact us at:</p>
+                    <a href="mailto:info@breathewithmeapp.com" class="contact-email">info@breathewithmeapp.com</a>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer with Confirm Button -->
+        <footer class="footer">
+            <div class="acknowledge-text">
+                By using the App, you acknowledge that you have read and understand this Privacy Policy, and you agree to the collection and use of your personal information as described above.
+            </div>
+            <button class="confirm-button" onclick="confirmPolicy()">
+                Confirm and Accept
+            </button>
+        </footer>
+    </div>
+
+    <script>
+        function goBack() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                // Fallback if no history
+                alert('Going back to previous page...');
+            }
+        }
+
+       function confirmTerms() {
+    // Redirect back to the previous page
+    window.history.back();
+}
+
+// Smooth scrolling for better UX
+document.addEventListener('DOMContentLoaded', function() {
+    // Add smooth scroll behavior
+    document.documentElement.style.scrollBehavior = 'smooth';
+});
+
+    </script>
+</body>
+</html>

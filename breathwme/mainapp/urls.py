@@ -6,6 +6,7 @@ from . import views
 
 urlpatterns = [
     path('', views.main_page, name='main_page'),
+    path('app/', views.app_main_page, name='app_main_page'),
     path('toggle-theme/', views.toggle_theme, name='toggle_theme'),
     path('theme1/', views.theme1, name='theme1'),
     path('signin/', views.signin, name='signin'),  
@@ -13,6 +14,9 @@ urlpatterns = [
     path('otp_varify/', views.otp_varify, name='otp_varify'), 
     path('logout/', views.user_logout, name='logout'),
 
+    path('terms/', views.terms_and_conditions, name='terms'),
+    path('privacy/', views.privacy_policy, name='privacy'),
+    
     path('home/', views.home, name='home'), 
     path('library/', views.library, name='library'),
     # path('sleep/', views.sleep, name='sleep'),
@@ -24,6 +28,8 @@ urlpatterns = [
     path('sequrity/', views.sequrity, name='sequrity'),
     path('user_settings/', views.user_settings, name='user_settings'),
     path('subscriptions/', views.subscriptions, name='subscriptions'),
+    # In urls.py, add this pattern
+    path('free_subscription/<int:plan_id>/', views.free_subscription, name='free_subscription'),          # When proce is 0 
     path('paypal/create_payment/<int:plan_id>/', views.create_payment, name='create_payment'),
     path('paypal/execute/', views.execute_payment, name='execute_payment'),
 
@@ -38,4 +44,6 @@ urlpatterns = [
     path('email-notifications/', views.user_email_notifications, name='user_email_notifications'),
     path('user-privacy-settings/', views.user_privacy_settings, name='user_privacy_settings'),
     path('delete-account/', views.delete_account, name='delete_account'),
+
+
 ]

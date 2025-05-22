@@ -273,5 +273,20 @@
    margin-bottom: 80px;
 }
     </style>
+
+    <!-- For Activity Page ----------------------- -->
+     <script>
+    let startTime = Date.now();
+
+    window.addEventListener("beforeunload", function () {
+        let duration = Math.round((Date.now() - startTime) / 1000);
+
+        navigator.sendBeacon("/activityapp/track-activity/", JSON.stringify({
+            url: window.location.pathname,
+            duration: duration
+        }));
+    });
+</script>
+
 </body>
 </html>

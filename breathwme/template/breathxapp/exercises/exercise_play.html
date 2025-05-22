@@ -6,6 +6,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ exercise.name }} - Breathing Exercise</title>
+    <!-- Add this line in the head section of your HTML document -->
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 <style>
     /* Original styles remain the same */
 body {
@@ -369,7 +373,7 @@ button:hover {
                     <button id="voice-toggle-btn" class="control-btn">
                         <i class="fas fa-volume-mute"></i>
                     </button>
-                    <button aria-label="Vibration" id="vibration-button" style="background-color: rgba(30, 30, 35, 0.9); width: 55px; display: inline-flex; align-items: center; justify-content: center; padding: 0; border: none; border-radius: 60px; ">
+                    <button aria-label="Vibration" id="vibration-button-set" style="background-color: rgba(30, 30, 35, 0.9); width: 55px; display: inline-flex; align-items: center; justify-content: center; padding: 0; border: none; border-radius: 60px; ">
             <img src="{% static 'v2.png' %}" alt="" style="max-width: 100%; max-height: 100%; object-fit: contain;">
             </button>
                     
@@ -527,9 +531,119 @@ button:hover {
                 }
             </style>
             
-            <!-- Add this line in the head section of your HTML document -->
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+            
+
         </div>
+        <!-- Section for guide  -->
+         <section class="guide-container" style="
+  padding: 1.5rem;
+  color: #e0e0e0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  background-color: #1a1a1a;
+  border-radius: 12px;
+  margin: 1rem auto;
+  max-width: 90%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+">
+  <h2 style="
+    color: #39e5ff;
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    border-bottom: 1px solid rgba(57, 229, 255, 0.2);
+    padding-bottom: 0.75rem;
+  ">How to Practice Breathing</h2>
+  
+  <div class="guide-step" style="
+    margin-bottom: 1.5rem;
+    padding-left: 1rem;
+    border-left: 3px solid rgba(57, 229, 255, 0.6);
+  ">
+    <h3 style="
+      color: #ffffff;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    ">Step 1: Find Your Position</h3>
+    <p style="
+      line-height: 1.6;
+      color: #cdcdcd;
+      font-size: 0.95rem;
+      margin-bottom: 0.5rem;
+    ">Sit comfortably with your back straight or lie down in a quiet place. Place one hand on your chest and the other on your abdomen to feel your breath movement.</p>
+  </div>
+  
+  <div class="guide-step" style="
+    margin-bottom: 1.5rem;
+    padding-left: 1rem;
+    border-left: 3px solid rgba(57, 229, 255, 0.6);
+  ">
+    <h3 style="
+      color: #ffffff;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    ">Step 2: Breathing Rhythm</h3>
+    <p style="
+      line-height: 1.6;
+      color: #cdcdcd;
+      font-size: 0.95rem;
+      margin-bottom: 0.5rem;
+    ">Inhale slowly through your nose for a count of 4, feeling your abdomen expand. Hold briefly, then exhale through your mouth for a count of 6.</p>
+  </div>
+  
+  <div class="guide-step" style="
+    margin-bottom: 1.5rem;
+    padding-left: 1rem;
+    border-left: 3px solid rgba(57, 229, 255, 0.6);
+  ">
+    <h3 style="
+      color: #ffffff;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    ">Step 3: Maintain Focus</h3>
+    <p style="
+      line-height: 1.6;
+      color: #cdcdcd;
+      font-size: 0.95rem;
+      margin-bottom: 0.5rem;
+    ">Keep your attention on your breath. When your mind wanders, gently bring your focus back to your breathing pattern without judgment.</p>
+  </div>
+
+  <div class="tip-box" style="
+    background-color: rgba(57, 229, 255, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+    border: 1px solid rgba(57, 229, 255, 0.2);
+  ">
+    <div style="
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    ">
+      <span style="
+        color: #39e5ff;
+        font-size: 1.2rem;
+        margin-right: 0.5rem;
+      ">💡</span>
+      <h4 style="
+        color: #39e5ff;
+        font-size: 1rem;
+        margin: 0;
+        font-weight: 500;
+      ">Pro Tip</h4>
+    </div>
+    <p style="
+      line-height: 1.6;
+      color: #cdcdcd;
+      font-size: 0.95rem;
+      margin: 0;
+    ">Try practicing at the same time each day to build a consistent habit. Even 5 minutes of focused breathing can help reduce stress and improve mindfulness.</p>
+  </div>
+</section>
     </div>
   
 <script>
@@ -598,21 +712,42 @@ const audioFiles = {
 let voiceEnabled = false; // Voice starts off by default
 
 // For Vibration in React native app ------------------------------------------------------------------------------
-function notifyPhaseChange(phase) {
-  // Always log the phase change
-  console.log("Phase changed to:", phase);
-  
-  // Send a message to the React Native WebView if available
-  if (window.ReactNativeWebView) {
-    window.ReactNativeWebView.postMessage(JSON.stringify({
-      type: 'phaseChange',
-      phase: phase
-    }));
-    console.log("post message sent");
+// Add vibration state variable
+let vibrationEnabled = true;
+
+// Modify your existing notifyPhaseChange function
+function notifyPhaseChange(phase) { 
+  // Always log the phase change 
+  console.log("Phase changed to:", phase); 
+   
+  // Only send message if vibration is enabled
+  if (vibrationEnabled) {
+    // Send a message to the React Native WebView if available 
+    if (window.ReactNativeWebView) { 
+      window.ReactNativeWebView.postMessage(JSON.stringify({ 
+        type: 'phaseChange', 
+        phase: phase 
+      })); 
+      console.log("post message sent"); 
+    } else { 
+      console.log("ReactNativeWebView not available - would have sent message:", phase); 
+    } 
   } else {
-    console.log("ReactNativeWebView not available - would have sent message:", phase);
+    console.log("Vibration disabled - message not sent");
   }
 }
+
+// Add click event to your existing button
+document.getElementById('vibration-button-set').addEventListener('click', function() {
+  vibrationEnabled = !vibrationEnabled;
+  
+  // Toggle visual state
+  if (vibrationEnabled) {
+    this.classList.remove('off');
+  } else {
+    this.classList.add('off');
+  }
+});
 
 // Initialize
 updateShapeDisplay();
@@ -1632,12 +1767,62 @@ color: #fffefe;
     });
     </script>
     <style>
+        .guide-container{
+    display: none;
+  }
+@media screen and (max-width: 768px) {
+
         /* Making page responsive  */
         .exercise-display {
     max-height: 500px;
         }
+  html {
+    zoom: 0.978;
+  }
+  .guide-container{
+    display: block;
+  }
+}
+
+/* ///////////////////// */
+#vibration-button-set {
+  position: relative;
+}
+
+#vibration-button-set::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60%;
+  height: 3px;
+  background-color: #ff4444;
+  transform: translate(-50%, -50%) rotate(45deg);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+#vibration-button-set.off::after {
+  opacity: 1;
+}
+
+#vibration-button-set.off img {
+  filter: grayscale(100%) opacity(0.5);
+}
     </style>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+        <!-- For activity Page ----------------------------------------------- -->
+     <script>
+    let startTime = Date.now();
+
+    window.addEventListener("beforeunload", function () {
+        let duration = Math.round((Date.now() - startTime) / 1000);
+
+        navigator.sendBeacon("/activityapp/track-activity/", JSON.stringify({
+            url: window.location.pathname,
+            duration: duration
+        }));
+    });
+</script>
+
 </body>
 </html>

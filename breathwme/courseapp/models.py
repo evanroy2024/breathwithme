@@ -2,10 +2,11 @@ from django.db import models
 from datetime import date
 from embed_video.fields import EmbedVideoField
 
+
 class Course(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
-    image = models.ImageField(upload_to='course_images/', blank=True, null=True)
+    image = models.ImageField(upload_to='course_images/', blank=True, null=True , )
     start_date = models.DateField(default=date.today)  # Default start date is today
     end_date = models.DateField(default=date.today)  # Default end date is today
     duration = models.CharField(max_length=50, blank=True, null=True)

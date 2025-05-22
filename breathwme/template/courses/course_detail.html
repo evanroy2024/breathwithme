@@ -15,369 +15,751 @@ Home - Meditation Dashboard
         }
 
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Roboto', 'Arial', sans-serif;
             background-color: #121212;
             color: #f5f5f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             text-align: center;
-            padding: 20px;
+            padding: 0;
+            margin: 0;
+            overflow-x: hidden;
         }
 
         .course-detail-container {
-            max-width: 900px;
             width: 100%;
+            max-width: 900px;
             background-color: #1f1f1f;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-            padding: 30px;
+            padding: 20px;
             text-align: left;
             overflow: hidden;
+            margin: 20px auto;
+            transition: all 0.3s ease;
         }
 
         .course-thumbnail {
             width: 100%;
-            height: 300px;
+            max-height: 300px;
             object-fit: cover;
             border-radius: 12px;
             margin-bottom: 20px;
         }
 
         .course-title {
-            font-size: 2.2em;
-            margin-bottom: 20px;
+            font-size: 2rem;
+            margin-bottom: 15px;
             color: #ffcc00;
             font-weight: bold;
+            line-height: 1.2;
         }
 
         .course-description {
-            font-size: 1.1em;
+            font-size: 1rem;
             color: #bbbbbb;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            line-height: 1.5;
         }
 
         .course-meta p {
-            font-size: 1em;
+            font-size: 0.95rem;
             color: #888888;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .start-button {
             display: inline-block;
-            padding: 15px 30px;
+            width: 100%;
+            padding: 15px 0;
             background-color: #28a745;
             color: white;
             text-decoration: none;
-            font-size: 1.2em;
+            font-size: 1.1rem;
             font-weight: bold;
             border-radius: 8px;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-            margin-top: 20px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 15px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            border: none;
         }
 
-        .start-button:hover {
+        .start-button:hover, .start-button:active {
             background-color: #218838;
-            transform: translateY(-3px);
+            transform: translateY(-2px);
         }
 
         .lecture-container {
             display: none;
-            margin-top: 30px;
-            background-color: #2c2c2c;
-            padding: 20px;
+            margin-top: 20px;
+            background-color: #1f1f1f;
+            padding: 15px;
             border-radius: 8px;
+            transition: all 0.3s ease;
         }
 
         .lecture {
             background-color: #333;
-            padding: 20px;
-            margin-bottom: 15px;
+            padding: 15px;
+            margin-bottom: 12px;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s ease;
+        }
+
+        .lecture:active {
+            transform: scale(0.98);
         }
 
         .lecture-title {
-            font-size: 1.3em;
+            font-size: 1.1rem;
             color: #ffcc00;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .lecture-title::after {
+            content: '›';
+            font-size: 1.5rem;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+        }
+
+        .lecture.active .lecture-title::after {
+            transform: rotate(90deg);
         }
 
         .lecture-material {
-            font-size: 1.1em;
+            font-size: 1rem;
             color: #bbb;
+            text-align: center;
+            padding-top: 10px;
+        }
+
+        video {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .lecture-material p a {
+            color: #fcfcfc;
+            text-decoration: none;
+            display: inline-block;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 10px 15px;
+            border-radius: 6px;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .lecture-material p a:hover, .lecture-material p a:active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #00d0ff;
+        }
+
+        .quizzes-container {
+            max-width: 100%;
+            margin: 20px auto;
+            padding: 15px;
+            background-color: #1f1f1f;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .quizzes-container h2 {
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 15px;
+            color: #ffdd57;
+        }
+
+        .quizzes-container ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .quizzes-container li {
+            background-color: #2c2c2c;
+            border: 1px solid #444;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            padding: 12px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .quizzes-container li:active {
+            transform: scale(0.98);
+        }
+
+        .quizzes-container strong {
+            font-size: 1.1rem;
+            color: #ff6f61;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .quizzes-container p {
+            font-size: 0.9rem;
+            color: #ddd;
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+
+        .quiz-link {
+            display: block;
+            width: 100%;
+            padding: 12px 0;
+            font-size: 1rem;
+            text-align: center;
+            text-decoration: none;
+            color: #fff;
+            background: linear-gradient(45deg, #4267B2, #2b8ced);
+            border-radius: 6px;
+            border: none;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .quiz-link:hover, .quiz-link:active {
+            background: linear-gradient(45deg, #2b8ced, #4267B2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
         }
 
         .back-button {
-            display: inline-block;
-            padding: 10px 20px;
+            display: block;
+            width: 100%;
+            padding: 12px 0;
             background-color: #007bff;
             color: white;
             text-decoration: none;
-            font-size: 1.1em;
+            font-size: 1rem;
             border-radius: 8px;
             transition: background-color 0.3s ease;
-            margin-top: 20px;
+            margin: 15px 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
 
-        .back-button:hover {
+        .back-button:hover, .back-button:active {
             background-color: #0056b3;
         }
 
-        @media (max-width: 768px) {
+        /* App-like header for mobile */
+        .app-header {
+            position: sticky;
+            top: 0;
+            background-color: #1a1a1a;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            width: 100%;
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ffcc00;
+        }
+
+        .app-menu {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Progress bar */
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background-color: #333;
+            border-radius: 5px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #52d66f);
+            width: 0;
+            transition: width 0.3s ease;
+            border-radius: 5px;
+        }
+
+        /* Active lecture highlighting */
+        .active-lecture {
+            border-left: 4px solid #ffcc00;
+        }
+
+        /* Bottom navigation bar */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            background-color: #1a1a1a;
+            padding: 12px 0;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.4);
+            z-index: 100;
+        }
+
+        .nav-item {
+            color: #888;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: color 0.3s ease;
+        }
+
+        .nav-item.active {
+            color: #ffcc00;
+        }
+
+        .nav-icon {
+            font-size: 1.5rem;
+            margin-bottom: 3px;
+        }
+
+        /* Loading animation */
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: #ffcc00;
+            animation: spin 1s ease-in-out infinite;
+            margin: 20px auto;
+            display: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive adjustments */
+        @media (min-width: 768px) {
             .course-detail-container {
+                padding: 30px;
+                margin: 30px auto;
+            }
+
+            .course-title {
+                font-size: 2.2rem;
+            }
+
+            .start-button, .back-button, .quiz-link {
+                width: auto;
+                display: inline-block;
+                padding: 15px 30px;
+            }
+
+            .bottom-nav {
+                display: none;
+            }
+
+            .app-header {
+                display: none;
+            }
+
+            body {
                 padding: 20px;
-            }
-
-            .start-button {
-                font-size: 1em;
-                padding: 10px 20px;
-            }
-
-            .lecture-container {
-                padding: 15px;
             }
         }
 
-        .lecture {
-    background-color: #333;
-    padding: 20px;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.lecture-title {
-    font-size: 1.3em;
-    color: #ffcc00;
-    margin-bottom: 10px;
-    cursor: pointer;
-}
-
-.lecture-material {
-    font-size: 1.1em;
-    color: #bbb;
-    text-align: center; /* Center content */
-}
-
-video {
-    width: 100%; /* Take up full width */
-    height: auto; /* Maintain aspect ratio */
-    border-radius: 8px; /* Optional: for rounded corners */
-    margin-top: 20px; /* Optional: some space between content */
-}
-.lecture-material p a {
-    color: #fcfcfc; /* Apply the desired color to the link */
-    text-decoration: none; /* Optional: remove underline */
-}
-
-.lecture-material p a:hover {
-    color: #00d0ff; /* Change color on hover */
-    text-decoration: underline; /* Optional: add underline on hover */
-}
-.course-detail-container {
-    margin-top: 15%;
-    margin-bottom: 10%;
-    width: 900px;
-}
-
-  /* Quizzes Container Styling */
-  .quizzes-container {
-                max-width: 800px;
-                margin: 30px auto;
-                padding: 20px;
-                background-color: #1f1f1f; /* Dark grey for black-themed background */
-                border-radius: 10px;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-                color: #fff;
-                font-family: 'Arial', sans-serif;
+        @media (max-width: 767px) {
+            body {
+                padding-bottom: 70px; /* Space for bottom navigation */
             }
-        
-            .quizzes-container h2 {
-                font-size: 24px;
-                text-align: center;
-                margin-bottom: 20px;
-                color: #ffdd57; /* Highlighted gold for the header */
-            }
-        
-            /* Quiz List Styling */
-            .quizzes-container ul {
-                list-style: none;
-                padding: 0;
+
+            .course-detail-container {
                 margin: 0;
-            }
-        
-            .quizzes-container li {
-                background-color: #2c2c2c; /* Slightly lighter than the container */
-                border: 1px solid #444; /* Border to define the cards */
-                border-radius: 8px;
-                margin-bottom: 15px;
+                border-radius: 0;
                 padding: 15px;
-                transition: transform 0.3s ease, box-shadow 0.3s ease;
             }
-        
-            .quizzes-container li:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+
+            .lecture-container {
+                padding: 10px;
             }
-        
-            .quizzes-container strong {
-                font-size: 18px;
-                color: #ff6f61; /* Warm coral for quiz titles */
+
+            .quizzes-container {
+                border-radius: 0;
             }
-        
-            .quizzes-container p {
-                font-size: 14px;
-                color: #ddd; /* Light grey for description text */
-                margin: 10px 0;
+
+            /* Added for content padding on mobile */
+            .page-content {
+                padding-top: 60px;
             }
-        
-            /* Link Styling */
-            .quiz-link {
-                display: inline-block;
-                padding: 10px 20px;
-                font-size: 14px;
-                text-decoration: none;
-                color: #fff;
-                background: linear-gradient(45deg, #4267B2, #2b8ced); /* Gradient blue for links */
-                border-radius: 6px;
-                border: 1px solid #2b8ced;
-                transition: all 0.3s ease;
-            }
-        
-            .quiz-link:hover {
-                background: linear-gradient(45deg, #2b8ced, #4267B2); /* Reverse gradient on hover */
-                transform: translateY(-2px);
-                box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
-            }
-        
-            /* Message Styling for No Quizzes */
-            .quizzes-container p {
-                text-align: center;
-                font-size: 16px;
-                margin-top: 20px;
-            }
+        }
+
+        /* Pull-to-refresh animation */
+        .pull-indicator {
+            text-align: center;
+            height: 40px;
+            line-height: 40px;
+            color: #888;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        /* Dark mode toggle */
+        .dark-mode-toggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #ffcc00;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 101;
+        }
+
+        /* Status indicators */
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .status-complete {
+            background-color: #28a745;
+        }
+
+        .status-in-progress {
+            background-color: #ffc107;
+        }
+
+        .status-not-started {
+            background-color: #6c757d;
+        }
     </style>
 
-<div class="course-detail-container">
-    <!-- Course Thumbnail -->
-    {% if course.image %}
-        <img class="course-thumbnail" src="{{ course.image.url }}" alt="{{ course.title }}">
-    {% else %}
-        <img class="course-thumbnail" src="https://via.placeholder.com/900x300?text=No+Image+Available" alt="No Image Available">
-    {% endif %}
 
-    <!-- Course Title -->
-    <h1 class="course-title">{{ course.title }}</h1>
 
-    <!-- Course Description -->
-    <p class="course-description">{{ course.description }}</p>
+    <div class="page-content">
+        <div class="course-detail-container">
+            <!-- Pull to refresh indicator -->
+            <div class="pull-indicator">Pull down to refresh...</div>
+            
+            <!-- Loading spinner -->
+            <div class="loading-spinner" id="loading-spinner"></div>
+            
+            <!-- Course Thumbnail -->
+            {% if course.image %}
+                <img class="course-thumbnail" src="{{ course.image.url }}" alt="{{ course.title }}">
+            {% else %}
+                <img class="course-thumbnail" src="https://via.placeholder.com/900x300?text=No+Image+Available" alt="No Image Available">
+            {% endif %}
 
-    <!-- Course Meta Information -->
-    <div class="course-meta">
-        <p><strong>Duration:</strong> {{ course.duration }} months</p>
-        <p><strong>Start Date:</strong> {{ course.start_date }}</p>
-        <p><strong>End Date:</strong> {{ course.end_date }}</p>
-        <p><strong>Rating:</strong> {{ course.rating }} ⭐</p>
-    </div>
+            <!-- Course Title -->
+            <h1 class="course-title">{{ course.title }}</h1>
 
-    <!-- Start Button -->
-    <a href="#" class="start-button" id="start-button">Start Course</a>
+            <!-- Progress bar (for mobile app look) -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar" style="width: 30%;"></div>
+            </div>
 
-    <!-- Lectures Section (Initially Hidden) -->
-    <div class="lecture-container" id="lecture-container">
-        <h2>Course Lectures</h2>
+            <!-- Course Description -->
+            <p class="course-description">{{ course.description }}</p>
 
-        <!-- Loop through all materials, making each a clickable link to show only that material -->
-        {% for material in course.materials.all|dictsort:"order" %}
-        <div class="lecture">
-            <h3 class="lecture-title" onclick="showLecture({{ material.id }})">
-                Lecture {{ material.order }}. {{ material.get_material_type_display }}
-            </h3>
-            <div id="lecture-{{ material.id }}" class="lecture-material" style="display: none;">
-                {% if material.material_type == 'video' %}
-                    <div>
-                        {% video material.content_url 'small' %}
+            <!-- Course Meta Information -->
+            <div class="course-meta">
+                <p><strong>Duration:</strong> {{ course.duration }} months</p>
+                <p><strong>Start Date:</strong> {{ course.start_date }}</p>
+                <p><strong>End Date:</strong> {{ course.end_date }}</p>
+                <p><strong>Rating:</strong> {{ course.rating }} ⭐</p>
+            </div>
+
+            <!-- Start Button -->
+            <button class="start-button" id="start-button">Start Course</button>
+
+            <!-- Lectures Section (Initially Hidden) -->
+            <div class="lecture-container" id="lecture-container">
+                <h2>Course Lectures</h2>
+
+                <!-- Loop through all materials, making each a clickable link to show only that material -->
+                {% for material in course.materials.all|dictsort:"order" %}
+                <div class="lecture" id="lecture-item-{{ material.id }}">
+                    <h3 class="lecture-title" onclick="showLecture({{ material.id }})">
+                        <span>
+                            <span class="status-indicator status-not-started" id="status-{{ material.id }}"></span>
+                            Lecture {{ material.order }}. {{ material.get_material_type_display }}
+                        </span>
+                    </h3>
+                    <div id="lecture-{{ material.id }}" class="lecture-material" style="display: none;">
+                        {% if material.material_type == 'video' %}
+                            <div>
+                                {% video material.content_url 'small' %}
+                            </div>
+                        {% elif material.material_type == 'audio' %}
+                            <p><a href="{{ material.content_url }}" target="_blank">Listen to Audio</a></p>
+                        {% elif material.material_type == 'text' %}
+                            <p><a href="{{ material.pdf_file.url }}" target="_blank">Download PDF</a></p>
+                        {% endif %}
                     </div>
-                {% elif material.material_type == 'audio' %}
-                    <p><a href="{{ material.content_url }}" target="_blank">Listen to Audio</a></p>
-                {% elif material.material_type == 'text' %}
-                    <p style="color: white;"><a href="{{ material.pdf_file.url }}" target="_blank">Download PDF</a></p>
-                {% endif %}
+                </div>
+                {% empty %}
+                <p>No materials available for this course.</p>
+                {% endfor %}
+                
+                <!-- Quizzes Section -->
+                <div class="quizzes-container" id="quizzes-container">
+                    <h2>Quizzes for {{ course.title }}</h2>
+                
+                    {% if quizzes %}
+                        <ul>
+                            {% for quiz in quizzes %}
+                            <li>
+                                <strong>{{ quiz.title }}</strong>
+                                <p>{{ quiz.description }}</p>
+                                <a href="{% url 'quiz_detail' quiz.id %}" class="quiz-link">Start Quiz</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No quizzes available for this course yet.</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Back Button -->
+                <a href="#" class="back-button" id="back-button" style="display: none;">Back to Lectures</a>
             </div>
         </div>
-        
-        {% empty %}
-        <p>No materials available for this course.</p>
-        {% endfor %}
-
-        
-        <!-- Quizzes Section -->
-        <div class="quizzes-container" id="quizzes-container">
-            <h2>Quizzes for {{ course.title }}</h2>
-        
-            {% if quizzes %}
-                <ul>
-                    {% for quiz in quizzes %}
-                    <li>
-                        <strong>{{ quiz.title }}</strong><br>
-                        <p>{{ quiz.description }}</p>
-                        <a href="{% url 'quiz_detail' quiz.id %}" class="quiz-link">Start Quiz</a> <!-- Link to start quiz -->
-                    </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>No quizzes available for this course yet.</p>
-            {% endif %}
-        </div>
-        
-        <!-- Back Button -->
-        <a href="#" class="back-button" id="back-button" style="display: none;" onclick="goBack()">Back to Lectures</a>
     </div>
 
-   
-</div>
 
-<!-- JavaScript for showing the selected lecture and hiding others -->
-<script>
-    document.getElementById('start-button').addEventListener('click', function(e) {
-        e.preventDefault();
-        // Hide the course overview and show the lectures
-        document.querySelector('.course-description').style.display = 'none';
-        document.querySelector('.course-meta').style.display = 'none';
-        document.getElementById('start-button').style.display = 'none';  // Hide the start button
-        document.getElementById('lecture-container').style.display = 'block';  // Show the lectures
-    });
 
-    function showLecture(lectureId) {
-        // Hide all lectures
-        var lectures = document.querySelectorAll('.lecture-material');
-        lectures.forEach(function(lecture) {
-            lecture.style.display = 'none';
+    <!-- JavaScript for mobile responsiveness and interactions -->
+    <script>
+        // Start button functionality
+        document.getElementById('start-button').addEventListener('click', function() {
+            // Show loading spinner briefly for app-like feel
+            const spinner = document.getElementById('loading-spinner');
+            spinner.style.display = 'block';
+            
+            setTimeout(function() {
+                spinner.style.display = 'none';
+                
+                // Hide the course overview and show the lectures
+                document.querySelector('.course-description').style.display = 'none';
+                document.querySelector('.course-meta').style.display = 'none';
+                document.getElementById('start-button').style.display = 'none';
+                document.getElementById('lecture-container').style.display = 'block';
+                
+                // Update app header title
+                document.querySelector('.app-title').textContent = 'Course Lectures';
+                
+                // Update active bottom nav
+                updateActiveNav('Courses');
+            }, 800); // Simulate loading time
         });
 
-        // Show the selected lecture
-        var selectedLecture = document.getElementById('lecture-' + lectureId);
-        selectedLecture.style.display = 'block';
+        // Function to show selected lecture
+        function showLecture(lectureId) {
+            // Show loading spinner briefly
+            const spinner = document.getElementById('loading-spinner');
+            spinner.style.display = 'block';
+            
+            setTimeout(function() {
+                spinner.style.display = 'none';
+                
+                // Hide all lectures
+                const lectures = document.querySelectorAll('.lecture-material');
+                lectures.forEach(function(lecture) {
+                    lecture.style.display = 'none';
+                });
+                
+                // Remove active class from all lecture items
+                const lectureItems = document.querySelectorAll('.lecture');
+                lectureItems.forEach(function(item) {
+                    item.classList.remove('active-lecture');
+                });
+                
+                // Add active class to selected lecture
+                const selectedLectureItem = document.getElementById('lecture-item-' + lectureId);
+                selectedLectureItem.classList.add('active-lecture');
+                
+                // Show the selected lecture
+                const selectedLecture = document.getElementById('lecture-' + lectureId);
+                selectedLecture.style.display = 'block';
+                
+                // Update status indicator to in-progress
+                const statusIndicator = document.getElementById('status-' + lectureId);
+                statusIndicator.className = 'status-indicator status-in-progress';
+                
+                // Show the back button
+                document.getElementById('back-button').style.display = 'block';
+                
+                // Hide quizzes container when viewing a lecture
+                document.getElementById('quizzes-container').style.display = 'none';
+                
+                // Update progress bar (simulated progress)
+                updateProgress(lectureId);
+                
+                // Make the current lecture title element expand with an animation
+                const lectureTitle = selectedLectureItem.querySelector('.lecture-title');
+                lectureTitle.classList.add('active');
+                
+                // Scroll to the selected lecture
+                selectedLectureItem.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 500);
+        }
 
-        // Show the back button
-        document.getElementById('back-button').style.display = 'inline-block';
-    }
-
-    function goBack() {
-        // Hide all lecture content and show the lectures list again
-        var lectures = document.querySelectorAll('.lecture-material');
-        lectures.forEach(function(lecture) {
-            lecture.style.display = 'none';
+        // Back button functionality
+        document.getElementById('back-button').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Hide all lecture content and the back button
+            const lectures = document.querySelectorAll('.lecture-material');
+            lectures.forEach(function(lecture) {
+                lecture.style.display = 'none';
+            });
+            
+            // Remove active class from all lecture items
+            const lectureItems = document.querySelectorAll('.lecture');
+            lectureItems.forEach(function(item) {
+                item.classList.remove('active-lecture');
+                const lectureTitle = item.querySelector('.lecture-title');
+                lectureTitle.classList.remove('active');
+            });
+            
+            // Hide the back button
+            this.style.display = 'none';
+            
+            // Show quizzes container again
+            document.getElementById('quizzes-container').style.display = 'block';
         });
 
-        // Show the lectures list
-        document.getElementById('lecture-container').style.display = 'block';
+        // Function to update progress bar (simulated)
+        function updateProgress(lectureId) {
+            // Get total number of lectures
+            const totalLectures = document.querySelectorAll('.lecture').length;
+            
+            // Calculate progress based on lecture ID (simplistic approach)
+            const progress = (lectureId / totalLectures) * 100;
+            
+            // Update progress bar width
+            document.getElementById('progress-bar').style.width = Math.min(progress, 100) + '%';
+            
+            // Simulate completion of previous lectures
+            for (let i = 1; i <= lectureId; i++) {
+                const statusIndicator = document.getElementById('status-' + i);
+                if (statusIndicator && i < lectureId) {
+                    statusIndicator.className = 'status-indicator status-complete';
+                }
+            }
+        }
 
-        // Hide the back button
-        document.getElementById('back-button').style.display = 'none';
-    }
-</script>
+        // Function to update active bottom navigation
+        function updateActiveNav(navName) {
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(function(item) {
+                item.classList.remove('active');
+                if (item.textContent.trim() === navName) {
+                    item.classList.add('active');
+                }
+            });
+        }
 
+        // Bottom navigation functionality
+        document.querySelectorAll('.nav-item').forEach(function(navItem) {
+            navItem.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Update active state
+                document.querySelectorAll('.nav-item').forEach(function(item) {
+                    item.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Simulate page change with loading spinner
+                const spinner = document.getElementById('loading-spinner');
+                spinner.style.display = 'block';
+                
+                setTimeout(function() {
+                    spinner.style.display = 'none';
+                    // This would normally navigate to a new page or change content
+                    // For this demo, we'll just update the app title
+                    document.querySelector('.app-title').textContent = 
+                        navItem.textContent.trim() === 'Home' ? 'Meditation Dashboard' : navItem.textContent.trim();
+                }, 800);
+            });
+        });
+
+        // Add touch gesture support for mobile (simple implementation)
+        let touchStartY = 0;
+        let touchEndY = 0;
+        
+        document.addEventListener('touchstart', function(e) {
+            touchStartY = e.changedTouches[0].screenY;
+            
+            // Show pull indicator if at top of page
+            if (window.scrollY === 0) {
+                document.querySelector('.pull-indicator').style.display = 'block';
+            }
+        }, false);
+        
+        document.addEventListener('touchend', function(e) {
+            touchEndY = e.changedTouches[0].screenY;
+            handleGesture();
+        }, false);
+        
+        function handleGesture() {
+            // Hide pull indicator
+            document.querySelector('.pull-indicator').style.display = 'none';
+            
+            // If pull down is significant and at top of page
+            if (touchEndY - touchStartY > 100 && window.scrollY === 0) {
+                // Simulate refresh with spinner
+                const spinner = document.getElementById('loading-spinner');
+                spinner.style.display = 'block';
+                
+                setTimeout(function() {
+                    spinner.style.display = 'none';
+                    // This would normally refresh content
+                }, 1000);
+            }
+        }
+
+        // Simulate lecture completion on video/audio end
+        // Note: This would need actual event listeners for video/audio elements
+        function markLectureComplete(lectureId) {
+            const statusIndicator = document.getElementById('status-' + lectureId);
+            if (statusIndicator) {
+                statusIndicator.className = 'status-indicator status-complete';
+            }
+            updateProgress(lectureId);
+        }
+
+        // App menu button functionality (for mobile)
+        document.querySelector('.app-menu').addEventListener('click', function() {
+            // This would normally open a sidebar or dropdown menu
+            // For this demo, we'll just show an alert
+            alert('Menu options would appear here');
+        });
+        
+        // Initialize with first lecture progress status
+        document.getElementById('status-1').className = 'status-indicator status-in-progress';
+    </script>
 {% endblock %}
