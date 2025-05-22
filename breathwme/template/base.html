@@ -181,7 +181,7 @@
         {% block content %}
         {% endblock %}
     </div>
-    <div class="nav-bar">
+    <!-- <div class="nav-bar">
         <a href="{% url 'home' %}" class="active">
             <img src="{% static 'img/icons/icon1.png' %}" alt="Home">
             <p>Home</p>
@@ -203,7 +203,32 @@
             <p>Seetings</p>
         </a>
         
-    </div>
+    </div> -->
+<div class="nav-bar">
+    <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name != 'library' and request.resolver_match.url_name != 'all_chatrooms' and request.resolver_match.url_name != 'profile' and request.resolver_match.url_name != 'user_settings' %}active{% endif %}">
+        <div data-lucide="home"></div>
+        <p>Home</p>
+    </a>
+    <a href="{% url 'library' %}" class="{% if request.resolver_match.url_name == 'library' %}active{% endif %}">
+        <div data-lucide="file-text"></div>
+        <p>Library</p>
+    </a>
+    <a href="{% url 'mastercontrol:all_chatrooms' %}" class="{% if request.resolver_match.url_name == 'all_chatrooms' %}active{% endif %}">
+        <div data-lucide="monitor"></div>
+        <p>SharedPlay</p>
+    </a>
+    <a href="{% url 'profile' %}" class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+        <div data-lucide="user"></div>
+        <p>Profile</p>
+    </a>
+    <a href="{% url 'user_settings' %}" class="{% if request.resolver_match.url_name == 'user_settings' %}active{% endif %}">
+        <div data-lucide="settings"></div>
+        <p>Settings</p>
+    </a>
+</div>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
 
     
     <script src="{% static 'js/script.js' %}"></script>
@@ -286,6 +311,10 @@
     bottom: -15px;
     z-index: 500;
 }
+.nav-bar {
+  border-radius: 18px 18px 0 0;
+}
+
     </style>
     
 
