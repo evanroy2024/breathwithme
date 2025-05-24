@@ -77,3 +77,26 @@ class SubscribeAPIView(APIView):
             serializer.save()
             return Response({"message": "Subscription created successfully"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+
+
+
+
+
+
+# Firebase Fck Setup ////////////////////////////////////////////////////////////////////////
+# notifications/views.py
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .models import DeviceToken
+
+class SaveTokenView(APIView):
+    def post(self, request):
+        token = request.data.get('token')
+        if not token:
+            return Response({"error": "Token missing"}, status=status.HTTP_400_BAD_REQUEST)
+        DeviceToken.objects.get_or_create(token=token)
+        return Response({"message": "Token saved"}, status=status.HTTP_201_CREATED)

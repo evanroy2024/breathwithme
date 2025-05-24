@@ -94,3 +94,24 @@ class PushNotificationMessage(models.Model):
 
     def __str__(self):
         return f"{self.title} - Sent: {self.sent}"
+
+
+
+# For testing Firebase FCM --------------------------------------------------------------------------------- 
+from django.db import models
+
+class DeviceToken(models.Model):
+    token = models.CharField(max_length=255, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.token
+
+class Notification(models.Model):
+    title = models.CharField(max_length=100)
+    body = models.TextField()
+    image = models.URLField(blank=True, null=True)
+    sent_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return self.title
