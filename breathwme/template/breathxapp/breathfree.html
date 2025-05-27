@@ -9,7 +9,33 @@
   <button id="haptic" style="padding:20px; font-size:20px;">WTN HAPTIC</button>
   <div id="log"></div>
 
-  <script src="https://app.webtonative.com/sdk.js"></script>
+  <script>
+    // Load WTN SDK with better error handling
+    function loadWTNSDK() {
+      return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://app.webtonative.com/sdk.js';
+        script.onload = () => {
+          addLog('✅ WTN SDK script loaded');
+          // Wait a bit for WTN to initialize
+          setTimeout(() => {
+            if (window.WTN) {
+              addLog('✅ WTN object available');
+              resolve();
+            } else {
+              addLog('❌ WTN object not found after script load');
+              reject('WTN object not initialized');
+            }
+          }, 500);
+        };
+        script.onerror = () => {
+          addLog('❌ Failed to load WTN SDK script');
+          reject('Script load failed');
+        };
+        document.head.appendChild(script);
+      });
+    }
+  </script>
   
   <script>
     let log = document.getElementById('log');
@@ -81,23 +107,42 @@
       }, effects.length * 500);
     };
     
-    // Wait for SDK to load
-    setTimeout(() => {
-      checkWTN();
-      
-      // Auto-test
-      setTimeout(() => {
-        if (window.WTN && window.WTN.haptics) {
-          addLog('Auto-testing medium impact...');
-          try {
-            window.WTN.haptics.trigger({ effect: 'impactMedium' });
-            addLog('✅ Auto-test sent');
-          } catch (error) {
-            addLog('❌ Auto-test failed: ' + error.message);
+    // Load and test WTN SDK
+    addLog('Loading WTN SDK...');
+    loadWTNSDK()
+      .then(() => {
+        checkWTN();
+        
+        // Auto-test
+        setTimeout(() => {
+          if (window.WTN && window.WTN.haptics) {
+            addLog('Auto-testing medium impact...');
+            try {
+              window.WTN.haptics.trigger({ effect: 'impactMedium' });
+              addLog('✅ Auto-test sent');
+            } catch (error) {
+              addLog('❌ Auto-test failed: ' + error.message);
+            }
           }
-        }
-      }, 2000);
-    }, 1000);
+        }, 1000);
+      })
+      .catch((error) => {
+        addLog('❌ WTN SDK load failed: ' + error);
+        addLog('💡 Possible solutions:');
+        addLog('1. Check if running inside WebToNative app (not browser)');
+        addLog('2. Check internet connection');
+        addLog('3. Try different network/WiFi');
+        addLog('4. Check if WebToNative server is down');
+        addLog('5. Use local SDK file instead of CDN');
+        
+        // Try fallback URL
+        addLog('Trying fallback SDK URL...');
+        const fallbackScript = document.createElement('script');
+        fallbackScript.src = 'https://cdn.jsdelivr.net/gh/webtonative/sdk@latest/dist/sdk.js';
+        fallbackScript.onload = () => addLog('✅ Fallback SDK loaded');
+        fallbackScript.onerror = () => addLog('❌ Fallback SDK also failed');
+        document.head.appendChild(fallbackScript);
+      });
     
     // Debug info
     window.addEventListener('load', () => {
