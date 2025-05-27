@@ -1177,8 +1177,14 @@ function animate(timestamp) {
         
         // Notify React Native about phase change
         notifyPhaseChange(phaseNames[currentPhase]);
-        if (navigator.vibrate) {
-          navigator.vibrate(400);
+        // if (navigator.vibrate) {
+        //   navigator.vibrate(400);
+        // }
+        if (window.WTN && window.WTN.haptics && typeof window.WTN.haptics.trigger === 'function') {
+          const { haptics } = window.WTN;
+          haptics.trigger({
+            effect: 'impactMedium' // You can choose different effects
+          });
         }
 
         
