@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<script src="https://app.webtonative.com/sdk.js"></script>
+
     <title>Shape Meditation - Breathing Exercise</title>
 <style>
  
@@ -1174,18 +1176,23 @@ function animate(timestamp) {
                 phaseStartTime += phaseTimes[i];
             }
         }
-        
+        if (window.WTN && window.WTN.haptics && typeof window.WTN.haptics.trigger === 'function') {
+          window.WTN.haptics.trigger({
+            effect: 'impactMedium'  // you can change effect if you want
+          });
+        }
+
         // Notify React Native about phase change
         notifyPhaseChange(phaseNames[currentPhase]);
         // if (navigator.vibrate) {
         //   navigator.vibrate(400);
         // }
-        if (window.WTN && window.WTN.haptics && typeof window.WTN.haptics.trigger === 'function') {
-          const { haptics } = window.WTN;
-          haptics.trigger({
-            effect: 'impactMedium' // You can choose different effects
-          });
-        }
+        // if (window.WTN && window.WTN.haptics && typeof window.WTN.haptics.trigger === 'function') {
+        //   const { haptics } = window.WTN;
+        //   haptics.trigger({
+        //     effect: 'impactMedium' // You can choose different effects
+        //   });
+        // }
 
         
         
