@@ -35,15 +35,15 @@
 
   <h1>WebToNative Haptics Test</h1>
   <button id="vibrateBtn">Trigger Haptic Feedback</button>
-  <div id="status"></div>
+  <div id="status">Waiting for user action...</div>
 
   <script>
     const status = document.getElementById('status');
     const btn = document.getElementById('vibrateBtn');
 
-    function triggerHaptics() {
+    function checkAndTriggerHaptics() {
       if (!window.WTN) {
-        status.textContent = "Error: window.WTN is not defined. Are you running inside a WebToNative app?";
+        status.textContent = "Error: window.WTN is NOT defined. Are you running inside a WebToNative app?";
         return;
       }
       if (!window.WTN.haptics || typeof window.WTN.haptics.trigger !== 'function') {
@@ -59,7 +59,22 @@
       }
     }
 
-    btn.addEventListener('click', triggerHaptics);
+    btn.addEventListener('click', () => {
+      status.textContent = "Trying to trigger haptics...";
+      // Slight delay to ensure any async bridge initialization completes
+      setTimeout(checkAndTriggerHaptics, 100);
+    });
+
+    // Optional: auto-check after 2 seconds if you want automatic check on load
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        if (window.WTN) {
+          status.textContent = "window.WTN is available!";
+        } else {
+          status.textContent = "window.WTN is still NOT defined after 2 seconds.";
+        }
+      }, 2000);
+    });
   </script>
 </body>
 </html>
