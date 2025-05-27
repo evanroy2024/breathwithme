@@ -107,6 +107,22 @@
       }, effects.length * 500);
     };
     
+    // Check if running in WebToNative app
+    const userAgent = navigator.userAgent;
+    const platform = navigator.platform;
+    
+    if (platform === 'Win32' || platform.includes('Mac') || platform.includes('Linux')) {
+      addLog('🚫 RUNNING ON DESKTOP - WTN ONLY WORKS ON MOBILE APP!');
+      addLog('📱 Deploy to WebToNative mobile app to test haptics');
+      addLog('💻 Desktop browsers do not support WebToNative SDK');
+      return;
+    }
+    
+    if (!userAgent.includes('WebToNative') && !userAgent.includes('wvt')) {
+      addLog('⚠️ May not be running in WebToNative app');
+      addLog('👀 User Agent: ' + userAgent);
+    }
+    
     // Load and test WTN SDK
     addLog('Loading WTN SDK...');
     loadWTNSDK()
