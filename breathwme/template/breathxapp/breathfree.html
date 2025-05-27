@@ -1181,12 +1181,8 @@ function animate(timestamp) {
           navigator.vibrate(400);
         }
 
-        const { haptics } = window.WTN;
-        haptics.trigger({
-            effect: 'impactMedium' // You can choose different effects
-        });
-
-                
+        
+        
         // Speak the new phase if voice is enabled
         if (voiceEnabled && currentPhase !== lastSpokenPhase) {
             speakPhase(phaseNames[currentPhase]);
