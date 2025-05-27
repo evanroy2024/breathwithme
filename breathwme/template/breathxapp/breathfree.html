@@ -1,243 +1,65 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WebToNative Haptic Test</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WebToNative Haptics Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      text-align: center;
+      background: #f0f0f0;
+    }
+    #status {
+      margin-top: 1.5rem;
+      font-weight: bold;
+      color: #333;
+    }
+    button {
+      font-size: 1.2rem;
+      padding: 0.7rem 1.5rem;
+      border: none;
+      border-radius: 5px;
+      background: #6e8efb;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #5876d9;
+    }
+  </style>
 </head>
 <body>
-  <button id="haptic" style="padding:20px; font-size:20px;">WTN HAPTIC</button>
-  <div id="log"></div>
+
+  <h1>WebToNative Haptics Test</h1>
+  <button id="vibrateBtn">Trigger Haptic Feedback</button>
+  <div id="status"></div>
 
   <script>
-    // Load WTN SDK with better error handling
-    function loadWTNSDK() {
-      return new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = 'https://app.webtonative.com/sdk.js';
-        script.onload = () => {
-          addLog('✅ WTN SDK script loaded');
-          // Wait a bit for WTN to initialize
-          setTimeout(() => {
-            if (window.WTN) {
-              addLog('✅ WTN object available');
-              resolve();
-            } else {
-              addLog('❌ WTN object not found after script load');
-              reject('WTN object not initialized');
-            }
-          }, 500);
-        };
-        script.onerror = () => {
-          addLog('❌ Failed to load WTN SDK script');
-          reject('Script load failed');
-        };
-        document.head.appendChild(script);
-      });
-    }
-  </script>
-  
-  <script>
-    let log = document.getElementById('log');
-    
-    function addLog(msg) {
-      log.innerHTML += '<br>' + new Date().toLocaleTimeString() + ': ' + msg;
-    }
-    
-    // Check if WTN loaded
-    function checkWTN() {
-      if (window.WTN) {
-        addLog('✅ WTN SDK loaded');
-        if (window.WTN.haptics) {
-          addLog('✅ WTN haptics available');
-        } else {
-          addLog('❌ WTN haptics not available');
-        }
-      } else {
-        addLog('❌ WTN SDK not loaded');
-      }
-    }
-    
-    document.getElementById('haptic').onclick = function() {
-      addLog('Testing WTN haptic...');
-      
-      // First check if we're in WebToNative app
-      const isWTNApp = userAgent.includes('WebToNative') || 
-                       userAgent.includes('wvt') || 
-                       window.AndroidInterface ||
-                       window.webkit?.messageHandlers;
-      
-      if (!isWTNApp) {
-        addLog('❌ Not detected as WebToNative app');
-        addLog('👀 User Agent: ' + userAgent.substring(0, 100));
-        
-        // Try native fallback
-        addLog('Trying native vibration fallback...');
-        if (navigator.vibrate) {
-          navigator.vibrate([200, 100, 200]);
-          addLog('✅ Native vibration sent');
-        } else {
-          addLog('❌ No vibration support at all');
-        }
-        return;
-      }
-      
+    const status = document.getElementById('status');
+    const btn = document.getElementById('vibrateBtn');
+
+    function triggerHaptics() {
       if (!window.WTN) {
-        addLog('❌ WTN SDK not loaded in app');
-      addLog('🔧 WEBTONATIVE SETUP CHECKLIST:');
-      addLog('1. Login to WebToNative dashboard');
-      addLog('2. Go to your app project');
-      addLog('3. Click "Addons" or "Plugins" section');
-      addLog('4. Find "Haptic Feedback" addon');
-      addLog('5. Toggle it ON (enable it)');
-      addLog('6. Click "Build APK" or "Generate APK"');
-      addLog('7. Download and install NEW APK');
-      addLog('');
-      addLog('❗ IMPORTANT: You must REBUILD APK after enabling addon');
-      addLog('❗ Old APK will not have haptic support');
-      addLog('');
-      addLog('If haptic addon not available:');
-      addLog('- Check if your WebToNative plan supports addons');
-      addLog('- Contact WebToNative support');
-      addLog('- Try upgrading your plan');
-        
-        // Try manual SDK injection
-        addLog('Trying manual SDK injection...');
-        window.WTN = {
-          haptics: {
-            trigger: function(options) {
-              if (window.AndroidInterface && window.AndroidInterface.triggerHaptic) {
-                window.AndroidInterface.triggerHaptic(options.effect || 'impactMedium');
-                addLog('✅ Android interface haptic triggered');
-              } else if (navigator.vibrate) {
-                const patterns = {
-                  impactLight: [50],
-                  impactMedium: [100],
-                  impactHeavy: [200],
-                  notificationSuccess: [100, 50, 100],
-                  notificationWarning: [100, 50, 100, 50, 100],
-                  notificationError: [200, 100, 200]
-                };
-                navigator.vibrate(patterns[options.effect] || [100]);
-                addLog('✅ Fallback vibration triggered');
-              } else {
-                throw new Error('No haptic method available');
-              }
-            }
-          }
-        };
-        
+        status.textContent = "Error: window.WTN is not defined. Are you running inside a WebToNative app?";
         return;
       }
-      
-      if (!window.WTN.haptics) {
-        addLog('❌ WTN haptics not available - addon not enabled');
-        addLog('💡 Go to WebToNative dashboard > Addons > Enable Haptic');
-        addLog('💡 Then rebuild and reinstall APK');
+      if (!window.WTN.haptics || typeof window.WTN.haptics.trigger !== 'function') {
+        status.textContent = "Error: Haptics API not available in this WebToNative version.";
         return;
       }
-      
-      // Try all WTN haptic effects
-      let effects = [
-        'impactLight',
-        'impactMedium', 
-        'impactHeavy',
-        'notificationSuccess',
-        'notificationWarning',
-        'notificationError',
-        'selectionChanged'
-      ];
-      
-      effects.forEach((effect, i) => {
-        setTimeout(() => {
-          try {
-            window.WTN.haptics.trigger({ effect: effect });
-            addLog('✅ Triggered: ' + effect);
-          } catch (error) {
-            addLog('❌ Failed ' + effect + ': ' + error.message);
-          }
-        }, i * 500);
-      });
-      
-      // Also try with duration
-      setTimeout(() => {
-        try {
-          window.WTN.haptics.trigger({ 
-            effect: 'impactHeavy',
-            duration: 1000 
-          });
-          addLog('✅ Triggered heavy with duration');
-        } catch (error) {
-          addLog('❌ Duration failed: ' + error.message);
-        }
-      }, effects.length * 500);
-    };
-    
-    // Check if running in WebToNative app
-    const userAgent = navigator.userAgent;
-    const platform = navigator.platform;
-    
-    if (platform === 'Win32' || platform.includes('Mac') || platform.includes('Linux')) {
-      addLog('🚫 RUNNING ON DESKTOP - WTN ONLY WORKS ON MOBILE APP!');
-      addLog('📱 Deploy to WebToNative mobile app to test haptics');
-      addLog('💻 Desktop browsers do not support WebToNative SDK');
-      return;
+
+      try {
+        window.WTN.haptics.trigger({ effect: 'impactMedium' });
+        status.textContent = "Haptic feedback triggered successfully!";
+      } catch (e) {
+        status.textContent = "Error triggering haptics: " + e.message;
+      }
     }
-    
-    if (!userAgent.includes('WebToNative') && !userAgent.includes('wvt')) {
-      addLog('⚠️ May not be running in WebToNative app');
-      addLog('👀 User Agent: ' + userAgent);
-    }
-    
-    // Load and test WTN SDK
-    addLog('Loading WTN SDK...');
-    loadWTNSDK()
-      .then(() => {
-        checkWTN();
-        
-        // Auto-test
-        setTimeout(() => {
-          if (window.WTN && window.WTN.haptics) {
-            addLog('Auto-testing medium impact...');
-            try {
-              window.WTN.haptics.trigger({ effect: 'impactMedium' });
-              addLog('✅ Auto-test sent');
-            } catch (error) {
-              addLog('❌ Auto-test failed: ' + error.message);
-            }
-          }
-        }, 1000);
-      })
-      .catch((error) => {
-        addLog('❌ WTN SDK load failed: ' + error);
-        addLog('💡 Possible solutions:');
-        addLog('1. Check if running inside WebToNative app (not browser)');
-        addLog('2. Check internet connection');
-        addLog('3. Try different network/WiFi');
-        addLog('4. Check if WebToNative server is down');
-        addLog('5. Use local SDK file instead of CDN');
-        
-        // Try fallback URL
-        addLog('Trying fallback SDK URL...');
-        const fallbackScript = document.createElement('script');
-        fallbackScript.src = 'https://cdn.jsdelivr.net/gh/webtonative/sdk@latest/dist/sdk.js';
-        fallbackScript.onload = () => addLog('✅ Fallback SDK loaded');
-        fallbackScript.onerror = () => addLog('❌ Fallback SDK also failed');
-        document.head.appendChild(fallbackScript);
-      });
-    
-    // Debug info
-    window.addEventListener('load', () => {
-      setTimeout(() => {
-        addLog('--- DEBUG INFO ---');
-        addLog('User Agent: ' + navigator.userAgent.substring(0, 50) + '...');
-        addLog('Platform: ' + navigator.platform);
-        addLog('WTN Object: ' + (window.WTN ? 'Present' : 'Missing'));
-        if (window.WTN) {
-          addLog('WTN Keys: ' + Object.keys(window.WTN).join(', '));
-        }
-      }, 3000);
-    });
+
+    btn.addEventListener('click', triggerHaptics);
   </script>
 </body>
 </html>
