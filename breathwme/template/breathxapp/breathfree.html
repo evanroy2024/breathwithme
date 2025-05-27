@@ -61,13 +61,79 @@
     document.getElementById('haptic').onclick = function() {
       addLog('Testing WTN haptic...');
       
+      // First check if we're in WebToNative app
+      const isWTNApp = userAgent.includes('WebToNative') || 
+                       userAgent.includes('wvt') || 
+                       window.AndroidInterface ||
+                       window.webkit?.messageHandlers;
+      
+      if (!isWTNApp) {
+        addLog('❌ Not detected as WebToNative app');
+        addLog('👀 User Agent: ' + userAgent.substring(0, 100));
+        
+        // Try native fallback
+        addLog('Trying native vibration fallback...');
+        if (navigator.vibrate) {
+          navigator.vibrate([200, 100, 200]);
+          addLog('✅ Native vibration sent');
+        } else {
+          addLog('❌ No vibration support at all');
+        }
+        return;
+      }
+      
       if (!window.WTN) {
-        addLog('❌ WTN not loaded - check internet connection');
+        addLog('❌ WTN SDK not loaded in app');
+      addLog('🔧 WEBTONATIVE SETUP CHECKLIST:');
+      addLog('1. Login to WebToNative dashboard');
+      addLog('2. Go to your app project');
+      addLog('3. Click "Addons" or "Plugins" section');
+      addLog('4. Find "Haptic Feedback" addon');
+      addLog('5. Toggle it ON (enable it)');
+      addLog('6. Click "Build APK" or "Generate APK"');
+      addLog('7. Download and install NEW APK');
+      addLog('');
+      addLog('❗ IMPORTANT: You must REBUILD APK after enabling addon');
+      addLog('❗ Old APK will not have haptic support');
+      addLog('');
+      addLog('If haptic addon not available:');
+      addLog('- Check if your WebToNative plan supports addons');
+      addLog('- Contact WebToNative support');
+      addLog('- Try upgrading your plan');
+        
+        // Try manual SDK injection
+        addLog('Trying manual SDK injection...');
+        window.WTN = {
+          haptics: {
+            trigger: function(options) {
+              if (window.AndroidInterface && window.AndroidInterface.triggerHaptic) {
+                window.AndroidInterface.triggerHaptic(options.effect || 'impactMedium');
+                addLog('✅ Android interface haptic triggered');
+              } else if (navigator.vibrate) {
+                const patterns = {
+                  impactLight: [50],
+                  impactMedium: [100],
+                  impactHeavy: [200],
+                  notificationSuccess: [100, 50, 100],
+                  notificationWarning: [100, 50, 100, 50, 100],
+                  notificationError: [200, 100, 200]
+                };
+                navigator.vibrate(patterns[options.effect] || [100]);
+                addLog('✅ Fallback vibration triggered');
+              } else {
+                throw new Error('No haptic method available');
+              }
+            }
+          }
+        };
+        
         return;
       }
       
       if (!window.WTN.haptics) {
-        addLog('❌ WTN haptics not available - check app configuration');
+        addLog('❌ WTN haptics not available - addon not enabled');
+        addLog('💡 Go to WebToNative dashboard > Addons > Enable Haptic');
+        addLog('💡 Then rebuild and reinstall APK');
         return;
       }
       
