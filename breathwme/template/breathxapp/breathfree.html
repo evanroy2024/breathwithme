@@ -1177,6 +1177,9 @@ function animate(timestamp) {
         
         // Notify React Native about phase change
         notifyPhaseChange(phaseNames[currentPhase]);
+        if (navigator.vibrate) {
+          navigator.vibrate(400);
+        }
         
         // Speak the new phase if voice is enabled
         if (voiceEnabled && currentPhase !== lastSpokenPhase) {
