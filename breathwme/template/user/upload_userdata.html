@@ -6,7 +6,10 @@ Home - Meditation Dashboard
 
 {% block content %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-
+<!-- Cropper CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
+<!-- Cropper JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 <style>
     /* General Reset */
     * {
@@ -143,7 +146,26 @@ Home - Meditation Dashboard
 
 <div class="container">
     <div class="header">
-        <span class="back-arrow"  onclick="window.location.href='{% url 'home' %}'">&#8592;</span>
+            <button style="
+  background-color: #2c2c2c;
+  border: none;
+  border-radius: 8px;
+  width: 48px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  margin-right: 20px;
+  border: 1px solid #444; /* Dark border for button */
+" onclick="window.location.href='{% url 'user_settings' %}'">
+  <svg style="margin-left: -5px;" width="24" height="24" viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16 6L10 12L16 18" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="10" y1="12" x2="22" y2="12" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  </svg>
+</button>
+        <!-- <span class="back-arrow"  onclick="window.location.href='{% url 'home' %}'">&#8592;</span> -->
         <h1>Update Profile Details </h1>
       </div>
  
@@ -173,8 +195,8 @@ Home - Meditation Dashboard
   <label for="city">City:</label>
   <input type="text" id="city" name="city" value="{{ user_data.city|default_if_none:'' }}" required><br><br>
 
-  <label for="country">Country:</label>
-  <input type="text" id="country" name="country" value="{{ user_data.country|default_if_none:'' }}" required><br><br>
+  <!-- <label for="country">Country:</label>
+  <input type="text" id="country" name="country" value="{{ user_data.country|default_if_none:'' }}" required><br><br> -->
 
   <label for="hobby">Hobby:</label>
   <textarea id="hobby" name="hobby" rows="3">{{ user_data.hobby|default_if_none:'' }}</textarea><br><br>
@@ -184,14 +206,49 @@ Home - Meditation Dashboard
 
   <label for="goal">Goal:</label>
   <textarea id="goal" name="goal" rows="3">{{ user_data.goal|default_if_none:'' }}</textarea><br><br>
-
-  <label for="profile_image">Profile Image:</label>
-  <input type="file" id="profile_image" name="profile_image"><br><br>
-
-  {% if user_data.profile_image %}
-      <img src="{{ user_data.profile_image.url }}" alt="Current Profile Image" style="width: 100px; height: auto;"><br>
+ {% if user_data.profile_image %}
+    <img src="{{ user_data.profile_image.url }}" alt="Current Profile Image" style="width: 100px; margin-top: 10px;">
   {% endif %}
 
+
+ <label for="profile_image">Profile Image:</label>
+  <input type="file" id="profile_image" name="profile_image" accept="image/*"><br><br>
+
+  <div id="preview-container" style="display:none; margin-top: 10px;">
+    <img id="preview-image" style="max-width: 100%; border: 1px solid #ccc; border-radius: 6px;" />
+    
+    <!-- Crop & Confirm Button -->
+   <button 
+  type="button" 
+  id="crop-btn"
+  style="
+    background: linear-gradient(135deg, #6e8efb, #a777e3);
+    color: white;
+    padding: 10px 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s ease;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  "
+>Crop </button>
+
+
+    <!-- ✅ Crop confirmation message -->
+    <div id="crop-message" style="margin-top: 10px; color: green; font-weight: bold; display: none;">
+      ✅ Crop done! Now hit Upload below.
+    </div>
+  </div>
+
+  <!-- Hidden cropped image -->
+  <input type="hidden" id="cropped_image_data" name="cropped_image_data">
+
+ 
   <button type="submit">Submit</button>
 </form>
 
@@ -510,6 +567,53 @@ Home - Meditation Dashboard
   });
 </script>
 
+<script>
+  let cropper;
+  const imageInput = document.getElementById('profile_image');
+  const previewContainer = document.getElementById('preview-container');
+  const previewImage = document.getElementById('preview-image');
+  const cropBtn = document.getElementById('crop-btn');
+  const croppedDataInput = document.getElementById('cropped_image_data');
+  const cropMessage = document.getElementById('crop-message');
+
+  imageInput.addEventListener('change', function () {
+    const file = this.files[0];
+    if (file) {
+      previewContainer.style.display = 'block';
+      cropMessage.style.display = 'none';
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        previewImage.src = e.target.result;
+        if (cropper) cropper.destroy();
+        cropper = new Cropper(previewImage, {
+          aspectRatio: 1,
+          viewMode: 1,
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  cropBtn.addEventListener('click', function () {
+    if (cropper) {
+      const canvas = cropper.getCroppedCanvas({
+        width: 300,
+        height: 300,
+      });
+      croppedDataInput.value = canvas.toDataURL('image/jpeg');
+
+      // ✅ Show the confirmation message
+      cropMessage.style.display = 'block';
+    }
+  });
+</script>
+
+<style>
+  form input[type="text"], form input[type="date"], form textarea, form input[type="file"] {
+    margin-bottom: 5px;
+  }
+</style>
 {% endblock %}
 
 

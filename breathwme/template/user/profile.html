@@ -141,7 +141,25 @@ Home - Meditation Dashboard
 {% if userdata %}
 <div class="container">
     <div class="header">
-      <span class="back-arrow"  onclick="window.location.href='{% url 'home' %}'">&#8592;</span>
+      <button style="
+  background-color: #2c2c2c;
+  border: none;
+  border-radius: 8px;
+  width: 48px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  margin-right: 20px;
+" onclick="window.location.href='{% url 'user_settings' %}'">
+  <svg style="margin-left: -5px;" width="24" height="24" viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16 6L10 12L16 18" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="10" y1="12" x2="22" y2="12" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  </svg>
+</button>
+      <!-- <span class="back-arrow"  onclick="window.location.href='{% url 'home' %}'">&#8592;</span> -->
       <h1>User Profile</h1>
     </div>
     {% if userdata.profile_image %}
@@ -150,7 +168,8 @@ Home - Meditation Dashboard
     </div>
 {% else %}
 <div class="profile-picture">
-  <img src="{% static 'du.jpg' %}" alt="Profile Picture">
+<img src="https://cdn-icons-png.flaticon.com/512/9131/9131529.png" alt="Profile Picture">
+
 </div>
 {% endif %}
     
@@ -159,14 +178,14 @@ Home - Meditation Dashboard
   <input type="text" id="full-name" value="{{ userdata.name }}" readonly title="Read-only">
 </div>
 <div class="input-group">
-  <label for="email">Country</label>
-  <input type="text" id="email" value="{{ userdata.country }}" readonly title="Read-only">
+  <label for="email">City</label>
+  <input type="text" id="email" value="{{ userdata.city }}" readonly title="Read-only">
 </div>
-<div class="input-group password">
+<!-- <div class="input-group password">
   <label for="password">Password</label>
-  <input type="password" id="password" value="Private Information !" readonly title="Read-only">
+  <input type="password" id="password" value="***********" readonly title="Read-only">
   <span class="toggle-password" onclick="togglePasswordVisibility()">&#128065;</span>
-</div>
+</div> -->
 
 
 {% else %}

@@ -1,87 +1,2742 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>WebToNative Haptics Test</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 2rem;
-      text-align: center;
-      background: #f0f0f0;
+{% extends "exercisebase.html" %}
+{% load static %}
+{% block title %}
+Home - Meditation Dashboard
+{% endblock %}
+
+{% block content %}
+    <title>Shape Meditation - Breathing Exercise</title>
+<style>
+ 
+:root {
+    --primary: #7c3aed;
+    --primary-light: #a78bfa;
+    --secondary: #059669;
+    --background: #f3f4f6;
+    --text: #1f2937;
+    --accent: #f97316;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    background-color: #121212;
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    padding: 20px;
+    transition: background-color 0.5s;
+    margin: 0;
+    overflow-x: hidden;
+}
+
+.container {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h1 {
+    color: var(--primary);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.controls {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 30px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+label {
+    font-weight: 600;
+    color: var(--text);
+}
+
+select {
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    background-color: white;
+    font-size: 16px;
+    color: var(--text);
+    width: 100%;
+    -webkit-appearance: menulist; /* Safari compatible dropdown */
+    appearance: menulist;
+}
+
+.timing-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+}
+
+.timing-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.timing-input label {
+    min-width: 80px;
+}
+
+input[type="number"] {
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    font-size: 16px;
+    width: 100%;
+    -webkit-appearance: none; /* Fix for Safari number inputs */
+    appearance: none;
+}
+
+button {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 100%;
+    -webkit-appearance: none; /* Fix for Safari buttons */
+    appearance: none;
+}
+
+button:hover {
+    background-color: var(--primary-light);
+}
+
+.meditation-area {
+    width: 100%;
+    aspect-ratio: 1;
+    max-width: 350px;
+    position: relative;
+    margin-bottom: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#shapeContainer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateZ(0); /* Force GPU acceleration */
+    -webkit-transform: translateZ(0);
+}
+
+#shape {
+    width: 100%;
+    height: 100%;
+    stroke: rgb(255, 255, 255);
+    stroke-width: 1;
+    fill: none;
+    -webkit-transform-origin: center center; /* Fix for Safari transformations */
+    transform-origin: center center;
+}
+
+#ball {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    will-change: transform; /* Optimize animations */
+}
+
+.center-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    font-size: 28px;
+    font-weight: 700;
+    color: white;
+    text-align: center;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.instruction {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--secondary);
+    text-align: center;
+    margin-top: 20px;
+    min-height: 36px;
+}
+
+.status {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: var(--primary-light);
+    color: white;
+    border-radius: 20px;
+    font-weight: 500;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.status.active {
+    opacity: 1;
+}
+
+#breath-option {
+    display: none; /* Hidden by default */
+    margin-top: 20px;
+}
+
+/* SVG and glow effects */
+svg {
+    filter: drop-shadow(0 0 5px rgba(110, 142, 251, 0.6));
+    transition: filter 0.5s ease-in-out;
+    -webkit-filter: drop-shadow(0 0 5px rgba(110, 142, 251, 0.6));
+    -webkit-transition: -webkit-filter 0.5s ease-in-out;
+    transform: translateZ(0); /* Fix Safari rendering issues */
+    -webkit-transform: translateZ(0);
+}
+
+/* Moderate glow effects based on breathing phase */
+svg.inhale {
+    filter: drop-shadow(0 0 5px rgba(94, 186, 252, 0.7)) 
+            drop-shadow(0 0 10px rgba(94, 186, 252, 0.5)) 
+            drop-shadow(0 0 18px rgba(0, 119, 255, 0.4));
+    -webkit-filter: drop-shadow(0 0 5px rgba(94, 186, 252, 0.7)) 
+                   drop-shadow(0 0 10px rgba(94, 186, 252, 0.5)) 
+                   drop-shadow(0 0 18px rgba(0, 119, 255, 0.4));
+}
+
+svg.exhale {
+    filter: drop-shadow(0 0 5px rgba(99, 242, 172, 0.7)) 
+            drop-shadow(0 0 10px rgba(38, 209, 134, 0.5))
+            drop-shadow(0 0 18px rgba(18, 153, 95, 0.4));
+    -webkit-filter: drop-shadow(0 0 5px rgba(99, 242, 172, 0.7)) 
+                   drop-shadow(0 0 10px rgba(38, 209, 134, 0.5))
+                   drop-shadow(0 0 18px rgba(18, 153, 95, 0.4));
+}
+
+svg.hold {
+    filter: drop-shadow(0 0 5px rgba(252, 94, 232, 0.7)) 
+            drop-shadow(0 0 10px rgba(200, 46, 242, 0.5))
+            drop-shadow(0 0 18px rgba(135, 12, 219, 0.4));
+    -webkit-filter: drop-shadow(0 0 5px rgba(252, 94, 232, 0.7)) 
+                   drop-shadow(0 0 10px rgba(200, 46, 242, 0.5))
+                   drop-shadow(0 0 18px rgba(135, 12, 219, 0.4));
+}
+
+/* Shape element styles - black fill with colored stroke */
+svg circle, 
+svg rect, 
+svg polygon, 
+svg ellipse {
+    fill: #121212;
+    stroke-width: 0.4;
+    transition: all 0.4s ease-in-out;
+    -webkit-transition: all 0.4s ease-in-out;
+    vector-effect: non-scaling-stroke; /* Helps with Safari rendering */
+}
+
+/* Phase-specific shape styles */
+svg.inhale circle, 
+svg.inhale rect, 
+svg.inhale polygon, 
+svg.inhale ellipse {
+    stroke: rgba(94, 186, 252, 0.4);
+}
+
+svg.exhale circle, 
+svg.exhale rect, 
+svg.exhale polygon, 
+svg.exhale ellipse {
+    stroke: rgba(99, 242, 172, 0.4);
+}
+
+svg.hold circle, 
+svg.hold rect, 
+svg.hold polygon, 
+svg.hold ellipse {
+    stroke: rgba(252, 94, 232, 0.4);
+}
+
+.shape-meditation {
+    margin-left: 0; /* Fix arbitrary negative margin */
+    transform: translateX(-30px); /* More precise control for positioning */
+    -webkit-transform: translateX(-30px);
+}
+
+@media (max-width: 768px) {
+    .meditation-area {
+        max-width: 90vw;
     }
-    #status {
-      margin-top: 1.5rem;
-      font-weight: bold;
-      color: #333;
+    
+    h1 {
+        font-size: 24px;
     }
+    
+    .instruction {
+        font-size: 20px;
+    }
+    
+    .shape-meditation {
+        transform: translateX(-20px);
+        -webkit-transform: translateX(-20px);
+    }
+}
+
+@media (max-width: 480px) {
+    .controls {
+        padding: 15px;
+    }
+    
     button {
-      font-size: 1.2rem;
-      padding: 0.7rem 1.5rem;
-      border: none;
-      border-radius: 5px;
-      background: #6e8efb;
-      color: white;
-      cursor: pointer;
-      transition: background 0.3s ease;
+        padding: 10px 16px;
     }
-    button:hover {
-      background: #5876d9;
+    
+    .meditation-area {
+        max-width: 95vw;
     }
-  </style>
-</head>
-<body>
-
-  <h1>WebToNative Haptics Test</h1>
-  <button id="vibrateBtn">Trigger Haptic Feedback</button>
-  <div id="status">Waiting for user action...</div>
-
-  <script>
-    const status = document.getElementById('status');
-    const btn = document.getElementById('vibrateBtn');
-
-    function checkAndTriggerHaptics() {
-      if (!window.WTN) {
-        status.textContent = "Error: window.WTN is NOT defined. Are you running inside a WebToNative app?";
-        return;
-      }
-      if (!window.WTN.haptics || typeof window.WTN.haptics.trigger !== 'function') {
-        status.textContent = "Error: Haptics API not available in this WebToNative version.";
-        return;
-      }
-
-      try {
-        window.WTN.haptics.trigger({ effect: 'impactMedium' });
-        status.textContent = "Haptic feedback triggered successfully!";
-      } catch (e) {
-        status.textContent = "Error triggering haptics: " + e.message;
-      }
+    
+    .shape-meditation {
+        transform: translateX(-10px);
+        -webkit-transform: translateX(-10px);
     }
+}
 
-    btn.addEventListener('click', () => {
-      status.textContent = "Trying to trigger haptics...";
-      // Slight delay to ensure any async bridge initialization completes
-      setTimeout(checkAndTriggerHaptics, 100);
+</style>
+
+
+    <div class="guide-container" style="display: none;">
+        <h2 class="guide-heading">Choose shape to read guide</h2>
+        <div class="guide-buttons">
+          <a href="{% url 'breathxapp:circle_guide' %}" target="_blank">Circle </a>
+          <a href="{% url 'breathxapp:square_guide' %}" target="_blank">Square</a>
+          <a href="{% url 'breathxapp:rectangle_guide' %}" target="_blank">Rectangle</a>
+          <a href="{% url 'breathxapp:triangle_guide' %}" target="_blank">Triangle</a>
+          <a href="{% url 'breathxapp:reverse_triangle_guide' %}" target="_blank">Reverse Triangle</a>
+          <a href="{% url 'breathxapp:diamond_guide' %}" target="_blank">Diamond</a>
+          <a href="oval.html" style="visibility: hidden;" target="_blank">Oval</a>
+          <a href="{% url 'breathxapp:oval_guide' %}" target="_blank">Oval</a>
+        </div>
+      </div>
+      <div class="popup-overlay" id="popupOverlay" style="display: none;">
+        <div class="popup">
+            <h2>Save this exercise?</h2>
+           <p>Your exercise, along with all selected parameters such as shape, will be saved and can be played later from Silent Exercise</p>
+            <input type="text" id="exerciseNickname" placeholder="Enter exercise name">
+            
+            <div class="button-group">
+                <button id="saveExerciseButton" class="save-btn">Save</button>
+                <button class="cancel-btn" onclick="closePopup()">Don’t Save</button>
+            </div>
+    
+            <input type="hidden" id="csrf_token" value="{{ csrf_token }}">
+        </div>
+    </div>
+    
+    <div class="container">
+      <div class="main-heading">
+        <div class="header-container">
+          <!-- <button class="back-button" onclick="window.location.href='{% url 'breathxapp:exercise_list' %}'"> -->
+            <!-- <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+          </button> -->
+          <h1 class="title" style="display: none;">BreathFree-Meditation</h1>
+        </div>
+      </div>
+      <!-- <hr style="width: 400px; height: 5px;  background: linear-gradient(to right, #6e8efb, #a777e3); border-radius: 10px; margin-bottom: 20px;"> -->
+    
+          
+
+ 
+        <div class="meditation-area">
+            <div id="shapeContainer">
+                <svg id="shape" viewBox="0 0 100 100"></svg>
+                <div id="ball"></div>
+                <div class="center-text" id="centerText"></div>
+            </div>
+        </div>
+        
+        <div style="display: none;" class="instruction" id="instruction"></div>
+        <div style="display: none;" class="status" id="status"></div>
+
+
+        
+          
+        <div id="breath-option">
+            <div class="control-group">
+              <label>Breathing Timing (seconds)</label>
+              <div class="timing-controls" id="timingControls">
+                <div class="timing-input">
+                  <label for="inhaleTime">Inhale</label>
+                  <!-- <input type="number" id="inhaleTime" min="1" max="20" value="4"> -->
+                  <select id="inhaleTime">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4" selected>4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="12">12</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                    <option value="25">25</option>
+                    <option value="30">30</option>
+                    <option value="35">35</option>
+                    <option value="40">40</option>
+                    <option value="45">45</option>
+                    <option value="50">50</option>
+                    <option value="55">55</option>
+                    <option value="60">60</option>
+                  </select>
+                </div>
+                <div class="timing-input" id="holdInControl">
+                  <label for="holdInTime">Hold</label>
+                  <!-- <input type="number" id="holdInTime" min="0" max="20" value="4"> -->
+                  <select id="holdInTime">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4" selected>4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="12">12</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                    <option value="25">25</option>
+                    <option value="30">30</option>
+                    <option value="35">35</option>
+                    <option value="40">40</option>
+                    <option value="45">45</option>
+                    <option value="50">50</option>
+                    <option value="55">55</option>
+                    <option value="60">60</option>
+                  </select>
+                </div>
+                <div class="timing-input">
+                  <label for="exhaleTime">Exhale</label>
+                  <!-- <input type="number" id="exhaleTime" min="1" max="20" value="4"> -->
+                  <select id="exhaleTime">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4" selected>4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="12">12</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                    <option value="25">25</option>
+                    <option value="30">30</option>
+                    <option value="35">35</option>
+                    <option value="40">40</option>
+                    <option value="45">45</option>
+                    <option value="50">50</option>
+                    <option value="55">55</option>
+                    <option value="60">60</option>
+                  </select>
+                </div>
+                <div class="timing-input" id="holdOutControl">
+                  <label for="holdOutTime">Hold</label>
+                  <!-- <input type="number" id="holdOutTime" min="0" max="20" value="4"> -->
+                  <select id="holdOutTime">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4" selected>4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="12">12</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                    <option value="25">25</option>
+                    <option value="30">30</option>
+                    <option value="35">35</option>
+                    <option value="40">40</option>
+                    <option value="45">45</option>
+                    <option value="50">50</option>
+                    <option value="55">55</option>
+                    <option value="60">60</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <button id="breath-close">Close</button>
+
+          </div>
+
+        <div class="controls" id="controls-row" style="display: flex; flex-direction: row;"> 
+            <div class="control-group">
+                <label for="shapeSelect"></label>
+                <select id="shapeSelect" >
+                    <option value="circle">Circle (inhale/exhale)</option>
+                    <option value="square">Square (inhale/hold in/exhale/hold out)</option>
+                    <option value="rectangle">Rectangle (inhale/hold in/exhale/hold out) </option>
+                    <option value="triangle">Triangle (inhale/exhale/hold out)</option>
+                    <option value="reverseTriangle">Reverse Triangle (inhale/hold in/exhale) </option>
+                    <option value="diamond">Diamond (inhale/hold in/exhale/hold out)</option>
+                    <option value="oval">Oval (inhale/exhale)</option>
+                </select>
+                
+            </div>
+            
+<script>
+document.getElementById('shapeSelect').addEventListener('change', function() {
+    // Get all options
+    const options = this.querySelectorAll('option');
+    
+    // Remove existing checkmarks
+    options.forEach(option => {
+        option.textContent = option.textContent.replace('✓ ', '');
     });
+    
+    // Add checkmark to selected option
+    const selectedOption = this.options[this.selectedIndex];
+    selectedOption.textContent = '✓ ' + selectedOption.textContent;
+});
 
-    // Optional: auto-check after 2 seconds if you want automatic check on load
-    window.addEventListener('load', () => {
-      setTimeout(() => {
-        if (window.WTN) {
-          status.textContent = "window.WTN is available!";
-        } else {
-          status.textContent = "window.WTN is still NOT defined after 2 seconds.";
+// Set initial checkmark on page load
+window.addEventListener('load', function() {
+    const select = document.getElementById('shapeSelect');
+    const selectedOption = select.options[select.selectedIndex];
+    selectedOption.textContent = '✓ ' + selectedOption.textContent;
+});
+</script>
+<div id="breathstartbtn">
+            <button id="breathtoggleBtn">Breath</button>
+            <button id="startButton">Start </button>
+            </div>
+        </div>
+        
+        <div class="action-buttons" >
+            <button id="voice-start" class="voice-off" aria-label="Voice">
+              <i class="fas fa-volume-mute"></i>
+            </button>
+            <button aria-label="Vibration" id="vibration-button-set" style="width: 50px; display: inline-flex; align-items: center; justify-content: center; padding: 0; border: none; ">
+            <img src="{% static 'v2.png' %}" alt="" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+            </button>
+
+            <button aria-label="Save" id="save-exercise-button-id">
+              <i class="fas fa-save"></i>
+            </button>
+            <button aria-label="Guide" id="guide-button-id">
+              <i class="fas fa-question-circle"></i>
+            </button>
+          </div>
+          <script>
+            const settingsButton = document.getElementById("settings-buttons");
+            const actionButtons = document.querySelector(".action-buttons");
+          
+            settingsButton.addEventListener("click", () => {
+              // Read the current state from the data-toggle attribute
+              const isVisible = settingsButton.getAttribute("data-toggle") === "true";
+              
+              // Toggle visibility based on the current state
+              if (isVisible) {
+                actionButtons.style.display = "none";
+                settingsButton.setAttribute("data-toggle", "false");
+              } else {
+                actionButtons.style.display = "flex";  // Show the buttons
+                settingsButton.setAttribute("data-toggle", "true");
+              }
+            });
+          </script>
+          
+          
+            <!-- Section for guide  -->
+         <section class="guide-container-end" style="
+  padding: 1.5rem;
+  color: #e0e0e0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  background-color: #1a1a1a;
+  border-radius: 12px;
+  margin: 1rem auto;
+  max-width: 100%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+">
+  <h2 style="
+    color: #39e5ff;
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    border-bottom: 1px solid rgba(57, 229, 255, 0.2);
+    padding-bottom: 0.75rem;
+  ">How to Practice Breathing</h2>
+  
+  <div class="guide-step" style="
+    margin-bottom: 1.5rem;
+    padding-left: 1rem;
+    border-left: 3px solid rgba(57, 229, 255, 0.6);
+  ">
+    <h3 style="
+      color: #ffffff;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    ">Step 1: Find Your Position</h3>
+    <p style="
+      line-height: 1.6;
+      color: #cdcdcd;
+      font-size: 0.95rem;
+      margin-bottom: 0.5rem;
+    ">Sit comfortably with your back straight or lie down in a quiet place. Place one hand on your chest and the other on your abdomen to feel your breath movement.</p>
+  </div>
+  
+  <div class="guide-step" style="
+    margin-bottom: 1.5rem;
+    padding-left: 1rem;
+    border-left: 3px solid rgba(57, 229, 255, 0.6);
+  ">
+    <h3 style="
+      color: #ffffff;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    ">Step 2: Breathing Rhythm</h3>
+    <p style="
+      line-height: 1.6;
+      color: #cdcdcd;
+      font-size: 0.95rem;
+      margin-bottom: 0.5rem;
+    ">Inhale slowly through your nose for a count of 4, feeling your abdomen expand. Hold briefly, then exhale through your mouth for a count of 6.</p>
+  </div>
+  
+  <div class="guide-step" style="
+    margin-bottom: 1.5rem;
+    padding-left: 1rem;
+    border-left: 3px solid rgba(57, 229, 255, 0.6);
+  ">
+    <h3 style="
+      color: #ffffff;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    ">Step 3: Maintain Focus</h3>
+    <p style="
+      line-height: 1.6;
+      color: #cdcdcd;
+      font-size: 0.95rem;
+      margin-bottom: 0.5rem;
+    ">Keep your attention on your breath. When your mind wanders, gently bring your focus back to your breathing pattern without judgment.</p>
+  </div>
+
+  <div class="tip-box" style="
+    background-color: rgba(57, 229, 255, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+    border: 1px solid rgba(57, 229, 255, 0.2);
+  ">
+    <div style="
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    ">
+      <span style="
+        color: #39e5ff;
+        font-size: 1.2rem;
+        margin-right: 0.5rem;
+      ">💡</span>
+      <h4 style="
+        color: #39e5ff;
+        font-size: 1rem;
+        margin: 0;
+        font-weight: 500;
+      ">Pro Tip</h4>
+    </div>
+    <p style="
+      line-height: 1.6;
+      color: #cdcdcd;
+      font-size: 0.95rem;
+      margin: 0;
+    ">Try practicing at the same time each day to build a consistent habit. Even 5 minutes of focused breathing can help reduce stress and improve mindfulness.</p>
+  </div>
+</section>      
+    </div>
+
+ <!-- Add this Font Awesome link in the head of your HTML -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<!-- Replace your existing voice button with this -->
+
+<script>
+    // DOM Elements
+const shapeSelect = document.getElementById('shapeSelect');
+const inhaleTimeInput = document.getElementById('inhaleTime');
+const holdInTimeInput = document.getElementById('holdInTime');
+const exhaleTimeInput = document.getElementById('exhaleTime');
+const holdOutTimeInput = document.getElementById('holdOutTime');
+const holdInControl = document.getElementById('holdInControl');
+const holdOutControl = document.getElementById('holdOutControl');
+const startButton = document.getElementById('startButton');
+const timingControls = document.getElementById('timingControls');
+const shapeElement = document.getElementById('shape');
+const ball = document.getElementById('ball');
+const instruction = document.getElementById('instruction');
+const status = document.getElementById('status');
+const centerText = document.getElementById('centerText');
+const voiceButton = document.getElementById('voice-start');
+
+// Animation variables
+let animationId = null;
+let isAnimating = false;
+let currentPhase = 0;
+let currentTime = 0;
+let phaseTimes = [];
+let points = [];
+let totalTime = 0;
+let phaseNames = [];
+let lastTimestamp = 0;
+let lastSpokenPhase = -1; // Track the last spoken phase
+let speechSynthesis = window.speechSynthesis; // Speech synthesis API
+let voiceEnabled = false; // Voice starts off by default
+
+// Initialize voice button
+function initVoiceButton() {
+    // Add icon to button
+    voiceButton.innerHTML = '<i class="fas fa-volume-mute"></i>';
+    voiceButton.classList.add('voice-off');
+    
+    // Add event listener
+    voiceButton.addEventListener('click', toggleVoice);
+}
+
+// For Vibration in React native app ------------------------------------------------------------------------------
+// Add vibration state variable
+let vibrationEnabled = true;
+
+// Modify your existing notifyPhaseChange function
+function notifyPhaseChange(phase) { 
+  // Always log the phase change 
+  console.log("Phase changed to:", phase); 
+   
+  // Only send message if vibration is enabled
+  if (vibrationEnabled) {
+    // Send a message to the React Native WebView if available 
+    if (window.ReactNativeWebView) { 
+      window.ReactNativeWebView.postMessage(JSON.stringify({ 
+        type: 'phaseChange', 
+        phase: phase 
+      })); 
+      console.log("post message sent"); 
+    } else { 
+      console.log("ReactNativeWebView not available - would have sent message:", phase); 
+    } 
+  } else {
+    console.log("Vibration disabled - message not sent");
+  }
+}
+
+// Add click event to your existing button
+document.getElementById('vibration-button-set').addEventListener('click', function() {
+  vibrationEnabled = !vibrationEnabled;
+  
+  // Toggle visual state
+  if (vibrationEnabled) {
+    this.classList.remove('off');
+  } else {
+    this.classList.add('off');
+  }
+});
+// Voice -------------------------------------------------------------------
+const audioFiles = {
+        'Inhale': new Audio("{{ audio_urls.inhale }}"),
+        'Hold': new Audio("{{ audio_urls.hold }}"),
+        'Exhale': new Audio("{{ audio_urls.exhale }}")
+};
+
+// Replace the entire toggleVoice function:
+function toggleVoice() {
+    voiceEnabled = !voiceEnabled;
+    
+    if (voiceEnabled) {
+        voiceButton.innerHTML = '<i class="fas fa-volume-up"></i>';
+        voiceButton.classList.remove('voice-off');
+        voiceButton.classList.add('voice-on');
+        
+        // If currently animating, speak the current phase
+        if (isAnimating && currentPhase >= 0) {
+            speakPhase(phaseNames[currentPhase]);
         }
-      }, 2000);
+    } else {
+        voiceButton.innerHTML = '<i class="fas fa-volume-mute"></i>';
+        voiceButton.classList.remove('voice-on');
+        voiceButton.classList.add('voice-off');
+        
+        // Stop any playing audio
+        for (const phase in audioFiles) {
+            audioFiles[phase].pause();
+            audioFiles[phase].currentTime = 0;
+        }
+    }
+}
+
+// Shape drawing functions
+const drawShape = {
+    circle: () => {
+        shapeElement.setAttribute('viewBox', '0 0 100 100');
+        shapeElement.innerHTML = '<circle cx="50" cy="50" r="45" />';
+        return getCirclePoints(50, 50, 45);
+    },
+    square: () => {
+        shapeElement.setAttribute('viewBox', '0 0 100 100');
+        shapeElement.innerHTML = '<rect x="10" y="10" width="80" height="80" />';
+        return getSquarePoints(10, 10, 90, 90);
+    },
+    rectangle: () => {
+        shapeElement.setAttribute('viewBox', '0 0 100 100');
+        // 5:8 ratio
+        const width = 80;
+        const height = width * (5/8);
+        const x = 10;
+        const y = (100 - height) / 2;
+        shapeElement.innerHTML = `<rect x="${x}" y="${y}" width="${width}" height="${height}" />`;
+        return getSquarePoints(x, y, x + width, y + height);
+    },
+    triangle: () => {
+        shapeElement.setAttribute('viewBox', '0 0 100 100');
+        shapeElement.innerHTML = '<polygon points="10,90 50,10 90,90" />';
+        return getTrianglePoints(10, 90, 50, 10, 90, 90);
+    },
+
+    reverseTriangle: () => {
+        shapeElement.setAttribute('viewBox', '0 0 100 100');
+        shapeElement.innerHTML = '<polygon points="10,10 90,10 50,90" />';
+        return getTrianglePoints(10, 10, 90, 10, 50, 90);
+    },
+    diamond: () => {
+        shapeElement.setAttribute('viewBox', '0 0 100 100');
+        shapeElement.innerHTML = '<polygon points="50,10 90,50 50,90 10,50" />';
+        return getDiamondPoints(50, 10, 90, 50, 50, 90, 10, 50);
+    },
+    oval: () => {
+        shapeElement.setAttribute('viewBox', '0 0 100 100');
+        shapeElement.innerHTML = '<ellipse cx="50" cy="50" rx="40" ry="25" />';
+        return getOvalPoints(50, 50, 40, 25);
+    }
+};
+
+// Replace the entire init function:
+function init() {
+    updateTimingControls();
+    drawCurrentShape();
+    initVoiceButton();
+    
+    // Preload audio files
+    for (const phase in audioFiles) {
+        audioFiles[phase].load();
+        audioFiles[phase].preload = 'auto';
+    }
+    
+    // Event listeners
+    shapeSelect.addEventListener('change', () => {
+        updateTimingControls();
+        drawCurrentShape();
+        syncInputs(); // Sync inputs when shape changes
+        if (isAnimating) {
+            stopAnimation();
+            startAnimation();
+        }
+    });
+    
+    // Add event listeners to all inputs to auto-adjust when values change and sync related inputs
+    inhaleTimeInput.addEventListener('input', () => {
+        syncInputs();
+        autoAdjustAnimation();
+    });
+    
+    holdInTimeInput.addEventListener('input', () => {
+        syncInputs();
+        autoAdjustAnimation();
+    });
+    
+    exhaleTimeInput.addEventListener('input', () => {
+        syncInputs();
+        autoAdjustAnimation();
+    });
+    
+    holdOutTimeInput.addEventListener('input', () => {
+        syncInputs();
+        autoAdjustAnimation();
+    });
+    
+    startButton.addEventListener('click', toggleAnimation);
+    
+    // Initial sync
+    syncInputs();
+}
+
+// Sync input values based on the selected shape
+function syncInputs() {
+    const shape = shapeSelect.value;
+    
+    switch (shape) {
+        case 'circle':
+            // For circle: exhaleTime = inhaleTime
+            exhaleTimeInput.value = inhaleTimeInput.value;
+            break;
+            
+        case 'square':
+            // For square: all inputs = inhaleTime
+            holdInTimeInput.value = inhaleTimeInput.value;
+            exhaleTimeInput.value = inhaleTimeInput.value;
+            holdOutTimeInput.value = inhaleTimeInput.value;
+            break;
+            
+        case 'rectangle':
+            // For rectangle: exhaleTime = inhaleTime, holdOutTime = holdInTime
+            exhaleTimeInput.value = inhaleTimeInput.value;
+            holdOutTimeInput.value = holdInTimeInput.value;
+            break;
+            
+        // No changes for other shapes
+        case 'triangle':
+        case 'reverseTriangle':
+        case 'diamond':
+        case 'oval':
+            // No syncing needed
+            break;
+    }
+}
+
+// Replace the entire speakPhase function:
+function speakPhase(phaseText) {
+    // Only play if voice is enabled
+    if (!voiceEnabled) return;
+    
+    // Stop any currently playing audio first
+    for (const phase in audioFiles) {
+        audioFiles[phase].pause();
+        audioFiles[phase].currentTime = 0;
+    }
+    
+    // Play the appropriate audio file
+    if (audioFiles[phaseText]) {
+        // Reset audio to beginning
+        audioFiles[phaseText].currentTime = 0;
+        
+        // Play the audio file immediately
+        const playPromise = audioFiles[phaseText].play();
+        
+        // Handle potential play() promise rejection
+        if (playPromise !== undefined) {
+            playPromise.catch(error => {
+                console.log('Audio play failed:', error);
+            });
+        }
+    }
+}
+
+// Update timing controls based on selected shape
+function updateTimingControls() {
+    const shape = shapeSelect.value;
+    
+    // First reset all inputs to be visible
+    inhaleTimeInput.parentElement.style.display = 'flex';
+    holdInTimeInput.parentElement.style.display = 'flex';
+    exhaleTimeInput.parentElement.style.display = 'flex';
+    holdOutTimeInput.parentElement.style.display = 'flex';
+    
+    // Then hide entire controls based on shape
+    switch (shape) {
+        case 'circle':
+            // Only inhale and exhale controls visible
+            holdInControl.style.display = 'none';
+            holdOutControl.style.display = 'none';
+            
+            // For circle, hide exhale input (but keep control visible)
+            exhaleTimeInput.parentElement.style.display = 'none';
+            break;
+        case 'oval':
+            // Only inhale and exhale controls visible
+            holdInControl.style.display = 'none';
+            holdOutControl.style.display = 'none';
+            
+            // For circle, hide exhale input (but keep control visible)
+            break;
+            
+        case 'triangle':
+            document.querySelector('.center-text').style.top = '58%';
+            holdInControl.style.display = 'flex';
+            holdOutControl.style.display = 'none';
+            break;
+        case 'reverseTriangle':
+            // Inhale, hold, exhale controls visible
+            document.querySelector('.center-text').style.top = '42%';
+
+            holdInControl.style.display = 'flex';
+            holdOutControl.style.display = 'none';
+            break;
+            
+        case 'square':
+            // All controls visible but hide specific inputs
+            holdInControl.style.display = 'flex';
+            holdOutControl.style.display = 'flex';
+            
+            // For square, hide all inputs except the first one
+            
+            holdInTimeInput.parentElement.style.display = 'none';
+            exhaleTimeInput.parentElement.style.display = 'none';
+            holdOutTimeInput.parentElement.style.display = 'none';
+            break;
+            
+        case 'rectangle':
+            // All controls visible but hide specific inputs
+            holdInControl.style.display = 'flex';
+            holdOutControl.style.display = 'flex';
+            
+            // For rectangle, only first two inputs are visible
+            exhaleTimeInput.parentElement.style.display = 'none';
+            holdOutTimeInput.parentElement.style.display = 'none';
+            break;
+            
+        case 'diamond':
+            // All controls visible
+            holdInControl.style.display = 'flex';
+            holdOutControl.style.display = 'flex';
+            break;
+    }
+}
+// Draw the current shape
+function drawCurrentShape() {
+    const shape = shapeSelect.value;
+    points = drawShape[shape]();
+    positionBall(points[0]);
+}
+
+// Position the ball at the given point
+function positionBall(point) {
+    ball.style.left = `${point.x}%`;
+    ball.style.top = `${point.y}%`;
+}
+
+// Auto-adjust animation when inputs change
+function autoAdjustAnimation() {
+    if (isAnimating) {
+        stopAnimation();
+        startAnimation();
+    }
+}
+
+// Toggle animation
+function toggleAnimation() {
+    if (isAnimating) {
+        stopAnimation();
+        startButton.textContent = 'Start';
+        instruction.textContent = '';
+        status.classList.remove('active');
+    } else {
+        startAnimation();
+        startButton.textContent = 'Stop';
+    }
+}
+
+// Start the animation
+function startAnimation() {
+    if (isAnimating) return;
+    
+    const shape = shapeSelect.value;
+    setupAnimationParameters(shape);
+    
+    isAnimating = true;
+    currentPhase = 0;
+    currentTime = 0;
+    
+    // Start the animation loop
+    lastTimestamp = performance.now();
+    animationId = requestAnimationFrame(animate);
+    
+    // Make sure status is active
+    status.classList.add('active');
+    
+    // Speak the initial phase if voice is enabled
+    if (voiceEnabled) {
+        speakPhase(phaseNames[0]);
+        lastSpokenPhase = 0;
+    }
+}
+
+// Replace the entire stopAnimation function:
+function stopAnimation() {
+    if (!isAnimating) return;
+    
+    cancelAnimationFrame(animationId);
+    isAnimating = false;
+    centerText.textContent = '';
+    status.classList.remove('active');
+    
+    // Remove all glow effect classes
+    shapeElement.classList.remove('inhale', 'exhale', 'hold');
+    
+    // Stop any playing audio
+    for (const phase in audioFiles) {
+        audioFiles[phase].pause();
+        audioFiles[phase].currentTime = 0;
+    }
+    
+    lastSpokenPhase = -1;
+}
+// Setup animation parameters based on the shape
+function setupAnimationParameters(shape) {
+    phaseTimes = [];
+    phaseNames = [];
+    
+    const inhaleTime = parseFloat(inhaleTimeInput.value) || 4;
+    const exhaleTime = parseFloat(exhaleTimeInput.value) || 4;
+    const holdInTime = parseFloat(holdInTimeInput.value) || 4;
+    const holdOutTime = parseFloat(holdOutTimeInput.value) || 4;
+    
+    switch (shape) {
+        case 'circle':
+        case 'oval':
+            phaseTimes = [inhaleTime, exhaleTime];
+            phaseNames = ['Inhale', 'Exhale'];
+            break;
+            
+        case 'triangle':
+            phaseTimes = [inhaleTime, exhaleTime, holdInTime];
+            phaseNames = ['Inhale', 'Exhale', 'Hold'];
+            break;
+        case 'reverseTriangle':
+            phaseTimes = [inhaleTime, holdInTime, exhaleTime];
+            phaseNames = ['Inhale', 'Hold', 'Exhale'];
+            break;
+            
+        case 'square':
+        case 'rectangle':
+        case 'diamond':
+            phaseTimes = [inhaleTime, holdInTime, exhaleTime, holdOutTime];
+            phaseNames = ['Inhale', 'Hold', 'Exhale', 'Hold'];
+            break;
+    }
+    
+    totalTime = phaseTimes.reduce((sum, time) => sum + time, 0);
+}
+
+// Add these JavaScript updates
+
+// Replace the animate function with this improved version
+function animate(timestamp) {
+    const deltaTime = (timestamp - lastTimestamp) / 1000; // Convert to seconds
+    lastTimestamp = timestamp;
+    
+    // Update the current time
+    currentTime += deltaTime;
+    
+    // Calculate the phase boundaries
+    let phaseStartTime = 0;
+    for (let i = 0; i < currentPhase; i++) {
+        phaseStartTime += phaseTimes[i];
+    }
+    
+    const phaseEndTime = phaseStartTime + phaseTimes[currentPhase];
+    
+      // Update inside the animate function where phase changes
+    if (currentTime >= phaseEndTime) {
+        // Update the phase
+        currentPhase = (currentPhase + 1) % phaseTimes.length;
+        
+        // If we've completed a full cycle
+        if (currentPhase === 0) {
+            currentTime = 0;
+            phaseStartTime = 0;
+        } else {
+            // Recalculate the phase start time for the new phase
+            phaseStartTime = 0;
+            for (let i = 0; i < currentPhase; i++) {
+                phaseStartTime += phaseTimes[i];
+            }
+        }
+        
+        // Notify React Native about phase change
+        notifyPhaseChange(phaseNames[currentPhase]);
+        
+        // Speak the new phase if voice is enabled
+        if (voiceEnabled && currentPhase !== lastSpokenPhase) {
+            speakPhase(phaseNames[currentPhase]);
+            lastSpokenPhase = currentPhase;
+        }
+    }
+    
+    // Calculate progress within the current phase (after phase update)
+    const phaseProgress = (currentTime - phaseStartTime) / phaseTimes[currentPhase];
+    
+    // Update the instruction text, center text, and status
+    instruction.textContent = phaseNames[currentPhase];
+    centerText.textContent = phaseNames[currentPhase];
+    status.textContent = phaseNames[currentPhase];
+    
+    // Update glow effect classes based on current phase
+    shapeElement.classList.remove('inhale', 'exhale', 'hold');
+    
+    if (phaseNames[currentPhase] === 'Inhale') {
+        shapeElement.classList.add('inhale');
+    } else if (phaseNames[currentPhase] === 'Exhale') {
+        shapeElement.classList.add('exhale');
+    } else if (phaseNames[currentPhase] === 'Hold') {
+        shapeElement.classList.add('hold');
+    }
+    
+    // Calculate the position of the ball
+    // Use a single smooth calculation for the ball position
+    const currentPoint = getPointsForPhase(currentPhase, phaseProgress);
+    positionBall(currentPoint);
+    
+    // Continue the animation
+    animationId = requestAnimationFrame(animate);
+}
+
+// In the stopAnimation function, add code to remove the glow classes:
+function stopAnimation() {
+    if (!isAnimating) return;
+    
+    cancelAnimationFrame(animationId);
+    isAnimating = false;
+    centerText.textContent = '';
+    status.classList.remove('active');
+    
+    // Remove all glow effect classes
+    shapeElement.classList.remove('inhale', 'exhale', 'hold');
+    
+    // Stop any ongoing speech
+    speechSynthesis.cancel();
+    lastSpokenPhase = -1;
+}
+// Replace this function in your code
+// Replace or update the getPointsForPhase function with this logic
+function getPointsForPhase(phase, progress) {
+    const shape = shapeSelect.value;
+    const numPhases = phaseTimes.length;
+    
+    // For circle and oval, each phase should complete a full 360-degree cycle
+    if (shape === 'circle' || shape === 'oval') {
+        // For each phase, go full circle from 12 o'clock to 12 o'clock
+        // Start at top (-90 degrees) and make a full 360 rotation
+        const angle = -90 + (progress * 360);
+        const radians = angle * Math.PI / 180;
+        
+        if (shape === 'circle') {
+            const radius = 45;
+            const x = 50 + radius * Math.cos(radians);
+            const y = 50 + radius * Math.sin(radians);
+            return { x, y };
+        } else { // oval
+            const rx = 40;
+            const ry = 25;
+            const x = 50 + rx * Math.cos(radians);
+            const y = 50 + ry * Math.sin(radians);
+            return { x, y };
+        }
+    } else {
+        // Special case for reverseTriangle - adjust the starting point
+        if (shape === 'reverseTriangle') {
+            // For reverse triangle, we want to start from the bottom point (50,90)
+            // Remap the points so phase 0 starts at bottom point
+            
+            const pointsPerPhase = points.length / numPhases;
+            
+            // Calculate the index for the bottom point (which is at 50,90)
+            const bottomPointIndex = points.findIndex(p => 
+                Math.abs(p.x - 50) < 1 && Math.abs(p.y - 90) < 1
+            );
+            
+            // If bottom point found, adjust the start index
+            if (bottomPointIndex >= 0) {
+                const adjustedPhase = (phase + (bottomPointIndex / pointsPerPhase)) % numPhases;
+                const startIdx = Math.floor(adjustedPhase * pointsPerPhase) % points.length;
+                const endIdx = Math.floor((adjustedPhase + 1) * pointsPerPhase) % points.length;
+                
+                // If start and end are the same, we need to wrap around
+                if (startIdx === endIdx) {
+                    return points[startIdx];
+                }
+                
+                // For shapes with corners, we need to interpolate between points
+                let startPoint = points[startIdx];
+                let endPoint = (endIdx === 0) ? points[points.length - 1] : points[endIdx];
+                
+                const x = startPoint.x + (endPoint.x - startPoint.x) * progress;
+                const y = startPoint.y + (endPoint.y - startPoint.y) * progress;
+                
+                return { x, y };
+            }
+        }
+        
+        // For other polygons, each phase maps to a specific segment of the shape
+        const pointsPerPhase = points.length / numPhases;
+        const startIdx = Math.floor(phase * pointsPerPhase);
+        const endIdx = Math.floor((phase + 1) * pointsPerPhase) % points.length;
+        
+        // If start and end are the same, we need to wrap around
+        if (startIdx === endIdx) {
+            return points[startIdx];
+        }
+        
+        // For shapes with corners, we need to interpolate between points
+        let startPoint = points[startIdx];
+        let endPoint;
+        
+        // Handle the case where endIdx is 0 (wrap around to the beginning)
+        if (endIdx === 0) {
+            endPoint = points[points.length - 1];
+        } else {
+            endPoint = points[endIdx];
+        }
+        
+        const x = startPoint.x + (endPoint.x - startPoint.x) * progress;
+        const y = startPoint.y + (endPoint.y - startPoint.y) * progress;
+        
+        return { x, y };
+    }
+}
+
+// And update the getTrianglePoints function for reverse triangle
+function getTrianglePoints(x1, y1, x2, y2, x3, y3) {
+    // Create more points along each side for smooth animation
+    const points = [];
+    const numPointsPerSide = 20;
+    
+    // For reverse triangle, the order matters
+    // The point we want to start with should be the first one added
+    
+    // If this is a reverse triangle (where y3 > y1 and y3 > y2)
+    const isReverseTriangle = (y3 > y1 && y3 > y2);
+    
+    if (isReverseTriangle) {
+        // Start with bottom point and go counterclockwise
+        
+        // Side 1: bottom point to top-left
+        for (let i = 0; i <= numPointsPerSide; i++) {
+            points.push({
+                x: x3 + (x1 - x3) * (i / numPointsPerSide),
+                y: y3 + (y1 - y3) * (i / numPointsPerSide)
+            });
+        }
+        
+        // Side 2: top-left to top-right
+        for (let i = 1; i <= numPointsPerSide; i++) {
+            points.push({
+                x: x1 + (x2 - x1) * (i / numPointsPerSide),
+                y: y1 + (y2 - y1) * (i / numPointsPerSide)
+            });
+        }
+        
+        // Side 3: top-right back to bottom point
+        for (let i = 1; i < numPointsPerSide; i++) {
+            points.push({
+                x: x2 + (x3 - x2) * (i / numPointsPerSide),
+                y: y2 + (y3 - y2) * (i / numPointsPerSide)
+            });
+        }
+    } else {
+        // Regular triangle - same as before
+        // Side 1: first point to second point
+        for (let i = 0; i <= numPointsPerSide; i++) {
+            points.push({
+                x: x1 + (x2 - x1) * (i / numPointsPerSide),
+                y: y1 + (y2 - y1) * (i / numPointsPerSide)
+            });
+        }
+        
+        // Side 2: second point to third point
+        for (let i = 1; i <= numPointsPerSide; i++) {
+            points.push({
+                x: x2 + (x3 - x2) * (i / numPointsPerSide),
+                y: y2 + (y3 - y2) * (i / numPointsPerSide)
+            });
+        }
+        
+        // Side 3: third point back to first point
+        for (let i = 1; i < numPointsPerSide; i++) {
+            points.push({
+                x: x3 + (x1 - x3) * (i / numPointsPerSide),
+                y: y3 + (y1 - y3) * (i / numPointsPerSide)
+            });
+        }
+    }
+    
+    return points;
+}
+// Helper functions to generate points for shapes
+function getCirclePoints(cx, cy, r) {
+    const points = [];
+    const numPoints = 60; // More points for smoother circle
+    
+    for (let i = 0; i < numPoints; i++) {
+        const angle = (i / numPoints) * 2 * Math.PI - Math.PI/2; // Start at top
+        const x = cx + r * Math.cos(angle);
+        const y = cy + r * Math.sin(angle);
+        points.push({ x, y });
+    }
+    
+    return points;
+}
+
+function getSquarePoints(x1, y1, x2, y2) {
+    // Create more points along each side for smooth animation
+    const points = [];
+    const numPointsPerSide = 15;
+    
+    // Top side: left to right
+    for (let i = 0; i <= numPointsPerSide; i++) {
+        points.push({
+            x: x1 + (x2 - x1) * (i / numPointsPerSide),
+            y: y1
+        });
+    }
+    
+    // Right side: top to bottom
+    for (let i = 1; i <= numPointsPerSide; i++) {
+        points.push({
+            x: x2,
+            y: y1 + (y2 - y1) * (i / numPointsPerSide)
+        });
+    }
+    
+    // Bottom side: right to left
+    for (let i = 1; i <= numPointsPerSide; i++) {
+        points.push({
+            x: x2 - (x2 - x1) * (i / numPointsPerSide),
+            y: y2
+        });
+    }
+    
+    // Left side: bottom to top
+    for (let i = 1; i < numPointsPerSide; i++) {
+        points.push({
+            x: x1,
+            y: y2 - (y2 - y1) * (i / numPointsPerSide)
+        });
+    }
+    
+    return points;
+}
+
+function getTrianglePoints(x1, y1, x2, y2, x3, y3) {
+    // Create more points along each side for smooth animation
+    const points = [];
+    const numPointsPerSide = 20;
+    
+    // Side 1: first point to second point
+    for (let i = 0; i <= numPointsPerSide; i++) {
+        points.push({
+            x: x1 + (x2 - x1) * (i / numPointsPerSide),
+            y: y1 + (y2 - y1) * (i / numPointsPerSide)
+        });
+    }
+    
+    // Side 2: second point to third point
+    for (let i = 1; i <= numPointsPerSide; i++) {
+        points.push({
+            x: x2 + (x3 - x2) * (i / numPointsPerSide),
+            y: y2 + (y3 - y2) * (i / numPointsPerSide)
+        });
+    }
+    
+    // Side 3: third point back to first point
+    for (let i = 1; i < numPointsPerSide; i++) {
+        points.push({
+            x: x3 + (x1 - x3) * (i / numPointsPerSide),
+            y: y3 + (y1 - y3) * (i / numPointsPerSide)
+        });
+    }
+    
+    return points;
+}
+
+function getDiamondPoints(x1, y1, x2, y2, x3, y3, x4, y4) {
+    // Create more points along each side for smooth animation
+    const points = [];
+    const numPointsPerSide = 15;
+    
+    // Side 1: top to right
+    for (let i = 0; i <= numPointsPerSide; i++) {
+        points.push({
+            x: x1 + (x2 - x1) * (i / numPointsPerSide),
+            y: y1 + (y2 - y1) * (i / numPointsPerSide)
+        });
+    }
+    
+    // Side 2: right to bottom
+    for (let i = 1; i <= numPointsPerSide; i++) {
+        points.push({
+            x: x2 + (x3 - x2) * (i / numPointsPerSide),
+            y: y2 + (y3 - y2) * (i / numPointsPerSide)
+        });
+    }
+    
+    // Side 3: bottom to left
+    for (let i = 1; i <= numPointsPerSide; i++) {
+        points.push({
+            x: x3 + (x4 - x3) * (i / numPointsPerSide),
+            y: y3 + (y4 - y3) * (i / numPointsPerSide)
+        });
+    }
+    
+    // Side 4: left to top
+    for (let i = 1; i < numPointsPerSide; i++) {
+        points.push({
+            x: x4 + (x1 - x4) * (i / numPointsPerSide),
+            y: y4 + (y1 - y4) * (i / numPointsPerSide)
+        });
+    }
+    
+    return points;
+}
+
+function getOvalPoints(cx, cy, rx, ry) {
+    const points = [];
+    const numPoints = 60; // More points for smoother oval
+    
+    for (let i = 0; i < numPoints; i++) {
+        const angle = (i / numPoints) * 2 * Math.PI - Math.PI/2; // Start at top
+        const x = cx + rx * Math.cos(angle);
+        const y = cy + ry * Math.sin(angle);
+        points.push({ x, y });
+    }
+    
+    return points;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Initialize the app
+window.addEventListener('load', init);
+</script>
+
+
+<script>
+    const toggleBtn = document.getElementById("breathtoggleBtn");
+    const breathOption = document.getElementById("breath-option");
+  
+    toggleBtn.addEventListener("click", () => {
+      breathOption.style.display = breathOption.style.display === "none" ? "block" : "none";
     });
   </script>
+<style>
+    #controls-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px; /* Reduced gap between buttons */
+      flex-wrap: nowrap; /* Force all in one row */
+      padding: 10px;
+      max-width: 450px;
+      width: 100%;
+    }
+  
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+  
+    .control-group label {
+      white-space: nowrap;
+      font-weight: 500;
+    }
+  
+    #shapeSelect {
+      width: 180px; /* fixed width like buttons */
+      padding: 8px 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+  
+    #controls-row button {
+      min-width: 180px;
+      padding: 10px 15px;
+      font-size: 14px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #6e8efb, #a777e3);
+      color: #fff;
+      cursor: pointer;
+      transition: 0.2s;
+      white-space: nowrap;
+    }
+  
+    #controls-row button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+  
+    #controls-row button i {
+      margin-right: 6px;
+    }
+  
+    /* Optional: Responsive fallback for small screens */
+    @media (max-width: 600px) {
+      #controls-row {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+  
+      .control-group,
+      #controls-row button {
+        width: 100%;
+        justify-content: center;
+      }
+  
+      #shapeSelect {
+        width: 100%;
+      }
+    }
+  
+    /* Dropdown (Select) Styling */
+    #shapeSelect {
+      width: 100%; /* Ensure the dropdown takes up the full width of its container */
+      max-width: 100px; /* Limit the maximum width to 180px */
+      padding: 10px 12px;
+      font-size: 14px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #6e8efb, #a777e3);
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      appearance: none;
+      cursor: pointer;
+      transition: 0.2s ease-in-out;
+      outline: none;
+    }
+  
+    /* Dropdown options */
+    #shapeSelect option {
+      background-color: #f9f9f9;
+      color: #333;
+      padding: 10px;
+      font-size: 14px;
+    }
+  
+    /* Breathing option container */
+    #breath-option {
+      background: #f7f7f7;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      margin: 20px 0;
+    }
+  
+    /* Control group styling */
+    .control-group {
+      margin-bottom: 20px;
+    }
+  
+    /* Labels */
+    .control-group label {
+      font-size: 16px;
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 10px;
+      display: block;
+    }
+  
+    /* Timing control container using grid */
+    .timing-controls {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+  
+    /* Timing input containers */
+    .timing-input {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+  
+    /* Timing input label styling */
+    .timing-input label {
+      font-size: 14px;
+      color: #666;
+    }
+  
+    /* Input styling */
+    .timing-input input {
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      outline: none;
+      background-color: #fff;
+      transition: all 0.3s ease;
+    }
+  
+    /* Focus effect */
+    .timing-input input:focus {
+      border-color: #6e8efb;
+      box-shadow: 0 0 5px rgba(110, 142, 251, 0.5);
+    }
+  
+    /* Space adjustment for last input in a group */
+    .timing-input:last-child {
+      margin-bottom: 0;
+    }
+  
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      /* Stack inputs in a single column */
+      .timing-controls {
+        grid-template-columns: 1fr; /* Stack inputs on top of each other */
+      }
+  
+      /* Dropdown (Select) styling for small screens */
+      #shapeSelect {
+        max-width: 100%; /* Make dropdown full width on small screens */
+      }
+  
+      /* Buttons */
+      button {
+        width: 100%; /* Ensure buttons take full width on small screens */
+        margin-bottom: 10px; /* Add space between buttons */
+        padding: 12px 15px; /* Adjust button size */
+      }
+    }
+  
+    #controls-row button {
+      min-width: 100px;
+    }
 
-  <button onclick="window.WTN.haptics.trigger({effect: 'impactMedium'})">Vibrate</button>
-<script src="https://app.webtonative.com/sdk.js"></script>
-<!-- Try these alternatives -->
-<script src="https://webtonative.com/sdk.js"></script>
-<script src="https://cdn.webtonative.com/sdk.js"></script>
-<script src="https://sdk.webtonative.com/sdk.js"></script>
-</body>
-</html>
+    #controls-row {
+        border: 2px solid goldenrod;
+        background: rgb(1, 1, 1);
+    }
+    .action-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+  background: transparent;
+}
+
+.action-buttons button {
+  width: 60px;
+  height: 60px;
+  background: #1e1e1e;
+  border: 2px solid #6e8efb;
+  border-radius: 50%;
+  color: #ffffff;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 6px rgba(110, 142, 251, 0.4);
+  position: relative;
+}
+
+.action-buttons button:hover {
+  background: #6e8efb;
+  color: #fff;
+  box-shadow: 0 0 12px #6e8efb, 0 0 18px #a777e3;
+  transform: scale(1.08);
+}
+
+.action-buttons button:active {
+  transform: scale(0.95);
+  box-shadow: 0 0 10px #a777e3 inset;
+}
+
+.action-buttons button i {
+  pointer-events: none;
+}
+#controls-row button {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+
+}
+#controls-row button {
+  width: 80px;
+  height: 41px;
+  background: #1e1e1e; /* Button background */
+  color: #fff;
+  font-size: 14px;
+  border: 5px solid transparent; /* Transparent border to create space */
+  border-radius: 10px; /* Rounded corners */
+  padding: 8px 16px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-clip: padding-box; /* Ensure background doesn't cover the border */
+border: 2px solid gold;
+}
+#controls-row{
+    border: 1px solid white;
+    max-width:500px;
+}
+    .shape-meditation {
+  font-size: 1.7rem;
+  color: #FFD700; /* Gold color */
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  padding-bottom: 10px;
+  width: auto; /* Ensure it adjusts to content width */
+  white-space: nowrap; /* Prevent the text from wrapping */
+}
+
+.shape-meditation .back-arrow {
+  background: none;
+  border: none;
+  color: #FFD700; /* Gold color */
+  font-size: 1.5rem;
+  margin-right: 10px; /* Space between the arrow and text */
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+/* Always visible underline */
+.shape-meditation::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(135deg, #FFD700, #FFA500); /* Gold to orange gradient */
+}
+
+/* Hover effect for back arrow */
+.shape-meditation:hover .back-arrow {
+  transform: translateX(-5px); /* Move the arrow slightly on hover */
+}
+
+/* Styling for the span to align properly */
+.shape-meditation span {
+  display: inline-block;
+}
+#controls-row {
+    border: 1px solid white;
+    max-width: 450px;
+}
+.timing-input label {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 13px;
+    margin-bottom: 6px;
+    text-align: center;
+}
+</style>
+      
+<style>
+    /* Action buttons container */
+.action-buttons {
+  gap: 12px;
+  padding: 10px;
+  margin: 0 auto;
+  width: fit-content;
+  background-color: rgba(40, 40, 40, 0.7);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Individual buttons */
+.action-buttons button {
+  width: 30px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(60, 60, 60, 0.8);
+  color: #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Button hover state */
+.action-buttons button:hover {
+  background-color: rgba(70, 70, 70, 0.9);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Button active state */
+.action-buttons button:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+off {
+  color: #a0aec0;
+}
+
+/* Voice button - on state */
+.action-buttons button.voice-on {
+  color: #4299e1;
+  background-color: #ebf8ff;
+}
+
+/* Icons within buttons */
+.action-buttons button i {
+  font-size: 16px;
+}
+    /* Popup Overlay - positioned over everything */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  backdrop-filter: blur(5px);
+}
+
+/* Popup Container */
+.popup {
+  background: linear-gradient(145deg, #1f2233, #292d44);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3),
+              0 0 0 1px rgba(255, 255, 255, 0.1);
+  width: 90%;
+  max-width: 420px;
+  padding: 30px;
+  text-align: center;
+  animation: fadeIn 0.3s ease-out;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle highlight effect */
+.popup::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #5e72e4, #8a5fff);
+}
+
+/* Typography */
+.popup h2 {
+  margin-top: 5px;
+  margin-bottom: 20px;
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.popup p {
+  color: #b4b9c8;
+  font-size: 15px;
+  line-height: 1.5;
+  margin-bottom: 25px;
+}
+
+/* Input field styling */
+.popup input[type="text"] {
+  width: 100%;
+  padding: 12px 15px;
+  background-color: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 15px;
+  margin-bottom: 25px;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.popup input[type="text"]:focus {
+  outline: none;
+  border-color: #5e72e4;
+  box-shadow: 0 0 0 2px rgba(94, 114, 228, 0.3);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.popup input[type="text"]::placeholder {
+  color: #8e94a3;
+}
+
+/* Button group */
+.button-group {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+/* Button styling */
+.popup button {
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  flex: 1;
+  max-width: 160px;
+}
+
+.save-btn {
+  background: linear-gradient(135deg, #5e72e4, #8a5fff);
+  color: white;
+  box-shadow: 0 4px 12px rgba(94, 114, 228, 0.3);
+}
+
+.save-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(94, 114, 228, 0.4);
+}
+
+.save-btn:active {
+  transform: translateY(1px);
+}
+
+.cancel-btn {
+  background: rgba(255, 255, 255, 0.08);
+  color: #b4b9c8;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cancel-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .popup {
+    padding: 25px 20px;
+  }
+  
+  .popup h2 {
+    font-size: 22px;
+  }
+  
+  .button-group {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .popup button {
+    width: 100%;
+    max-width: none;
+  }
+}
+    /* Guide container styling - designed for dark backgrounds */
+.guide-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(18, 18, 22, 0.85);
+  border: 1px solid #4d4dff;
+  border-radius: 16px;
+  padding: 30px;
+  width: 90%;
+  max-width: 550px;
+  text-align: center;
+  box-shadow: 0 0 25px rgba(77, 77, 255, 0.2);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+/* Heading styles */
+.guide-heading {
+  font-size: 26px;
+  color: #ffffff;
+  margin-bottom: 25px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  position: relative;
+  display: inline-block;
+}
+
+.guide-heading::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 2px;
+  background: #4d4dff;
+}
+
+/* Buttons grid */
+.guide-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
+  gap: 15px;
+  margin-top: 30px;
+}
+
+/* Button styles */
+.guide-buttons a {
+  display: inline-block;
+  padding: 12px 15px;
+  border-radius: 8px;
+  background: #232328;
+  color: #ffffff;
+  font-weight: 400;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  font-size: 15px;
+  border: 1px solid rgba(77, 77, 255, 0.3);
+}
+
+.guide-buttons a:hover {
+  background: #2a2a30;
+  border-color: #4d4dff;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 20, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 550px) {
+  .guide-container {
+    padding: 25px 20px;
+    width: 85%;
+  }
+  
+  .guide-heading {
+    font-size: 22px;
+  }
+  
+  .guide-buttons {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  
+  .guide-buttons a {
+    padding: 10px;
+    font-size: 14px;
+  }
+}
+
+/* css for breath section -------------------------------------------------------- */
+#breath-option {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  background: rgba(15, 15, 15, 0.85);
+  backdrop-filter: blur(8px);
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1), 0 0 15px rgba(129, 140, 248, 0.15);
+  padding: 16px 20px;
+  width: 320px;
+  max-width: 90vw;
+  border: 1px solid rgba(129, 140, 248, 0.2);
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.control-group > label {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  margin-bottom: 2px;
+  text-align: center;
+}
+
+.timing-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.timing-input {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  min-width: calc(50% - 6px);
+  background: rgba(30, 30, 30, 0.6);
+  border-radius: 5px;
+  padding: 8px;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.timing-input:hover {
+  background: rgba(40, 40, 40, 0.8);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.timing-input label {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.timing-input input {
+  background: rgba(20, 20, 20, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  color: white;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 5px 8px;
+  width: 60px;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.timing-input input:focus {
+  outline: none;
+  border-color: rgba(129, 140, 248, 0.7);
+  box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.2);
+}
+
+.timing-input input:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Hide spinner arrows for number inputs */
+.timing-input input::-webkit-outer-spin-button,
+.timing-input input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.timing-input input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Add some accent colors for a nice touch */
+#inhaleTime, #inhaleTime + label {
+  border-color: rgba(129, 140, 248, 0.3);
+}
+
+#exhaleTime, #exhaleTime + label {
+  border-color: rgba(52, 211, 153, 0.3);
+}
+
+#holdInTime, #holdInTime + label, 
+#holdOutTime, #holdOutTime + label {
+  border-color: rgba(251, 191, 36, 0.3);
+}
+
+/* Add subtle glow effect on focus */
+.timing-input:focus-within {
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.05);
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  #breath-option {
+    padding: 16px 18px;
+  }
+  
+  .timing-controls {
+    gap: 8px;
+  }
+  
+  .timing-input {
+    min-width: calc(50% - 4px);
+    padding: 8px;
+  }
+  
+  .timing-input input {
+    width: 65px;
+    font-size: 13px;
+  }
+}
+select {
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #4b5563; /* dark gray border */
+    background-color: #1f2937;  /* dark background */
+    font-size: 16px;
+    color: #f9fafb;             /* light text */
+    width: 100%;
+}
+
+</style>  
+
+<!-- Django BAckend data exercise saVE  -->
+<script>
+    // Store timings during animation
+    window.storedTimings = [];
+    
+    // Function to capture current timings - simplified to just array of values
+    function captureCurrentTimings() {
+        return [
+            parseFloat(document.getElementById('inhaleTime').value) || 4,
+            parseFloat(document.getElementById('holdInTime').value) || 4,
+            parseFloat(document.getElementById('exhaleTime').value) || 4,
+            parseFloat(document.getElementById('holdOutTime').value) || 4
+        ];
+    }
+    
+    // Add this function to your code to setup save functionality
+    function setupSaveExerciseButton() {
+        const saveButton = document.getElementById("saveExerciseButton");
+        
+        if (saveButton) {
+            saveButton.addEventListener("click", saveExercise);
+        } else {
+            console.error("Save exercise button not found!");
+        }
+    }
+    
+    // Separate save function for better organization
+    function saveExercise() {
+        const nickname = document.getElementById("exerciseNickname").value;
+        const shape = shapeSelect.value;
+        
+        // Store current timings as simple array
+        window.storedTimings = captureCurrentTimings();
+        
+        if (!nickname.trim()) {
+            alert("Please enter a nickname for the exercise.");
+            return;
+        }
+        
+        // Get CSRF token
+        const csrfToken = document.getElementById("csrf_token").value;
+        
+        fetch("{% url 'breathxapp:save_exercise' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-CSRFToken": csrfToken,
+            },
+            body: new URLSearchParams({
+                nickname: nickname,
+                shape: shape,
+                inputs: JSON.stringify(window.storedTimings), // Convert array to JSON
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Exercise saved successfully!");
+                closePopup(); // Close the popup
+            } else {
+                alert("Failed to save exercise: " + (data.error || "Unknown error"));
+            }
+        })
+        .catch(error => console.error("Error:", error));
+        
+        // Automatically simulate clicking the play button when Save is pressed
+        const playButton = document.getElementById("playSong");
+        if (playButton) playButton.click();
+    }
+    
+    // Function to close popup
+    function closePopup() {
+        const popup = document.querySelector('.popup-container');
+        if (popup) {
+            popup.style.display = 'none';
+        }
+    }
+    
+    // Add to your initialization function or use the existing DOMContentLoaded
+    document.addEventListener("DOMContentLoaded", function() {
+        // Add event listener for Save button
+        document.getElementById("saveExerciseButton").addEventListener("click", saveExercise);
+    });
+
+    </script>
+<!-- Buttons Coming gone  -->
+<script>
+  document.getElementById("breath-close").addEventListener("click", function() {
+document.getElementById("breath-option").style.display = "none";
+});
+// For the save exercise 
+const saveButton = document.getElementById("save-exercise-button-id");
+const popupOverlay = document.getElementById("popupOverlay");
+
+saveButton.addEventListener("click", () => {
+// Toggle visibility
+if (popupOverlay.style.display === "none" || popupOverlay.style.display === "") {
+popupOverlay.style.display = "flex";
+} else {
+popupOverlay.style.display = "none";
+}
+});
+
+function closePopup() {
+popupOverlay.style.display = "none";
+}
+const guideButton = document.getElementById("guide-button-id");
+const guideContainer = document.querySelector(".guide-container");
+
+guideButton.addEventListener("click", (e) => {
+// Prevent the click event from propagating to the document click event
+e.stopPropagation();
+
+// Toggle the visibility of the guide container
+guideContainer.style.display =
+guideContainer.style.display === "none" || guideContainer.style.display === ""
+? "block"
+: "none";
+});
+
+// Close the guide container when clicking anywhere else on the document
+document.addEventListener("click", (e) => {
+// Check if the click is outside the guide container or button
+if (!guideContainer.contains(e.target) && e.target !== guideButton) {
+guideContainer.style.display = "none";  // Hide the guide container
+}
+});
+
+</script>
+<style>
+
+#shapeSelect {
+    margin-top: 8px;
+    border: 1px solid #454544;
+    background: #1e1e1e;
+}
+#controls-row button {
+        border: 1px solid #454544;
+}
+.shape-meditation {
+    color: #ffffff;
+}
+
+
+
+.main-heading {
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.back-button {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  margin-right: 15px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.back-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.title {
+  color: white;
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.meditation-area {
+    margin-bottom: 20px;
+
+}
+@media screen and (max-width: 668px) {
+.guide-container-end{
+  display: block;
+}
+}
+#vibration-button-set {
+  position: relative;
+}
+
+#vibration-button-set::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60%;
+  height: 3px;
+  background-color: #ff4444;
+  transform: translate(-50%, -50%) rotate(45deg);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+#vibration-button-set.off::after {
+  opacity: 1;
+}
+
+#vibration-button-set.off img {
+  filter: grayscale(100%) opacity(0.5);
+}
+
+
+.action-buttons {
+    gap: 5%;
+    padding: 10px;
+    margin: 0 auto;
+    width: 100%;
+    background-color: #121212;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+#controls-row {
+    border: 1px solid white;
+    max-width: 450px;
+    gap: 30px;
+}
+#controls-row {
+    border: 1px solid #302e2e;
+    max-width: 450px;
+    gap: 30px;
+}
+
+.action-buttons {
+    gap: 12%;
+    padding: 10px;
+    margin: 0 auto;
+    width: 100%;
+    background-color: #000000;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    margin-top: -40px;
+    border-left: 1px solid #302e2e;
+    border-right: 1px solid #302e2e;
+    border-bottom: 1px solid #302e2e;
+    max-width: 450px;
+}
+
+</style>
+
+
+    <!-- For activity Page ----------------------------------------------- -->
+     <script>
+    let startTime = Date.now();
+
+    window.addEventListener("beforeunload", function () {
+        let duration = Math.round((Date.now() - startTime) / 1000);
+
+        navigator.sendBeacon("/activityapp/track-activity/", JSON.stringify({
+            url: window.location.pathname,
+            duration: duration
+        }));
+    });
+</script>
+
+<!-- For real time smartwatch  -->
+<script>
+  // Simple WebSocket Integration for Breathing Exercise
+// Add this script at the end of your breathing exercise page
+
+// WebSocket variables
+let socket = null;
+
+// Get the user's code from Django template - provide fallback
+const code = "45283";
+
+// Initialize WebSocket connection
+function initWebSocket() {
+    if (!code || code === "{{ code }}") {
+        console.error("Code variable not properly set in Django template");
+        return;
+    }
+    
+    try {
+        socket = new WebSocket("wss://6692547a65db.ngrok-free.app/ws/smartwatch/" + code + "/");
+ 
+        socket.onopen = () => {
+            console.log("WebSocket connected");
+        };
+        
+        socket.onclose = (event) => {
+            console.log("WebSocket disconnected, code:", event.code, "reason:", event.reason);
+            setTimeout(initWebSocket, 5000);
+        };
+        
+        socket.onerror = (error) => {
+            console.error("WebSocket connection failed");
+        };
+        
+    } catch (error) {
+        console.error("Failed to create WebSocket:", error.message);
+    }
+}
+
+// Send breathing state via WebSocket
+function sendBreathingState(state) {
+    if (socket && socket.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify({ state: state }));
+    }
+}
+
+// Override the existing notifyPhaseChange function
+const originalNotifyPhaseChange = window.notifyPhaseChange;
+
+window.notifyPhaseChange = function(phase) {
+    if (originalNotifyPhaseChange) {
+        originalNotifyPhaseChange(phase);
+    }
+    sendBreathingState(phase);
+};
+
+// Monitor for phase changes
+let lastSentPhase = '';
+
+function monitorAndSendPhase() {
+    if (typeof phaseNames !== 'undefined' && 
+        typeof currentPhase !== 'undefined' && 
+        isAnimating && 
+        phaseNames[currentPhase] && 
+        phaseNames[currentPhase] !== lastSentPhase) {
+        
+        lastSentPhase = phaseNames[currentPhase];
+        sendBreathingState(lastSentPhase);
+    }
+}
+
+setInterval(monitorAndSendPhase, 100);
+
+// Send 'Stopped' when animation stops
+const originalStopAnimation = window.stopAnimation;
+window.stopAnimation = function() {
+    if (originalStopAnimation) {
+        originalStopAnimation.apply(this, arguments);
+    }
+    sendBreathingState('Stopped');
+    lastSentPhase = '';
+};
+
+// Initialize WebSocket
+initWebSocket();
+ </script>
+ <style>
+  #controls-row button {
+    margin-right: 22px;
+  }
+  @media (max-width: 500px) {
+    #breathstartbtn {
+      display: flex;
+      padding: 0;
+      margin: 0;
+      width: 100vw;
+      gap: 12px;
+    }
+ #controls-row button {
+    margin-right: 0px;
+  }
+    #breathtoggleBtn,
+    #startButton {
+      flex: 1;
+      margin: 0;
+      padding: 0;
+      border: none;
+      box-sizing: border-box;
+    }
+        .control-group {
+        margin-bottom: 5px;
+    }
+.action-buttons button {
+    width: 42px;
+    height: 42px;
+}
+
+  }
+  @media (max-width: 430px) {
+
+  #controls-row {
+    border: 1px solid #302e2e;
+    max-width: 372px;
+    gap: 30px;
+}
+  }
+
+  @media (max-width: 350px) {
+
+  #controls-row {
+    border: 1px solid #302e2e;
+    max-width: 320px;
+    gap: 30px;
+}
+  }
+</style>
+
+{% endblock content %}

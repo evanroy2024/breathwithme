@@ -1,0 +1,361 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="header mb-5">
+        <h1>Sleep Sessions</h1>
+        <div class="nav-buttons">
+               <button id="toggle-star-filter" onclick="toggleStarFilter()" title="Show only starred playlists">★</button>
+
+        </div>
+    </div>
+    
+    <div class="grid">
+        {% for playlist in playlists %}
+        <div class="playlist-card {% if playlist.star %}starred{% endif %}">
+            <!-- <div class="playlist-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" fill="currentColor"/>
+                </svg>
+            </div> -->
+            <div class="playlist-info">
+                <div class="playlist-heading">
+                <h3>{{ playlist.name }}</h3>
+
+                     <button class="star-btn {% if not playlist.star %}unstarred{% endif %}"
+        data-playlist-id="{{ playlist.id }}"
+        onclick="toggleUserPlaylistStar(this)">
+  {% if playlist.star %}
+    ★
+  {% else %}
+    ☆
+  {% endif %}
+</button>
+                </div>
+                <div class="playlist-creator">
+                    <span class="creator-dot"></span>
+                    <span>Sleep Music</span>
+                </div>
+                <div class="playlist-meta">
+                    <span>{{ playlist.tracks.count }} TRACKS</span>
+                    <span>•</span>
+                    <span class="stat-item">Tags - {{ playlist.tags }}</span>
+
+                </div>
+            </div>
+            <a href="{% url 'musicapp:exercise_page' %}?playlist_id={{ playlist.id }}" class="view-btn">
+                PLAY PLAYLIST
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M5 12h14m-7-7l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
+            <form method="POST" action="{% url 'musicapp:delete_playlist' playlist.id %}" style="margin-top: 10px;" onsubmit="return confirm('Delete this playlist?');">
+        {% csrf_token %}
+        <button type="submit" class="delete-btn">🗑️ Delete</button>
+    </form>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    body {
+        background: #0f0f0f;
+        color: #fff;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #333;
+    }
+
+    .header h1 {
+        font-size: 2.8rem;
+        font-weight: 800;
+        margin: 0;
+        background: linear-gradient(135deg, #fff 0%, #a0a0a0 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .nav-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .nav-btn {
+        padding: 8px 16px;
+        background: transparent;
+        border: 1px solid #444;
+        color: #999;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 500;
+        border-radius: 20px;
+        transition: all 0.2s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .nav-btn.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-color: transparent;
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .nav-btn:hover:not(.active) {
+        border-color: #666;
+        color: #ccc;
+        text-decoration: none;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .playlist-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 2rem;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .playlist-card:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-4px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .playlist-icon {
+        width: 56px;
+        height: 56px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+        color: #fff;
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+    }
+
+    .playlist-info h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 0 0 0.5rem 0;
+        color: #fff;
+    }
+
+    .playlist-creator {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        font-size: 0.95rem;
+        color: #999;
+    }
+
+    .creator-dot {
+        width: 8px;
+        height: 8px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+    }
+
+    .playlist-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.75rem;
+        color: #666;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        margin-bottom: 1.5rem;
+    }
+
+    .view-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        width: 100%;
+        padding: 14px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #fff;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 600;
+        border-radius: 10px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        backdrop-filter: blur(10px);
+    }
+
+    .view-btn:hover {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.3);
+        color: #fff;
+        text-decoration: none;
+        transform: translateY(-1px);
+    }
+
+    .view-btn svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    @media (max-width: 768px) {
+        .header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .nav-buttons {
+            width: 100%;
+            justify-content: flex-start;
+        }
+        
+        .grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+        }
+
+        .container {
+            padding: 1rem;
+        }
+    }
+    .delete-btn {
+    background-color: #ff4b2b;
+    color: white;
+    padding: 6px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+    width: 100%;
+    height: 50px;
+}
+.delete-btn:hover {
+    background-color: #d4371a;
+}
+
+</style>
+<style>
+  .star-btn {
+    background: none;
+    border: none;
+    font-size: 26px;
+    cursor: pointer;
+    color: #f1c40f;
+    padding: 0;
+    outline: none;
+    transition: transform 0.2s ease;
+    margin-top: -10px;
+    margin-left: 20px;
+  }
+
+  .star-btn.unstarred {
+    color: #ccc;
+  }
+
+  .star-btn:hover {
+    transform: scale(1.1);
+  }
+</style>
+<style>
+  #toggle-star-filter {
+    background-color: #f1c40f;
+    border: none;
+    color: rgb(0, 0, 0);
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+
+  #toggle-star-filter:hover {
+    background-color: #f39c12;
+    transform: scale(1.05);
+    color: rgb(0, 0, 0);
+
+  }
+</style>
+
+<script>
+  function toggleUserPlaylistStar(button) {
+    const playlistId = button.getAttribute('data-playlist-id');
+
+    fetch("{% url 'musicapp:toggle_user_playlist_star' %}", {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': '{{ csrf_token }}',
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({ playlist_id: playlistId })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'ok') {
+        button.textContent = data.starred ? '★' : '☆';
+        button.classList.toggle('unstarred', !data.starred);
+      } else {
+        alert(data.message || 'Something went wrong.');
+      }
+    });
+  }
+</script>
+<script>
+  let filterOn = false;
+
+  function toggleStarFilter() {
+    filterOn = !filterOn;
+    const btn = document.getElementById('toggle-star-filter');
+    const cards = document.querySelectorAll('.playlist-card');
+
+    cards.forEach(card => {
+      if (filterOn) {
+        if (!card.classList.contains('starred')) {
+          card.style.display = 'none';
+        }
+      } else {
+        card.style.display = 'block';
+      }
+    });
+
+    btn.textContent = filterOn ? 'All' : '★';
+  }
+</script>
+{% endblock %}

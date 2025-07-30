@@ -1,0 +1,2162 @@
+{% extends "base2.html" %}
+{% load static %}
+{% block title %}
+Breathing Exercise Songs
+{% endblock %}
+
+{% block content %}
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #121212;
+      color: white;
+      font-family: 'Arial', sans-serif;
+      overflow: hidden;
+    }
+
+    .container {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .shape-container {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      margin: 20px 0;
+    }
+
+    .breathing-circle {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.5s ease, box-shadow 0.5s ease;
+    }
+
+    .breathing-square {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.5s ease, box-shadow 0.5s ease;
+      display: none; /* Hidden by default */
+    }
+
+    .breathing-text {
+      font-size: 32px;
+      font-weight: bold;
+      color: white;
+      opacity: 0.9;
+      text-align: center;
+      z-index: 10;
+      transition: transform 0.5s ease, opacity 0.5s ease;
+    }
+
+    .marker-ball {
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      background-color: white;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) translate(0, -150px);
+      box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.7);
+      z-index: 5;
+    }
+
+    .pulsate {
+      animation: pulsate 2s infinite ease-in-out;
+    }
+
+    @keyframes pulsate {
+      0% { transform: scale(1); box-shadow: 0 0 10px 2px rgba(90, 200, 250, 0.5); }
+      50% { transform: scale(1.1); box-shadow: 0 0 20px 5px rgba(90, 200, 250, 0.8); }
+      100% { transform: scale(1); box-shadow: 0 0 10px 2px rgba(90, 200, 250, 0.5); }
+    }
+
+    .inhale-animation {
+      box-shadow: 0 0 30px rgba(64, 224, 208, 0.5);
+    }
+
+    .exhale-animation {
+      box-shadow: 0 0 30px rgba(138, 43, 226, 0.5);
+    }
+
+    .hold-animation {
+      box-shadow: 0 0 30px rgba(255, 165, 0, 0.5);
+    }
+
+    .title {
+      margin-bottom: 20px;
+      font-size: 24px;
+      text-align: center;
+    }
+
+    .controls {
+      margin-top: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .select-group {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 10px;
+    }
+
+    audio {
+      margin-bottom: 20px;
+      width: 300px;
+    }
+    
+    .waiting {
+      color: #aaa;
+      font-style: italic;
+    }
+
+    .timer {
+      margin-top: 10px;
+      font-size: 16px;
+      color: #aaa;
+    }
+  </style>
+
+  <div class="container">
+
+    <div id="topmargin" style="color: #121212;"> 
+      it is 
+    </div>
+    
+    <div class="shape-container" id="shapeContainer">
+      <div class="breathing-circle" id="breathingCircle">
+        <div class="breathing-text" id="breathText">Waiting...</div>
+      </div>
+      <div class="breathing-square" id="breathingSquare">
+        <div class="breathing-text" id="breathTextSquare">Waiting...</div>
+      </div>
+      <div class="marker-ball" id="markerBall"></div>
+    </div>
+    
+    <div class="controls">
+      <div class="select-group">
+        <div class="main-three-btn">
+        <div class="pattern-select">
+          <label for="breathPattern">Breathing </label>
+          <select id="breathPattern">
+            {% for item in names %}
+            <option value="default" >{{ item.name1 }}</option>
+            <option value="halfBar">{{ item.name2 }}</option>
+            <option value="fullBar" selected>{{ item.name3 }}</option>
+            <option value="twoBar">{{ item.name4 }}</option>
+            <option value="fourBar">{{ item.name5 }}</option>
+            {% endfor %}
+
+          </select>
+        </div>
+        
+        <div class="shape-select">
+          <label >Vibration :</label>
+          <select id="VibrationType">
+            <option value="2">Off </option>
+            <option value="3">On </option>
+          </select>
+        </div> 
+
+        <div class="shape-select">
+          <label >Voice :</label>
+
+          <select onchange="speechEnabled = this.value === 'on';">
+            <option value="on">On</option>
+            <option value="off" selected>Off</option>
+          </select>
+          
+          
+        </div>
+      </div>
+     
+        <div id="shapeOverlay">
+          <div class="shape-box">
+            <label for="shapeType">Choose a Shape:</label>
+            <select id="shapeType">
+              <option value="circle">Select Shape</option>
+              <option value="circle">Circle (Inhale/Exhale)</option>
+              <option value="square">Square (Inhale/Hold/Exhale/Hold)</option>
+            </select>
+          </div>
+        </div>
+        
+      </div>
+      
+      <!-- <form method="get" onchange="this.submit()" id="song-switcher">
+        <label for="songSelect">Choose another song:</label>
+        <select name="song_id" id="songSelect">
+          {% for s in all_songs %}
+            <option value="{{ s.id }}" {% if s.id == song.id %}selected{% endif %}>{{ s.title }}</option>
+          {% endfor %}
+        </select>
+      </form> -->
+      <!-- muscic selection starts  -->
+      <!-- Button to open the modal -->
+<!-- Category selection starts -->
+<!-- Button to open the modal -->
+
+<!-- Modal structure (hidden by default) -->
+<!-- Modal structure (hidden by default) ---------------------------------------------------------------->
+<div id="uniqueModal" class="unique-modal">
+  <div class="unique-modal-content">
+    <span class="unique-close" onclick="closeUniqueModal()">&times;</span>
+
+    <div class="dark-category-container">
+      <form method="get" id="category-switcher" class="dark-category-form">
+        <label for="categorySelect" class="dark-category-label">Choose a category:</label>
+        <div class="dark-select-wrapper">
+          <select name="category_id" id="categorySelect" class="dark-category-select">
+            <option value="">All Categories</option>
+            {% for category in categories %}
+              <option value="{{ category.id }}" {% if selected_category_id == category.id|stringformat:"s" %}selected{% endif %}>
+                {{ category.name }}
+              </option>
+            {% endfor %}
+          </select>
+          <span class="dark-select-arrow">▼</span>
+        </div>
+      </form>
+    </div>
+
+    <!-- Song listing starts -->
+    <div id="song-list" class="dark-song-list">
+      {% for song in all_songs %}
+        <div class="dark-song-item">
+          <a href="?song_id={{ song.id }}&category_id={{ selected_category_id|default:'' }}" class="dark-song-link">
+            <div class="dark-song-icon">♫</div>
+            <div class="dark-song-title">{{ song.title }}</div>
+            <div class="dark-song-arrow">→</div>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+
+    <script>
+      // JavaScript to handle category change and update song list via AJAX
+      document.getElementById('categorySelect').addEventListener('change', function() {
+        var categoryId = this.value;
+        
+        // Update the URL with the new category (without reloading)
+        var url = new URL(window.location);
+        url.searchParams.set('category_id', categoryId);
+        window.history.pushState({}, '', url);
+        
+        // Send the AJAX request to the same URL with the selected category_id
+        fetch('?category_id=' + categoryId, {
+          method: 'GET',
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          // Update the song list with the new songs
+          var songListDiv = document.getElementById('song-list');
+          songListDiv.innerHTML = data.song_options.join('');
+        })
+        .catch(error => console.log('Error fetching song list:', error));
+      });
+    </script>
+  </div>
+</div>
+
+<style>
+  /* Modal Styles - Updated for Dark Theme */
+  .unique-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+  }
+
+  .unique-modal-content {
+    background-color: #121212;
+    color: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    width: 80%;
+    max-width: 600px;
+    margin: auto;
+    position: relative;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  .unique-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 30px;
+    color: #ffffff;
+    cursor: pointer;
+    transition: color 0.3s;
+    z-index: 10;
+  }
+
+  .unique-close:hover {
+    color: #565bc0;
+  }
+
+  /* Category Selector Styles */
+  .dark-category-container {
+    padding: 0 0 15px 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #2a2a2a;
+  }
+  
+  .dark-category-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .dark-category-label {
+    color: #ffffff;
+    font-size: 18px;
+    margin-bottom: 12px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+  
+  .dark-select-wrapper {
+    position: relative;
+    width: 100%;
+  }
+  
+  .dark-category-select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #383838;
+    background-color: #1e1e1e;
+    color: #ffffff;
+    border-radius: 8px;
+    font-size: 16px;
+    appearance: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .dark-category-select:hover {
+    background-color: #2a2a2a;
+  }
+  
+  .dark-category-select:focus {
+    outline: none;
+    border-color: #565bc0;
+    box-shadow: 0 0 0 2px rgba(86, 91, 192, 0.3);
+  }
+  
+  .dark-select-arrow {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #ffffff;
+    pointer-events: none;
+    font-size: 12px;
+  }
+  
+  /* Song List Styles */
+  .dark-song-list {
+    max-height: 50vh;
+    overflow-y: auto;
+    border-radius: 8px;
+    background-color: #1a1a1a;
+  }
+  
+  .dark-song-item {
+    border-bottom: 1px solid #2a2a2a;
+    transition: background-color 0.2s ease;
+  }
+  
+  .dark-song-item:last-child {
+    border-bottom: none;
+  }
+  
+  .dark-song-item:hover {
+    background-color: #2a2a2a;
+  }
+  
+  .dark-song-link {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    color: #ffffff;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    width: 100%;
+  }
+  
+  .dark-song-icon {
+    font-size: 18px;
+    margin-right: 16px;
+    color: #565bc0;
+    min-width: 24px;
+    text-align: center;
+  }
+  
+  .dark-song-title {
+    font-size: 16px;
+    font-weight: 400;
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: 0.3px;
+  }
+  
+  .dark-song-arrow {
+    margin-left: 12px;
+    opacity: 0;
+    transition: all 0.3s ease;
+    font-weight: 300;
+    font-size: 18px;
+  }
+  
+  .dark-song-link:hover .dark-song-arrow {
+    opacity: 1;
+    transform: translateX(3px);
+  }
+
+  /* Scrollbar Styling */
+  .dark-song-list::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .dark-song-list::-webkit-scrollbar-track {
+    background: #1a1a1a;
+  }
+
+  .dark-song-list::-webkit-scrollbar-thumb {
+    background-color: #3a3a3a;
+    border-radius: 6px;
+  }
+
+  .dark-song-list::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+  
+  /* Media Queries for Responsiveness */
+  @media (max-width: 768px) {
+    .unique-modal-content {
+      width: 90%;
+      padding: 20px;
+    }
+    
+    .dark-song-link {
+      padding: 12px 14px;
+    }
+    
+    .dark-song-title {
+      font-size: 15px;
+    }
+    
+    .dark-song-icon {
+      font-size: 16px;
+      margin-right: 12px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .unique-modal-content {
+      width: 95%;
+      padding: 15px;
+    }
+    
+    .dark-category-select {
+      padding: 10px 14px;
+    }
+    
+    .dark-song-link {
+      padding: 10px 12px;
+    }
+    
+    .dark-song-title {
+      font-size: 14px;
+    }
+    
+    .dark-song-icon {
+      margin-right: 10px;
+      font-size: 14px;
+    }
+  }
+</style>
+
+<!-- Song selection ends -->
+      <!-- music selection Ends  -->
+      <audio id="audio" controls controlsList="nodownload noplaybackrate nofullscreen noremoteplayback">
+        <source src="{{ song.song.url }}" type="audio/mpeg">
+      </audio>
+      
+
+<div style="display: none;" class="timer" id="timer">00:00</div>
+<div class="song-vibration-btn">
+  <button id="uniqueOpenModalButton" onclick="openUniqueModal()">Open Songs</button>
+<button class="plst-modal-trigger-btn" onclick="openPlaylistModal()">Add to Playlist</button>
+<button class="plst-modal-trigger-btn" onclick="openCreateModal()">Create Playlist</button>
+
+</div>
+    </div>
+  </div>
+
+<script>
+  const breathText = document.getElementById("breathText");
+  const breathTextSquare = document.getElementById("breathTextSquare");
+  const breathingCircle = document.getElementById("breathingCircle");
+  const breathingSquare = document.getElementById("breathingSquare");
+  const audio = document.getElementById("audio");
+  const markerBall = document.getElementById("markerBall");
+  const timer = document.getElementById("timer");
+  const patternSelect = document.getElementById("breathPattern");
+  const shapeSelect = document.getElementById("shapeType");
+
+  // Set the default selection to fullBar
+  // patternSelect.value = 'fullBar';
+  // Beat times from Django
+  const beatTimes = {{ song.beat_times|safe }};
+  
+  // Different states for circle and square
+  const circleStates = ["Inhale", "Exhale"];
+  const squareStates = ["Inhale", "Hold", "Exhale", "Hold"];
+  
+  let stateIndex = 0;
+  let timeoutIds = [];
+  let animationFrameId = null;
+  let isPaused = true;
+
+  // Pattern multipliers
+  const patterns = {
+    "default": 1,  // Each beat is one state
+    "halfBar": 2,  // Every 2 beats is one state
+    "fullBar": 4,  // Every 4 beats is one state
+    "twoBar": 8,    // Every 8 beats is one state
+    "fourBar": 16 
+  };
+
+  
+// Voice -------------------------------------------------------------------
+const audioFiles = {
+    'Inhale': new Audio("{% static 'voices/inhale.mp3' %}"),
+    'Hold': new Audio("{% static 'voices/hold.mp3' %}"),
+    'Exhale': new Audio("{% static 'voices/exhale.mp3' %}")
+};
+
+// For Vibration in React native app ------------------------------------------------------------------------------
+// Add vibration state variable
+let vibrationEnabled = true; // default on
+
+// Add event listener to the select dropdown
+document.getElementById('VibrationType').addEventListener('change', function() {
+  vibrationEnabled = this.value === '3'; // '3' = On, '2' = Off
+  console.log('Vibration', vibrationEnabled ? 'enabled' : 'disabled');
+});
+
+document.getElementById('VibrationType').value = '3';
+
+function notifyPhaseChange(phase) { 
+  console.log("Phase changed to:", phase); 
+   
+  if (vibrationEnabled) {
+    if (window.ReactNativeWebView) { 
+      window.ReactNativeWebView.postMessage(JSON.stringify({ 
+        type: 'phaseChange', 
+        phase: phase 
+      })); 
+      console.log("post message sent"); 
+    } else { 
+      console.log("ReactNativeWebView not available - would have sent message:", phase); 
+    } 
+  } else {
+    console.log("Vibration disabled - message not sent");
+  }
+}
+  // Switch between circle and square
+  shapeSelect.addEventListener("change", function() {
+    if (this.value === "circle") {
+      breathingCircle.style.display = "flex";
+      breathingSquare.style.display = "none";
+    } else {
+      breathingCircle.style.display = "none";
+      breathingSquare.style.display = "flex";
+    }
+  });
+
+  // Position the ball on the shape's edge properly
+  function calculatePosition(progress) {
+    const shape = shapeSelect.value;
+    const radius = 150; // Shape radius/half-width in pixels
+    let x, y;
+    
+    if (shape === "circle") {
+      // Convert progress (0-1) to angle in radians
+      const angle = progress * 2 * Math.PI - Math.PI/2; // Start from top (-90 degrees)
+      
+      // Calculate x and y coordinates on the circle
+      x = radius * Math.cos(angle);
+      y = radius * Math.sin(angle);
+    } else {
+      // For square - we need to determine which edge we're on
+      // Progress 0-0.25 = top edge, 0.25-0.5 = right edge, etc.
+      const side = Math.floor(progress * 4);
+      const sideProgress = (progress * 4) - side; // Progress along this side (0-1)
+      
+      switch(side) {
+        case 0: // Top edge (left to right)
+          x = -radius + (sideProgress * 2 * radius);
+          y = -radius;
+          break;
+        case 1: // Right edge (top to bottom)
+          x = radius;
+          y = -radius + (sideProgress * 2 * radius);
+          break;
+        case 2: // Bottom edge (right to left)
+          x = radius - (sideProgress * 2 * radius);
+          y = radius;
+          break;
+        case 3: // Left edge (bottom to top)
+        default:
+          x = -radius;
+          y = radius - (sideProgress * 2 * radius);
+          break;
+      }
+    }
+    
+    // Apply the transformation - position from center
+    markerBall.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px)`;
+  }
+
+  // Initialize ball at the top of the shape
+  calculatePosition(0);
+
+  // Update timer display
+  function updateTimer(currentTime) {
+    const minutes = Math.floor(currentTime / 60);
+    const seconds = Math.floor(currentTime % 60);
+    timer.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  // Function to determine current breath state based on time and pattern
+  function getCurrentBreathState(currentTime) {
+    if (currentTime < beatTimes[0]) {
+      return "Waiting...";
+    }
+    
+    // Get current pattern multiplier
+    const patternMultiplier = patterns[patternSelect.value];
+    
+    // Find which beat group we're currently in
+    let beatGroupIndex = -1;
+    
+    for (let i = 0; i < beatTimes.length; i += patternMultiplier) {
+      if (currentTime >= beatTimes[i]) {
+        beatGroupIndex = Math.floor(i / patternMultiplier);
+      } else {
+        break;
+      }
+    }
+    
+    // Return the appropriate state based on shape
+    if (beatGroupIndex >= 0) {
+      const shape = shapeSelect.value;
+      if (shape === "circle") {
+        return circleStates[beatGroupIndex % 2];
+      } else {
+        return squareStates[beatGroupIndex % 4];
+      }
+    } else {
+      return "Waiting...";
+    }
+  }
+
+  // Animation loop for smooth marker movement and synced breath changes
+  // Add this near the top with your other variables
+const synth = window.speechSynthesis;
+let lastSpokenState = "";
+let speechEnabled = false; // Add this line
+let lastNotifiedState = "";
+  function animateMarker() {
+    if (isPaused) return;
+    
+    const currentTime = audio.currentTime;
+    updateTimer(currentTime);
+    
+    // Update breath text based on current time and pattern
+    const currentState = getCurrentBreathState(currentTime);
+    const textElements = [breathText, breathTextSquare];
+
+    // Add speech functionality - speak state when it changes
+
+    if (speechEnabled && currentState !== lastSpokenState && currentState !== "Waiting...") {
+    // Stop any currently playing audio
+    Object.values(audioFiles).forEach(audio => {
+        audio.pause();
+        audio.currentTime = 0;
+    });
+    
+    // Play the appropriate audio file immediately
+    if (audioFiles[currentState]) {
+        audioFiles[currentState].play();
+    }
+    
+    // Update last spoken state
+    lastSpokenState = currentState;
+}
+     // Only send notification when state actually changes
+    if (currentState !== lastNotifiedState && currentState !== "Waiting...") {
+        notifyPhaseChange(currentState);
+        lastNotifiedState = currentState;
+    }
+    
+    textElements.forEach(element => {
+      if (currentState === "Waiting...") {
+        element.innerText = currentState;
+        element.classList.add("waiting");
+      } else {
+        element.innerText = currentState;
+        element.classList.remove("waiting");
+      }
+    });
+
+    // Audio Code start   ------------------------------------------------------
+audio.onended = () => {
+    timeoutIds.forEach(id => clearTimeout(id));
+    timeoutIds = [];
+    stateIndex = 0;
+    lastSpokenState = ""; // Reset the last spoken state
+    
+    // Rest of your existing onended code...
+};
+
+// Also reset lastSpokenState when seeking
+audio.onseeked = () => {
+    lastSpokenState = ""; // Reset so the current state will be spoken
+};
+    // Audio Code End   ------------------------------------------------------
+    
+    // Get current pattern multiplier
+    const patternMultiplier = patterns[patternSelect.value];
+    
+    // Find the current and next beat group
+    let currentBeatGroupIndex = -1;
+    let nextBeatGroupIndex = -1;
+    
+    for (let i = 0; i < beatTimes.length; i += patternMultiplier) {
+      if (currentTime >= beatTimes[i]) {
+        currentBeatGroupIndex = Math.floor(i / patternMultiplier);
+      } else {
+        nextBeatGroupIndex = Math.floor(i / patternMultiplier);
+        break;
+      }
+    }
+    
+    // Handle case where we're past the last beat group
+    if (nextBeatGroupIndex < 0 || currentBeatGroupIndex < 0) {
+      // If at the end or not started yet
+      if (currentBeatGroupIndex >= 0) {
+        calculatePosition(1); // Position at the end of the shape
+      } else {
+        calculatePosition(0); // Position at the beginning of the shape
+      }
+      animationFrameId = requestAnimationFrame(animateMarker);
+      return;
+    }
+    
+    // Calculate the start and end beat times for current group
+    const currentGroupStartIndex = currentBeatGroupIndex * patternMultiplier;
+    const nextGroupStartIndex = nextBeatGroupIndex * patternMultiplier;
+    
+    const currentGroupStartTime = beatTimes[currentGroupStartIndex];
+    const nextGroupStartTime = beatTimes[nextGroupStartIndex];
+    
+    // Calculate progress within the current beat group
+    const groupDuration = nextGroupStartTime - currentGroupStartTime;
+    const progress = groupDuration > 0 ? (currentTime - currentGroupStartTime) / groupDuration : 0;
+    
+    // For the square, we need to map to the appropriate state
+    let mappedProgress = progress;
+    if (shapeSelect.value === "square") {
+      // For square, the current state determines which edge we're on
+      const stateInCycle = currentBeatGroupIndex % 4;
+      mappedProgress = (stateInCycle + progress) / 4;
+    }
+    
+    // Calculate position along the shape (full circle/square per cycle)
+    calculatePosition(mappedProgress);
+    
+    // Apply appropriate animation based on current state
+    updateShapeAnimation(currentState);
+    
+    animationFrameId = requestAnimationFrame(animateMarker);
+  }
+
+  // Update shape animation based on state
+  function updateShapeAnimation(state) {
+    // Remove all animations first
+    breathingCircle.classList.remove("pulsate", "inhale-animation", "exhale-animation", "hold-animation");
+    breathingSquare.classList.remove("pulsate", "inhale-animation", "exhale-animation", "hold-animation");
+    
+    // Apply appropriate animation
+    if (state === "Inhale") {
+      breathingCircle.classList.add("inhale-animation");
+      breathingSquare.classList.add("inhale-animation");
+    } else if (state === "Exhale") {
+      breathingCircle.classList.add("exhale-animation");
+      breathingSquare.classList.add("exhale-animation");
+    } else if (state === "Hold") {
+      breathingSquare.classList.add("hold-animation");
+    }
+  }
+
+  audio.onplay = () => {
+    isPaused = false;
+    
+    // Remove all animations from the shapes
+    breathingCircle.classList.remove("pulsate", "inhale-animation", "exhale-animation", "hold-animation");
+    breathingSquare.classList.remove("pulsate", "inhale-animation", "exhale-animation", "hold-animation");
+    
+    // Clear any previous timers
+    timeoutIds.forEach(id => clearTimeout(id));
+    timeoutIds = [];
+    
+    // Start animation loop which will handle both ball movement and text updates
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+    }
+    animationFrameId = requestAnimationFrame(animateMarker);
+  };
+
+  // On pause, just set isPaused flag
+  audio.onpause = () => {
+    isPaused = true;
+    
+    // Cancel the animation frame but don't reset position or text
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+    }
+    
+    // Clear any scheduled timeouts if any
+    timeoutIds.forEach(id => clearTimeout(id));
+    timeoutIds = [];
+  };
+
+  audio.onended = () => {
+    timeoutIds.forEach(id => clearTimeout(id));
+    timeoutIds = [];
+    stateIndex = 0;
+    
+    // Reset text in both shapes
+    const textElements = [breathText, breathTextSquare];
+    textElements.forEach(element => {
+      element.innerText = "Waiting...";
+      element.classList.add("waiting");
+    });
+    
+    // Remove all animations from the shapes
+    breathingCircle.classList.remove("pulsate", "inhale-animation", "exhale-animation", "hold-animation");
+    breathingSquare.classList.remove("pulsate", "inhale-animation", "exhale-animation", "hold-animation");
+    
+    isPaused = true;
+    
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+    }
+    
+    // Reset marker position to top
+    calculatePosition(0);
+  };
+
+  // Handle seeking in the audio
+  audio.onseeked = () => {
+    // Update everything based on new position
+    const currentTime = audio.currentTime;
+    updateTimer(currentTime);
+    
+    const currentState = getCurrentBreathState(currentTime);
+    const textElements = [breathText, breathTextSquare];
+    
+    textElements.forEach(element => {
+      if (currentState === "Waiting...") {
+        element.innerText = currentState;
+        element.classList.add("waiting");
+      } else {
+        element.innerText = currentState;
+        element.classList.remove("waiting");
+      }
+    });
+    
+    // Update shape animation
+    updateShapeAnimation(currentState);
+    
+    // If not paused, ensure animation is running
+    if (!isPaused && !animationFrameId) {
+      animationFrameId = requestAnimationFrame(animateMarker);
+    }
+  };
+
+  // When breathing pattern or shape changes, update the visualization
+  patternSelect.addEventListener("change", updateOnPatternOrShapeChange);
+  shapeSelect.addEventListener("change", updateOnPatternOrShapeChange);
+
+  function updateOnPatternOrShapeChange() {
+    if (!isPaused) {
+      // Force update of the breathing state and animation
+      const currentTime = audio.currentTime;
+      
+      const currentState = getCurrentBreathState(currentTime);
+      const textElements = [breathText, breathTextSquare];
+      
+      textElements.forEach(element => {
+        if (currentState === "Waiting...") {
+          element.innerText = currentState;
+          element.classList.add("waiting");
+        } else {
+          element.innerText = currentState;
+          element.classList.remove("waiting");
+        }
+      });
+      
+      // Update shape animation
+      updateShapeAnimation(currentState);
+    }
+  }
+
+  // Initialize the timer
+  updateTimer(0);
+</script>
+<style>
+  button {
+  padding: 10px 24px;
+  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
+}
+
+button:active {
+  transform: scale(0.97);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+  /* General styles for the controls container */
+.controls {
+  background-color: #0d0d0d;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.03);
+  max-width: 800px;
+  margin: 20px auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #fff;
+}
+
+/* Style for the select group container */
+.select-group {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+/* Style for pattern and shape select containers */
+.pattern-select,
+.shape-select {
+  flex: 1 1 48%;
+}
+
+/* Label styling */
+label {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 500;
+  font-size: 14px;
+  color: #ccc;
+}
+
+/* Select dropdown styling */
+select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #333;
+  border-radius: 6px;
+  background-color: #1a1a1a;
+  color: #fff;
+  font-size: 14px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 140 140' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='20,50 70,100 120,50' style='fill:none;stroke:white;stroke-width:20' /%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px;
+}
+
+select:focus {
+  outline: none;
+  border-color: #6e8efb;
+}
+
+/* Audio player styling */
+audio {
+  width: 100%;
+  height: 32px;
+  margin: 8px 0;
+  border-radius: 6px;
+}
+
+/* Remove download option */
+audio::-internal-media-controls-download-button,
+audio::-webkit-media-controls-enclosure {
+  display: none;
+}
+
+audio::-webkit-media-controls-panel {
+  background-color: #222;
+  border-radius: 6px;
+}
+
+audio::-webkit-media-controls-play-button {
+  background-color: #6e8efb;
+  border-radius: 50%;
+}
+
+/* Timer styling */
+.timer {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #6e8efb;
+  padding: 6px 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .select-group {
+    flex-direction: row;
+    gap: 10px;
+  }
+
+  .pattern-select,
+  .shape-select {
+    flex: 1 1 100%;
+  }
+
+  audio {
+    height: 30px;
+  }
+}
+.title {
+  position: relative;
+  font-size: 28px;
+  font-weight: 700;
+  color: #ffffff; /* White color for the text */
+  display: inline-flex;
+  align-items: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding-bottom: 6px;
+  margin-left: -100px;
+}
+
+/* Left arrow style */
+.back-arrow {
+  font-size: 32px;
+  color: #ffffff; /* White color for the arrow */
+  margin-right: 50px;
+}
+
+/* Underline effect */
+.title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -5px; /* Adjusted for a better fit */
+  height: 4px; /* Increased height for a thicker underline */
+  width: 120%; /* Made the underline a bit wider */
+  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  border-radius: 2px;
+}
+
+</style>
+
+<!-- Shape selector button display settings  -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const shapeSelect = document.getElementById('shapeType');
+    const overlay = document.getElementById('shapeOverlay');
+
+    shapeSelect.addEventListener('change', () => {
+      if (shapeSelect.value !== '') {
+        overlay.style.display = 'none';
+      }
+    });
+  });
+</script>
+
+<style>
+  .controls {
+  min-width: 350px;
+}
+  #shapeOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100dvh;
+    width: 100vw;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(6px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+  }
+
+  .shape-box {
+    background: #1e1e1e;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+    text-align: center;
+    color: #fff;
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  .shape-box label {
+    font-size: 18px;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  .shape-box select {
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    background-color: #2c2c2c;
+    color: #fff;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  .shape-box select:hover {
+    background-color: #383838;
+  }
+</style>
+
+  
+<style>
+  .main-three-btn {
+    display: flex;
+    align-items: center; /* Aligns items vertically */
+    gap: 10px; /* Adds spacing between the elements */
+  }
+
+  .main-three-btn div {
+    display: flex;
+    flex-direction: column; /* Stack the label and select */
+  }
+
+  label {
+    margin-bottom: 5px; /* Adds space between label and select */
+    font-weight: bold;
+  }
+
+  select {
+    padding: 5px;
+    font-size: 14px;
+  }
+  .main-three-btn div {
+    width: 120px;
+}
+.back-arrow:hover{
+  cursor: pointer;
+}
+</style>
+
+
+<!-- Music selection Starts  -->
+ <!-- <style>
+  /* CSS for the Modal (Unique Styles) */
+.unique-modal {
+  display: none;  /* Hidden by default */
+  position: fixed; /* Fixed in the center */
+  z-index: 1000; /* Overlays on top of everything */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Background overlay */
+  justify-content: center;
+  align-items: center;
+}
+
+.unique-modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  width: 60%; /* Set width as per your design */
+  max-width: 600px; /* Maximum width */
+  margin: auto;
+  position: relative;
+}
+
+.unique-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 30px;
+  color: #aaa;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.unique-close:hover {
+  color: #000;
+}
+
+ </style> -->
+ <script>
+  // JavaScript to handle opening and closing the modal
+
+function openUniqueModal() {
+  document.getElementById('uniqueModal').style.display = 'flex';
+}
+
+function closeUniqueModal() {
+  document.getElementById('uniqueModal').style.display = 'none';
+}
+
+// Close the modal if the user clicks outside of the modal content
+window.onclick = function(event) {
+  if (event.target == document.getElementById('uniqueModal')) {
+    closeUniqueModal();
+  }
+};
+
+
+
+ </script>
+
+ <!-- Page responsiveness  -->
+  <style>
+@media screen and (max-width: 768px) {
+  body {
+    height: 90vh;
+  }
+  .title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: 
+#ffffff;
+    padding: 0 1rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    background-color: 
+#121212;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: 3.5rem;
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    margin-bottom: 50px;
+  }
+  .back-arrow {
+    position: absolute;
+    left: 1rem;
+    font-size: 1.5rem;
+    color: 
+#39e5ff;
+    padding: 0.5rem;
+    margin-right: 0.5rem;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+
+@media (max-width: 599px) {
+  .back-arrow {
+    font-size: 22px;          /* make arrow bigger */
+    padding: 6px 10px;        /* add some padding */
+    border: 2px solid #555;   /* add subtle border */
+    border-radius: 6px;       /* round corners */
+    color: #222;              /* darker color */
+    background-color: #f0f0f0; /* light background for visibility */
+    transition: background-color 0.3s, color 0.3s;
+  }
+}
+
+  </style>
+    <!-- For activity Page ----------------------------------------------- -->
+     <script>
+    let startTime = Date.now();
+
+    window.addEventListener("beforeunload", function () {
+        let duration = Math.round((Date.now() - startTime) / 1000);
+
+        navigator.sendBeacon("/activityapp/track-activity/", JSON.stringify({
+            url: window.location.pathname,
+            duration: duration
+        }));
+    });
+</script>
+
+<!-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- Add these 2 buttons where you want them -->
+
+<!-- Modal overlay (add to your template) -->
+<div id="plstModalOverlay987" class="plst-modal-overlay-wrapper">
+    <div class="plst-modal-container">
+        <button class="plst-modal-close-x" onclick="closePlstModal()">&times;</button>
+        
+        <div id="plstAddForm" class="plst-modal-form-section">
+            <h3>Add to Playlist</h3>
+            <form method="POST" action="{% url 'testapp:add_to_playlist' %}">
+                {% csrf_token %}
+                <input type="hidden" name="song_id" value="{{ song.id }}">
+                
+                <label for="plst_select_dropdown">Choose Playlist:</label>
+                <select name="playlist_id" id="plst_select_dropdown" required>
+                    {% for playlist in playlists %}
+                        <option value="{{ playlist.id }}">{{ playlist.name }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="plst-submit-action-btn">Add Song</button>
+            </form>
+        </div>
+
+        <div id="plstCreateForm" class="plst-modal-form-section" style="display: none;">
+            <h3>Create New Playlist</h3>
+            <form method="POST" action="{% url 'testapp:create_playlist' %}">
+                {% csrf_token %}
+                <input type="text" name="playlist_name" placeholder="Enter playlist name" required>
+                <input type="hidden" name="song_id" value="{{ song.id }}">
+                <button type="submit" class="plst-submit-action-btn">Create & Add Song</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Unique playlist modal styles - won't interfere with existing CSS */
+.plst-modal-overlay-wrapper {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(12px);
+    z-index: 99999;
+    justify-content: center;
+    align-items: center;
+    animation: plstFadeIn 0.3s ease;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.plst-modal-overlay-wrapper.plst-active {
+    display: flex;
+}
+
+.plst-modal-container {
+    background: linear-gradient(145deg, #1f2937, #111827);
+    border: 1px solid #374151;
+    border-radius: 18px;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.8);
+    width: 100%;
+    max-width: 420px;
+    position: relative;
+    padding: 30px;
+    margin: 10px;
+    transform: scale(0.8);
+    animation: plstSlideUp 0.4s ease forwards;
+    box-sizing: border-box;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    .plst-modal-container {
+        padding: 20px;
+        margin: 5px;
+        max-width: calc(100vw - 20px);
+        border-radius: 12px;
+    }
+    
+    .plst-modal-trigger-btn {
+        padding: 10px 18px;
+        font-size: 14px;
+        margin: 0 4px;
+    }
+}
+
+@media (max-width: 480px) {
+    .plst-modal-container {
+        padding: 15px;
+        max-width: calc(100vw - 10px);
+    }
+    
+    .plst-modal-trigger-btn {
+        display: block;
+        margin: 5px 0;
+        width: 100%;
+    }
+}
+
+.plst-modal-close-x {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    padding: 22px;
+    background: rgba(55, 65, 81, 0.8);
+    border: 1px solid #4b5563;
+    font-size: 24px;
+    color: #d1d5db;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.plst-modal-close-x:hover {
+    background: #dc2626;
+    color: white;
+    transform: rotate(90deg);
+    border-color: #dc2626;
+}
+
+.plst-modal-trigger-btn {
+    background: linear-gradient(135deg, #1f2937, #374151);
+    color: #e5e7eb;
+    border: 1px solid #4b5563;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.plst-modal-trigger-btn:hover {
+    background: linear-gradient(135deg, #374151, #4b5563);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+    color: #fff;
+}
+
+.plst-modal-form-section h3 {
+    margin: 0 0 25px 0;
+    color: #f3f4f6;
+    font-size: 18px;
+    text-align: center;
+    font-weight: 700;
+}
+
+.plst-modal-form-section label {
+    display: block;
+    margin-bottom: 8px;
+    color: #d1d5db;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.plst-modal-form-section input,
+.plst-modal-form-section select {
+    width: 100%;
+    padding: 12px 16px;
+    background: #374151;
+    border: 2px solid #4b5563;
+    border-radius: 10px;
+    font-size: 16px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    color: #f3f4f6;
+}
+
+.plst-modal-form-section input::placeholder {
+    color: #9ca3af;
+}
+
+.plst-modal-form-section input:focus,
+.plst-modal-form-section select:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    background: #4b5563;
+}
+
+.plst-submit-action-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #059669, #047857);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.plst-submit-action-btn:hover {
+    background: linear-gradient(135deg, #047857, #065f46);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4);
+}
+
+/* Mobile form adjustments */
+@media (max-width: 768px) {
+    .plst-modal-form-section h3 {
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+    
+    .plst-modal-form-section input,
+    .plst-modal-form-section select {
+        font-size: 16px;
+        padding: 14px 16px;
+    }
+    
+    .plst-submit-action-btn {
+        padding: 16px;
+        font-size: 16px;
+    }
+    button{
+          width: 400px;
+    }
+}
+
+@keyframes plstFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes plstSlideUp {
+    from { 
+        transform: scale(0.8) translateY(50px);
+        opacity: 0;
+    }
+    to { 
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+}
+
+/* // ADDing for larger play button  */
+/* Just add this CSS to style your existing audio player */
+#audio {
+    width: 100%;
+    height: 60px;
+    background: #1f2937;
+    border: 2px solid #4b5563;
+    border-radius: 12px;
+    outline: none;
+}
+
+#audio::-webkit-media-controls-panel {
+    background: #1f2937;
+}
+
+#audio::-webkit-media-controls-play-button {
+    background-color: #374151 !important;
+    border: 2px solid #6b7280 !important;
+    border-radius: 50% !important;
+    width: 45px !important;
+    height: 45px !important;
+    min-width: 45px !important;
+    min-height: 45px !important;
+    margin: 5px 15px !important;
+    filter: invert(1) !important;
+    aspect-ratio: 1/1 !important;
+}
+
+#audio::-webkit-media-controls-play-button:hover {
+    background-color: #4b5563 !important;
+    transform: scale(1.05);
+}
+
+#audio::-webkit-media-controls-current-time-display,
+#audio::-webkit-media-controls-time-remaining-display {
+    color: #e5e7eb !important;
+    font-size: 14px !important;
+    text-shadow: none !important;
+}
+
+#audio::-webkit-media-controls-timeline {
+    background: #4b5563 !important;
+    border-radius: 25px !important;
+    margin: 0 10px !important;
+    height: 6px !important;
+}
+
+#audio::-webkit-media-controls-volume-slider {
+    background: #4b5563 !important;
+    border-radius: 25px !important;
+    height: 6px !important;
+}
+
+/* Hide the 3-dot menu and speed controls */
+#audio::-webkit-media-controls-overflow-button,
+#audio::-webkit-media-controls-overflow-menu-button,
+#audio::-webkit-media-controls-toggle-closed-captions-button,
+#audio[controls]::-webkit-media-controls-overflow-button {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    #audio {
+        height: 55px;
+    }
+    
+    #audio::-webkit-media-controls-play-button {
+        width: 40px !important;
+        height: 40px !important;
+        margin: 5px 10px !important;
+    }
+    #topmargin{
+      margin-bottom: 70px;
+    }
+    .containeres{
+      margin-top: 15%;
+    }
+}
+</style>
+
+<script>
+function openPlaylistModal() {
+    document.getElementById('plstModalOverlay987').classList.add('plst-active');
+    document.getElementById('plstAddForm').style.display = 'block';
+    document.getElementById('plstCreateForm').style.display = 'none';
+}
+
+function openCreateModal() {
+    document.getElementById('plstModalOverlay987').classList.add('plst-active');
+    document.getElementById('plstAddForm').style.display = 'none';
+    document.getElementById('plstCreateForm').style.display = 'block';
+}
+
+function closePlstModal() {
+    document.getElementById('plstModalOverlay987').classList.remove('plst-active');
+}
+
+// Close modal when clicking outside
+document.getElementById('plstModalOverlay987').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closePlstModal();
+    }
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closePlstModal();
+    }
+});
+</script>
+
+<!-- New css code to fix the css issue in the site  -->
+<style>
+  @media (max-width: 800px) {
+  html, body {
+    overflow-x: hidden;
+  }
+  .container {
+    transform: scale(0.95);
+    transform-origin: top center;
+  }
+}
+
+@media (max-width: 500px) {
+  .container {
+    transform: scale(0.88);
+    transform-origin: top center;
+  }
+}
+
+@media (max-width: 400px) {
+  .container {
+    transform: scale(0.82);
+    transform-origin: top center;
+  }
+  #topmargin {
+    margin-bottom: 250px;
+  }
+}
+
+@media (max-width: 350px) {
+  .container {
+    transform: scale(0.78);
+    transform-origin: top center;
+  }
+  #topmargin {
+    margin-bottom: 350px;
+  }
+}
+
+</style>
+
+
+<!-- For real Time communication and Group Exercise ------------------------------------ -->
+ <script>
+  
+class BreathingGroupSync {
+    constructor(groupName) {
+        this.groupName = groupName;
+        this.socket = null;
+        this.isOwner = false;
+        this.isConnected = false;
+        this.reconnectAttempts = 0;
+        this.maxReconnectAttempts = 5;
+        this.memberCount = 0;
+        this.ownerUsername = null;
+        this.members = [];
+        
+        this.connect();
+        this.setupEventListeners();
+        this.createStatusDisplay();
+    }
+    
+    connect() {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${protocol}//${window.location.host}/ws/breathing/${this.groupName}/`;
+        
+        try {
+            this.socket = new WebSocket(wsUrl);
+            this.setupSocketEvents();
+        } catch (error) {
+            console.error('WebSocket connection error:', error);
+            this.handleReconnect();
+        }
+    }
+    
+    setupSocketEvents() {
+        this.socket.onopen = () => {
+            console.log('WebSocket connected');
+            this.isConnected = true;
+            this.reconnectAttempts = 0;
+            this.updateStatus();
+        };
+        
+        this.socket.onclose = (event) => {
+            console.log('WebSocket closed:', event.code);
+            this.isConnected = false;
+            this.updateStatus();
+            if (event.code !== 1000) {
+                this.handleReconnect();
+            }
+        };
+        
+        this.socket.onerror = (error) => {
+            console.error('WebSocket error:', error);
+        };
+        
+        this.socket.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                console.log('Received message:', data);
+                this.handleMessage(data);
+            } catch (error) {
+                console.error('Message parsing error:', error);
+            }
+        };
+    }
+    
+    handleMessage(data) {
+        const { action } = data;
+        
+        switch (action) {
+            case 'connection_established':
+                this.isOwner = data.is_owner;
+                this.memberCount = data.member_count;
+                this.ownerUsername = data.owner_username;
+                this.members = data.members || [];
+                console.log('Connection established. Owner:', this.isOwner);
+                this.updateUI();
+                break;
+                
+            case 'user_joined':
+            case 'user_left':
+                this.memberCount = data.member_count;
+                this.ownerUsername = data.owner_username;
+                this.members = data.members || [];
+                this.updateUI();
+                break;
+                
+            case 'ownership_changed':
+                this.isOwner = data.is_owner;
+                this.ownerUsername = data.new_owner;
+                console.log('Ownership changed. New owner:', this.isOwner);
+                this.updateUI();
+                break;
+                
+            case 'breathing_pattern_change':
+                console.log('Syncing breathing pattern:', data.data.value);
+                this.syncBreathingPattern(data.data.value);
+                break;
+                
+            case 'shape_change':
+                console.log('Syncing shape:', data.data.value);
+                this.syncShapeChange(data.data.value);
+                break;
+                
+            case 'vibration_change':
+                console.log('Syncing vibration:', data.data.value);
+                this.syncVibrationChange(data.data.value);
+                break;
+                
+            case 'voice_change':
+                console.log('Syncing voice:', data.data.value);
+                this.syncVoiceChange(data.data.value);
+                break;
+                
+            case 'audio_control':
+                console.log('Syncing audio:', data.data);
+                this.syncAudioControl(data.data);
+                break;
+                
+            case 'error':
+                console.error('Server error:', data.message);
+                alert('Error: ' + data.message);
+                break;
+        }
+    }
+    
+    syncBreathingPattern(pattern) {
+        const el = document.getElementById('breathPattern');
+        if (el && el.value !== pattern) {
+            console.log('Updating breathing pattern to:', pattern);
+            el.value = pattern;
+            // Trigger the change event to update the UI
+            const event = new Event('change', { bubbles: true });
+            el.dispatchEvent(event);
+        }
+    }
+    
+    syncShapeChange(shapeType) {
+        const el = document.getElementById('shapeType');
+        if (el && el.value !== shapeType) {
+            console.log('Updating shape to:', shapeType);
+            el.value = shapeType;
+            const event = new Event('change', { bubbles: true });
+            el.dispatchEvent(event);
+        }
+    }
+    
+    syncVibrationChange(enabled) {
+        const el = document.getElementById('VibrationType');
+        if (el) {
+            const newValue = enabled ? '3' : '2';
+            if (el.value !== newValue) {
+                console.log('Updating vibration to:', enabled);
+                el.value = newValue;
+                const event = new Event('change', { bubbles: true });
+                el.dispatchEvent(event);
+            }
+        }
+    }
+    
+    syncVoiceChange(enabled) {
+        const newValue = enabled ? 'on' : 'off';
+        console.log('Updating voice to:', enabled);
+        
+        document.querySelectorAll('select[onchange*="speechEnabled"]').forEach(select => {
+            if (select.value !== newValue) {
+                select.value = newValue;
+                const event = new Event('change', { bubbles: true });
+                select.dispatchEvent(event);
+            }
+        });
+        
+        // Also update the global variable
+        if (typeof window.speechEnabled !== 'undefined') {
+            window.speechEnabled = enabled;
+        }
+    }
+    
+    syncAudioControl(audioData) {
+        const audio = document.getElementById('audio');
+        if (!audio) return;
+        
+        console.log('Syncing audio control:', audioData);
+        
+        if (audioData.playing && audio.paused) {
+            audio.currentTime = audioData.currentTime || 0;
+            audio.play().catch(e => console.log('Sync play failed:', e));
+        } else if (!audioData.playing && !audio.paused) {
+            audio.pause();
+        }
+        
+        if (audioData.currentTime !== undefined) {
+            const timeDiff = Math.abs(audio.currentTime - audioData.currentTime);
+            if (timeDiff > 2) {
+                audio.currentTime = audioData.currentTime;
+            }
+        }
+    }
+    
+    sendMessage(action, value) {
+        if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+            if (this.isOwner) {
+                const message = { action, value };
+                console.log('Sending message:', message);
+                this.socket.send(JSON.stringify(message));
+            } else {
+                console.log('Not owner, cannot send control message');
+            }
+        } else {
+            console.log('Socket not ready, cannot send message');
+        }
+    }
+    
+    setupEventListeners() {
+        // Breathing pattern
+        const patternSelect = document.getElementById('breathPattern');
+        if (patternSelect) {
+            patternSelect.addEventListener('change', (e) => {
+                console.log('Breathing pattern changed:', e.target.value);
+                this.sendMessage('breathing_pattern_change', e.target.value);
+            });
+        }
+        
+        // Shape
+        const shapeSelect = document.getElementById('shapeType');
+        if (shapeSelect) {
+            shapeSelect.addEventListener('change', (e) => {
+                console.log('Shape changed:', e.target.value);
+                this.sendMessage('shape_change', e.target.value);
+            });
+        }
+        
+        // Vibration
+        const vibrationSelect = document.getElementById('VibrationType');
+        if (vibrationSelect) {
+            vibrationSelect.addEventListener('change', (e) => {
+                console.log('Vibration changed:', e.target.value);
+                this.sendMessage('vibration_change', e.target.value === '3');
+            });
+        }
+        
+        // Voice
+        document.querySelectorAll('select[onchange*="speechEnabled"]').forEach(select => {
+            select.addEventListener('change', (e) => {
+                console.log('Voice changed:', e.target.value);
+                this.sendMessage('voice_change', e.target.value === 'on');
+            });
+        });
+        
+        // Audio controls
+        const audio = document.getElementById('audio');
+        if (audio) {
+            let timeout;
+            const sendAudioState = () => {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    console.log('Audio state changed:', !audio.paused, audio.currentTime);
+                    this.sendMessage('audio_control', {
+                        playing: !audio.paused,
+                        currentTime: audio.currentTime
+                    });
+                }, 100);
+            };
+            
+            audio.addEventListener('play', sendAudioState);
+            audio.addEventListener('pause', sendAudioState);
+            audio.addEventListener('seeked', sendAudioState);
+        }
+    }
+    
+    createStatusDisplay() {
+        const statusDiv = document.createElement('div');
+        statusDiv.id = 'breathingStatus';
+        statusDiv.style.cssText = 'position:fixed;top:10px;right:10px;background:rgba(0,0,0,0.9);color:white;padding:10px;border-radius:5px;font-size:12px;z-index:1000;min-width:200px;';
+        document.body.appendChild(statusDiv);
+        
+        const membersDiv = document.createElement('div');
+        membersDiv.id = 'breathingMembers';
+        membersDiv.style.cssText = 'position:fixed;bottom:10px;right:10px;background:rgba(0,0,0,0.9);color:white;padding:10px;border-radius:5px;font-size:12px;z-index:1000;max-height:200px;overflow-y:auto;min-width:150px;';
+        document.body.appendChild(membersDiv);
+    }
+    
+    updateUI() {
+        this.updateStatus();
+        this.updateControlsAccess();
+        this.updateMembers();
+    }
+    
+    updateStatus() {
+        const statusDiv = document.getElementById('breathingStatus');
+        if (statusDiv) {
+            statusDiv.innerHTML = `
+                <div><strong>Group:</strong> ${this.groupName}</div>
+                <div><strong>Status:</strong> ${this.isConnected ? '🟢 Connected' : '🔴 Disconnected'}</div>
+                <div><strong>Role:</strong> ${this.isOwner ? '👑 OWNER' : '👤 Follower'}</div>
+                <div><strong>Members:</strong> ${this.memberCount}</div>
+                ${this.ownerUsername ? `<div><strong>Owner:</strong> ${this.ownerUsername}</div>` : ''}
+            `;
+        }
+    }
+    
+    updateControlsAccess() {
+        const controls = ['breathPattern', 'shapeType', 'VibrationType', 'audio'];
+        const voiceSelects = document.querySelectorAll('select[onchange*="speechEnabled"]');
+        
+        controls.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.disabled = !this.isOwner;
+                el.style.opacity = this.isOwner ? '1' : '0.6';
+                el.style.pointerEvents = this.isOwner ? 'auto' : 'none';
+            }
+        });
+        
+        voiceSelects.forEach(select => {
+            select.disabled = !this.isOwner;
+            select.style.opacity = this.isOwner ? '1' : '0.6';
+            select.style.pointerEvents = this.isOwner ? 'auto' : 'none';
+        });
+        
+        // Add visual indicator
+        if (!this.isOwner) {
+            this.showFollowerMessage();
+        } else {
+            this.hideFollowerMessage();
+        }
+    }
+    
+    showFollowerMessage() {
+        let msg = document.getElementById('followerMessage');
+        if (!msg) {
+            msg = document.createElement('div');
+            msg.id = 'followerMessage';
+            msg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.9);color:white;padding:20px;border-radius:10px;z-index:999;text-align:center;';
+            msg.innerHTML = `
+                <h3>👤 FOLLOWER MODE</h3>
+                <p>You are following <strong>${this.ownerUsername || 'the owner'}</strong></p>
+                <p>Controls are synchronized automatically</p>
+            `;
+            document.body.appendChild(msg);
+            
+            setTimeout(() => {
+                if (msg.parentNode) {
+                    msg.style.opacity = '0';
+                    msg.style.transition = 'opacity 1s';
+                    setTimeout(() => msg.remove(), 1000);
+                }
+            }, 3000);
+        }
+    }
+    
+    hideFollowerMessage() {
+        const msg = document.getElementById('followerMessage');
+        if (msg) msg.remove();
+    }
+    
+    updateMembers() {
+        const membersDiv = document.getElementById('breathingMembers');
+        if (membersDiv) {
+            let html = `<div><strong>Members (${this.memberCount}):</strong></div>`;
+            this.members.forEach(member => {
+                const crown = member.username === this.ownerUsername ? ' 👑' : '';
+                html += `<div>• ${member.username}${crown}</div>`;
+            });
+            membersDiv.innerHTML = html;
+        }
+    }
+    
+    handleReconnect() {
+        if (this.reconnectAttempts < this.maxReconnectAttempts) {
+            this.reconnectAttempts++;
+            const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000);
+            console.log(`Reconnecting in ${delay}ms... (${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
+            setTimeout(() => this.connect(), delay);
+        } else {
+            console.error('Max reconnection attempts reached');
+            alert('Connection failed. Please refresh the page.');
+        }
+    }
+    
+    disconnect() {
+        if (this.socket) {
+            this.socket.close(1000);
+        }
+    }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Get group name from URL or set default
+    const pathParts = window.location.pathname.split('/');
+    const groupName = pathParts[pathParts.length - 2] || 'default';
+    
+    console.log('Initializing breathing group sync for group:', groupName);
+    window.breathingGroupSync = new BreathingGroupSync(groupName);
+    
+    window.addEventListener('beforeunload', () => {
+        if (window.breathingGroupSync) {
+            window.breathingGroupSync.disconnect();
+        }
+    });
+});
+ </script>
+{% endblock content %}

@@ -1,24 +1,737 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>All Playlists</h1>
-{% if playlists %}
-    {% for playlist in playlists %}
-        <div>
-            <h3>{{ playlist.name }}</h3>
-            <p>Created By: {{ playlist.user.username }}</p>
-            <a href="{% url 'musicapp:view_playlist' playlist.id %}">View Playlist</a>
-        </div>
-    {% endfor %}
-{% else %}
-    <p>No playlists available.</p>
-{% endif %}
-<a href="{% url 'musicapp:create_playlist' %}">Create New Playlist</a>
+{% extends "base.html" %}
+{% load static %}
 
-</body>
-</html>
+{% block title %}
+My Playlists
+{% endblock %}
+
+{% block content %}
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    .playlist-container {
+        min-height: 100vh;
+        padding: 2rem 0;
+    }
+
+    .playlist-wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+    }
+
+    .playlist-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 3rem;
+        padding-bottom: 2rem;
+        border-bottom: 2px solid rgba(96, 165, 250, 0.3);
+    }
+
+    .playlist-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #ffffff;
+        margin: 0;
+        letter-spacing: -0.02em;
+        background: linear-gradient(135deg, #ffffff 0%, #60a5fa 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .create-btn {
+        background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+        color: #ffffff;
+        padding: 0.875rem 2rem;
+        border: none;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.9rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        box-shadow: 0 4px 20px rgba(96, 165, 250, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .create-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(96, 165, 250, 0.4);
+        text-decoration: none;
+        color: #ffffff;
+        background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+    }
+
+    .create-btn::before {
+        content: '+';
+        font-size: 1.3rem;
+        font-weight: 900;
+        background: rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+    }
+
+    .playlists-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .playlist-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(96, 165, 250, 0.2);
+        border-radius: 20px;
+        padding: 2rem;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .playlist-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, rgba(96, 165, 250, 0.5), rgba(147, 197, 253, 0.8), rgba(96, 165, 250, 0.5));
+        transform: translateX(-100%);
+        transition: transform 0.4s ease;
+    }
+
+    .playlist-card:hover::before {
+        transform: translateX(0);
+    }
+
+    .playlist-card:hover {
+        transform: translateY(-8px);
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(96, 165, 250, 0.4);
+        box-shadow: 0 20px 40px rgba(96, 165, 250, 0.2);
+    }
+
+    .playlist-header-content {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .playlist-icon {
+        width: 64px;
+        height: 64px;
+        background: linear-gradient(135deg, rgba(96, 165, 250, 0.3) 0%, rgba(147, 197, 253, 0.2) 100%);
+        border: 2px solid rgba(96, 165, 250, 0.3);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+        backdrop-filter: blur(10px);
+    }
+
+    .playlist-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .playlist-name {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin: 0 0 0.5rem 0;
+        line-height: 1.3;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .playlist-creator {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.95rem;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 500;
+    }
+
+    .playlist-creator::before {
+        content: '';
+        width: 20px;
+        height: 20px;
+        background: rgba(96, 165, 250, 0.4);
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .playlist-stats {
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.6);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-weight: 600;
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .stat-item::before {
+        content: '●';
+        color: rgba(96, 165, 250, 0.6);
+        font-size: 0.6rem;
+    }
+
+    .stat-item:first-child::before {
+        display: none;
+    }
+
+    .playlist-actions {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .view-playlist-btn {
+        background: transparent;
+        color: #ffffff;
+        padding: 0.75rem 1.5rem;
+        border: 2px solid rgba(96, 165, 250, 0.4);
+        border-radius: 12px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex: 1;
+        justify-content: center;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .view-playlist-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: rgba(96, 165, 250, 0.1);
+        transition: left 0.3s ease;
+    }
+
+    .view-playlist-btn:hover::before {
+        left: 0;
+    }
+
+    .view-playlist-btn:hover {
+        border-color: rgba(96, 165, 250, 0.7);
+        text-decoration: none;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(96, 165, 250, 0.2);
+    }
+
+    .view-playlist-btn::after {
+        content: '→';
+        transition: transform 0.3s ease;
+        font-size: 1rem;
+        font-weight: bold;
+    }
+
+    .view-playlist-btn:hover::after {
+        transform: translateX(4px);
+    }
+
+    .no-playlists {
+        text-align: center;
+        padding: 5rem 3rem;
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(20px);
+        border: 2px dashed rgba(96, 165, 250, 0.3);
+        border-radius: 20px;
+        margin: 3rem 0;
+        position: relative;
+    }
+
+    .no-playlists::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(circle, rgba(96, 165, 250, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 0;
+    }
+
+    .no-playlists-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .no-playlists-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        color: rgba(96, 165, 250, 0.6);
+    }
+
+    .no-playlists h3 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin: 0 0 1rem 0;
+    }
+
+    .no-playlists p {
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.7);
+        margin: 0 0 2.5rem 0;
+        line-height: 1.6;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .empty-state-btn {
+        background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+        color: #ffffff;
+        padding: 1rem 2.5rem;
+        border: none;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 20px rgba(96, 165, 250, 0.3);
+    }
+
+    .empty-state-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(96, 165, 250, 0.4);
+        text-decoration: none;
+        color: #ffffff;
+        background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+    }
+
+    .empty-state-btn::before {
+        content: '+';
+        font-size: 1.3rem;
+        font-weight: 900;
+        background: rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+    }
+
+    /* Mobile Optimizations */
+    @media (max-width: 640px) {
+        .playlist-container {
+            padding: 1.5rem 0;
+        }
+
+        .playlist-wrapper {
+            padding: 0 1rem;
+        }
+
+        .playlist-header {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+        }
+
+        .playlist-title {
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        .create-btn {
+            justify-content: center;
+            padding: 1rem 1.5rem;
+            font-size: 0.85rem;
+        }
+
+        .playlists-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .playlist-card {
+            padding: 1.5rem;
+        }
+
+        .playlist-header-content {
+            gap: 1rem;
+        }
+
+        .playlist-icon {
+            width: 48px;
+            height: 48px;
+            font-size: 1.2rem;
+        }
+
+        .playlist-name {
+            font-size: 1.2rem;
+        }
+
+        .playlist-stats {
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-item::before {
+            display: none;
+        }
+
+        .no-playlists {
+            padding: 3rem 2rem;
+        }
+
+        .no-playlists-icon {
+            font-size: 3rem;
+        }
+
+        .no-playlists h3 {
+            font-size: 1.3rem;
+        }
+
+        .no-playlists p {
+            font-size: 1rem;
+        }
+    }
+
+    /* Tablet Optimizations */
+    @media (min-width: 641px) and (max-width: 1024px) {
+        .playlists-grid {
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        }
+        
+        .playlist-header {
+            margin-bottom: 2.5rem;
+        }
+    }
+
+    /* Large screens */
+    @media (min-width: 1025px) {
+        .playlist-wrapper {
+            padding: 0 2rem;
+        }
+        
+        .playlists-grid {
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+        }
+    }
+</style>
+
+<div class="playlist-container">
+    <div class="playlist-wrapper">
+        <div class="playlist-header">
+            <h1 class="playlist-title">My Playlists</h1>
+            <div class="all-buttons" style="display: flex; align-items: center; gap: 10px;">
+               <button id="toggle-star-filter" onclick="toggleStarFilter()" title="Show only starred playlists">★</button>
+
+            <a href="{% url 'musicapp:create_playlist' %}" class="create-btn">
+                Create Playlist
+            </a>
+           
+             <a href="{% url 'musicapp:admin_playLists' %}" class="create-btn">
+                Admin Playlist
+            </a>
+            </div>
+        </div>
+
+        {% if playlists %}
+            <div class="playlists-grid" id="playlist-grid">
+                {% for playlist in playlists %}
+                    <div class="playlist-card {% if playlist.star %}starred{% endif %}" >
+                        <div class="playlist-header-content">
+                            <!-- <div class="playlist-icon">🎵</div> -->
+                            <div class="playlist-info" style="display: flex;"> 
+                                <h3 class="playlist-name">{{ playlist.name }}</h3>
+                                   <button class="star-btn {% if not playlist.star %}unstarred{% endif %}"
+        data-playlist-id="{{ playlist.id }}"
+        onclick="toggleUserPlaylistStar(this)">
+  {% if playlist.star %}
+    ★
+  {% else %}
+    ☆
+  {% endif %}
+</button>
+                            </div>
+                        </div>
+                     
+                        <div class="playlist-stats">
+                            <span>{{ playlist.tracks.count }} TRACKS</span>
+                            <span class="stat-item">Tags - {{ playlist.tags }}</span>
+                        </div>
+                        
+                        <div class="playlist-actions">
+                            <a href="{% url 'musicapp:view_playlist' playlist.id %}" class="view-playlist-btn">
+                                View Playlist
+                            </a>
+                        </div>
+                         <form method="POST" action="{% url 'musicapp:delete_playlist' playlist.id %}" style="margin-top: 10px;" onsubmit="return confirm('Delete this playlist?');">
+        {% csrf_token %}
+        <button type="submit" class="delete-btn">🗑️ Delete</button>
+    </form>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-playlists">
+                <div class="no-playlists-content">
+                    <div class="no-playlists-icon">🎵</div>
+                    <h3>No playlists yet</h3>
+                    <p>Create your first playlist to organize your favorite music and discover new tracks tailored to your taste.</p>
+                    <a href="{% url 'musicapp:create_playlist' %}" class="empty-state-btn">
+                        Create Your First Playlist
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+<style>
+    .delete-btn {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: #ffffff;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    justify-content: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.delete-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    transition: left 0.3s ease;
+}
+
+.delete-btn:hover::before {
+    left: 0;
+}
+
+.delete-btn:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    box-shadow: 0 6px 25px rgba(239, 68, 68, 0.3);
+}
+
+.delete-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px rgba(239, 68, 68, 0.3);
+}
+
+/* Mobile optimizations for delete button */
+@media (max-width: 640px) {
+    .delete-btn {
+        padding: 0.875rem 1.25rem;
+        font-size: 0.85rem;
+    }
+}
+
+
+/* Screen < 500px */
+@media (max-width: 500px) {
+    .create-btn {
+        padding: 0.4rem 0.75rem;
+        font-size: 0.65rem;
+        gap: 0.35rem;
+        border-radius: 6px;
+        box-shadow: 0 1px 5px rgba(96, 165, 250, 0.15);
+        letter-spacing: 0.3px;
+    }
+}
+
+/* Screen < 380px */
+@media (max-width: 380px) {
+    .create-btn {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.6rem;
+        gap: 0.25rem;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(96, 165, 250, 0.1);
+        letter-spacing: 0.2px;
+    }
+}
+
+/* Screen < 330px */
+@media (max-width: 330px) {
+    .create-btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.55rem;
+        gap: 0.2rem;
+        border-radius: 3px;
+        letter-spacing: 0.15px;
+    }
+}
+
+
+</style>
+<style>
+  .star-btn {
+    background: none;
+    border: none;
+    font-size: 26px;
+    cursor: pointer;
+    color: #f1c40f;
+    padding: 0;
+    outline: none;
+    transition: transform 0.2s ease;
+    margin-top: -10px;
+    margin-left: 20px;
+  }
+
+  .star-btn.unstarred {
+    color: #ccc;
+  }
+
+  .star-btn:hover {
+    transform: scale(1.1);
+  }
+</style>
+
+
+<script>
+  function toggleUserPlaylistStar(button) {
+    const playlistId = button.getAttribute('data-playlist-id');
+
+    fetch("{% url 'musicapp:toggle_user_playlist_star' %}", {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': '{{ csrf_token }}',
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({ playlist_id: playlistId })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'ok') {
+        button.textContent = data.starred ? '★' : '☆';
+        button.classList.toggle('unstarred', !data.starred);
+      } else {
+        alert(data.message || 'Something went wrong.');
+      }
+    });
+  }
+</script>
+<script>
+  let filterOn = false;
+
+  function toggleStarFilter() {
+    filterOn = !filterOn;
+    const btn = document.getElementById('toggle-star-filter');
+    const cards = document.querySelectorAll('.playlist-card');
+
+    cards.forEach(card => {
+      if (filterOn) {
+        if (!card.classList.contains('starred')) {
+          card.style.display = 'none';
+        }
+      } else {
+        card.style.display = 'block';
+      }
+    });
+
+    btn.textContent = filterOn ? 'All' : '★';
+  }
+</script>
+<style>
+  #toggle-star-filter {
+    background: none;
+    border: none;
+    color: #f1c40f;
+    font-size: 22px;
+    cursor: pointer;
+    margin-bottom: 15px;
+    padding: 6px 12px;
+    transition: transform 0.2s ease;
+  }
+
+  #toggle-star-filter:hover {
+    color: #f39c12;
+    transform: scale(1.2);
+  }
+</style>
+<style>
+  #toggle-star-filter {
+    background-color: #f1c40f;
+    border: none;
+    color: rgb(255, 255, 255);
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+
+  #toggle-star-filter:hover {
+    background-color: #f39c12;
+    transform: scale(1.05);
+    color: rgb(255, 255, 255);
+
+  }
+</style>
+
+{% endblock content %}

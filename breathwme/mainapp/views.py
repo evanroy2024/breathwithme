@@ -46,23 +46,28 @@ from django.conf import settings
 import random
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
+from datetime import datetime
+
 
 import random
-from django.contrib.auth.models import User
+from datetime import datetime  # ✅ Correct import
+from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
-from django.shortcuts import render, redirect
-from referal.models import ReferralLink, DigitalCoin  # Import referral & coin models
-
+from django.contrib.auth.models import User
+from referal.models import DigitalCoin , ReferralLink
+from django.core.mail import EmailMultiAlternatives
+from django.utils.html import strip_tags
 # Function to generate OTP
 def generate_otp():
-    return str(random.randint(100000, 999999))  # Ensure OTP is stored as a string
+    return str(random.randint(100000, 999999))
 
-# Register view with referral code support
 
+
+# Register view with referral support
 def register(request):
-    referral_code = request.GET.get("ref")  # Get referral code from URL
+    referral_code = request.GET.get("ref")
 
     if request.method == "POST":
         username = request.POST.get("username")
@@ -73,80 +78,150 @@ def register(request):
         if User.objects.filter(username=username).exists():
             messages.error(request, "Username already taken.")
             return redirect("register")
+
         if User.objects.filter(email=email).exists():
             messages.error(request, "Email already registered.")
             return redirect("register")
 
-        # Generate OTP and save in session
+        # Generate OTP and store time
         otp = generate_otp()
         request.session["otp"] = otp
+        request.session["otp_time"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        # Save referral code in session (if provided)
+        # Save referral code if provided
         if referral_code:
-            request.session["referral_code"] = referral_code  
+            request.session["referral_code"] = referral_code
 
-        # Send OTP email
-        send_mail(
-            "Your OTP Code",
-            f"Your OTP code is {otp}",
-            settings.DEFAULT_FROM_EMAIL,
-            [email],
-            fail_silently=False,
+        # -----------------------
+        # Send Beautiful HTML Email
+        # -----------------------
+        html_content = f"""
+        <div style="font-family: Arial, sans-serif; padding: 30px; background-color: #f5faff; color: #333;">
+            <h2 style="color: #4a90e2;">Welcome to <span style="color:#6e8efb;">Breathe</span> 🌬️</h2>
+            <p style="font-size: 16px; margin-top: 20px;">
+                We're so glad you've decided to join us on a path to greater calm, clarity, and mindfulness. 💙
+            </p>
+            <p style="font-size: 16px; margin-top: 10px;">
+                To complete your registration and begin your breathing journey, please enter the OTP below:
+            </p>
+
+            <div style="text-align: center; margin: 40px 0;">
+                <span style="
+                    display: inline-block;
+                    padding: 20px 40px;
+                    font-size: 36px;
+                    font-weight: bold;
+                    color: #ffffff;
+                    background: linear-gradient(135deg, #6e8efb, #a777e3);
+                    border-radius: 14px;
+                    letter-spacing: 2px;
+                ">
+                    {otp}
+                </span>
+            </div>
+
+            <p style="font-size: 15px; color: #555;">
+                ⏳ <strong>This OTP is valid for 5 Minutes .</strong><br>
+                Please do not share it with anyone.
+            </p>
+
+            <p style="font-size: 15px; color: #888; margin-top: 20px;">
+                If you did not request this, feel free to ignore this message. No action will be taken.
+            </p>
+
+            <br>
+            <p style="font-size: 16px;">
+                With calm and care,<br>
+                <strong style="color: #4a90e2;">The Breathe Team 🌿</strong>
+            </p>
+        </div>
+        """
+
+        text_content = strip_tags(html_content)
+
+        email_message = EmailMultiAlternatives(
+            subject="🌟 Your Breathe OTP – Begin Your Calm Journey",
+            body=text_content,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[email]
         )
+        email_message.attach_alternative(html_content, "text/html")
+        email_message.send()
 
-        # Save user data temporarily to session
+        # Store user info in session temporarily
         request.session["username"] = username
         request.session["email"] = email
         request.session["password"] = password
 
-        messages.success(request, "OTP sent to your email. Please verify.")
-        return redirect("otp_varify")  # Redirect to OTP verification page
+        messages.success(request, "We've sent a One-Time Password (OTP) to your email. Please verify to continue.")
+        return redirect("otp_varify")
 
     return render(request, "user/register.html")
 
 
-
-# OTP verification view with referral rewards
 def otp_varify(request):
     if request.method == "POST":
         entered_otp = request.POST.get("otp")
+        saved_otp = request.session.get("otp")
+        otp_time_str = request.session.get("otp_time")
 
-        # Verify OTP
-        if entered_otp == str(request.session.get("otp")):  # Ensure string comparison
+        if not saved_otp or not otp_time_str:
+            messages.error(request, "Session expired or OTP not found. Please request a new OTP.")
+            return redirect("register")
+
+        # Parse saved OTP time
+        otp_time = datetime.strptime(otp_time_str, "%Y-%m-%d %H:%M:%S")
+        now = datetime.now()
+
+        # Check OTP expiration: valid for 5 minutes
+        if (now - otp_time).total_seconds() > 300:
+            messages.error(request, "OTP expired. Please request a new one.")
+            return redirect("register")
+
+        # Match OTP
+        if entered_otp == saved_otp:
             username = request.session.get("username")
             email = request.session.get("email")
             password = request.session.get("password")
 
-            # Create new user
+            if not all([username, email, password]):
+                messages.error(request, "Session data incomplete. Please register again.")
+                return redirect("register")
+
+            # Create the user
             user = User.objects.create_user(username=username, email=email, password=password)
             user.save()
 
-            # Initialize user's digital coin balance
+            # Create initial digital coin record
             DigitalCoin.objects.get_or_create(user=user, defaults={"amount": 0})
 
-            # Check if referral code was used
+            # Handle referral reward
             referral_code = request.session.get("referral_code")
             if referral_code:
                 try:
-                    # Find the user who referred using the referral code
                     referrer = ReferralLink.objects.get(code=referral_code).user
-                    digital_coin, created = DigitalCoin.objects.get_or_create(user=referrer)
-                    digital_coin.amount += 5  # Reward the referrer with 5 coins
-                    digital_coin.save()
+                    coin, _ = DigitalCoin.objects.get_or_create(user=referrer)
+                    coin.amount += 1
+                    coin.save()
                 except ReferralLink.DoesNotExist:
-                    pass  # Ignore if the referral code does not exist or is invalid
+                    pass
 
-            # Clear session data after successful registration
+            # Clear session
             request.session.flush()
 
-            messages.success(request, "OTP verified successfully! You can now login.")
+            messages.success(request, "OTP verified successfully! You can now log in.")
             return redirect("signin")
-
-        messages.error(request, "Invalid OTP. Please try again.")
+        else:
+            messages.error(request, "Invalid OTP. Please try again.")
 
     return render(request, "user/otp.html")
 from .models import Subscription
 
+from django.views.decorators.csrf import csrf_exempt
+
+from userdata.models import UserAgreement
+from django.utils.http import url_has_allowed_host_and_scheme
+@csrf_exempt
 def signin(request):
     if request.method == "POST":
         email = request.POST.get('email')
@@ -161,14 +236,24 @@ def signin(request):
             login(request, user)
             messages.success(request, "You have successfully logged in!")
 
-            # 👉 Check if user has ANY subscription
+            # Check agreement
+            agreement, _ = UserAgreement.objects.get_or_create(user=user)
+            if not agreement.agreed:
+                return redirect('liability')
+            
+            # Handle ?next= redirect
+            next_url = request.GET.get('next')
+            if next_url:
+                return redirect(next_url)
+            # Check subscription
             if Subscription.objects.filter(user=user).exists():
                 return redirect('home')
             else:
-                return redirect('subscriptions')
+                # return redirect('subscriptions')
+                return redirect('home')
 
         else:
-            messages.error(request, "Invalid email or password. Please try again.")
+            messages.error(request, "Invalid email or password.")
 
     return render(request, 'user/signin.html')
 
@@ -176,6 +261,63 @@ def signin(request):
 def user_logout(request):
     logout(request)
     return redirect('signin')  # Redirect the user to the homepage or any other page
+
+
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
+import random
+
+def forget_password(request):
+    message = ''
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        try:
+            user = User.objects.get(email=email)
+            otp = random.randint(100000, 999999)
+            request.session['reset_email'] = email
+            request.session['reset_otp'] = str(otp)
+
+            send_mail(
+                'Your OTP for password reset',
+                f'Your OTP is {otp}',
+                'noreply@breathewithmeapp.com',  # must match your SMTP login email
+                [email],
+                fail_silently=False,
+            )
+            return redirect('verify_otp')
+        except User.DoesNotExist:
+            message = 'User with this email does not exist.'
+
+    return render(request, 'user/password/forget_password.html', {'message': message})
+
+def verify_otp(request):
+    message = ''
+    if request.method == 'POST':
+        otp = request.POST.get('otp')
+        if otp == request.session.get('reset_otp'):
+            return redirect('reset_password')
+        else:
+            message = 'Invalid OTP.'
+    return render(request, 'user/password/verify_otp.html', {'message': message})
+
+def reset_password(request):
+    message = ''
+    if request.method == 'POST':
+        password = request.POST.get('password')
+        email = request.session.get('reset_email')
+        try:
+            user = User.objects.get(email=email)
+            user.set_password(password)
+            user.save()
+            # Clear session data after password reset
+            request.session.pop('reset_email', None)
+            request.session.pop('reset_otp', None)
+            return redirect('signin')
+        except User.DoesNotExist:
+            message = 'Something went wrong.'
+    return render(request, 'user/password/reset_password.html', {'message': message})
 
 # Ending of Auth here ------------------------------------------------------------------
 
@@ -317,7 +459,7 @@ from django.contrib.auth.decorators import login_required
 from .decorators import check_subscription
 from django.urls import reverse
 
-@check_subscription
+# @check_subscription
 def home(request):
     if not request.user.is_authenticated:
         return redirect(reverse('signin'))  # replace 'signin' with your sign-in URL name
@@ -479,3 +621,52 @@ def delete_account(request):
             messages.error(request, "Incorrect password. Please try again.")
             return redirect('user_privacy_settings')  # Stay on the settings page if password is wrong
     return redirect('user_privacy_settings')  # In case the method is not POST
+
+from testapp.models import TestExercise
+from django.db.models.functions import Lower
+from testapp.models import TestExercise
+from musicapp.models import SavedMusic
+from django.db.models.functions import Lower
+from django.db.models.functions import Lower, Coalesce
+from django.db.models import Value
+from django.shortcuts import get_object_or_404
+from activityapp.models import TestExerciseActivity
+
+def library_list(request):
+    songs = TestExercise.objects.annotate(
+        sort_artist=Coalesce(Lower('artist'), Value('zzzz')),
+        sort_title=Coalesce(Lower('title'), Value(''))
+    ).order_by('sort_artist', 'sort_title')
+
+    saved_song_ids = []
+    if request.user.is_authenticated:
+        saved_song_ids = SavedMusic.objects.filter(user=request.user).values_list('music_id', flat=True)
+
+        # Track play count for selected song_id if present
+        selected_song_id = request.GET.get('song_id')
+        if selected_song_id:
+            song = get_object_or_404(TestExercise, pk=selected_song_id)
+            activity, created = TestExerciseActivity.objects.get_or_create(
+                user=request.user,
+                exercise=song,
+                defaults={'play_count': 1}
+            )
+            if not created:
+                activity.play_count += 1
+                activity.save()
+
+    return render(request, 'user/user_playlist.html', {
+        'songs': songs,
+        'saved_song_ids': saved_song_ids,
+    })
+
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def liability(request):
+    if request.method == 'POST':
+        agreement = UserAgreement.objects.get(user=request.user)
+        agreement.agreed = True
+        agreement.save()
+        return redirect('home')
+    return render(request, 'user/liability.html')

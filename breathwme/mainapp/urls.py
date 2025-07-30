@@ -5,20 +5,26 @@ from .views import main_page
 from . import views
 
 urlpatterns = [
-    path('', views.main_page, name='main_page'),
+    path('theme1/', views.main_page, name='main_page'),
     path('app/', views.app_main_page, name='app_main_page'),
     path('toggle-theme/', views.toggle_theme, name='toggle_theme'),
-    path('theme1/', views.theme1, name='theme1'),
-    path('signin/', views.signin, name='signin'),  
+    path('', views.theme1, name='theme1'),
+    path('login/', views.signin, name='signin'),  
     path('register/', views.register, name='register'), 
     path('otp_varify/', views.otp_varify, name='otp_varify'), 
     path('logout/', views.user_logout, name='logout'),
 
+    path('forget-password/', views.forget_password, name='forget_password'),
+    path('verify-otp/', views.verify_otp, name='verify_otp'),
+    path('reset-password/', views.reset_password, name='reset_password'),
+    
     path('terms/', views.terms_and_conditions, name='terms'),
     path('privacy/', views.privacy_policy, name='privacy'),
-    
+    path('liability/', views.liability, name='liability'),
     path('home/', views.home, name='home'), 
-    path('library/', views.library, name='library'),
+    path('playlist/', views.library, name='library_list'),
+    path('library_list/', views.library_list, name='library'),
+
     # path('sleep/', views.sleep, name='sleep'),
 
     path('mainpage/', views.main_page_course, name='main_page_course'),

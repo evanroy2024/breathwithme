@@ -18,6 +18,12 @@
         </a>
     </div>
     
+    <!-- Vibration Control Button -->
+    <div class="vibration-control mb-4 text-center">
+        <button id="vibration-toggle" class="btn btn-vibration-enabled">
+            <i class="fa fa-mobile-alt"></i> Vibration Enabled
+        </button>
+    </div>
     
     <div class="row g-4">
         {% for playlist in playlists %}
@@ -127,6 +133,35 @@
     .btn-outline-light:hover {
         background: rgba(255, 255, 255, 0.1);
         transform: translateY(-2px);
+    }
+    
+    /* Vibration control button */
+    .btn-vibration-enabled {
+        background: linear-gradient(135deg, #28a745, #20df5a);
+        color: white;
+        border: none;
+        border-radius: 30px;
+        padding: 10px 20px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-vibration-disabled {
+        background: linear-gradient(135deg, #dc3545, #ff4757);
+        color: white;
+        border: none;
+        border-radius: 30px;
+        padding: 10px 20px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-vibration-enabled:hover, .btn-vibration-disabled:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        color: white;
     }
     
     .play-icon {
@@ -258,9 +293,9 @@
         }
     }
     .text-muted {
-    --bs-text-opacity: 1;
-    color: rgb(255 255 255 / 75%) !important;
-}
+        --bs-text-opacity: 1;
+        color: rgb(255 255 255 / 75%) !important;
+    }
 </style>
 
 <script>
@@ -273,13 +308,13 @@
             {% for track in playlist.tracks.all %}
             {
                 title: "{{ track.title|escapejs }}",
-                url: "{{ track.song.url }}"  // Update this line to use 'song' instead of 'file'
+                url: "{{ track.song.url }}",
+                beatTimes: {{ track.beat_times|default:"[]"|safe }}
             },
             {% endfor %}
         ],
     {% endfor %}
-};
-
+    };
 
     const playButtons = document.querySelectorAll('.play-playlist-btn');
     const audio = document.getElementById('audio-player');
@@ -288,9 +323,76 @@
     const stopBtn = document.getElementById('stop-btn');
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
+    const vibrationToggle = document.getElementById('vibration-toggle');
     
     let currentPlaylistId = null;
     let currentIndex = 0;
+    let vibrationEnabled = true;
+    let beatTimeouts = [];
+
+    // Vibration toggle functionality
+    vibrationToggle.addEventListener('click', () => {
+        vibrationEnabled = !vibrationEnabled;
+        updateVibrationButton();
+    });
+
+    function updateVibrationButton() {
+        if (vibrationEnabled) {
+            vibrationToggle.className = 'btn btn-vibration-enabled';
+            vibrationToggle.innerHTML = '<i class="fa fa-mobile-alt"></i> Vibration Enabled';
+        } else {
+            vibrationToggle.className = 'btn btn-vibration-disabled';
+            vibrationToggle.innerHTML = '<i class="fa fa-mobile-alt"></i> Vibration Disabled';
+        }
+    }
+
+    // Function to send phase change notifications
+    function notifyPhaseChange(phase) {
+        // Always log the phase change
+        console.log("Phase changed to:", phase);
+        
+        // Only send message if vibration is enabled
+        if (vibrationEnabled) {
+            // Send a message to the React Native WebView if available
+            if (window.ReactNativeWebView) {
+                window.ReactNativeWebView.postMessage(JSON.stringify({
+                    type: 'phaseChange',
+                    phase: phase
+                }));
+                console.log("post message sent");
+            } else {
+                console.log("ReactNativeWebView not available - would have sent message:", phase);
+            }
+        } else {
+            console.log("Vibration disabled - message not sent");
+        }
+    }
+
+    // Function to clear all beat timeouts
+    function clearBeatTimeouts() {
+        beatTimeouts.forEach(timeout => clearTimeout(timeout));
+        beatTimeouts = [];
+    }
+
+    // Function to schedule beat notifications
+    function scheduleBeatNotifications(beatTimes) {
+        clearBeatTimeouts(); // Clear any existing timeouts
+        
+        if (!beatTimes || !Array.isArray(beatTimes)) {
+            console.log("No beat times available for this track");
+            return;
+        }
+
+        beatTimes.forEach((beatTime, index) => {
+            const timeout = setTimeout(() => {
+                notifyPhaseChange(`beat_${index + 1}`);
+            }, beatTime * 1000); // Convert seconds to milliseconds
+            
+            beatTimeouts.push(timeout);
+        });
+        
+        console.log(`Scheduled ${beatTimes.length} beat notifications:`, beatTimes);
+    }
 
     playButtons.forEach(button => {
         button.addEventListener('click', () => {
@@ -314,6 +416,10 @@
         if (!tracks || index < 0 || index >= tracks.length) return;
         
         const track = tracks[index];
+        
+        // Clear any existing timeouts before starting new track
+        clearBeatTimeouts();
+        
         audio.src = track.url;
         trackName.textContent = track.title;
         audio.play();
@@ -321,12 +427,16 @@
         
         currentIndex = index;
         
+        // Schedule beat notifications for this track
+        scheduleBeatNotifications(track.beatTimes);
+        
         // Update previous/next button states
         prevBtn.disabled = currentIndex === 0;
         nextBtn.disabled = currentIndex === tracks.length - 1;
     }
 
     audio.onended = () => {
+        clearBeatTimeouts(); // Clear timeouts when track ends
         const tracks = playlists[currentPlaylistId];
         currentIndex++;
         if (currentIndex < tracks.length) {
@@ -337,6 +447,7 @@
     };
 
     function stopPlayback() {
+        clearBeatTimeouts(); // Clear timeouts when stopping
         audio.pause();
         audio.src = "";
         playerBox.classList.add('d-none');
@@ -355,6 +466,11 @@
         if (currentIndex < tracks.length - 1) {
             playTrack(currentIndex + 1);
         }
+    });
+
+    // Clean up timeouts when page is unloaded
+    window.addEventListener('beforeunload', () => {
+        clearBeatTimeouts();
     });
 </script>
 {% endblock %}

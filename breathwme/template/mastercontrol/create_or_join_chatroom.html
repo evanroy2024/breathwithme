@@ -6,151 +6,455 @@ Home - Meditation Dashboard
 
 {% block content %}
 <style>
-    /* Center the container */
-    .container {
-        max-width: 600px;
-        margin: 50px auto;
-        background-color: #2c2f33; /* Slightly lighter dark background */
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
-        color: #f5f5f5; /* Light text for contrast */
+    body {
+        background-color: #000000;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
     }
 
-    /* Form heading */
-    .container h2 {
+    /* Initial choice container */
+    .choice-container {
+        max-width: 500px;
+        margin: 100px auto;
+        text-align: center;
+        padding: 40px;
+        background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+        border: 1px solid #333;
+    }
+
+    .choice-container h1 {
+        color: #ffffff;
+        font-size: 32px;
+        margin-bottom: 20px;
+        font-weight: 300;
+        letter-spacing: 1px;
+    }
+
+    .choice-container p {
+        color: #cccccc;
+        font-size: 16px;
+        margin-bottom: 40px;
+        line-height: 1.6;
+    }
+
+    .choice-buttons {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+    }
+
+    .choice-btn {
+        padding: 15px 30px;
+        font-size: 18px;
+        font-weight: 600;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 140px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .choice-btn.create {
+        background: linear-gradient(135deg, #4CAF50, #45a049);
+        color: white;
+        box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    }
+
+    .choice-btn.create:hover {
+        background: linear-gradient(135deg, #45a049, #3d8b40);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+    }
+
+    .choice-btn.join {
+        background: linear-gradient(135deg, #2196F3, #1976D2);
+        color: white;
+        box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+    }
+
+    .choice-btn.join:hover {
+        background: linear-gradient(135deg, #1976D2, #1565C0);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+    }
+
+    /* Form containers */
+    .form-container {
+        max-width: 500px;
+        margin: 50px auto;
+        background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+        border: 1px solid #333;
+        color: #ffffff;
+        display: none;
+    }
+
+    .form-container.active {
+        display: block;
+    }
+
+    .form-container h2 {
         text-align: center;
         font-size: 28px;
-        margin-bottom: 20px;
-        color: #7289da; /* Discord-inspired blue */
+        margin-bottom: 30px;
+        color: #ffffff;
+        font-weight: 300;
+        letter-spacing: 1px;
     }
 
-    /* Form group styling */
-    .form-group {
+    .back-btn {
+        background: #333;
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 5px;
+        cursor: pointer;
         margin-bottom: 20px;
+        font-size: 14px;
+        transition: background 0.3s ease;
+    }
+
+    .back-btn:hover {
+        background: #555;
+    }
+
+    /* Form styling */
+    .form-group {
+        margin-bottom: 25px;
     }
 
     .form-group label {
         display: block;
         font-size: 16px;
-        margin-bottom: 5px;
+        margin-bottom: 8px;
         color: #ffffff;
+        font-weight: 500;
     }
 
     .form-group input {
         width: 100%;
-        padding: 12px;
-        font-size: 15px;
-        border: 1px solid #444;
-        border-radius: 5px;
-        background-color: #23272a; /* Input field background */
+        padding: 15px;
+        font-size: 16px;
+        border: 2px solid #333;
+        border-radius: 8px;
+        background-color: #000000;
         color: #ffffff;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        box-sizing: border-box;
     }
 
     .form-group input:focus {
-        border-color: #7289da;
+        border-color: #4CAF50;
         outline: none;
-        box-shadow: 0 0 5px #7289da;
+        box-shadow: 0 0 10px rgba(76, 175, 80, 0.2);
     }
 
-    /* Buttons container */
-    .form-buttons {
-        display: flex;
-        justify-content: space-between;
-        gap: 10px;
+    .form-group input::placeholder {
+        color: #888;
     }
 
-    /* Buttons styling */
-    button {
-        flex: 1;
-        padding: 12px 20px;
-        font-size: 16px;
-        font-weight: bold;
+    /* Submit buttons */
+    .submit-btn {
+        width: 100%;
+        padding: 15px;
+        font-size: 18px;
+        font-weight: 600;
         border: none;
-        border-radius: 5px;
+        border-radius: 8px;
         cursor: pointer;
-        transition: transform 0.2s ease, background-color 0.3s ease;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 20px;
     }
 
-    button[name="action"][value="create"] {
-        background-color: #3ba55d; /* Professional green for create */
+    .submit-btn.create {
+        background: linear-gradient(135deg, #4CAF50, #45a049);
         color: white;
+        box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
     }
 
-    button[name="action"][value="create"]:hover {
-        background-color: #2c9a50;
-        transform: scale(1.05);
+    .submit-btn.create:hover {
+        background: linear-gradient(135deg, #45a049, #3d8b40);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
     }
 
-    button[name="action"][value="join"] {
-        background-color: #ffcc4d; /* Gold for join */
-        color: #000000;
+    .submit-btn.join {
+        background: linear-gradient(135deg, #2196F3, #1976D2);
+        color: white;
+        box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
     }
 
-    button[name="action"][value="join"]:hover {
-        background-color: #e6b839;
-        transform: scale(1.05);
+    .submit-btn.join:hover {
+        background: linear-gradient(135deg, #1976D2, #1565C0);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
     }
 
-    /* Messages list */
-    ul {
+    /* Info list */
+    .info-list {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 20px;
+        border-radius: 8px;
         margin-top: 20px;
+        border-left: 4px solid #4CAF50;
+    }
+
+    .info-list ul {
+        margin: 0;
         padding: 0;
         list-style: none;
     }
 
-    ul li {
-        background-color: #444b52;
-        padding: 10px;
+    .info-list li {
+        color: #cccccc;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        padding-left: 25px;
+    }
+
+    .info-list li:last-child {
+        border-bottom: none;
+    }
+
+    .info-list li:before {
+        content: "•";
+        color: #4CAF50;
+        font-size: 20px;
+        position: absolute;
+        left: 0;
+        top: 5px;
+    }
+
+    /* Messages styling */
+    .messages {
+        list-style: none;
+        padding: 0;
+        margin-bottom: 20px;
+    }
+
+    .messages li {
+        padding: 12px 16px;
+        border-radius: 8px;
         margin-bottom: 10px;
-        border-radius: 5px;
-        color: #ffffff;
+        font-weight: 500;
+    }
+
+    .messages li.success {
+        background-color: rgba(76, 175, 80, 0.1);
+        color: #4CAF50;
+        border-left: 4px solid #4CAF50;
+    }
+
+    .messages li.error {
+        background-color: rgba(244, 67, 54, 0.1);
+        color: #f44336;
+        border-left: 4px solid #f44336;
+    }
+
+    .messages li.info {
+        background-color: rgba(33, 150, 243, 0.1);
+        color: #2196F3;
+        border-left: 4px solid #2196F3;
     }
 
     /* Responsive design */
     @media (max-width: 600px) {
-        .form-buttons {
+        .choice-buttons {
             flex-direction: column;
+            align-items: center;
         }
-        button {
-            margin-bottom: 10px;
+        
+        .choice-btn {
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .form-container {
+            margin: 20px;
+            padding: 20px;
+        }
+        
+        .choice-container {
+            margin: 50px 20px;
+            padding: 30px 20px;
         }
     }
 </style>
 
-<div class="container">
-
-    <h2>Create or Join a Chatroom</h2>
-    
+<!-- Initial Choice Screen -->
+<div class="choice-container" id="choiceContainer">
+    <h1>Group Portal</h1>
+      
     {% if messages %}
-    <ul>
+    <ul class="messages">
         {% for message in messages %}
-        <li>{{ message }}</li>
+        <li class="{{ message.tags }}">{{ message }}</li>
         {% endfor %}
     </ul>
     {% endif %}
+    <p>Connect with others through real-time chat and shared music experiences. Choose your path below.</p>
+    <div class="choice-buttons">
+        <button class="choice-btn create" onclick="showForm('create')">Create Group</button>
+        <button class="choice-btn join" onclick="showForm('join')">Join Group</button>
+    </div>
+<div style="margin-bottom: 25px; text-align: left !important;">
+    <h6 style="margin: 12px 0; font-size: 15px !important; font-weight: 500 !important; color: #e0e0e0 !important; text-align: left !important;">• Connect with others through real-time chat and shared music experiences.</h6>
+    <h6 style="margin: 12px 0; font-size: 15px !important; font-weight: 500 !important; color: #e0e0e0 !important; text-align: left !important;">• Create your own group to start a private space for you and your friends.</h6>
+    <h6 style="margin: 12px 0; font-size: 15px !important; font-weight: 500 !important; color: #e0e0e0 !important; text-align: left !important;">• Or join an existing group to explore new communities and interests.</h6>
+    <h6 style="margin: 12px 0; font-size: 15px !important; font-weight: 500 !important; color: #e0e0e0 !important; text-align: left !important;">• It’s quick, easy, and made for seamless collaboration and fun.</h6>
+</div>
+
+
+</div>
+
+<!-- Create Chatroom Form -->
+<div class="form-container" id="createForm">
+<div class="head-elements" style="display: flex;">
+    <button style="
+  background-color: #2c2c2c;
+  border: none;
+  border-radius: 8px;
+  width: 48px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-right: 20px;
+  padding: 0;
+  border: 1px solid #444; /* Dark border for button */
+"  onclick="showChoice()">
+  <svg style="margin-left: -5px;" width="24" height="24" viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16 6L10 12L16 18" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="10" y1="12" x2="22" y2="12" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  </svg>
+</button>
+    <h2 style="margin-left: 10px;">Create a Group</h2>
+    </div>
+    
     <form method="POST" class="chatroom-form">
         {% csrf_token %}
         <div class="form-group">
-            <label for="chatroom_name">Chatroom Name:</label>
-            <input type="text" id="chatroom_name" name="chatroom_name" required>
+            <label for="public_name">Group Name:</label>
+            <input type="text" id="public_name" name="public_name" required placeholder="Enter your display name">
         </div>
-        <div class="form-group">
-            <label for="passcode">Passcode:</label>
-            <input type="text" id="passcode" name="passcode">
-        </div>
-        <div class="form-buttons">
-            <button type="submit" name="action" value="create">Create Chatroom</button>
-            <button type="submit" name="action" value="join">Join Chatroom</button>
-        </div>
-        <ul>
-            <li>The admin will have control over the music when you are in the group.</li>
-            <li>You can participate in real-time group chats. Please be polite and respectful to others.</li>
-            <li>Enjoy listening to music with others in real-time, creating a shared experience.</li>
-        </ul>
-        
-    </form>
-    
-</div>
-{% endblock %}
 
+        <div class="form-group">
+            <label for="chatroom_name">Group ID: ( Unique )</label>
+            <input type="text" id="chatroom_name" name="chatroom_name" required placeholder="Enter Group ID ( Like : mygroup14 / groups )">
+        </div>
+        
+        <div class="form-group">
+            <label for="passcode">Passcode ( Unique ):</label>
+            <input type="text" id="passcode" name="passcode" placeholder="Enter passcode for private room">
+        </div>
+        
+        <button type="submit" name="action" value="create" class="submit-btn create">Create Chatroom</button>
+        
+        <div class="info-list">
+            <ul>
+                <li>The admin will have control over the music when you are in the group.</li>
+                <li>You can participate in real-time group chats. Please be polite and respectful to others.</li>
+                <li>Enjoy listening to music with others in real-time, creating a shared experience.</li>
+            </ul>
+        </div>
+    </form>
+</div>
+
+<!-- Join Chatroom Form -->
+<div class="form-container" id="joinForm">
+    <!-- <button class="back-btn">← Back</button> -->
+<div class="head-elements" style="display: flex;">
+    <button style="
+  background-color: #2c2c2c;
+  border: none;
+  border-radius: 8px;
+  width: 48px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-right: 20px;
+  padding: 0;
+  border: 1px solid #444; /* Dark border for button */
+"  onclick="showChoice()">
+  <svg style="margin-left: -5px;" width="24" height="24" viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16 6L10 12L16 18" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="10" y1="12" x2="22" y2="12" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  </svg>
+</button>
+    <h2 style="margin-left: 10px;">Join a Group</h2>
+    </div>
+
+    
+    <form method="POST" class="chatroom-form">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="chatroom_name">Group ID :</label>
+            <input type="text" id="chatroom_name" name="chatroom_name" required placeholder="Enter chatroom name">
+        </div>
+        
+        <div class="form-group">
+            <label for="passcode">Passcode </label>
+            <input type="text" id="passcode" name="passcode" placeholder="Enter passcode if room is private">
+        </div>
+        
+        <button type="submit" name="action" value="join" class="submit-btn join">Join Chatroom</button>
+        
+        <div class="info-list">
+            <ul>
+                <li>The admin will have control over the music when you are in the group.</li>
+                <li>You can participate in real-time group chats. Please be polite and respectful to others.</li>
+                <li>Enjoy listening to music with others in real-time, creating a shared experience.</li>
+            </ul>
+        </div>
+    </form>
+</div>
+
+<script>
+function showForm(type) {
+    document.getElementById('choiceContainer').style.display = 'none';
+    if (type === 'create') {
+        document.getElementById('createForm').classList.add('active');
+    } else if (type === 'join') {
+        document.getElementById('joinForm').classList.add('active');
+    }
+}
+
+function showChoice() {
+    document.getElementById('choiceContainer').style.display = 'block';
+    document.getElementById('createForm').classList.remove('active');
+    document.getElementById('joinForm').classList.remove('active');
+}
+
+// Handle form submission errors - if there are Django messages, show the appropriate form
+document.addEventListener('DOMContentLoaded', function() {
+    const messages = document.querySelector('.messages');
+    if (messages) {
+        // If there are messages, we need to determine which form to show
+        // This is a simple approach - you might want to pass a parameter from Django to be more precise
+        const urlParams = new URLSearchParams(window.location.search);
+        const action = urlParams.get('action');
+        if (action === 'create') {
+            showForm('create');
+        } else if (action === 'join') {
+            showForm('join');
+        }
+    }
+});
+</script>
+
+{% endblock %}

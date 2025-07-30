@@ -1,12 +1,1476 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Activity</title>
-</head>
-<body>
-    <h2>User Activity</h2>
-    <p>Total time spent today: {{ formatted_time }}</p>
-</body>
-</html>
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+Home - Meditation Dashboard
+{% endblock %}
+
+{% block content %}
+    <title>User Activity Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: #e4e4e7;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease-out;
+            position: relative;
+        }
+
+        .back-button {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #e4e4e7;
+            padding: 12px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-50%) translateX(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-button:active {
+            transform: translateY(-50%) translateX(-1px) scale(0.95);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #bb86fc 0%, #03dac6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #9ca3af;
+            font-size: 1.1rem;
+        }
+
+        .filter-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .filter-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .date-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .date-input-group label {
+            font-size: 0.9rem;
+            color: #d1d5db;
+            font-weight: 500;
+        }
+
+        .date-input, .filter-btn {
+            padding: 12px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #e4e4e7;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .date-input:focus {
+            outline: none;
+            border-color: #bb86fc;
+            box-shadow: 0 0 0 3px rgba(187, 134, 252, 0.3);
+        }
+
+        .filter-btn {
+            background: linear-gradient(135deg, #bb86fc 0%, #03dac6 100%);
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            min-width: 120px;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(187, 134, 252, 0.3);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #bb86fc, #03dac6);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #bb86fc;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .stat-label {
+            color: #9ca3af;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+
+        .chart-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #e4e4e7;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 400px;
+            margin-bottom: 20px;
+        }
+
+        .activity-list {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.8s ease-out 0.8s both;
+        }
+
+        .activity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .activity-item.active {
+            border-left-color: #10b981;
+        }
+
+        .activity-item.inactive {
+            border-left-color: #ef4444;
+        }
+
+        .activity-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .activity-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .activity-icon.active {
+            background: #10b981;
+            color: white;
+        }
+
+        .activity-icon.inactive {
+            background: #ef4444;
+            color: white;
+        }
+
+        .activity-date {
+            font-weight: 500;
+            color: #e4e4e7;
+        }
+
+        .activity-status {
+            font-size: 0.9rem;
+            color: #9ca3af;
+        }
+
+        .details-section {
+            animation: fadeInUp 0.8s ease-out 1s both;
+        }
+
+        .detail-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .detail-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .detail-date {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #e4e4e7;
+        }
+
+        .detail-total {
+            background: linear-gradient(135deg, #bb86fc 0%, #03dac6 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .detail-activities {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .detail-activity {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .detail-activity:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .activity-name {
+            color: #d1d5db;
+            font-size: 0.9rem;
+        }
+
+        .activity-minutes {
+            color: #bb86fc;
+            font-weight: 600;
+        }
+
+        .scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(187, 134, 252, 0.5);
+            border-radius: 3px;
+        }
+
+        .scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(187, 134, 252, 0.7);
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .back-button {
+                position: relative;
+                transform: none;
+                margin-bottom: 20px;
+                align-self: flex-start;
+            }
+
+            .back-button:hover {
+                transform: translateX(-3px);
+            }
+
+            .back-button:active {
+                transform: translateX(-1px) scale(0.95);
+            }
+
+            .filter-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .date-input-group {
+                width: 100%;
+            }
+
+            .date-input, .filter-btn {
+                width: 100%;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .chart-wrapper {
+                height: 300px;
+            }
+
+            .activity-grid {
+                grid-template-columns: 1fr;
+                max-height: 300px;
+            }
+
+            .detail-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .detail-activities {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .stat-value {
+                font-size: 2rem;
+            }
+
+            .chart-wrapper {
+                height: 250px;
+            }
+        }
+    </style>
+
+    <div class="container">
+        <div class="header">
+            <button class="back-button"  onclick="window.location.href='{% url 'home' %}'">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back</span>
+            </button>
+            <h1><i class="fas fa-chart-line"></i> User Activity Tracker</h1>
+            <p>Track your meditation journey and daily progress</p>
+        </div>
+
+        <div class="filter-section">
+            <form method="get" class="filter-form">
+                <div class="date-input-group">
+                    <label for="start">From Date</label>
+                    <input type="date" id="start" name="start" value="{{ start_date }}" class="date-input">
+                </div>
+                <div class="date-input-group">
+                    <label for="end">To Date</label>
+                    <input type="date" id="end" name="end" value="{{ end_date }}" class="date-input">
+                </div>
+                
+                <button type="submit" class="filter-btn" style="margin-top: 2.2%;">
+                    
+                    <i class="fas fa-filter"></i> Apply Filter
+                </button>
+            </form>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-value">{{ activity_days }}</span>
+                <div class="stat-label">Active Days</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value">{{ total_days }}</span>
+                <div class="stat-label">Total Days</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value">{% widthratio activity_days total_days 100 %}%</span>
+                <div class="stat-label">Activity Rate</div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h3 class="chart-title">
+                <i class="fas fa-spa"></i>
+                Meditation Time (Minutes per Day)
+            </h3>
+            <div class="chart-wrapper">
+                <canvas id="meditationChart"></canvas>
+            </div>
+        </div>
+
+        <div class="activity-list">
+            <h3 class="chart-title">
+                <i class="fas fa-calendar-check"></i>
+                Daily Activity Overview
+            </h3>
+            <div class="activity-grid scrollbar">
+                {% for day in activity_data %}
+                <div class="activity-item {% if day.active %}active{% else %}inactive{% endif %}">
+                    <div class="activity-icon {% if day.active %}active{% else %}inactive{% endif %}">
+                        {% if day.active %}
+                            <i class="fas fa-check"></i>
+                        {% else %}
+                            <i class="fas fa-times"></i>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <div class="activity-date">{{ day.date }}</div>
+                        <div class="activity-status">
+                            {% if day.active %}Active Session{% else %}No Activity{% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+<div class="stats-grid">
+  <div class="stat-card">
+    <h2>Most Performed Admin Exercises</h2>
+    <ul>
+      {% for activity in top_user_exercises %}
+        <li>
+          <span class="name">{{ activity.exercise.name }}</span>
+          <span class="count">{{ activity.play_count }}</span>
+        </li>
+      {% empty %}
+        <li class="empty">No activity recorded</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="stat-card">
+    <h2>Most Performed Silent Exercises</h2>
+    <ul>
+      {% for activity in top_silent_exercises %}
+        <li>
+          <span class="name">{{ activity.exercise.nickname }}</span>
+          <span class="count">{{ activity.play_count }}</span>
+        </li>
+      {% empty %}
+        <li class="empty">No activity recorded</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="stat-card">
+    <h2>Most Listend Musics</h2>
+    <ul>
+      {% for activity in top_test_exercises %}
+        <li>
+          <span class="name">{{ activity.exercise.title }}</span>
+          <span class="count">{{ activity.play_count }}</span>
+        </li>
+      {% empty %}
+        <li class="empty">No activity recorded</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+        <div class="details-section">
+            <h3 class="chart-title">
+                <i class="fas fa-list-alt"></i>
+                Detailed Daily Activity
+            </h3>
+            {% for detail in detail_tiles %}
+            <div class="detail-card">
+                <div class="detail-header">
+                    <div class="detail-date">{{ detail.date|date:"l, F d, Y" }}</div>
+                    <div class="detail-total">{{ detail.total_minutes }} minutes</div>
+                </div>
+                <div class="detail-activities">
+                    <div class="detail-activity">
+                        <span class="activity-name"><i class="fas fa-wind"></i> Breathe Free </span>
+                        <span class="activity-minutes">{{ detail.breath_free_page }} mins</span>
+                    </div>
+                   <div class="detail-activity">
+                        <span class="activity-name"><i class="fas fa-plus"></i> Silent Exercises </span>
+                        <span class="activity-minutes">{{ detail.breathx_play_page|add:detail.breath_save_page }} mins</span>
+                    </div>
+
+                    <div class="detail-activity">
+                        <span class="activity-name"><i class="fas fa-heartbeat"></i> Breathing Beats</span>
+                        <span class="activity-minutes">{{ detail.breathing_beats_page }} mins</span>
+                    </div>
+                    <div class="detail-activity">
+                        <span class="activity-name"><i class="fas fa-graduation-cap"></i> Course </span>
+                        <span class="activity-minutes">{{ detail.course_page }} mins</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+<!-- Activity download button  -->
+<!-- Button to open modal -->
+<!-- Button to open modal -->
+<button class="btn btn-lg w-100 py-3 shadow-lg position-relative overflow-hidden" 
+        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 8px; color: white; font-weight: 600; transition: all 0.3s ease;"
+        data-bs-toggle="modal" data-bs-target="#downloadModal"
+        onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 8px 20px rgba(102, 126, 234, 0.3)'"
+        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)'">
+  <i class="fas fa-download me-2"></i>
+  Download PDF Report
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="downloadModal" tabindex="-1" aria-labelledby="downloadModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <form method="POST" action="{% url 'activityapp:send_email_report' %}">
+      {% csrf_token %}
+      <div class="modal-content border-0 shadow-2xl position-relative overflow-hidden" 
+           style="background: linear-gradient(145deg, #1a1a2e 0%, #16213e 30%, #0f3460 100%); border-radius: 20px; backdrop-filter: blur(20px);">
+        
+        <!-- Animated background elements -->
+        <div style="position: absolute; top: -50px; right: -50px; width: 100px; height: 100px; background: linear-gradient(45deg, #667eea, #764ba2); border-radius: 50%; opacity: 0.1; animation: float 6s ease-in-out infinite;"></div>
+        <div style="position: absolute; bottom: -30px; left: -30px; width: 60px; height: 60px; background: linear-gradient(45deg, #f093fb, #f5576c); border-radius: 50%; opacity: 0.1; animation: float 4s ease-in-out infinite reverse;"></div>
+        
+        <div class="modal-header border-0 pb-0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 20px 20px 0 0; padding: 1.5rem;">
+          <h5 style="margin-bottom: 10px;" class="modal-title fw-bold d-flex align-items-center gap-3 mb-0" id="downloadModalLabel" style="font-size: 1.3rem; letter-spacing: 0.5px;">
+            <div style="background: rgba(255,255,255,0.2); padding: 8px; border-radius: 10px; backdrop-filter: blur(10px);  margin-bottom: 10px;">
+              <i class="fas fa-calendar-alt" style="font-size: 1.2em;" ></i>
+            </div>
+            Choose Time Range
+          </h5>
+          <button type="button" class="btn-close btn-close-white opacity-75" data-bs-dismiss="modal" aria-label="Close" 
+                  style="font-size: 1.2rem;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.75'"></button>
+        </div>
+        
+        <div class="modal-body p-4" style="padding: 2rem !important;">
+          <div class="mb-4">
+            <label for="months" class="form-label fw-semibold text-light mb-3 d-flex align-items-center gap-2" style="font-size: 1.1rem;">
+              <div style="background: linear-gradient(45deg, #667eea, #764ba2); padding: 6px; border-radius: 8px; display: flex; align-items: center;">
+                <i class="fas fa-clock text-white" style="font-size: 0.9em;"></i>
+              </div>
+              Select reporting period:
+            </label>
+            <select name="months" id="months" 
+                    class="form-select form-select-lg border-0 shadow-lg" 
+                    style="background: linear-gradient(145deg, #2a2a3e 0%, #1e1e32 100%); color: white; border-radius: 8px; padding: 15px 20px; font-size: 1rem; transition: all 0.3s ease;"
+                    onmouseover="this.style.boxShadow='0 6px 20px rgba(102, 126, 234, 0.2)'"
+                    onmouseout="this.style.boxShadow='0 4px 15px rgba(0,0,0,0.2)'"
+                    required>
+              <option value="" disabled selected style="background: #1a1a2e;">Choose time range...</option>
+              <option value="1" style="background: #1a1a2e;">Last 1 Month</option>
+              <option value="2" style="background: #1a1a2e;">Last 2 Months</option>
+              <option value="3" style="background: #1a1a2e;">Last 3 Months</option>
+              <option value="6" style="background: #1a1a2e;">Last 6 Months</option>
+              <option value="9" style="background: #1a1a2e;">Last 9 Months</option>
+              <option value="12" style="background: #1a1a2e;">Last 12 Months</option>
+            </select>
+          </div>
+          
+          <div class="alert border-0 p-3" 
+               style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%); border-radius: 12px; border-left: 4px solid #667eea;">
+            <div class="d-flex align-items-center gap-2">
+              <div style="background: linear-gradient(45deg, #667eea, #764ba2); padding: 8px; border-radius: 50%; display: flex; align-items: center; justify-content: center; width: 35px; height: 35px;">
+                <i class="fas fa-info-circle text-white" style="font-size: 0.9em;"></i>
+              </div>
+              <small class="text-light mb-0" style="font-size: 0.95rem; line-height: 1.4;">
+                Your comprehensive report will include all activities and insights from the selected time period.
+              </small>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-footer border-0 pt-0 pb-4 px-4" style="padding: 0 2rem 2rem 2rem !important;">
+  <button type="submit" class="btn btn-lg px-5 py-2 shadow-lg w-100"
+          style="width: 100%; background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+                 border: none; border-radius: 8px; color: white; font-weight: 600; 
+                 transition: all 0.3s ease;"
+          onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 8px 20px rgba(40, 167, 69, 0.3)'"
+          onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)'">
+    <i class="fas fa-download me-2"></i>
+    Generate & Download
+  </button>
+</div>
+
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const today = new Date().toISOString().split("T")[0];
+    const startDateInput = document.getElementById("start");
+    const endDateInput = document.getElementById("end");
+
+    if (startDateInput) startDateInput.setAttribute("max", today);
+    if (endDateInput) endDateInput.setAttribute("max", today);
+});
+</script>
+<script>
+    // Complete JavaScript for Email Report Modal and Activity Dashboard
+
+// Chart configuration (keeping your existing chart code)
+const meditationLabels = {{ meditation_labels_json|safe }};
+const meditationValues = {{ meditation_values_json|safe }};
+
+const ctx = document.getElementById('meditationChart').getContext('2d');
+
+// Create gradient
+const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+gradient.addColorStop(0, 'rgba(187, 134, 252, 0.8)');
+gradient.addColorStop(1, 'rgba(3, 218, 198, 0.2)');
+
+const chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: meditationLabels,
+        datasets: [{
+            label: 'Minutes',
+            data: meditationValues,
+            backgroundColor: gradient,
+            borderColor: 'rgba(187, 134, 252, 1)',
+            borderWidth: 2,
+            borderRadius: 8,
+            borderSkipped: false,
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                backgroundColor: 'rgba(18, 18, 18, 0.95)',
+                titleColor: '#e4e4e7',
+                bodyColor: '#e4e4e7',
+                borderColor: 'rgba(187, 134, 252, 0.5)',
+                borderWidth: 1,
+                cornerRadius: 8,
+                displayColors: false,
+                callbacks: {
+                    title: function(context) {
+                        return context[0].label;
+                    },
+                    label: function(context) {
+                        return `${context.parsed.y} minutes of meditation`;
+                    }
+                }
+            }
+        },
+        scales: {
+            x: {
+                grid: {
+                    display: false
+                },
+                ticks: {
+                    color: '#9ca3af',
+                    font: {
+                        size: 12
+                    }
+                }
+            },
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: 'rgba(255, 255, 255, 0.1)',
+                    drawBorder: false
+                },
+                ticks: {
+                    color: '#9ca3af',
+                    font: {
+                        size: 12
+                    },
+                    callback: function(value) {
+                        return value + ' min';
+                    }
+                }
+            }
+        },
+        animation: {
+            duration: 2000,
+            easing: 'easeOutQuart'
+        },
+        interaction: {
+            intersect: false,
+            mode: 'index'
+        }
+    }
+});
+
+// Add hover effects to stat cards
+document.querySelectorAll('.stat-card').forEach(card => {
+    card.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-8px) scale(1.02)';
+    });
+    
+    card.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0) scale(1)';
+    });
+});
+
+// Smooth scrolling for activity list
+const activityGrid = document.querySelector('.activity-grid');
+if (activityGrid) {
+    activityGrid.classList.add('scrollbar');
+}
+
+// Add loading animation to filter button
+const filterBtn = document.querySelector('.filter-btn');
+if (filterBtn) {
+    filterBtn.addEventListener('click', function() {
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Filtering...';
+    });
+}
+
+// Animate counter on page load
+function animateCounters() {
+    document.querySelectorAll('.stat-value').forEach(counter => {
+        const target = parseInt(counter.textContent.replace(/[^\d]/g, ''));
+        const duration = 2000;
+        const increment = target / (duration / 16);
+        let current = 0;
+        
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                counter.textContent = counter.textContent.replace(/[\d]+/, target);
+                clearInterval(timer);
+            } else {
+                counter.textContent = counter.textContent.replace(/[\d]+/, Math.floor(current));
+            }
+        }, 16);
+    });
+}
+
+// Email Report Modal Functionality
+class EmailReportModal {
+    constructor() {
+        this.modal = document.getElementById('emailReportModal') || document.getElementById('downloadModal');
+        this.form = document.getElementById('emailReportForm');
+        this.submitBtn = document.getElementById('emailReportBtn');
+        this.monthsSelect = document.getElementById('months');
+        this.isSubmitting = false;
+        
+        this.init();
+    }
+    
+    init() {
+        if (this.form) {
+            this.form.addEventListener('submit', this.handleSubmit.bind(this));
+        }
+        
+        if (this.monthsSelect) {
+            this.monthsSelect.addEventListener('change', this.updatePreview.bind(this));
+        }
+        
+        // Reset form when modal is hidden
+        if (this.modal) {
+            this.modal.addEventListener('hidden.bs.modal', this.resetModal.bind(this));
+        }
+        
+        // Show loading state and validate before submit
+        if (this.submitBtn) {
+            this.submitBtn.addEventListener('click', this.validateForm.bind(this));
+        }
+    }
+    
+    handleSubmit(e) {
+        if (this.isSubmitting) {
+            e.preventDefault();
+            return;
+        }
+        
+        const months = this.monthsSelect?.value;
+        if (!months) {
+            e.preventDefault();
+            this.showError('Please select a time period');
+            return;
+        }
+        
+        this.isSubmitting = true;
+        this.showLoadingState();
+        
+        // Use AJAX for better user experience
+        e.preventDefault();
+        this.submitWithAjax();
+    }
+    
+    async submitWithAjax() {
+        try {
+            const formData = new FormData(this.form);
+            const response = await fetch(this.form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                this.showSuccess(data.message, data.email);
+                setTimeout(() => {
+                    this.hideModal();
+                }, 3000);
+            } else {
+                this.showError(data.message || 'Failed to send email');
+            }
+        } catch (error) {
+            console.error('Email submission error:', error);
+            this.showError('Network error. Please try again.');
+        } finally {
+            this.isSubmitting = false;
+        }
+    }
+    
+    validateForm(e) {
+        const months = this.monthsSelect?.value;
+        if (!months) {
+            e.preventDefault();
+            this.showError('Please select a time period');
+            this.monthsSelect?.focus();
+            return false;
+        }
+        return true;
+    }
+    
+    showLoadingState() {
+        if (this.submitBtn) {
+            this.submitBtn.disabled = true;
+            this.submitBtn.classList.add('btn-loading');
+            
+            const btnText = this.submitBtn.querySelector('.btn-text') || this.submitBtn;
+            btnText.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending Report...';
+            
+            // Add loading animation
+            this.submitBtn.style.background = 'linear-gradient(135deg, #6c757d 0%, #495057 100%)';
+        }
+    }
+    
+    showSuccess(message, email) {
+        if (this.submitBtn) {
+            this.submitBtn.classList.remove('btn-loading');
+            this.submitBtn.style.background = 'linear-gradient(135deg, #28a745 0%, #20c997 100%)';
+            
+            const btnText = this.submitBtn.querySelector('.btn-text') || this.submitBtn;
+            btnText.innerHTML = '<i class="fas fa-check-circle me-2"></i>Email Sent Successfully!';
+        }
+        
+        // Show success message in modal
+        this.showModalMessage(message, 'success', email);
+        
+        // Show toast notification
+        this.showToast(message, 'success');
+    }
+    
+    showError(message) {
+        if (this.submitBtn) {
+            this.submitBtn.disabled = false;
+            this.submitBtn.classList.remove('btn-loading');
+            this.submitBtn.style.background = 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)';
+            
+            const btnText = this.submitBtn.querySelector('.btn-text') || this.submitBtn;
+            btnText.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Try Again';
+        }
+        
+        // Show error message in modal
+        this.showModalMessage(message, 'error');
+        
+        // Show toast notification
+        this.showToast(message, 'error');
+        
+        // Reset button after 3 seconds
+        setTimeout(() => {
+            this.resetButton();
+        }, 3000);
+    }
+    
+    showModalMessage(message, type, email = '') {
+        // Remove existing messages
+        const existingMessage = this.modal?.querySelector('.modal-message');
+        if (existingMessage) {
+            existingMessage.remove();
+        }
+        
+        // Create message element
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `modal-message alert ${type === 'success' ? 'alert-success' : 'alert-danger'} mt-3`;
+        messageDiv.style.borderRadius = '10px';
+        messageDiv.style.border = 'none';
+        messageDiv.style.background = type === 'success' 
+            ? 'linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(32, 201, 151, 0.1) 100%)'
+            : 'linear-gradient(135deg, rgba(220, 53, 69, 0.1) 0%, rgba(200, 35, 51, 0.1) 100%)';
+        
+        const icon = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-triangle';
+        const color = type === 'success' ? '#28a745' : '#dc3545';
+        
+        messageDiv.innerHTML = `
+            <div class="d-flex align-items-center">
+                <i class="${icon} me-3" style="color: ${color}; font-size: 1.2em;"></i>
+                <div>
+                    <strong>${message}</strong>
+                    ${email ? `<br><small class="text-muted">Report will be sent to: ${email}</small>` : ''}
+                </div>
+            </div>
+        `;
+        
+        // Insert message before footer
+        const modalBody = this.modal?.querySelector('.modal-body');
+        if (modalBody) {
+            modalBody.appendChild(messageDiv);
+        }
+    }
+    
+    showToast(message, type) {
+        // Create toast notification
+        const toast = document.createElement('div');
+        toast.className = `toast align-items-center text-white border-0 position-fixed`;
+        toast.style.cssText = `
+            top: 20px; 
+            right: 20px; 
+            z-index: 9999;
+            min-width: 300px;
+            background: ${type === 'success' 
+                ? 'linear-gradient(135deg, #28a745 0%, #20c997 100%)' 
+                : 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)'};
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        `;
+        toast.setAttribute('role', 'alert');
+        
+        const icon = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-triangle';
+        
+        toast.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body d-flex align-items-center">
+                    <i class="${icon} me-2"></i>
+                    ${message}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="this.parentElement.parentElement.remove()"></button>
+            </div>
+        `;
+        
+        document.body.appendChild(toast);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (toast.parentElement) {
+                toast.remove();
+            }
+        }, 5000);
+    }
+    
+    updatePreview() {
+        const months = this.monthsSelect?.value;
+        if (months) {
+            const previewText = document.querySelector('.modal-body small');
+            if (previewText) {
+                const period = months == 1 ? 'month' : `${months} months`;
+                previewText.textContent = `Your comprehensive report will include all activities and insights from the last ${period}.`;
+            }
+        }
+    }
+    
+    resetModal() {
+        this.isSubmitting = false;
+        this.resetButton();
+        
+        // Remove any messages
+        const existingMessage = this.modal?.querySelector('.modal-message');
+        if (existingMessage) {
+            existingMessage.remove();
+        }
+        
+        // Reset form
+        if (this.form) {
+            this.form.reset();
+        }
+    }
+    
+    resetButton() {
+        if (this.submitBtn) {
+            this.submitBtn.disabled = false;
+            this.submitBtn.classList.remove('btn-loading');
+            this.submitBtn.style.background = 'linear-gradient(135deg, #28a745 0%, #20c997 100%)';
+            
+            const btnText = this.submitBtn.querySelector('.btn-text') || this.submitBtn;
+            btnText.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Send to Email';
+        }
+    }
+    
+    hideModal() {
+        if (this.modal && window.bootstrap) {
+            const modalInstance = bootstrap.Modal.getInstance(this.modal);
+            if (modalInstance) {
+                modalInstance.hide();
+            }
+        }
+    }
+}
+
+// Enhanced form validation
+function validateEmailForm() {
+    const form = document.getElementById('emailReportForm');
+    const monthsSelect = document.getElementById('months');
+    
+    if (!form || !monthsSelect) return true;
+    
+    // Check if months is selected
+    if (!monthsSelect.value) {
+        // Highlight the select field
+        monthsSelect.style.borderColor = '#dc3545';
+        monthsSelect.style.boxShadow = '0 0 0 0.2rem rgba(220, 53, 69, 0.25)';
+        
+        // Remove highlight after 3 seconds
+        setTimeout(() => {
+            monthsSelect.style.borderColor = '';
+            monthsSelect.style.boxShadow = '';
+        }, 3000);
+        
+        return false;
+    }
+    
+    return true;
+}
+
+// Initialize everything when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize email report modal
+    const emailModal = new EmailReportModal();
+    
+    // Initialize animations when page loads
+    setTimeout(animateCounters, 500);
+    
+    // Add smooth scroll behavior to page
+    document.documentElement.style.scrollBehavior = 'smooth';
+    
+    // Enhanced loading states for any buttons
+    document.querySelectorAll('button[type="submit"]').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            const form = this.closest('form');
+            if (form && form.checkValidity()) {
+                this.style.opacity = '0.7';
+                this.style.pointerEvents = 'none';
+                
+                setTimeout(() => {
+                    this.style.opacity = '';
+                    this.style.pointerEvents = '';
+                }, 3000);
+            }
+        });
+    });
+    
+    // Add keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        // Ctrl/Cmd + E to open email modal
+        if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+            e.preventDefault();
+            const modalTrigger = document.querySelector('[data-bs-target="#emailReportModal"], [data-bs-target="#downloadModal"]');
+            if (modalTrigger) {
+                modalTrigger.click();
+            }
+        }
+    });
+    
+    console.log('📧 Email Report System Initialized Successfully!');
+});
+</script>
+<script>
+// Download Notification Script - Add this at the end of your HTML file
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Check for download completion on page load
+    checkForDownloadNotification();
+    
+    // Set up download tracking
+    setupDownloadTracking();
+});
+
+function checkForDownloadNotification() {
+    // Method 1: Check URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('downloaded') === 'true' || urlParams.get('report') === 'downloaded') {
+        showDownloadNotification();
+        // Clean URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+        return;
+    }
+    
+    // Method 2: Check sessionStorage with timestamp
+    const downloadTime = sessionStorage.getItem('downloadTime');
+    if (downloadTime) {
+        const timeDiff = Date.now() - parseInt(downloadTime);
+        // If download was within last 10 seconds, show notification
+        if (timeDiff < 10000) {
+            showDownloadNotification();
+        }
+        sessionStorage.removeItem('downloadTime');
+    }
+    
+    // Method 3: Check localStorage as backup
+    const downloadFlag = localStorage.getItem('reportDownloaded');
+    if (downloadFlag === 'true') {
+        showDownloadNotification();
+        localStorage.removeItem('reportDownloaded');
+    }
+}
+
+function setupDownloadTracking() {
+    // Track all possible download triggers
+    document.addEventListener('click', function(e) {
+        const element = e.target;
+        
+        // Check if clicked element or its parent is a download trigger
+        if (isDownloadTrigger(element) || isDownloadTrigger(element.closest('form')) || isDownloadTrigger(element.closest('a'))) {
+            // Set multiple flags to ensure notification shows
+            sessionStorage.setItem('downloadTime', Date.now().toString());
+            localStorage.setItem('reportDownloaded', 'true');
+            
+            // Also set a delayed flag
+            setTimeout(() => {
+                sessionStorage.setItem('downloadTime', Date.now().toString());
+            }, 100);
+        }
+    });
+    
+    // Track form submissions
+    document.addEventListener('submit', function(e) {
+        if (isDownloadTrigger(e.target)) {
+            sessionStorage.setItem('downloadTime', Date.now().toString());
+            localStorage.setItem('reportDownloaded', 'true');
+        }
+    });
+}
+
+function isDownloadTrigger(element) {
+    if (!element) return false;
+    
+    const downloadKeywords = ['download', 'export', 'report', 'pdf', 'excel', 'csv'];
+    const elementText = element.textContent ? element.textContent.toLowerCase() : '';
+    const elementClass = element.className ? element.className.toLowerCase() : '';
+    const elementAction = element.action ? element.action.toLowerCase() : '';
+    const elementHref = element.href ? element.href.toLowerCase() : '';
+    
+    return downloadKeywords.some(keyword => 
+        elementText.includes(keyword) || 
+        elementClass.includes(keyword) || 
+        elementAction.includes(keyword) || 
+        elementHref.includes(keyword)
+    );
+}
+
+function showDownloadNotification() {
+    // Remove any existing notifications
+    const existing = document.querySelector('.download-notification');
+    if (existing) existing.remove();
+    
+    const toast = document.createElement('div');
+    toast.className = 'download-notification';
+    toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 99999;
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 10px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        animation: slideIn 0.5s ease-out;
+        min-width: 300px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    `;
+    
+    toast.innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center;">
+                <i class="fas fa-check-circle" style="margin-right: 10px; font-size: 1.2em;"></i>
+                <span><strong>Report Downloaded Successfully!</strong></span>
+            </div>
+            <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; color: white; font-size: 1.5em; cursor: pointer; padding: 0; margin-left: 10px;">&times;</button>
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (toast.parentElement) {
+            toast.style.animation = 'slideOut 0.3s ease-in';
+            setTimeout(() => toast.remove(), 300);
+        }
+    }, 5000);
+    
+    console.log('Download notification shown');
+}
+
+// Add CSS animations
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from { 
+            transform: translateX(100%); 
+            opacity: 0; 
+        }
+        to { 
+            transform: translateX(0); 
+            opacity: 1; 
+        }
+    }
+    @keyframes slideOut {
+        from { 
+            transform: translateX(0); 
+            opacity: 1; 
+        }
+        to { 
+            transform: translateX(100%); 
+            opacity: 0; 
+        }
+    }
+`;
+document.head.appendChild(style);
+
+// Force check after a delay (in case page loads slowly)
+setTimeout(() => {
+    checkForDownloadNotification();
+}, 1000);
+</script>
+<style>
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(0px); }
+}
+
+.btn:hover .shine-effect {
+  opacity: 1 !important;
+  left: 100% !important;
+}
+
+.modal-content select option:hover {
+  background: linear-gradient(45deg, #667eea, #764ba2) !important;
+}
+</style>
+
+<!-- Activity download button end  -->
+<style>
+.stats-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.stat-card {
+  background: linear-gradient(145deg, #1a1a1a, #0d1117);
+  border: 1px solid #30363d;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+  border-color: #58a6ff;
+}
+
+.stat-card h2 {
+  color: #f0f6fc;
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #58a6ff, #79c0ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stat-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.stat-card li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  background: rgba(56, 139, 253, 0.05);
+  border: 1px solid rgba(56, 139, 253, 0.1);
+  transition: all 0.2s ease;
+}
+
+.stat-card li:hover {
+  background: rgba(56, 139, 253, 0.1);
+  border-color: rgba(56, 139, 253, 0.3);
+  transform: translateX(4px);
+}
+
+.stat-card li:last-child {
+  margin-bottom: 0;
+}
+
+.name {
+  color: #e6edf3;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.count {
+  color: #58a6ff;
+  font-size: 13px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #21262d, #30363d);
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid #30363d;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.empty {
+  color: #7d8590;
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+}
+</style>
+
+
+    <!-- Buttons for export data  -->
+
+
+    {% endblock content %}

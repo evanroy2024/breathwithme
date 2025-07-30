@@ -8,12 +8,28 @@ Home - Meditation Dashboard
 <div class="container">
     <!-- Top Header Section -->
     <div class="header">
-        <button onclick="window.history.back()" class="back-btn">
-            &#8592; <!-- Left Arrow Unicode -->
+        <button style="
+          background-color: #2c2c2c;
+          border: none;
+          border-radius: 8px;
+          width: 48px;
+          height: 45px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          padding: 0;
+          margin-right: 20px;
+          border: 1px solid #444;
+        " onclick="window.location.href='{% url 'home' %}'">
+            <svg style="margin-left: -5px;" width="24" height="24" viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16 6L10 12L16 18" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <line x1="10" y1="12" x2="22" y2="12" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
         </button>
-        <h1 class="app-title">Your Playlist Creation </h1>
+        <h1 class="app-title">Playlist Creation</h1>
     </div>
-    
+
     <!-- Main Content -->
     <form method="post" class="form-container">
         {% csrf_token %}
@@ -21,28 +37,107 @@ Home - Meditation Dashboard
             <label for="name">Playlist Name:</label>
             <input type="text" id="name" name="name" placeholder="Enter playlist name" required>
         </div>
+
+        <div class="form-group">
+            <label>Select Tags:</label>
+            <div id="tag-options" style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 10px;">
+                {% for tag in tags_list %}
+                    <div class="tag-option" data-tag="{{ tag }}">{{ tag|capfirst }}</div>
+                {% endfor %}
+            </div>
+            <!-- Hidden input to hold selected tags -->
+            <input type="hidden" name="tags" id="selected-tags">
+        </div>
+
+        <div class="form-group">
+            <button type="button" id="custom-tag-btn" class="custom-btn">+ Add Custom Tag</button>
+            <input type="text" name="custom_tag" id="custom-tag-field" placeholder="Enter custom tag" style="display: none; margin-top: 10px;">
+        </div>
+
         <button type="submit" class="btn create-btn">Create Playlist</button>
     </form>
+
     <p style="
-    font-size: 1rem; 
-    line-height: 1.6; 
-    color: #a3a3c2; 
-    background: rgba(255, 255, 255, 0.05); 
-    padding: 15px; 
-    border-left: 4px solid #6e8efb; 
-    border-radius: 8px; 
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); 
-    margin: 20px 0;
-">
-    <strong>Rules for Creating a Playlist:</strong><br>
-    1. The playlist name should be unique and descriptive.<br>
-    2. Avoid using special characters or emojis in the playlist name.<br>
-    3. You can choose as many songs as you want and add them .<br>
-    <strong>Enjoy Your Playlist </strong><br>
-
-</p>
-
+        font-size: 1rem; 
+        line-height: 1.6; 
+        color: #a3a3c2; 
+        background: rgba(255, 255, 255, 0.05); 
+        padding: 15px; 
+        border-left: 4px solid #6e8efb; 
+        border-radius: 8px; 
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); 
+        margin: 20px 0;
+    ">
+        <strong>Rules for Creating a Playlist:</strong><br>
+        1. The playlist name should be unique and descriptive.<br>
+        2. Avoid using special characters or emojis in the playlist name.<br>
+        3. You can choose as many songs as you want and add them.<br>
+        <strong>Enjoy Your Playlist</strong><br>
+    </p>
 </div>
+
+<!-- Tag Styling and JS -->
+<style>
+    .tag-option {
+        background-color: #333;
+        color: #fff;
+        padding: 8px 14px;
+        border-radius: 20px;
+        cursor: pointer;
+        user-select: none;
+        font-size: 0.9rem;
+        transition: background-color 0.2s, color 0.2s;
+        border: 1px solid #444;
+    }
+
+    .tag-option.selected {
+        background-color: #28a745;
+        color: #fff;
+        font-weight: bold;
+        border-color: #28a745;
+    }
+
+    .custom-btn {
+        background-color: #6e8efb;
+        color: #fff;
+        padding: 8px 14px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.2s;
+    }
+
+    .custom-btn:hover {
+        background-color: #5d7ee0;
+    }
+</style>
+
+<script>
+    const tagOptions = document.querySelectorAll('.tag-option');
+    const hiddenInput = document.getElementById('selected-tags');
+    let selectedTags = [];
+
+    tagOptions.forEach(tag => {
+        tag.addEventListener('click', () => {
+            const value = tag.getAttribute('data-tag');
+            if (selectedTags.includes(value)) {
+                selectedTags = selectedTags.filter(t => t !== value);
+                tag.classList.remove('selected');
+            } else {
+                selectedTags.push(value);
+                tag.classList.add('selected');
+            }
+            hiddenInput.value = selectedTags.join(',');
+        });
+    });
+
+    document.getElementById('custom-tag-btn').addEventListener('click', function () {
+        document.getElementById('custom-tag-field').style.display = 'block';
+        this.style.display = 'none';
+    });
+</script>
+
 
 <style>
     /* General Reset */
@@ -55,7 +150,6 @@ Home - Meditation Dashboard
 
     /* Body Styling */
     body {
-        background: #1e1e2f; /* Dark mode background */
         color: #f0f0f0; /* Light text for contrast */
         display: flex;
         justify-content: center;

@@ -1,445 +1,242 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load static %}
-{% block title %}
-Home - Meditation Dashboard
-{% endblock %}
 
 {% block content %}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #121212;
-            color: #fff;
-            font-family: 'Arial', sans-serif;
-        }
-
-        .song-list {
-            max-width: 800px;
-            margin: 20px auto;
-            background: #1c1c1c;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        .song-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 15px;
-            border-bottom: 1px solid #2c2c2c;
-        }
-
-        .song-item:last-child {
-            border-bottom: none;
-        }
-
-        .song-item img {
-            height: 50px;
-            width: 50px;
-            border-radius: 5px;
-            margin-right: 15px;
-        }
-
-        .song-info {
-            display: flex;
-            align-items: center;
-            flex-grow: 1;
-        }
-
-        .song-title {
-            font-weight: bold;
-            margin: 0;
-        }
-
-        .song-artist {
-            font-size: 0.9em;
-            color: #b3b3b3;
-        }
-
-        .song-actions {
-            display: flex;
-            align-items: center;
-        }
-
-        .play-btn {
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 1.5em;
-            cursor: pointer;
-        }
-
-        .play-btn:hover {
-            color: #1db954;
-        }
-
-        .duration {
-            font-size: 0.9em;
-            color: #b3b3b3;
-            margin-left: 15px;
-        }
-
-        .sleep-btn {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #1db954;
-            border: none;
-            color: #fff;
-            border-radius: 20px;
-            width: 150px;
-            height: 40px;
-            font-size: 1em;
-            cursor: pointer;
-            text-align: center;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            margin-bottom: 150px;
-        }
-
-        .sleep-btn:hover {
-            background-color: #17a04d;
-        }
-
-        .category-btn {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #ff8c00;
-            border: none;
-            color: #fff;
-            border-radius: 20px;
-            width: 150px;
-            height: 40px;
-            font-size: 1em;
-            cursor: pointer;
-            text-align: center;
-            margin-bottom: 70px;
-        }
-
-        .category-btn:hover {
-            background-color: #e07b00;
-        }
-
-        #categoryForm {
-            display: none;
-            position: fixed;
-            bottom: 60%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #1c1c1c;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            width: 250px;
-        }
-
-        #sleepOverlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .sleep-box {
-            background: #1c1c1c;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            color: #fff;
-            width: 300px;
-        }
-
-        .sleep-box input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border: none;
-            background: #2c2c2c;
-            color: #fff;
-        }
-
-        .sleep-box button {
-            padding: 10px 20px;
-            border: none;
-            background-color: #1db954;
-            color: #fff;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .sleep-box button:hover {
-            background-color: #17a04d;
-        }
-        
-    </style>
-
-
-
-    <div class="container">
-        <!-- Song List -->
-        <div class="song-list">
-            <h3 class="text-center mb-4">Sleep Program</h3>
-
-            {% for track in tracks %}
-            <div class="song-item" data-track-id="{{ track.id }}">
-                <div class="song-info">
-                    <img src="{% static 'musicapp/1.jpg' %}" alt="Album Art">
-                    <div>
-                        <p class="song-title">{{ track.title }}</p>
-                        <p class="song-artist">{{ track.artist }}</p>
-                    </div>
+<div class="container py-5">
+    <div class="header mb-5">
+        <h1>Sleep Sessions</h1>
+        <div class="nav-buttons">
+            <a href="{% url 'musicapp:all_musics' %}" class="nav-btn">User Playlists</a>
+            <a href="{% url 'musicapp:admin_playLists' %}" class="nav-btn active">Admin Playlists</a>
+        </div>
+    </div>
+    
+    <div class="grid">
+        {% for playlist in playlists %}
+        <div class="playlist-card">
+            <div class="playlist-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" fill="currentColor"/>
+                </svg>
+            </div>
+            <div class="playlist-info">
+                <h3>{{ playlist.name }}</h3>
+                <div class="playlist-creator">
+                    <span class="creator-dot"></span>
+                    <span>Sleep Music</span>
                 </div>
-                <div class="song-actions">
-                    <button class="play-btn" data-url="{{ track.file.url }}">▶</button>
-                    <span class="duration" >2:45</span>
+                <div class="playlist-meta">
+                    <span>{{ playlist.tracks.count }} TRACKS</span>
+                    <span>•</span>
+                    <span>CREATED RECENTLY</span>
                 </div>
             </div>
-            {% endfor %}
+            <a href="{% url 'musicapp:exercise_page' %}?playlist_id={{ playlist.id }}" class="view-btn">
+                VIEW PLAYLIST
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M5 12h14m-7-7l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
         </div>
-        <!-- Fixed Icon on the Right -->
-        <div class="fixed-icon" id="fixedIcon">
-            <img src="https://cdn-icons-png.flaticon.com/512/61/61021.png" alt="Customization" width="50" height="50">
-        </div>
-        
-
-<!-- Hidden Button Container -->
-<div class="all-button-options" id="buttonContainer" style="display: none;">
-    <!-- Category Button -->
-    <button class="category-btn" id="categoryBtn">Category</button>
-    <!-- Sleep Button -->
-    <button class="sleep-btn" id="sleepBtn">Sleep</button>
+        {% endfor %}
+    </div>
 </div>
 
 <style>
-    /* Fixed icon on the right side */
-    .fixed-icon {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background-color: #1db954;
-        border-radius: 50%;
-        padding: 15px;
-        cursor: pointer;
-        z-index: 1000;
+    body {
+        background: #0f0f0f;
+        color: #fff;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        margin: 0;
+        padding: 0;
     }
 
-    .fixed-icon img {
-        width: 30px;
-        height: 30px;
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
     }
 
-    /* Button container - initially hidden */
-    .all-button-options {
-        position: fixed;
-        bottom: 100px;
-        right: 20px;
+    .header {
         display: flex;
-        flex-direction: column;
-        gap: 10px;
-        z-index: 999;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #333;
     }
 
-    .category-btn, .sleep-btn {
-        width: 150px;
-        height: 40px;
-        font-size: 16px;
+    .header h1 {
+        font-size: 2.8rem;
+        font-weight: 800;
+        margin: 0;
+        background: linear-gradient(135deg, #fff 0%, #a0a0a0 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .nav-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .nav-btn {
+        padding: 8px 16px;
+        background: transparent;
+        border: 1px solid #444;
+        color: #999;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 500;
         border-radius: 20px;
-        border: none;
+        transition: all 0.2s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .nav-btn.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-color: transparent;
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .nav-btn:hover:not(.active) {
+        border-color: #666;
+        color: #ccc;
+        text-decoration: none;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .playlist-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 2rem;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         cursor: pointer;
+        position: relative;
+        overflow: hidden;
     }
 
-    .category-btn {
-        background-color: #ff6a17;
-    color: white;
-    margin-bottom: 45px
+    .playlist-card:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-4px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
     }
 
-    .category-btn:hover {
-        background-color: #17a04d;
+    .playlist-icon {
+        width: 56px;
+        height: 56px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+        color: #fff;
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
     }
 
-    .sleep-btn {
-        background-color: #1db954;
-        color: white;
+    .playlist-info h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 0 0 0.5rem 0;
+        color: #fff;
     }
 
-    .sleep-btn:hover {
-        background-color: #17a04d;
+    .playlist-creator {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        font-size: 0.95rem;
+        color: #999;
     }
-</style>
 
-<script>
-    // Get the icon and button container
-    const fixedIcon = document.getElementById('fixedIcon');
-    const buttonContainer = document.getElementById('buttonContainer');
+    .creator-dot {
+        width: 8px;
+        height: 8px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+    }
 
-    // Toggle the visibility of the buttons when the fixed icon is clicked
-    fixedIcon.addEventListener('click', () => {
-        if (buttonContainer.style.display === 'none') {
-            buttonContainer.style.display = 'flex';  // Show the buttons
-        } else {
-            buttonContainer.style.display = 'none';  // Hide the buttons
+    .playlist-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.75rem;
+        color: #666;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        margin-bottom: 1.5rem;
+    }
+
+    .view-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        width: 100%;
+        padding: 14px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #fff;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 600;
+        border-radius: 10px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        backdrop-filter: blur(10px);
+    }
+
+    .view-btn:hover {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.3);
+        color: #fff;
+        text-decoration: none;
+        transform: translateY(-1px);
+    }
+
+    .view-btn svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    @media (max-width: 768px) {
+        .header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
         }
-    });
-</script>
-
-        <!-- Category Form -->
-        <div id="categoryForm">
-            <form method="GET" action="{% url 'musicapp:sleep_program' %}">
-                <select name="category" class="form-select" onchange="this.form.submit()">
-                    <option value="">All</option>
-                    {% for category in categories %}
-                    <option value="{{ category.id }}" {% if category.id == request.GET.category %} selected {% endif %}>
-                        {{ category.name }}
-                    </option>
-                    {% endfor %}
-                </select>
-            </form>
-        </div>
-
         
-        <!-- Sleep Timer Overlay -->
-        <div id="sleepOverlay">
-            <div class="sleep-box">
-                <h4>Set Sleep Timer</h4>
-                <input type="number" id="sleepTime" placeholder="Enter time in minutes" min="1" max="120">
-                <button id="setSleepTimer">Done</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const audio = new Audio();
-        let currentButton = null;
-        let sleepTimer = null;
-        let remainingTime = 0;
-        let countdownInterval = null;
-
-        document.querySelectorAll('.play-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                const url = button.getAttribute('data-url');
-
-                if (currentButton === button) {
-                    if (audio.paused) {
-                        audio.play();
-                        updateButtonState(button, true);
-                    } else {
-                        audio.pause();
-                        updateButtonState(button, false);
-                    }
-                } else {
-                    if (currentButton) {
-                        updateButtonState(currentButton, false);
-                    }
-                    audio.src = url;
-                    audio.play();
-                    updateButtonState(button, true);
-                }
-            });
-        });
-
-        function updateButtonState(button, isPlaying) {
-            button.innerHTML = isPlaying ? '❚❚' : '▶';
-            currentButton = isPlaying ? button : null;
+        .nav-buttons {
+            width: 100%;
+            justify-content: flex-start;
+        }
+        
+        .grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
         }
 
-        // Function to format time in mm:ss
-        // function formatTime(seconds) {
-        //     const minutes = Math.floor(seconds / 60);
-        //     const remainingSeconds = Math.round(seconds % 60); // Round seconds to remove extra decimal places
-        //     return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
-        // }
-
-        // Load the duration of each song and update the UI
-        document.querySelectorAll('.song-item').forEach((item) => {
-            const audioElement = new Audio();
-            const playButton = item.querySelector('.play-btn');
-            const durationElement = item.querySelector('.duration');
-
-            // Load audio file
-            audioElement.src = playButton.getAttribute('data-url');
-
-            // Wait for the audio to load metadata and get the duration
-            audioElement.addEventListener('loadedmetadata', () => {
-                const duration = audioElement.duration;
-                durationElement.textContent = formatTime(duration);
-            });
-        });
-
-        // Sleep timer functionality
-        const sleepBtn = document.getElementById('sleepBtn');
-        const sleepOverlay = document.getElementById('sleepOverlay');
-        const sleepTimeInput = document.getElementById('sleepTime');
-        const setSleepTimerBtn = document.getElementById('setSleepTimer');
-
-        sleepBtn.addEventListener('click', () => {
-            sleepOverlay.style.display = 'flex';
-        });
-
-        setSleepTimerBtn.addEventListener('click', () => {
-            const sleepTime = parseInt(sleepTimeInput.value);
-            if (isNaN(sleepTime) || sleepTime <= 0) {
-                alert('Please enter a valid time.');
-                return;
-            }
-
-            if (sleepTimer) {
-                clearTimeout(sleepTimer);
-                clearInterval(countdownInterval);
-            }
-
-            remainingTime = sleepTime * 60;
-
-            sleepTimer = setTimeout(() => {
-                audio.pause();
-                if (currentButton) {
-                    updateButtonState(currentButton, false);
-                }
-                alert('Sleep timer completed. Music stopped.');
-                sleepBtn.textContent = 'Sleep';
-                clearInterval(countdownInterval);
-            }, remainingTime * 1000);
-
-            countdownInterval = setInterval(() => {
-                remainingTime--;
-                const minutes = Math.floor(remainingTime / 60);
-                const seconds = remainingTime % 60;
-                sleepBtn.textContent = `Sleep (${minutes}:${seconds < 10 ? '0' : ''}${seconds})`;
-            }, 1000);
-
-            sleepOverlay.style.display = 'none';
-        });
-
-        // Category button functionality
-        const categoryBtn = document.getElementById('categoryBtn');
-        const categoryForm = document.getElementById('categoryForm');
-
-        categoryBtn.addEventListener('click', () => {
-            categoryForm.style.display = categoryForm.style.display === 'block' ? 'none' : 'block';
-        });
-    </script>
-<style>
-    .fixed-icon {
-    position: fixed;
-    right: 50px;
-    bottom: 100px; /* Adjust this value to move it higher */
-    z-index: 1000;
-}
-.category-btn {
-    background-color: #ff6a17;
-    color: white;
-    margin-bottom: 100px;
-}
+        .container {
+            padding: 1rem;
+        }
+    }
 </style>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-    {% endblock %}
+
+{% endblock %}

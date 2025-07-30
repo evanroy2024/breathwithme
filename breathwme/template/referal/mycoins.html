@@ -136,7 +136,26 @@ Home - Meditation Dashboard
 
 <div class="container">
   <div class="header">
-    <span class="back-arrow" onclick="window.location.href='{% url 'referal:generate_referral_link' %}'">&#8592;</span>
+                <button style="
+  background-color: #2c2c2c;
+  border: none;
+  border-radius: 8px;
+  width: 48px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  margin-right: 20px;
+  border: 1px solid #444; /* Dark border for button */
+" onclick="window.location.href='{% url 'referal:generate_referral_link' %}'">
+  <svg style="margin-left: -5px;" width="24" height="24" viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16 6L10 12L16 18" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="10" y1="12" x2="22" y2="12" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  </svg>
+</button>
+    <!-- <span class="back-arrow" onclick="window.location.href='{% url 'referal:generate_referral_link' %}'">&#8592;</span> -->
     <h1>Referal & Rewards</h1>
   </div>
   <!-- <div class="section">
@@ -157,8 +176,15 @@ Home - Meditation Dashboard
     <p class="coin-text">Earn more coins by referring friends and unlock exclusive rewards! 🚀💰</p>
     
     <div class="coin-buttons">
-        <button id="extendSubscriptionBtn" class="purchase-btn">Purchase</button>
-        <button class="go-back-btn"  onclick="window.location.href='{% url 'referal:generate_referral_link' %}'">Go Back</button>
+        <button onclick="window.location.href='{% url 'referal:coins_purchase' %}'" class="purchase-btn">Purchase</button>
+       {% if show_withdraw_button %}
+    <button style="background: linear-gradient(135deg, #FF4B2B, #FF416C); color: white; padding: 12px 20px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;" 
+        class="go-back-btn" 
+        onclick="window.location.href='{% url 'referal:withdraw_summary' %}'">
+        Withdraw
+    </button>
+{% endif %}
+
     </div>
 <p id="subscriptionMessage"></p>
 

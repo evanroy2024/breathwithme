@@ -136,7 +136,26 @@ Home - Meditation Dashboard
 
 <div class="container">
   <div class="header" >
-    <span class="back-arrow" onclick="window.location.href='{% url 'home' %}'">&#8592;</span>
+                <button style="
+  background-color: #2c2c2c;
+  border: none;
+  border-radius: 8px;
+  width: 48px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  margin-right: 20px;
+  border: 1px solid #444; /* Dark border for button */
+" onclick="window.location.href='{% url 'home' %}'">
+  <svg style="margin-left: -5px;" width="24" height="24" viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16 6L10 12L16 18" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="10" y1="12" x2="22" y2="12" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  </svg>
+</button>
+    <!-- <span class="back-arrow" onclick="window.location.href='{% url 'home' %}'">&#8592;</span> -->
     <h1>Settings</h1>
   </div>
   <div class="section">
@@ -155,47 +174,76 @@ Home - Meditation Dashboard
       </div>
       <span class="arrow">&#x25B6;</span>
     </div>
-    <div class="setting-item" onclick="window.location.href='{% url 'user_privacy_settings' %}'">
-  <span class="icon">&#128274;</span> <!-- lock icon for privacy -->
-  <div class="text">
-    <span class="title">Account Privacy</span>
-    <span class="description">Private</span> <!-- or "Public", depending on the setting -->
-  </div>
-  <span class="arrow">&#x25B6;</span>
-</div>
 
-    <div class="setting-item">
+<div class="setting-item"  onclick="window.location.href='{% url 'profile' %}'">
+      <span class="icon">&#128100;</span>
+      <div class="text">
+        <span class="title">Personal Information</span>
+      </div>
+      <span class="arrow">&#x25B6;</span>
+    </div>
+   
+    <!-- <div class="setting-item">
       <span class="icon">&#127769;</span>
       <div class="text">
         <span class="title">Dark Mode</span>
       </div>
-      <!-- Toggle Switch -->
+     
       <div class="toggle-switch" id="toggle-switch" onclick="toggleMode()">
         <div class="slider"></div>
       </div>
     </div>
-    
-  
+     -->
+      <div class="setting-item" onclick="window.location.href='{% url 'userdata:support' %}'" style="cursor: pointer;">
+  <span class="icon" style="font-size: 24px; color: #00bfff;">💬</span>
+  <div class="text">
+    <span class="title">Support</span>
+    <span class="description">Send your issue to our support Team. </span>
+  </div>
+        <span class="arrow">&#x25B6;</span>
+
+</div>
+  <div class="setting-item" onclick="window.location.href='{% url 'smartwatchapp:smartwatch_code' %}'" style="cursor: pointer;">
+  <span class="icon" style="font-size: 24px; color: #00bfff;">⌚</span>
+  <div class="text">
+    <span class="title">Connect Smartwatch</span>
+    <span class="description">Tap to enter code and start </span>
+  </div>
+        <span class="arrow">&#x25B6;</span>
+
+</div>
+
   </div>
 
   <div class="section">
-    <div class="section-title">Account Setting</div>
-    <div class="setting-item"  onclick="window.location.href='{% url 'profile' %}'">
+    <div class="section-title">Account Settings</div>
+    <div class="setting-item"  onclick="window.location.href='{% url 'user_privacy_settings' %}'">
       <span class="icon">&#128100;</span>
       <div class="text">
-        <span class="title" >Personal Information</span>
+        <span class="title" >Account Privacy</span>
+    <span class="description">Permanently delete your account </span>
+
       </div>
       <span class="arrow">&#x25B6;</span>
     </div>
-    <div class="setting-item">
+     <div class="setting-item">
       <a href="{% url 'logout' %}" class="logout-link">
         <span class="icon">&#x21AA;</span> <!-- Unicode Logout Icon -->
         <div class="text" style="margin-right: 200%;">
           <span class="title"> <b style="color: reds;">Logout</b> </span>
         </div>
-        <span class="arrow">&#x25B6;</span>
+        <span class="arrow" style="margin-left: -5px;">&#x25B6;</span>
       </a>
     </div>
+    <!-- <div class="setting-item">
+      <a href="{% url 'logout' %}" class="logout-link">
+        <span class="icon">&#x21AA;</span> 
+        <div class="text" style="margin-right: 200%;">
+          <span class="title"> <b style="color: reds;">Logout</b> </span>
+        </div>
+        <span class="arrow">&#x25B6;</span>
+      </a>
+    </div> -->
     
   </div>
   

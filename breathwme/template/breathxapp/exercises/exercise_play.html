@@ -1,11 +1,10 @@
-<!-- templates/exercises/exercise_play.html -->
-<!DOCTYPE html>
+{% extends "exercisebase.html" %}
 {% load static %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ exercise.name }} - Breathing Exercise</title>
+{% block title %}
+Home - Meditation Dashboard
+{% endblock %}
+
+{% block content %}
     <!-- Add this line in the head section of your HTML document -->
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -333,24 +332,15 @@ button:hover {
     letter-spacing: 0.5px;
 }
 </style>
-</head>
-<body>
+
     <div class="container">
         
         <div class="main-heading">
-            <div class="header-container">
-              <button class="back-button" onclick="window.location.href='{% url 'breathxapp:exercise_list' %}'">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M19 12H5M12 19l-7-7 7-7"/>
-                </svg>
-              </button>
-              <h1 class="title">BreathFree-Meditation</h1>
-            </div>
-          </div>
-          <hr style="width: 400px; height: 5px;  background: linear-gradient(to right, #6e8efb, #a777e3); border-radius: 10px;">
         
 
         <div class="exercise-display">
+                    <div  id="phase-progress">Ready to start</div>
+
             <div class="shape-container">
                 <div class="phase-info"></div>
                 <div id="shape-element" class=""></div>
@@ -369,18 +359,21 @@ button:hover {
                         <i class="fas fa-redo"></i>
                     </button>
                   
-                    <!-- Add this button where your other controls are -->
+                   
+                </div>
+                <div class="buttons-row">
+
+                 <!-- Add this button where your other controls are -->
                     <button id="voice-toggle-btn" class="control-btn">
                         <i class="fas fa-volume-mute"></i>
                     </button>
                     <button aria-label="Vibration" id="vibration-button-set" style="background-color: rgba(30, 30, 35, 0.9); width: 55px; display: inline-flex; align-items: center; justify-content: center; padding: 0; border: none; border-radius: 60px; ">
             <img src="{% static 'v2.png' %}" alt="" style="max-width: 100%; max-height: 100%; object-fit: contain;">
             </button>
-                    
-                </div>
-                
+                    </div>
                 <div class="progress-row">
-                    <div id="phase-progress">Ready to start</div>
+                    <!-- <div id="phase-progress">Ready to start</div> -->
+
                     <div id="cycle-progress"></div>
                 </div>
             </div>
@@ -534,8 +527,36 @@ button:hover {
             
 
         </div>
-        <!-- Section for guide  -->
-         <section class="guide-container" style="
+       <!-- Section for guide  -->
+<section class="guide-container">
+  <h2 class="guide-title">How to Practice Breathing</h2>
+  
+  <div class="guide-step">
+    <h3 class="step-title">Step 1: Find Your Position</h3>
+    <p class="step-text">Sit comfortably with your back straight or lie down in a quiet place. Place one hand on your chest and the other on your abdomen to feel your breath movement.</p>
+  </div>
+  
+  <div class="guide-step">
+    <h3 class="step-title">Step 2: Breathing Rhythm</h3>
+    <p class="step-text">Inhale slowly through your nose for a count of 4, feeling your abdomen expand. Hold briefly, then exhale through your mouth for a count of 6.</p>
+  </div>
+  
+  <div class="guide-step">
+    <h3 class="step-title">Step 3: Maintain Focus</h3>
+    <p class="step-text">Keep your attention on your breath. When your mind wanders, gently bring your focus back to your breathing pattern without judgment.</p>
+  </div>
+
+  <div class="tip-box">
+    <div class="tip-header">
+      <span class="tip-icon">💡</span>
+      <h4 class="tip-title">Pro Tip</h4>
+    </div>
+    <p class="tip-text">Try practicing at the same time each day to build a consistent habit. Even 5 minutes of focused breathing can help reduce stress and improve mindfulness.</p>
+  </div>
+</section>
+
+<style>
+.guide-container {
   padding: 1.5rem;
   color: #e0e0e0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
@@ -544,108 +565,173 @@ button:hover {
   margin: 1rem auto;
   max-width: 90%;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-">
-  <h2 style="
-    color: #39e5ff;
-    font-size: 1.4rem;
-    margin-bottom: 1.5rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    border-bottom: 1px solid rgba(57, 229, 255, 0.2);
-    padding-bottom: 0.75rem;
-  ">How to Practice Breathing</h2>
-  
-  <div class="guide-step" style="
-    margin-bottom: 1.5rem;
-    padding-left: 1rem;
-    border-left: 3px solid rgba(57, 229, 255, 0.6);
-  ">
-    <h3 style="
-      color: #ffffff;
-      font-size: 1.1rem;
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-    ">Step 1: Find Your Position</h3>
-    <p style="
-      line-height: 1.6;
-      color: #cdcdcd;
-      font-size: 0.95rem;
-      margin-bottom: 0.5rem;
-    ">Sit comfortably with your back straight or lie down in a quiet place. Place one hand on your chest and the other on your abdomen to feel your breath movement.</p>
-  </div>
-  
-  <div class="guide-step" style="
-    margin-bottom: 1.5rem;
-    padding-left: 1rem;
-    border-left: 3px solid rgba(57, 229, 255, 0.6);
-  ">
-    <h3 style="
-      color: #ffffff;
-      font-size: 1.1rem;
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-    ">Step 2: Breathing Rhythm</h3>
-    <p style="
-      line-height: 1.6;
-      color: #cdcdcd;
-      font-size: 0.95rem;
-      margin-bottom: 0.5rem;
-    ">Inhale slowly through your nose for a count of 4, feeling your abdomen expand. Hold briefly, then exhale through your mouth for a count of 6.</p>
-  </div>
-  
-  <div class="guide-step" style="
-    margin-bottom: 1.5rem;
-    padding-left: 1rem;
-    border-left: 3px solid rgba(57, 229, 255, 0.6);
-  ">
-    <h3 style="
-      color: #ffffff;
-      font-size: 1.1rem;
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-    ">Step 3: Maintain Focus</h3>
-    <p style="
-      line-height: 1.6;
-      color: #cdcdcd;
-      font-size: 0.95rem;
-      margin-bottom: 0.5rem;
-    ">Keep your attention on your breath. When your mind wanders, gently bring your focus back to your breathing pattern without judgment.</p>
-  </div>
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  width: 100%;
+  box-sizing: border-box;
+}
 
-  <div class="tip-box" style="
-    background-color: rgba(57, 229, 255, 0.1);
-    border-radius: 8px;
+.guide-title {
+  color: #39e5ff;
+  font-size: 1.4rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border-bottom: 1px solid rgba(57, 229, 255, 0.2);
+  padding-bottom: 0.75rem;
+  word-wrap: break-word;
+}
+
+.guide-step {
+  margin-bottom: 1.5rem;
+  padding-left: 1rem;
+  border-left: 3px solid rgba(57, 229, 255, 0.6);
+}
+
+.step-title {
+  color: #ffffff;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  word-wrap: break-word;
+}
+
+.step-text {
+  line-height: 1.6;
+  color: #cdcdcd;
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  white-space: normal;
+  word-break: break-word;
+  max-width: 100%;
+}
+
+.tip-box {
+  background-color: rgba(57, 229, 255, 0.1);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+  border: 1px solid rgba(57, 229, 255, 0.2);
+  word-wrap: break-word;
+}
+
+.tip-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.tip-icon {
+  color: #39e5ff;
+  font-size: 1.2rem;
+  margin-right: 0.5rem;
+}
+
+.tip-title {
+  color: #39e5ff;
+  font-size: 1rem;
+  margin: 0;
+  font-weight: 500;
+  word-wrap: break-word;
+}
+
+.tip-text {
+  line-height: 1.6;
+  color: #cdcdcd;
+  font-size: 0.95rem;
+  margin: 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  white-space: normal;
+  word-break: break-word;
+  max-width: 100%;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .guide-container {
     padding: 1rem;
-    margin-top: 1rem;
-    border: 1px solid rgba(57, 229, 255, 0.2);
-  ">
-    <div style="
-      display: flex;
-      align-items: center;
-      margin-bottom: 0.5rem;
-    ">
-      <span style="
-        color: #39e5ff;
-        font-size: 1.2rem;
-        margin-right: 0.5rem;
-      ">💡</span>
-      <h4 style="
-        color: #39e5ff;
-        font-size: 1rem;
-        margin: 0;
-        font-weight: 500;
-      ">Pro Tip</h4>
-    </div>
-    <p style="
-      line-height: 1.6;
-      color: #cdcdcd;
-      font-size: 0.95rem;
-      margin: 0;
-    ">Try practicing at the same time each day to build a consistent habit. Even 5 minutes of focused breathing can help reduce stress and improve mindfulness.</p>
-  </div>
-</section>
-    </div>
+    margin: 0.5rem auto;
+    max-width: 95%;
+  }
   
+  .guide-title {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .guide-step {
+    padding-left: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  
+  .step-title {
+    font-size: 1rem;
+  }
+  
+  .step-text {
+    font-size: 0.9rem;
+  }
+  
+  .tip-box {
+    padding: 0.75rem;
+  }
+  
+  .tip-title {
+    font-size: 0.9rem;
+  }
+  
+  .tip-text {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .guide-container {
+    padding: 0.75rem;
+    margin: 0.25rem auto;
+    max-width: 98%;
+  }
+  
+  .guide-title {
+    font-size: 1.1rem;
+  }
+  
+  .guide-step {
+    padding-left: 0.5rem;
+  }
+  
+  .step-title {
+    font-size: 0.95rem;
+  }
+  
+  .step-text {
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  
+  .tip-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .tip-icon {
+    margin-bottom: 0.25rem;
+  }
+  
+  .tip-text {
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+}
+</style>
+    </div>
+  </div>
 <script>
 // Get exercise phases data from Django
 const phasesData = {{ phases_data|safe }};
@@ -705,10 +791,10 @@ const shapeColors = {
 
 // Voice -------------------------------------------------------------------
 const audioFiles = {
-    'Inhale': new Audio("{% static 'voices/inhale.mp3' %}"),
-    'Hold': new Audio("{% static 'voices/hold.mp3' %}"),
-    'Exhale': new Audio("{% static 'voices/exhale.mp3' %}")
-};
+        'Inhale': new Audio("{{ audio_urls.inhale }}"),
+        'Hold': new Audio("{{ audio_urls.hold }}"),
+        'Exhale': new Audio("{{ audio_urls.exhale }}")
+    };
 let voiceEnabled = false; // Voice starts off by default
 
 // For Vibration in React native app ------------------------------------------------------------------------------
@@ -789,7 +875,6 @@ function pauseExercise() {
     }
 }
 
-
 function resetExercise() {
     isRunning = false;
     clearTimeout(timer);
@@ -812,27 +897,14 @@ function resetExercise() {
     
     lastSpokenPhase = '';
     
-    // Get the current shape before updating display
-    const shape = phasesData[currentPhaseIndex].shape.toLowerCase();
+    // Clear ALL styling properties completely
+    shapeElement.style.border = '';
+    shapeElement.style.boxShadow = '';
+    shapeElement.style.filter = '';
+    shapeElement.className = '';
     
+    // Update shape display which will set the correct class
     updateShapeDisplay();
-    
-    // Apply appropriate resetting based on shape type
-    if (shape === 'triangle') {
-        shapeElement.style.filter = "none";
-        shapeElement.style.boxShadow = "none";
-        shapeElement.style.border = "none";
-        updateTriangleGlowColor('transparent');
-    } else if (shape === 'reversedtriangle') {
-        shapeElement.style.filter = "none";
-        shapeElement.style.boxShadow = "none";
-        shapeElement.style.border = "none";
-        updateReversedTriangleGlowColor('transparent');
-    } else {
-        shapeElement.style.boxShadow = "none";
-        shapeElement.style.filter = "none";
-        shapeElement.style.border = "1px solid rgba(200, 200, 200, 0.3)"; // Very subtle neutral border
-    }
     
     // Also remove ball glow
     if (ball) {
@@ -840,72 +912,76 @@ function resetExercise() {
     }
 }
 function runCurrentEdge() {
-    if (!isRunning) return;
-    
-    const phase = phasesData[currentPhaseIndex];
-    if (!phase) {
-        // Exercise completed
-        resetExercise();
-        phaseProgress.textContent = 'Exercise completed!';
-        return;
-    }
-    
-    // Update shape display for current phase
-    updateShapeDisplay();
-    applyGlowEffect();
-    
-    // Create path for the current shape if it doesn't exist
-    createShapePath(phase.shape);
-    
-    // Get total number of edges for this shape
-    const totalEdges = getEdgeCount(phase.shape);
-    
-    // Get current breathing phase
-    const breathingPhases = phase.breathing_phases;
-    const currentBreathingPhase = breathingPhases[currentBreathingPhaseIndex];
-    
-    // Determine if this is a circular shape
-    const isCircularShape = ['circle', 'oval'].includes(phase.shape.toLowerCase());
-    
-    // Get duration for current edge/phase
-    let duration;
-    if (isCircularShape) {
-        // For circle/oval, use the specified duration for each full circle
-        duration = phase.inputs[currentBreathingPhaseIndex] || 0;
-    } else {
-        // For other shapes, use the specified duration for each edge
-        duration = phase.inputs[0] || 0;
-    }
-    
-    // Update display
-    updateBreathingPhaseDisplay(phase.shape, currentBreathingPhase, duration);
-    
-    // For multi-edge shapes, we need to determine which edge to animate
-    let edgePoints;
-    
-    if (isCircularShape) {
-        // For circular shapes, use the full path for animation
-        edgePoints = shapePaths[phase.shape];
-    } else {
-        // For shapes with distinct edges, use the appropriate edge
-        edgePoints = shapeEdges[phase.shape][currentEdgeIndex];
-    }
-    
-    // Start ball animation for this edge
-    if (isCircularShape) {
-        // For circular shapes, use full circle animation
-        startCircularAnimation(phase, edgePoints, duration);
-    } else {
-        // For other shapes, we animate along the edge
-        startEdgeAnimation(phase, edgePoints, duration);
-    }
-    
-    // Schedule next edge
-    timer = setTimeout(() => {
-        goToNextEdge(phase);
-    }, duration * 1000);
+   if (!isRunning) return;
+   
+   const phase = phasesData[currentPhaseIndex];
+   if (!phase) {
+       // Exercise completed
+       resetExercise();
+       phaseProgress.textContent = 'Exercise completed!';
+       return;
+   }
+   
+   // Update shape display for current phase
+   updateShapeDisplay();
+   applyGlowEffect();
+   
+   // Create path for the current shape if it doesn't exist
+   createShapePath(phase.shape);
+   
+   // Get total number of edges for this shape
+   const totalEdges = getEdgeCount(phase.shape);
+   
+   // Get current breathing phase
+   const breathingPhases = phase.breathing_phases;
+   const currentBreathingPhase = breathingPhases[currentBreathingPhaseIndex];
+   
+   // Determine if this is a circular shape
+   const isCircularShape = ['circle', 'oval'].includes(phase.shape.toLowerCase());
+   
+   // Get duration for current edge/phase
+   let duration;
+   if (isCircularShape) {
+       // For circle/oval, use the specified duration for each full circle
+       duration = phase.inputs[currentBreathingPhaseIndex] || 0;
+   } else {
+       // For other shapes, use the duration based on current edge index, but cycle through available inputs
+       const availableInputs = phase.inputs.filter(input => input !== null && input !== undefined && input > 0);
+       if (availableInputs.length > 0) {
+           duration = availableInputs[currentEdgeIndex % availableInputs.length];
+       } else {
+           duration = phase.inputs[0] || 0;
+       }
+   }
+   
+   // Update display
+   updateBreathingPhaseDisplay(phase.shape, currentBreathingPhase, duration);
+   
+   // For multi-edge shapes, we need to determine which edge to animate
+   let edgePoints;
+   
+   if (isCircularShape) {
+       // For circular shapes, use the full path for animation
+       edgePoints = shapePaths[phase.shape];
+   } else {
+       // For shapes with distinct edges, use the appropriate edge
+       edgePoints = shapeEdges[phase.shape][currentEdgeIndex];
+   }
+   
+   // Start ball animation for this edge
+   if (isCircularShape) {
+       // For circular shapes, use full circle animation
+       startCircularAnimation(phase, edgePoints, duration);
+   } else {
+       // For other shapes, we animate along the edge
+       startEdgeAnimation(phase, edgePoints, duration);
+   }
+   
+   // Schedule next edge
+   timer = setTimeout(() => {
+       goToNextEdge(phase);
+   }, duration * 1000);
 }
-
 function getEdgeCount(shape) {
     switch(shape.toLowerCase()) {
         case 'circle':
@@ -922,6 +998,9 @@ function getEdgeCount(shape) {
             return 1;
     }
 }
+
+// ONLY REPLACE THE goToNextEdge FUNCTION - Replace your existing goToNextEdge function with this:
+// ONLY REPLACE THE goToNextEdge FUNCTION - Replace your existing goToNextEdge function with this:
 
 function goToNextEdge(phase) {
     const isCircularShape = ['circle', 'oval'].includes(phase.shape.toLowerCase());
@@ -947,19 +1026,62 @@ function goToNextEdge(phase) {
     
     // Check if we completed all cycles for this shape
     if (currentCycle > phase.cycles) {
-        currentCycle = 1;
-        currentEdgeIndex = 0;
-        currentBreathingPhaseIndex = 0;
-        currentPhaseIndex++;
-        
-        // Force shape update for the next phase
-        updateShapeDisplay();
-        applyGlowEffect();
+        // Check if there's a hold time before moving to next phase
+        if (phase.hold_time && phase.hold_time > 0) {
+            // Hide ball and show hold message
+            ball.style.display = 'none';
+            phaseInfo.textContent = 'Hold';
+            
+            // Start countdown
+            let remainingTime = phase.hold_time;
+            phaseProgress.textContent = `Hold for ${remainingTime} `;
+            
+            const countdownInterval = setInterval(() => {
+                if (!isRunning) {
+                    clearInterval(countdownInterval);
+                    return;
+                }
+                
+                remainingTime--;
+                phaseProgress.textContent = ` ${remainingTime} Remains before next phase`;
+                
+                if (remainingTime <= 0) {
+                    clearInterval(countdownInterval);
+                }
+            }, 1000);
+            
+            // Wait for hold_time seconds, then proceed to next phase
+            timer = setTimeout(() => {
+                clearInterval(countdownInterval);
+                currentCycle = 1;
+                currentEdgeIndex = 0;
+                currentBreathingPhaseIndex = 0;
+                currentPhaseIndex++;
+                
+                // Force shape update for the next phase
+                updateShapeDisplay();
+                applyGlowEffect();
+                
+                runCurrentEdge();
+            }, phase.hold_time * 1000);
+        } else {
+            // No hold time, proceed directly to next phase
+            currentCycle = 1;
+            currentEdgeIndex = 0;
+            currentBreathingPhaseIndex = 0;
+            currentPhaseIndex++;
+            
+            // Force shape update for the next phase
+            updateShapeDisplay();
+            applyGlowEffect();
+            
+            runCurrentEdge();
+        }
+    } else {
+        // Continue with current phase
+        runCurrentEdge();
     }
-    
-    runCurrentEdge();
 }
-
 
 function toggleVoice() {
     voiceEnabled = !voiceEnabled;
@@ -1017,7 +1139,6 @@ function speakBreathingPhase(text) {
     }
 }
 
-
 function updateBreathingPhaseDisplay(shape, breathingPhase, duration) {
     // Clear previous classes
     shapeElement.className = '';
@@ -1025,9 +1146,14 @@ function updateBreathingPhaseDisplay(shape, breathingPhase, duration) {
     // Set shape class
     shapeElement.classList.add(shape.toLowerCase());
     
+    // Get current phase data
+    const currentPhase = phasesData[currentPhaseIndex];
+    const phaseName = currentPhase.name || `Phase ${currentPhaseIndex + 1}`;
+    
     // Update text displays
     phaseInfo.textContent = breathingPhase;
-    phaseProgress.textContent = `Phase: ${currentPhaseIndex + 1}/${phasesData.length} - ${breathingPhase} (${duration}s)`;
+    // phaseProgress.textContent = `${phaseName} - ${breathingPhase} (${duration}s)`;
+    phaseProgress.textContent = phaseName;
     cycleProgress.textContent = `Cycle: ${currentCycle}/${phasesData[currentPhaseIndex].cycles}`;
     
     // Update glow effect based on breathing phase
@@ -1039,16 +1165,24 @@ function updateBreathingPhaseDisplay(shape, breathingPhase, duration) {
     // Send notification for phase change to React Native WebView
     notifyPhaseChange(breathingPhase);
 }
-
 function updateShapeDisplay() {
     const phase = phasesData[currentPhaseIndex];
     if (!phase) return;
     
-    // Clear previous classes
+    // Complete style reset - remove all inline styles
+    shapeElement.removeAttribute('style');
     shapeElement.className = '';
+    
+    // Force reflow by accessing a layout property
+    shapeElement.offsetHeight;
     
     // Set shape class
     shapeElement.classList.add(phase.shape.toLowerCase());
+    
+    // Apply only necessary initial styling when not running
+    if (!isRunning) {
+        shapeElement.style.border = '1px solid rgba(200, 200, 200, 0.3)';
+    }
     
     // Reset text displays
     if (!isRunning) {
@@ -1064,8 +1198,6 @@ function updateShapeDisplay() {
     // Create path for the shape
     createShapePath(phase.shape);
 }
-
-
 // Function to update glow intensity based on breathing phase
 function updateGlowIntensity(breathingPhase) {
     const phase = phasesData[currentPhaseIndex];
@@ -1216,10 +1348,10 @@ function createShapePath(shape) {
             }
             break;
             
-            case 'triangle':
-            document.querySelectorAll('.phase-info').forEach(el => {
-            el.style.top = '55%';  // Set top to 60% for triangle
-        });
+case 'triangle':
+    document.querySelectorAll('.phase-info').forEach(el => {
+        el.style.top = '55%';  // Set top to 60% for triangle
+    });
     // Create points for an equilateral triangle
     const triWidth = shapeRect.width;
     const triHeight = shapeRect.height;
@@ -1233,19 +1365,18 @@ function createShapePath(shape) {
     const point2 = { x: triLeft, y: triTop + triHeight }; // Bottom-left
     const point3 = { x: triLeft + triWidth, y: triTop + triHeight }; // Bottom-right
     
+    // LEFT edge (bottom-left to top) - CLOCKWISE DIRECTION - STARTS FROM LEFT
+    const triLeftEdge = createLinePoints(point2, point1, 100);
+    
     // RIGHT edge (top to bottom-right) - CLOCKWISE DIRECTION
     const triRightEdge = createLinePoints(point1, point3, 100);
     
     // Bottom edge (bottom-right to bottom-left) - CLOCKWISE DIRECTION
     const triBottomEdge = createLinePoints(point3, point2, 100);
     
-    // Left edge (bottom-left to top) - CLOCKWISE DIRECTION
-    const triLeftEdge = createLinePoints(point2, point1, 100);
-    
-    edges = [triRightEdge, triBottomEdge, triLeftEdge];
-    points = [...triRightEdge, ...triBottomEdge, ...triLeftEdge];
-    break;
-    
+    edges = [triLeftEdge, triRightEdge, triBottomEdge];
+    points = [...triLeftEdge, ...triRightEdge, ...triBottomEdge];
+    break; 
 case 'reversedtriangle':
     document.querySelectorAll('.phase-info').forEach(el => {
             el.style.top = '44%';  // Set top to 60% for triangle
@@ -1809,6 +1940,11 @@ color: #fffefe;
 #vibration-button-set.off img {
   filter: grayscale(100%) opacity(0.5);
 }
+
+        #phase-progress {
+        font-size: 25px;
+    }
+    
     </style>
         <!-- For activity Page ----------------------------------------------- -->
      <script>
@@ -1824,5 +1960,110 @@ color: #fffefe;
     });
 </script>
 
-</body>
-</html>
+<!-- For css of responsiveness of my screen  -->
+ <style>
+    /* Media query for screens less than 800px */
+@media (max-width: 800px) {
+    .controls-container {
+        max-width: 100%;
+        margin: 0 10px;
+        padding: 16px 20px;
+        gap: 16px;
+    }
+    
+    .buttons-row {
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .control-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 14px;
+        flex-shrink: 0;
+    }
+    
+    #vibration-button-set {
+        width: 44px !important;
+        height: 44px;
+        min-width: 44px;
+    }
+    
+    #phase-progress {
+        font-size: 25px;
+    }
+    
+    #cycle-progress {
+        font-size: 13px;
+    }
+    
+}
+
+/* Additional media query for very small screens (iPhone SE, etc.) */
+@media (max-width: 385px) {
+    .controls-container {
+        max-width: 100%;
+        margin: 0 8px;
+        padding: 12px 16px;
+    }
+    
+    .buttons-row {
+        gap: 6px;
+    }
+    
+    .control-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 12px;
+    }
+    
+    #vibration-button-set {
+        width: 40px !important;
+        height: 40px;
+        min-width: 40px;
+    }
+}
+.oval .phase-info {
+    font-size: 1.5em;
+    margin-top: 100px;
+    color: #f7fafe;
+}
+
+@media (max-width: 375px) {
+    .controls-container {
+        max-width: 100%;
+        width: 300px;
+    }
+}
+.controls-container {
+    min-width: 280px;
+}
+.buttons-row {
+    margin-bottom: -5px;
+    margin-top: -12px;
+}
+    #phase-progress {
+        font-size: 25px;
+    }
+ </style>
+
+ <script>
+  const phaseDiv = document.getElementById('phase-progress');
+
+  function clearIfNoneText() {
+    const text = phaseDiv.textContent.trim().toLowerCase();
+    if (text === "none") {
+      phaseDiv.textContent = "";
+    }
+  }
+
+  // Initial check
+  clearIfNoneText();
+
+  // Watch for future changes
+  const observer = new MutationObserver(clearIfNoneText);
+  observer.observe(phaseDiv, { childList: true, subtree: true });
+</script>
+
+{% endblock content %}

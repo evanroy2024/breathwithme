@@ -1,0 +1,533 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+  .main-wrapper {
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .group-settings-container {
+    max-width: 700px;
+    width: 100%;
+    padding: 2.5rem;
+    color: #e4e4e7;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: rgb(25 26 28 / 80%);
+    border-radius: 16px;
+    border: 1px solid #2d3542;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+  }
+
+  .group-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #374151;
+  }
+
+  .group-title {
+    font-size: 1.875rem;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+    color: #f9fafb;
+  }
+
+  .group-image {
+    max-height: 150px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    margin-bottom: 1rem;
+  }
+
+  .section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid #374151;
+    background: rgba(31, 41, 55, 0.5);
+  }
+
+  .section-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #f3f4f6;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .admin-badge {
+    background: linear-gradient(45deg, #10b981, #059669);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .upload-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .file-input {
+    padding: 0.75rem;
+    border: 1px solid #4b5563;
+    border-radius: 8px;
+    background-color: #1f2937;
+    color: #e5e7eb;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+  }
+
+  .file-input:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  }
+
+  .btn {
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.875rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .btn-primary {
+    background: linear-gradient(45deg, #4f46e5, #6366f1);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(45deg, #4338ca, #4f46e5);
+    transform: translateY(-1px);
+  }
+
+  .btn-danger {
+    background: linear-gradient(45deg, #dc2626, #ef4444);
+    color: white;
+  }
+
+  .btn-danger:hover {
+    background: linear-gradient(45deg, #b91c1c, #dc2626);
+    transform: translateY(-1px);
+  }
+
+  .btn-warning {
+    background: linear-gradient(45deg, #d97706, #f59e0b);
+    color: white;
+  }
+
+  .btn-warning:hover {
+    background: linear-gradient(45deg, #b45309, #d97706);
+    transform: translateY(-1px);
+  }
+
+  .member-count {
+    font-size: 0.875rem;
+    color: #9ca3af;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .members-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .member-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: rgba(31, 41, 55, 0.8);
+    border-radius: 8px;
+    border: 1px solid #374151;
+    transition: all 0.2s;
+  }
+
+  .member-item:hover {
+    border-color: #4b5563;
+    background: rgba(31, 41, 55, 1);
+  }
+
+  .member-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .member-name {
+    font-weight: 500;
+    color: #f3f4f6;
+  }
+
+  .member-role {
+    background: linear-gradient(45deg, #10b981, #059669);
+    color: white;
+    padding: 0.125rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  .remove-btn {
+    background: none;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 6px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .remove-btn:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+    transform: scale(1.1);
+  }
+
+  .dustbin-icon {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+  }
+
+  .divider {
+    border: none;
+    height: 1px;
+    background-color: #374151;
+    margin: 1.5rem 0;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    color: #9ca3af;
+    text-decoration: none;
+    font-size: 0.875rem;
+    margin-top: 1.5rem;
+    padding: 0.75rem 1.25rem;
+    background: rgb(31 41 55 / 60%);
+    border: 1px solid #374151;
+    border-radius: 8px;
+    transition: all 0.2s;
+    gap: 0.5rem;
+    font-weight: 500;
+  }
+
+  .back-link:hover {
+    color: #f3f4f6;
+    background: rgb(31 41 55 / 80%);
+    border-color: #4b5563;
+    transform: translateY(-1px);
+  }
+
+  .danger-zone {
+    border-color: #dc2626;
+    background: rgba(220, 38, 38, 0.05);
+  }
+
+  .confirmation-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+  }
+
+  .confirmation-dialog {
+    background: #1f2937;
+    border: 1px solid #374151;
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+  }
+
+  .confirmation-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #f3f4f6;
+    margin-bottom: 1rem;
+  }
+
+  .confirmation-message {
+    color: #d1d5db;
+    margin-bottom: 2rem;
+    line-height: 1.5;
+  }
+
+  .confirmation-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+  }
+
+  .btn-secondary {
+    background: #4b5563;
+    color: #e5e7eb;
+  }
+
+  .btn-secondary:hover {
+    background: #6b7280;
+  }
+</style>
+
+<div class="main-wrapper">
+  <div class="group-settings-container">
+    <div class="group-header" style="display: flex;">
+                        <button style="
+  background-color: #2c2c2c;
+  border: none;
+  border-radius: 8px;
+  width: 48px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  margin-right: 20px;
+  border: 1px solid #444; /* Dark border for button */
+" onclick="window.location.href='{% url 'mastercontrol:all_chatrooms' %}'">
+  <svg style="margin-left: -5px;" width="24" height="24" viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16 6L10 12L16 18" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="10" y1="12" x2="22" y2="12" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  </svg>
+</button>
+      <h2 class="group-title"> {{ room.public_name }}</h2>
+    </div>
+   {% if is_admin %}
+
+  <div class="section">
+      <h3 class="section-title">
+        Room Details 
+        
+      </h3>
+      <ul class="members-list">
+        <!-- Admin first -->
+        {% for member in members %}
+          {% if member.user == room.admin %}
+            <li class="member-item">
+              <div class="member-info">
+                <span class="member-name">Group Name - <b style="color: #10b981;">{{ room.display_name }}</b>  </span>
+              </div>
+            </li>
+            <li class="member-item">
+              <div class="member-info">
+                <span class="member-name">Group ID - <b style="color: #10b981;">  {{ room.display_name }}   </b> ( share with people to join ) </span>
+              </div>
+            </li>
+
+          
+             <li class="member-item">
+              <div class="member-info">
+                <span class="member-name">Group Password - <b style="color: #10b981;">{{ room.passcode }} </b> ( share with people to join ) </span>
+              </div>
+            </li>
+          {% endif %}
+        {% endfor %}
+        
+       
+      </ul>
+    </div>
+        {% endif %}
+
+    <div class="section">
+      <h3 class="section-title">
+        👥 Members
+        {% if is_admin %}
+          <span class="admin-badge">Admin</span>
+        {% endif %}
+      </h3>
+      <p class="member-count">
+        <span>👤</span>
+        Total Members: {{ member_count }}
+      </p>
+      
+      <ul class="members-list">
+        <!-- Admin first -->
+        {% for member in members %}
+          {% if member.user == room.admin %}
+            <li class="member-item">
+              <div class="member-info">
+                <span class="member-name">{{ member.user.username }}</span>
+                <span class="member-role">Admin</span>
+              </div>
+            </li>
+          {% endif %}
+        {% endfor %}
+        
+        <!-- Other members alphabetically -->
+        {% for member in members %}
+          {% if member.user != room.admin %}
+            <li class="member-item">
+              <div class="member-info">
+                <span class="member-name">{{ member.user.username }}</span>
+              </div>
+              {% if is_admin %}
+                <button type="button" class="remove-btn" onclick="showConfirmation('member', '{{ member.user.username }}', {{ member.user.id }})" title="Remove Member">
+                  <svg class="dustbin-icon" viewBox="0 0 24 24">
+                    <path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"/>
+                  </svg>
+                </button>
+              {% endif %}
+            </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+
+    {% if room.image %}
+      <div class="section">
+        <h3 class="section-title">
+          🖼️ Current Group Image
+        </h3>
+        <img src="{{ room.image.url }}" alt="Group Image" class="group-image">
+      </div>
+    {% endif %}
+
+    {% if is_admin %}
+      <div class="section">
+        <h3 class="section-title">
+          📷 {% if room.image %}Change{% else %}Upload{% endif %} Group Image
+        </h3>
+        <form method="post" enctype="multipart/form-data" class="upload-form">
+          {% csrf_token %}
+          <input type="file" name="group_image" class="file-input" required accept="image/*">
+          <button type="submit" class="btn btn-primary">{% if room.image %}Change Image{% else %}Upload Image{% endif %}</button>
+        </form>
+      </div>
+    {% endif %}
+
+    <div class="section danger-zone">
+      <h3 class="section-title">⚠️ Danger Zone</h3>
+      <button type="button" class="btn {% if is_admin %}btn-danger{% else %}btn-warning{% endif %}" onclick="showConfirmation('{% if is_admin %}delete{% else %}leave{% endif %}', '{{ room.name }}', null)">
+        {% if is_admin %}🗑️ Delete Group{% else %}🚪 Leave Group{% endif %}
+      </button>
+    </div>
+
+    <a href="{% url 'mastercontrol:all_chatrooms' %}" class="back-link">
+      ← Back to My Groups
+    </a>
+  </div>
+</div>
+
+<!-- Confirmation Dialog -->
+<div id="confirmationOverlay" class="confirmation-overlay">
+  <div class="confirmation-dialog">
+    <h3 class="confirmation-title" id="confirmationTitle">Confirm Action</h3>
+    <p class="confirmation-message" id="confirmationMessage">Are you sure?</p>
+    <div class="confirmation-actions">
+      <button type="button" class="btn btn-secondary" onclick="hideConfirmation()">Cancel</button>
+      <button type="button" class="btn btn-danger" id="confirmButton" onclick="executeAction()">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden Forms -->
+<form id="memberRemoveForm" method="post" style="display: none;">
+  {% csrf_token %}
+  <input type="hidden" name="kick_user_id" id="kickUserId">
+</form>
+
+<form id="deleteLeaveForm" method="post" style="display: none;">
+  {% csrf_token %}
+  <input type="hidden" name="delete_or_leave" value="true">
+</form>
+
+<script>
+let currentAction = null;
+let currentData = null;
+
+function showConfirmation(action, name, userId) {
+  const overlay = document.getElementById('confirmationOverlay');
+  const title = document.getElementById('confirmationTitle');
+  const message = document.getElementById('confirmationMessage');
+  const confirmButton = document.getElementById('confirmButton');
+  
+  currentAction = action;
+  currentData = { name, userId };
+  
+  if (action === 'member') {
+    title.textContent = 'Remove Member';
+    message.textContent = `Are you sure you want to remove "${name}" from this group? This action cannot be undone.`;
+    confirmButton.textContent = 'Remove Member';
+    confirmButton.className = 'btn btn-danger';
+  } else if (action === 'delete') {
+    title.textContent = 'Delete Group';
+    message.textContent = `Are you sure you want to delete "${name}"? This will permanently remove the group and all its messages. This action cannot be undone.`;
+    confirmButton.textContent = 'Delete Group';
+    confirmButton.className = 'btn btn-danger';
+  } else if (action === 'leave') {
+    title.textContent = 'Leave Group';
+    message.textContent = `Are you sure you want to leave "${name}"? You will need to be re-invited to join again.`;
+    confirmButton.textContent = 'Leave Group';
+    confirmButton.className = 'btn btn-warning';
+  }
+  
+  overlay.style.display = 'flex';
+}
+
+function hideConfirmation() {
+  document.getElementById('confirmationOverlay').style.display = 'none';
+  currentAction = null;
+  currentData = null;
+}
+
+function executeAction() {
+  if (currentAction === 'member') {
+    document.getElementById('kickUserId').value = currentData.userId;
+    document.getElementById('memberRemoveForm').submit();
+  } else if (currentAction === 'delete' || currentAction === 'leave') {
+    document.getElementById('deleteLeaveForm').submit();
+  }
+}
+
+// Close dialog when clicking outside
+document.getElementById('confirmationOverlay').addEventListener('click', function(e) {
+  if (e.target === this) {
+    hideConfirmation();
+  }
+});
+
+// Close dialog with Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    hideConfirmation();
+  }
+});
+</script>
+{% endblock %}

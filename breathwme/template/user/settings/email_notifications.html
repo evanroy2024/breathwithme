@@ -136,7 +136,25 @@ Home - Meditation Dashboard
 
 <div class="container">
   <div class="header">
-    <span class="back-arrow" onclick="window.location.href='{% url 'user_settings' %}'">&#8592;</span>
+     <button style="
+  background-color: #2c2c2c;
+  border: none;
+  border-radius: 8px;
+  width: 48px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-right: 20px;
+  padding: 0;
+  border: 1px solid #444; /* Dark border for button */
+" onclick="window.location.href='{% url 'user_settings' %}'">
+  <svg style="margin-left: -5px;" width="24" height="24" viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16 6L10 12L16 18" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="10" y1="12" x2="22" y2="12" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  </svg>
+</button>
     <h1>Email Notifcations</h1>
   </div>
   <div class="section">
@@ -185,26 +203,7 @@ Home - Meditation Dashboard
 </div>
 
 
-  <div class="section">
-    <div class="section-title">Account Setting</div>
-    <div class="setting-item"  onclick="window.location.href='{% url 'profile' %}'">
-      <span class="icon">&#128100;</span>
-      <div class="text">
-        <span class="title">Personal Information</span>
-      </div>
-      <span class="arrow">&#x25B6;</span>
-    </div>
-    <div class="setting-item">
-      <a href="{% url 'logout' %}" class="logout-link">
-        <span class="icon">&#x21AA;</span> <!-- Unicode Logout Icon -->
-        <div class="text" style="margin-right: 200%;">
-          <span class="title"> <b style="color: reds;">Logout</b> </span>
-        </div>
-        <span class="arrow">&#x25B6;</span>
-      </a>
-    </div>
-    
-  </div>
+ 
   
 </div>
 

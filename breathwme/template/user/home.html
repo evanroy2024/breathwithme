@@ -249,48 +249,68 @@ Home - Meditation Dashboard
 <div class="header">
     <div class="profile">
         {% if userdata.profile_image %}
+
           <img src="{{ userdata.profile_image.url }}" alt="Profile Picture">
     {% else %}
-    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQb6jjtDA6oGgxL26KEP4S8XQWpm6csYOW_qw&s" alt="Profile Picture">
+<img src="https://cdn-icons-png.flaticon.com/512/9131/9131529.png" alt="Profile Picture">
 
     {% endif %}
         <div>
-            <p>Welcome Back,</p>
-            <p><strong> {% if username %}{{ username }}{% else %}Guest{% endif %}!</strong></p>
+            <p>Welcome back, <strong> {% if username %}{{ username }}{% else %}Guest{% endif %}</strong></p>
+            <p></p>
         </div>
     </div>
-    <div class="quote">
+    <!-- <div class="quote">
         "Start your meditation journey with guided session."
-    </div>
+    </div> -->
 </div>
 
 <div class="features">
-    <h2>Features</h2>
     <div class="feature-cards">
-        <div class="feature-card active" onclick="window.location.href='{% url 'breathxapp:build_habit' %}';">
-            <i class="fas fa-seedling fa-2x"></i>
-            <h3 style="color: white;">Build a Habit</h3>
-            <hr>
-            <p>Build a custom breath work practice to fit your life</p>
-        </div>
+       
         <div class="feature-card" onclick="window.location.href='{% url 'testapp:song_list' %}'">
             <i class="fas fa-music fa-2x"></i>
             <h3 style="color: white;">Breathing Beats</h3>
             <hr>
-            <p>Perform Different Meditation Programs</p>
+            <p>Experience the benefits of conscious rhythmic breathing</p>
         </div>
         <div class="feature-card" onclick="window.location.href='{% url 'breathxapp:exercise_list' %}'">
             <i class="fas fa-spa fa-2x"></i>
             <h3 style="color: white;">Silent Session</h3>
             <hr>
-            <p>Focus within to discover your inner power</p>
+            <p>Discover your perfect breath</p>
+        </div>
+         <div class="feature-card " onclick="window.location.href='{% url 'breathxapp:build_habit' %}';">
+            <i class="fas fa-seedling fa-2x"></i>
+            <h3 style="color: white;">Build a Habit</h3>
+            <hr>
+            <p>Build a custom breath work practice to fit your life</p>
         </div>
          
         <div class="feature-card" onclick="window.location.href='{% url 'musicapp:all_musics' %}'">
             <i class="fas fa-moon fa-2x"></i>
             <h3 style="color: white;">Sleep Session</h3>
             <hr>
-            <p>Let these sessions guide you into, or back into, the best sleep of your life</p>
+            <p>Let these sessions guide you into the best sleep of your life</p>
+        </div>
+        <div class="feature-card" onclick="window.location.href='{% url 'mastercontrol:all_chatrooms' %}'">
+            <i class="fas fa-users fa-2x"></i>
+            <h3 style="color: white;">Group Session</h3>
+            <hr>
+            <p>Get together and get the breathwork party started!</p>
+        </div>
+         <div class="feature-card" onclick="window.location.href='{% url 'musicapp:all_playlists' %}'">
+            <i class="fas fa-headphones fa-2x"></i>
+            <h3 style="color: white;">Music Playlists</h3>
+            <hr>
+            <p>Stay in the flow with multi song sessions</p>
+        </div>
+        
+        <div class="feature-card" onclick="window.location.href='{% url 'breathxapp:my_bookings' %}'">
+            <i class="fas fa-user fa-2x"></i>
+            <h3 style="color: white;">One on One Session</h3>
+            <hr>
+            <p>Learn breathwork and develop a program in a private session</p>
         </div>
         <div class="feature-card" onclick="window.location.href='{% url 'course_main' %}'">
             <i class="fas fa-book-open fa-2x"></i>
@@ -298,26 +318,14 @@ Home - Meditation Dashboard
             <hr>
             <p>Learn the art and science of breathwork to improve your life</p>
         </div>
-        <div class="feature-card" onclick="window.location.href='{% url 'library' %}'">
-            <i class="fas fa-headphones fa-2x"></i>
-            <h3 style="color: white;">Music Playlists</h3>
+        <!-- <div class="feature-card" onclick="window.location.href='{% url 'referal:generate_referral_link' %}'">
+            <i class="fas fa-user-friends fa-2x" ></i> 
+            <h3 style="color: white;">Ambassador Program</h3>
             <hr>
-            <p>Breathe to the beat of songs chosen by our experts</p>
-        </div>
+            <p>Get points when anyone signs up using your referral link.</p>
+        </div> -->
        
-        <div class="feature-card" onclick="window.location.href='{% url 'mastercontrol:all_chatrooms' %}'">
-            <i class="fas fa-users fa-2x"></i>
-            <h3 style="color: white;">Group Session</h3>
-            <hr>
-            <p>Get together and get the breathwork party started!</p>
-        </div>
-        <div class="feature-card" onclick="window.location.href='{% url 'breathxapp:my_bookings' %}'">
-            <i class="fas fa-user fa-2x"></i>
-            <h3 style="color: white;">One on One Session</h3>
-            <hr>
-            <p>Learn breathwork and develop a program in a private session</p>
-        </div>
-        <div class="feature-card" onclick="window.location.href='{% url 'breathxapp:activaty' %}'">
+        <div class="feature-card" onclick="window.location.href='{% url 'activatyapp:user-activity' %}'">
             <i class="fas fa-clipboard-list fa-2x"></i>
             <h3 style="color: white;">Activity Log</h3>
             <hr>
@@ -327,24 +335,19 @@ Home - Meditation Dashboard
             <i class="fas fa-cogs fa-2x"></i>
             <h3 style="color: white;">Settings</h3>
             <hr>
-            <p>Everything you need to customize the app to your needs</p>
+            <p>Customize the app to your needs</p>
         </div>
-        <div class="feature-card" onclick="window.location.href='{% url 'referal:generate_referral_link' %}'">
-            <i class="fas fa-user-friends fa-2x" ></i> <!-- Referral-related icon -->
-            <h3 style="color: white;">Ambassador Program</h3>
-            <hr>
-            <p>Get points when anyone signs up using your referral link.</p>
-        </div>
-        <div class="feature-card" onclick="window.location.href='{% url 'user_subscription_page' %}'">
+       
+        <!-- <div class="feature-card" onclick="window.location.href='{% url 'user_subscription_page' %}'">
             <i class="fas fa-layer-group fa-2x"></i>
 
             <h3 style="color: white;">Manage Your Plans</h3>
             <hr>
-            <p>Manage or update your plans to get premium benifits </p>
-        </div>
+            <p>Manage your plan to unlock premium features</p>
+        </div> -->
         
     </div>
-<a href="{% url 'course_main' %}" class="start-now">Start Now</a>
+<!-- <a href="{% url 'course_main' %}" class="start-now">Start Now</a> -->
 
 </div>
 <!-- JS and css for dakr to light and light to dark start  -->
@@ -444,6 +447,37 @@ Home - Meditation Dashboard
     color: #333;
     border-bottom: 1px solid #ccc;
 }
+/* ////////////////////////////////////////////////////////////////////// */
 
+@media (max-width: 600px) {
+  .header {
+    height: 120px;
+  }
+
+  .header .quote {
+    font-size: 14px;
+    margin-top: 8px;
+    line-height: 1.4;
+    display: none;
+  }
+}
+
+@media (max-width: 800px) {
+    .header .profile img {
+        width: 120px;
+        height: 120px;
+    }
+.header .profile img {
+    width: 85px;
+    height: 85px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+}
+@media (min-width: 1200px) {
+  .header {
+    height: 160px;
+  }
+}
   </style>
 {% endblock %}

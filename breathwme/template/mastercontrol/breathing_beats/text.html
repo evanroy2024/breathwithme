@@ -1,0 +1,976 @@
+<script>
+  // Enhanced real-time synchronization script for breathing exercise with connection status
+(function() {
+    'use strict';
+    
+    // WebSocket connection variables
+    let socket;
+    let isLeader = false;
+    let isConnected = false;
+    let connectionStartTime = null;
+    let connectionTimer = null;
+    let reconnectAttempts = 0;
+    let maxReconnectAttempts = 5;
+    let reconnectDelay = 3000;
+    
+    // Get chatroom name from current URL or set it
+    const chatroomName = '{{ chatroom.name }}' || window.location.pathname.split('/').pop() || 'default';
+    const isAuthenticated = {{ request.user.is_authenticated|yesno:"true,false" }};
+    const isMember = {{ is_member|yesno:"true,false" }};
+    
+    // Create connection status UI
+    function createConnectionStatusUI() {
+        // Remove existing status UI if any
+        const existingStatus = document.getElementById('websocket-status');
+        if (existingStatus) {
+            existingStatus.remove();
+        }
+        
+        // Create status container
+        const statusContainer = document.createElement('div');
+        statusContainer.id = 'websocket-status';
+        statusContainer.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            z-index: 10000;
+            font-size: 14px;
+            min-width: 250px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        `;
+        
+        // Create status text
+        const statusText = document.createElement('div');
+        statusText.id = 'connection-status-text';
+        statusText.style.marginBottom = '10px';
+        
+        // Create timer display
+        const timerDisplay = document.createElement('div');
+        timerDisplay.id = 'connection-timer';
+        timerDisplay.style.cssText = `
+            font-weight: bold;
+            color: #ffd700;
+            margin-bottom: 10px;
+        `;
+        
+        // Create test connection button
+        const testButton = document.createElement('button');
+        testButton.id = 'test-connection-btn';
+        testButton.textContent = 'Test Connection';
+        testButton.style.cssText = `
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+            font-size: 12px;
+        `;
+        
+        // Create force reconnect button
+        const reconnectButton = document.createElement('button');
+        reconnectButton.id = 'force-reconnect-btn';
+        reconnectButton.textContent = 'Force Reconnect';
+        reconnectButton.style.cssText = `
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        `;
+        
+        // Create minimize button
+        const minimizeButton = document.createElement('button');
+        minimizeButton.id = 'minimize-status-btn';
+        minimizeButton.textContent = '−';
+        minimizeButton.style.cssText = `
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: transparent;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            width: 20px;
+            height: 20px;
+        `;
+        
+        // Assemble the UI
+        statusContainer.appendChild(minimizeButton);
+        statusContainer.appendChild(statusText);
+        statusContainer.appendChild(timerDisplay);
+        statusContainer.appendChild(testButton);
+        statusContainer.appendChild(reconnectButton);
+        
+        document.body.appendChild(statusContainer);
+        
+        // Add event listeners
+        testButton.addEventListener('click', testConnection);
+        reconnectButton.addEventListener('click', forceReconnect);
+        minimizeButton.addEventListener('click', toggleStatusUI);
+        
+        return {
+            container: statusContainer,
+            statusText: statusText,
+            timerDisplay: timerDisplay,
+            testButton: testButton,
+            reconnectButton: reconnectButton
+        };
+    }
+    
+    // Toggle status UI visibility
+    function toggleStatusUI() {
+        const container = document.getElementById('websocket-status');
+        const minimizeBtn = document.getElementById('minimize-status-btn');
+        
+        if (container.style.height === '30px') {
+            // Expand
+            container.style.height = 'auto';
+            container.style.overflow = 'visible';
+            minimizeBtn.textContent = '−';
+            container.querySelectorAll('div, button').forEach((el, index) => {
+                if (index > 0) el.style.display = 'block';
+            });
+        } else {
+            // Minimize
+            container.style.height = '30px';
+            container.style.overflow = 'hidden';
+            minimizeBtn.textContent = '+';
+            container.querySelectorAll('div, button').forEach((el, index) => {
+                if (index > 0) el.style.display = 'none';
+            });
+        }
+    }
+    
+    // Update connection status display
+    function updateConnectionStatus(status, color = '#ffffff') {
+        const statusText = document.getElementById('connection-status-text');
+        if (statusText) {
+            statusText.textContent = status;
+            statusText.style.color = color;
+        }
+        console.log('Connection Status:', status);
+    }
+    
+    // Update connection timer
+    function updateConnectionTimer() {
+        const timerDisplay = document.getElementById('connection-timer');
+        if (!timerDisplay || !connectionStartTime) return;
+        
+        const elapsed = Math.floor((Date.now() - connectionStartTime) / 1000);
+        
+        if (!isConnected) {
+            timerDisplay.textContent = `Connecting... ${elapsed}s`;
+            timerDisplay.style.color = '#ffd700';
+        } else {
+            timerDisplay.textContent = `Connected in ${elapsed}s`;
+            timerDisplay.style.color = '#28a745';
+            // Clear timer after showing success for 3 seconds
+            setTimeout(() => {
+                if (timerDisplay) {
+                    timerDisplay.textContent = '';
+                }
+            }, 3000);
+        }
+    }
+    
+    // Start connection timer
+    function startConnectionTimer() {
+        connectionStartTime = Date.now();
+        connectionTimer = setInterval(updateConnectionTimer, 1000);
+    }
+    
+    // Stop connection timer
+    function stopConnectionTimer() {
+        if (connectionTimer) {
+            clearInterval(connectionTimer);
+            connectionTimer = null;
+        }
+    }
+    
+    // Test connection function
+    function testConnection() {
+        const testButton = document.getElementById('test-connection-btn');
+        const originalText = testButton.textContent;
+        
+        testButton.textContent = 'Testing...';
+        testButton.disabled = true;
+        
+        if (!isConnected) {
+            updateConnectionStatus('❌ Not Connected', '#dc3545');
+        } else {
+            // Send a test message
+            sendMessage({
+                type: 'connection_test',
+                timestamp: Date.now()
+            });
+            updateConnectionStatus('✅ Connected & Active', '#28a745');
+        }
+        
+        setTimeout(() => {
+            testButton.textContent = originalText;
+            testButton.disabled = false;
+        }, 2000);
+    }
+    
+    // Force reconnect function
+    function forceReconnect() {
+        const reconnectButton = document.getElementById('force-reconnect-btn');
+        const originalText = reconnectButton.textContent;
+        
+        reconnectButton.textContent = 'Reconnecting...';
+        reconnectButton.disabled = true;
+        
+        updateConnectionStatus('🔄 Force Reconnecting...', '#ffd700');
+        
+        // Close existing connection
+        if (socket) {
+            socket.close();
+        }
+        
+        // Reset connection state
+        isConnected = false;
+        reconnectAttempts = 0;
+        
+        // Start new connection after brief delay
+        setTimeout(() => {
+            initializeWebSocket();
+            reconnectButton.textContent = originalText;
+            reconnectButton.disabled = false;
+        }, 1000);
+    }
+    
+    // Initialize WebSocket connection
+    function initializeWebSocket() {
+        if (!isAuthenticated || !isMember) {
+            updateConnectionStatus('❌ Not Authenticated', '#dc3545');
+            console.log('User not authenticated or not a member');
+            return;
+        }
+        
+        // Start connection timer
+        startConnectionTimer();
+        updateConnectionStatus('🔄 Connecting...', '#ffd700');
+        
+        const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
+        const wsUrl = wsScheme + '://' + window.location.host + '/ws/chatroom/' + chatroomName + '/';
+        
+        console.log('Attempting WebSocket connection to:', wsUrl);
+        
+        try {
+            socket = new WebSocket(wsUrl);
+            
+            // Set connection timeout
+            const connectionTimeout = setTimeout(() => {
+                if (!isConnected) {
+                    updateConnectionStatus('⏰ Connection Timeout', '#dc3545');
+                    socket.close();
+                }
+            }, 15000); // 15 second timeout
+            
+            socket.onopen = function(e) {
+                console.log('WebSocket connected for real-time sync');
+                clearTimeout(connectionTimeout);
+                isConnected = true;
+                reconnectAttempts = 0;
+                updateConnectionStatus('✅ Connected Successfully', '#28a745');
+                stopConnectionTimer();
+                updateConnectionTimer(); // Show final connection time
+                
+                // Send initial connection message
+                sendMessage({
+                    type: 'user_connected',
+                    timestamp: Date.now()
+                });
+            };
+            
+            socket.onmessage = function(e) {
+                try {
+                    const data = JSON.parse(e.data);
+                    handleIncomingMessage(data);
+                } catch (error) {
+                    console.error('Error parsing WebSocket message:', error);
+                }
+            };
+            
+            socket.onclose = function(e) {
+                console.log('WebSocket disconnected. Code:', e.code, 'Reason:', e.reason);
+                clearTimeout(connectionTimeout);
+                isConnected = false;
+                stopConnectionTimer();
+                
+                if (e.code === 1000) {
+                    updateConnectionStatus('✅ Connection Closed Normally', '#28a745');
+                } else {
+                    updateConnectionStatus(`❌ Connection Lost (${e.code})`, '#dc3545');
+                    
+                    // Auto-reconnect with exponential backoff
+                    if (reconnectAttempts < maxReconnectAttempts) {
+                        reconnectAttempts++;
+                        const delay = reconnectDelay * Math.pow(2, reconnectAttempts - 1);
+                        updateConnectionStatus(`🔄 Reconnecting in ${Math.ceil(delay/1000)}s (${reconnectAttempts}/${maxReconnectAttempts})`, '#ffd700');
+                        
+                        setTimeout(() => {
+                            if (!isConnected) {
+                                initializeWebSocket();
+                            }
+                        }, delay);
+                    } else {
+                        updateConnectionStatus('❌ Max Reconnect Attempts Reached', '#dc3545');
+                    }
+                }
+            };
+            
+            socket.onerror = function(e) {
+                console.error('WebSocket error:', e);
+                updateConnectionStatus('❌ Connection Error', '#dc3545');
+            };
+            
+        } catch (error) {
+            console.error('Failed to create WebSocket:', error);
+            updateConnectionStatus('❌ Connection Failed', '#dc3545');
+            stopConnectionTimer();
+        }
+    }
+    
+    // Handle incoming WebSocket messages
+    function handleIncomingMessage(data) {
+        if (!data.type) return;
+        
+        console.log('Received message:', data.type);
+        
+        switch(data.type) {
+            case 'user_role':
+                isLeader = data.is_leader;
+                updateUIForRole();
+                break;
+                
+            case 'connection_test':
+                // Respond to connection test
+                sendMessage({
+                    type: 'connection_test_response',
+                    timestamp: Date.now()
+                });
+                break;
+                
+            case 'connection_test_response':
+                updateConnectionStatus('✅ Connection Test Passed', '#28a745');
+                break;
+                
+            case 'shape_change':
+                if (!isLeader) {
+                    updateShapeSelection(data.shape);
+                }
+                break;
+                
+            case 'breath_toggle':
+                if (!isLeader) {
+                    handleBreathToggle(data.isActive);
+                }
+                break;
+                
+            case 'exercise_start':
+                if (!isLeader) {
+                    handleExerciseStart();
+                }
+                break;
+                
+            case 'voice_toggle':
+                if (!isLeader) {
+                    handleVoiceToggle(data.isActive);
+                }
+                break;
+                
+            case 'vibration_toggle':
+                if (!isLeader) {
+                    handleVibrationToggle(data.isActive);
+                }
+                break;
+                
+            case 'save_exercise':
+                if (!isLeader) {
+                    handleSaveExercise();
+                }
+                break;
+                
+            case 'show_guide':
+                if (!isLeader) {
+                    handleShowGuide();
+                }
+                break;
+                
+            case 'breathing_timing_change':
+                if (!isLeader) {
+                    handleBreathingTimingChange(data);
+                }
+                break;
+                
+            case 'close_component':
+                if (!isLeader) {
+                    handleCloseComponent(data.componentId);
+                }
+                break;
+                
+            case 'reload_all':
+                handleReloadAll(data);
+                break;
+        }
+    }
+    
+    // Send message through WebSocket
+    function sendMessage(messageData) {
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            // Allow connection test messages from anyone
+            if (messageData.type === 'connection_test' || messageData.type === 'connection_test_response' || messageData.type === 'user_connected') {
+                socket.send(JSON.stringify(messageData));
+                return;
+            }
+            
+            // Other messages only from leader
+            if (isLeader) {
+                socket.send(JSON.stringify(messageData));
+            }
+        } else {
+            console.warn('Cannot send message - WebSocket not connected');
+            updateConnectionStatus('❌ Cannot Send - Not Connected', '#dc3545');
+        }
+    }
+    
+    // Update UI based on user role
+    function updateUIForRole() {
+        const statusContainer = document.getElementById('websocket-status');
+        if (statusContainer) {
+            const roleIndicator = statusContainer.querySelector('.role-indicator') || document.createElement('div');
+            roleIndicator.className = 'role-indicator';
+            roleIndicator.style.cssText = `
+                font-weight: bold;
+                margin-bottom: 10px;
+                padding: 5px 10px;
+                border-radius: 5px;
+                text-align: center;
+            `;
+            
+            if (isLeader) {
+                roleIndicator.textContent = '👑 LEADER';
+                roleIndicator.style.background = '#28a745';
+                roleIndicator.style.color = 'white';
+            } else {
+                roleIndicator.textContent = '👥 FOLLOWER';
+                roleIndicator.style.background = '#6c757d';
+                roleIndicator.style.color = 'white';
+            }
+            
+            if (!statusContainer.querySelector('.role-indicator')) {
+                statusContainer.insertBefore(roleIndicator, statusContainer.firstChild.nextSibling);
+            }
+        }
+        
+        if (!isLeader) {
+            // Add visual indicator for followers in the main UI
+            const controls = document.getElementById('controls-row');
+            if (controls && !controls.querySelector('.follower-indicator')) {
+                const indicator = document.createElement('div');
+                indicator.className = 'follower-indicator';
+                indicator.style.cssText = `
+                    position: absolute;
+                    top: -25px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: rgba(255, 255, 255, 0.9);
+                    color: #333;
+                    padding: 5px 10px;
+                    border-radius: 15px;
+                    font-size: 12px;
+                    font-weight: bold;
+                `;
+                indicator.textContent = '👥 Following Leader';
+                controls.style.position = 'relative';
+                controls.appendChild(indicator);
+            }
+        }
+    }
+    
+    // Handle shape selection updates
+    function updateShapeSelection(shape) {
+        const shapeSelect = document.getElementById('shapeSelect');
+        if (shapeSelect && shapeSelect.value !== shape) {
+            shapeSelect.value = shape;
+            shapeSelect.dispatchEvent(new Event('change'));
+        }
+    }
+    
+    // Handle breath toggle
+    function handleBreathToggle(isActive) {
+        const breathBtn = document.getElementById('breathtoggleBtn');
+        if (breathBtn) {
+            breathBtn.click();
+        }
+    }
+    
+    // Handle exercise start
+    function handleExerciseStart() {
+        const startBtn = document.getElementById('startButton');
+        if (startBtn) {
+            startBtn.click();
+        }
+    }
+    
+    // Handle voice toggle
+    function handleVoiceToggle(isActive) {
+        const voiceBtn = document.getElementById('voice-start');
+        if (voiceBtn) {
+            voiceBtn.click();
+        }
+    }
+    
+    // Handle vibration toggle
+    function handleVibrationToggle(isActive) {
+        const vibrationBtn = document.getElementById('vibration-button-set');
+        if (vibrationBtn) {
+            vibrationBtn.click();
+        }
+    }
+    
+    // Handle save exercise
+    function handleSaveExercise() {
+        const saveBtn = document.getElementById('save-exercise-button-id');
+        if (saveBtn) {
+            saveBtn.click();
+        }
+    }
+    
+    // Handle show guide
+    function handleShowGuide() {
+        const guideBtn = document.getElementById('guide-button-id');
+        if (guideBtn) {
+            guideBtn.click();
+        }
+    }
+    
+    // Handle close component
+    function handleCloseComponent(componentId) {
+        console.log('Follower received close command for:', componentId);
+        
+        const component = document.getElementById(componentId);
+        if (component) {
+            if (component.tagName === 'BUTTON') {
+                component.click();
+                return;
+            }
+            
+            component.style.display = 'none';
+            
+            let parent = component.parentElement;
+            while (parent) {
+                if (parent.classList.contains('modal') || 
+                    parent.classList.contains('popup') || 
+                    parent.classList.contains('overlay') ||
+                    parent.classList.contains('dialog')) {
+                    parent.style.display = 'none';
+                    break;
+                }
+                parent = parent.parentElement;
+            }
+            
+            const activeClasses = ['active', 'open', 'show', 'visible'];
+            activeClasses.forEach(className => {
+                if (component.classList.contains(className)) {
+                    component.classList.remove(className);
+                }
+                
+                let parentEl = component.parentElement;
+                while (parentEl) {
+                    if (parentEl.classList.contains(className)) {
+                        parentEl.classList.remove(className);
+                    }
+                    parentEl = parentEl.parentElement;
+                }
+            });
+            
+            component.dispatchEvent(new Event('close', { bubbles: true }));
+            component.dispatchEvent(new CustomEvent('component-close', { 
+                bubbles: true, 
+                detail: { componentId: componentId } 
+            }));
+        }
+    }
+    
+    // Handle reload all functionality
+    function handleReloadAll(data) {
+        console.log('Received reload all command from leader:', data.leader);
+        
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 10000;
+            font-size: 16px;
+            text-align: center;
+        `;
+        notification.textContent = `Leader ${data.leader} is reconnecting with you...`;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            window.location.reload();
+        }, 1500);
+    }
+    
+    // Handle breathing timing changes
+    function handleBreathingTimingChange(data) {
+        const { inhaleTime, holdInTime, exhaleTime, holdOutTime } = data;
+        
+        console.log('Follower received timing change:', data);
+        
+        const inhaleSelect = document.getElementById('inhaleTime');
+        const holdInSelect = document.getElementById('holdInTime');
+        const exhaleSelect = document.getElementById('exhaleTime');
+        const holdOutSelect = document.getElementById('holdOutTime');
+        
+        const originalIsLeader = isLeader;
+        isLeader = true;
+        
+        if (inhaleSelect && inhaleTime !== undefined) {
+            inhaleSelect.value = inhaleTime;
+        }
+        if (holdInSelect && holdInTime !== undefined) {
+            holdInSelect.value = holdInTime;
+        }
+        if (exhaleSelect && exhaleTime !== undefined) {
+            exhaleSelect.value = exhaleTime;
+        }
+        if (holdOutSelect && holdOutTime !== undefined) {
+            holdOutSelect.value = holdOutTime;
+        }
+        
+        setTimeout(() => {
+            [inhaleSelect, holdInSelect, exhaleSelect, holdOutSelect].forEach((select) => {
+                if (select) {
+                    select.dispatchEvent(new Event('change', { bubbles: true }));
+                    select.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+            });
+            
+            if (window.$ || window.jQuery) {
+                const $ = window.$ || window.jQuery;
+                $('#inhaleTime, #holdInTime, #exhaleTime, #holdOutTime').trigger('change');
+            }
+            
+            const timingValues = {
+                inhale: parseInt(inhaleTime) || 4,
+                holdIn: parseInt(holdInTime) || 4,
+                exhale: parseInt(exhaleTime) || 4,
+                holdOut: parseInt(holdOutTime) || 4
+            };
+            
+            const updateFunctions = [
+                'updateBreathingTiming',
+                'updateTiming',
+                'setBreathingTiming',
+                'changeBreathingTiming',
+                'applyBreathingTiming'
+            ];
+            
+            updateFunctions.forEach(funcName => {
+                if (window[funcName] && typeof window[funcName] === 'function') {
+                    try {
+                        window[funcName](timingValues);
+                    } catch (e) {
+                        console.log(`Error calling ${funcName}:`, e);
+                    }
+                }
+            });
+            
+            const globalVars = ['breathingTimer', 'breathingConfig', 'breathConfig', 'timing'];
+            globalVars.forEach(varName => {
+                if (window[varName]) {
+                    Object.assign(window[varName], timingValues);
+                }
+            });
+            
+            if (window.initializeBreathing && typeof window.initializeBreathing === 'function') {
+                window.initializeBreathing();
+            }
+            
+            if (window.breathingAnimation || window.animation) {
+                const anim = window.breathingAnimation || window.animation;
+                if (anim && typeof anim === 'object') {
+                    Object.assign(anim, timingValues);
+                }
+            }
+            
+            isLeader = originalIsLeader;
+        }, 100);
+        
+        setTimeout(() => {
+            if (window.restartBreathing && typeof window.restartBreathing === 'function') {
+                window.restartBreathing();
+            }
+            
+            const timingControls = document.querySelectorAll('#inhaleTime, #holdInTime, #exhaleTime, #holdOutTime');
+            timingControls.forEach(control => {
+                if (control) {
+                    control.focus();
+                    control.blur();
+                }
+            });
+        }, 300);
+    }
+    
+    // Set up event listeners for leader controls
+    function setupLeaderControls() {
+        const shapeSelect = document.getElementById('shapeSelect');
+        if (shapeSelect) {
+            shapeSelect.addEventListener('change', function() {
+                sendMessage({
+                    type: 'shape_change',
+                    shape: this.value
+                });
+            });
+        }
+        
+        const breathBtn = document.getElementById('breathtoggleBtn');
+        if (breathBtn) {
+            breathBtn.addEventListener('click', function() {
+                sendMessage({
+                    type: 'breath_toggle',
+                    isActive: true
+                });
+            });
+        }
+        
+        const startBtn = document.getElementById('startButton');
+        if (startBtn) {
+            startBtn.addEventListener('click', function() {
+                sendMessage({
+                    type: 'exercise_start'
+                });
+            });
+        }
+        
+        const voiceBtn = document.getElementById('voice-start');
+        if (voiceBtn) {
+            voiceBtn.addEventListener('click', function() {
+                sendMessage({
+                    type: 'voice_toggle',
+                    isActive: !this.classList.contains('voice-off')
+                });
+            });
+        }
+        
+        const vibrationBtn = document.getElementById('vibration-button-set');
+        if (vibrationBtn) {
+            vibrationBtn.addEventListener('click', function() {
+                sendMessage({
+                    type: 'vibration_toggle',
+                    isActive: true
+                });
+            });
+        }
+        
+        const saveBtn = document.getElementById('save-exercise-button-id');
+        if (saveBtn) {
+            saveBtn.addEventListener('click', function() {
+                sendMessage({
+                    type: 'save_exercise'
+                });
+            });
+        }
+        
+        const guideBtn = document.getElementById('guide-button-id');
+        if (guideBtn) {
+            guideBtn.addEventListener('click', function() {
+                sendMessage({
+                    type: 'show_guide'
+                });
+            });
+        }
+        
+        const reloadAllBtn = document.getElementById('reload-all');
+        if (reloadAllBtn) {
+            reloadAllBtn.addEventListener('click', function() {
+                if (confirm('This will reconnect with all users but existing exercise will be stopped. Continue?')) {
+                    sendMessage({
+                        type: 'reload_all',
+                        leader: 'Admin'
+                    });
+                    
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 500);
+                }
+            });
+        }
+        
+        setupBreathingTimingControls();
+        setupCloseButtonControls();
+    }
+    
+    // Set up breathing timing control listeners
+    function setupBreathingTimingControls() {
+        const timingSelects = ['inhaleTime', 'holdInTime', 'exhaleTime', 'holdOutTime'];
+        
+        timingSelects.forEach(selectId => {
+            const select = document.getElementById(selectId);
+            if (select) {
+                select.addEventListener('change', function() {
+                    if (!isLeader) {
+                        return;
+                    }
+                    
+                    const inhaleTime = document.getElementById('inhaleTime')?.value;
+                    const holdInTime = document.getElementById('holdInTime')?.value;
+                    const exhaleTime = document.getElementById('exhaleTime')?.value;
+                    const holdOutTime = document.getElementById('holdOutTime')?.value;
+                    
+                    const message = {
+                        type: 'breathing_timing_change',
+                        inhaleTime: inhaleTime,
+                        holdInTime: holdInTime,
+                        exhaleTime: exhaleTime,
+                        holdOutTime: holdOutTime
+                    };
+                    
+                    sendMessage(message);
+                });
+            }
+        });
+    }
+    
+    // Set up close button control listeners
+    function setupCloseButtonControls() {
+        const closeButtonSelectors = [
+            '#breath-close',
+            '#close-button',
+            '#modal-close',
+            '#popup-close',
+            '#dialog-close',
+            '.close-btn',
+            '.modal-close',
+            '.popup-close',
+            '[data-dismiss]',
+            '[data-close]'
+        ];
+        
+        closeButtonSelectors.forEach(selector => {
+            document.addEventListener('click', function(e) {
+                if (!isLeader) return;
+                
+                const target = e.target;
+                
+                if (target.matches && target.matches(selector)) {
+                    const componentId = target.id || target.getAttribute('data-close') || selector.replace('#', '');
+                    
+                    sendMessage({
+                        type: 'close_component',
+                        componentId: componentId
+                    });
+                }
+            });
+        });
+        
+        document.addEventListener('keydown', function(e) {
+            if (!isLeader) return;
+            
+            if (e.key === 'Escape' || e.keyCode === 27) {
+                const openElements = document.querySelectorAll('.modal.show, .popup.open, .dialog.active, [style*="display: block"]');
+                openElements.forEach(element => {
+                    if (element.id) {
+                        sendMessage({
+                            type: 'close_component',
+                            componentId: element.id
+                        });
+                    }
+                });
+            }
+        });
+    }
+    
+    // Initialize everything when DOM is loaded
+    function initialize() {
+        // Create connection status UI first
+        createConnectionStatusUI();
+        
+        // Initialize WebSocket
+        initializeWebSocket();
+        
+        // Set up leader controls after getting role
+        setTimeout(() => {
+            if (isLeader) {
+                setupLeaderControls();
+            }
+        }, 2000); // Increased delay to ensure connection is established
+    }
+    
+    // Handle page visibility changes
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden && (!socket || socket.readyState === WebSocket.CLOSED)) {
+            updateConnectionStatus('🔄 Page Visible - Reconnecting...', '#ffd700');
+            initializeWebSocket();
+        }
+    });
+    
+    // Handle page unload
+    window.addEventListener('beforeunload', function() {
+        if (socket) {
+            socket.close(1000, 'Page unloading');
+        }
+    });
+    
+    // Handle network status changes
+    window.addEventListener('online', function() {
+        updateConnectionStatus('🌐 Network Online - Reconnecting...', '#28a745');
+        if (!isConnected) {
+            setTimeout(initializeWebSocket, 1000);
+        }
+    });
+    
+    window.addEventListener('offline', function() {
+        updateConnectionStatus('🌐 Network Offline', '#dc3545');
+    });
+    
+    // Periodic connection health check
+    function startHealthCheck() {
+        setInterval(() => {
+            if (isConnected && socket && socket.readyState === WebSocket.OPEN) {
+                // Send ping to check if connection is really alive
+                sendMessage({
+                    type: 'ping',
+                    timestamp: Date.now()
+                });
+            } else if (!isConnected && (!socket || socket.readyState === WebSocket.CLOSED)) {
+                // Try to reconnect if disconnected for too long
+                updateConnectionStatus('🔄 Auto-reconnecting...', '#ffd700');
+                initializeWebSocket();
+            }
+        }, 30000); // Check every 30 seconds
+    }
+    
+    // Start initialization
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initialize);
+    } else {
+        initialize();
+    }
+    
+    // Start health check after initial setup
+    setTimeout(startHealthCheck, 5000);
+    
+})();
+
+
+</script>

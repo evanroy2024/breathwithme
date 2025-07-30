@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Breathing Exercise</title>
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #f0f8ff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        #state {
+            font-size: 3em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1.2em;
+            border: none;
+            background-color: #6e8efb;
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #5a78d4;
+        }
+        #codeDisplay {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="codeDisplay">Your Code: {{ code }}</div>
+    <div id="state">Press Play</div>
+    <button onclick="start()">Play</button>
+
+    <script>
+    const states = ['Inhale', 'Hold', 'Exhale'];
+    let index = 0;
+
+    // Get the user's code from Django template
+    const code = "{{ code }}";
+    const socket = new WebSocket("wss://e05f5f27620d.ngrok-free.app/ws/smartwatch/" + code + "/");
+
+    socket.onopen = () => {
+        console.log("WebSocket connected to code: " + code);
+    };
+
+    socket.onerror = (error) => {
+        console.error("WebSocket Error: ", error);
+    };
+
+    function sendState(state) {
+        document.getElementById('state').innerText = state;
+        if (socket.readyState === WebSocket.OPEN) {
+            socket.send(JSON.stringify({ state: state }));
+        } else {
+            console.error("WebSocket is not open");
+        }
+    }
+
+    function start() {
+        sendState(states[index]);
+        setInterval(() => {
+            index = (index + 1) % states.length;
+            sendState(states[index]);
+        }, 3000);
+    }
+    </script>
+</body>
+</html>

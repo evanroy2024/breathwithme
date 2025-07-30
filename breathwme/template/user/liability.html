@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buyer Policy - Liability Waiver</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 50%, #0f0f0f 100%);
+            color: #e5e5e5;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(20, 20, 20, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 
+                        0 0 40px rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #4a9eff, transparent);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .title {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            color: #b0b0b0;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        .intro-text {
+            background: rgba(30, 30, 30, 0.8);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 35px;
+            border-left: 4px solid #4a9eff;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .section {
+            margin-bottom: 35px;
+        }
+
+        .section-title {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: #4a9eff;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            background: #4a9eff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #4a9eff;
+        }
+
+        .subsection {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(25, 25, 25, 0.6);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .subsection:hover {
+            background: rgba(30, 30, 30, 0.8);
+            border-color: rgba(74, 158, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .subsection-label {
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .subsection-content {
+            color: #d0d0d0;
+            text-align: justify;
+        }
+
+        .signature-section {
+            background: rgba(35, 35, 35, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 40px;
+            border: 2px solid rgba(74, 158, 255, 0.3);
+            position: relative;
+        }
+
+        .signature-section::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            bottom: -1px;
+            background: linear-gradient(45deg, #4a9eff, transparent, #4a9eff);
+            border-radius: 15px;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        .agreement-text {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(40, 40, 40, 0.8);
+            border-radius: 12px;
+            border: 1px solid rgba(74, 158, 255, 0.2);
+            color: #e0e0e0;
+            font-size: 1.1em;
+            line-height: 1.7;
+        }
+
+        .button-container form {
+            display: inline-block;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .agree-button, .decline-button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 180px;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .agree-button {
+            background: linear-gradient(135deg, #4a9eff, #2d7dd2);
+            color: white;
+            box-shadow: 0 5px 20px rgba(74, 158, 255, 0.4);
+        }
+
+        .agree-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(74, 158, 255, 0.6);
+            background: linear-gradient(135deg, #5bb0ff, #3e8ee3);
+        }
+
+        .decline-button {
+            background: linear-gradient(135deg, #666, #444);
+            color: #ccc;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .decline-button:hover {
+            background: linear-gradient(135deg, #777, #555);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .button-icon {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .agreement-info {
+            background: rgba(40, 100, 40, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid rgba(74, 255, 74, 0.3);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .info-value {
+            color: #d0d0d0;
+            font-weight: 500;
+        }
+
+        .info-value.agreed {
+            color: #4eff4e;
+            font-weight: 700;
+        }
+
+        .success-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #2d7dd2, #4a9eff);
+            color: white;
+            padding: 30px 40px;
+            border-radius: 20px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: 600;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            animation: popIn 0.5s ease-out;
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .warning-banner {
+            background: linear-gradient(135deg, #ff4444, #cc0000);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.1em;
+            box-shadow: 0 5px 20px rgba(255, 68, 68, 0.3);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .highlight {
+            color: #4a9eff;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+                margin: 10px;
+            }
+            
+            .title {
+                font-size: 1.8em;
+            }
+            
+            .signature-row {
+                flex-direction: column;
+            }
+            
+            .button-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .agree-button, .decline-button {
+                min-width: 200px;
+            }
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #4a9eff;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #5bb0ff;
+        }
+    </style>
+    <script>
+        function handleAgreement(event) {
+            // Prevent form submission for demo purposes - remove this in production
+            // event.preventDefault();
+            
+            // Show agreement confirmation
+            const agreementInfo = document.getElementById('agreementInfo');
+            const agreementDate = document.getElementById('agreementDate');
+            
+            // Set current date and time
+            const now = new Date();
+            const formattedDate = now.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            agreementDate.textContent = formattedDate;
+            agreementInfo.style.display = 'block';
+            
+            // Hide buttons
+            document.querySelector('.button-container').style.display = 'none';
+            
+            // Show success message
+            showSuccessMessage();
+            
+            // Note: In production, the form will submit to your Django view
+            // and handle the redirect server-side, so you might not need
+            // the setTimeout redirect below
+            
+            // For demo purposes only - remove in production
+            setTimeout(() => {
+                alert('Form submitted! In production, Django will handle the redirect.');
+            }, 1000);
+        }
+        
+        function handleDecline() {
+    const declineMessage = document.createElement('div');
+    declineMessage.className = 'success-message';
+    declineMessage.style.background = 'linear-gradient(135deg, #ff4444, #cc0000)';
+    declineMessage.style.position = 'fixed';
+    declineMessage.style.top = '50%';
+    declineMessage.style.left = '50%';
+    declineMessage.style.transform = 'translate(-50%, -50%)';
+    declineMessage.style.padding = '20px';
+    declineMessage.style.color = '#fff';
+    declineMessage.style.textAlign = 'center';
+    declineMessage.style.borderRadius = '10px';
+    declineMessage.style.zIndex = '9999';
+    declineMessage.innerHTML = `
+        <div style="margin-bottom: 15px; font-size: 2em;">⚠️</div>
+        <div>You have declined the terms.</div>
+        <div style="font-size: 0.9em; margin-top: 10px; opacity: 0.8;">You cannot proceed without accepting the agreement.</div>
+    `;
+
+    document.body.appendChild(declineMessage);
+
+    setTimeout(() => {
+        declineMessage.remove();
+        // Use Django URL reverse lookup
+        window.location.href = "{% url 'signin' %}";
+    }, 1000);
+}
+        function showSuccessMessage() {
+            const successMessage = document.createElement('div');
+            successMessage.className = 'success-message';
+            successMessage.innerHTML = `
+                <div style="margin-bottom: 15px; font-size: 2em;">✅</div>
+                <div>Agreement Accepted Successfully!</div>
+                <div style="font-size: 0.9em; margin-top: 10px; opacity: 0.8;">Redirecting to home page...</div>
+            `;
+            
+            document.body.appendChild(successMessage);
+            
+            setTimeout(() => {
+                successMessage.remove();
+            }, 1000);
+        }
+    </script>
+</head>
+<body>
+    <div class="container-s">
+        <div class="header">
+            <h1 class="title">Buyer Policy</h1>
+            <p class="subtitle">Including Liability Waiver and Use at Your Own Risk</p>
+        </div>
+
+        <div class="warning-banner">
+            ⚠️ IMPORTANT: READ CAREFULLY BEFORE USE ⚠️
+        </div>
+
+        <div class="intro-text">
+            This Buyer Policy ("Policy") governs your purchase and use of the breathing device ("Device"). By purchasing and using the Device, you acknowledge and agree to the following terms and conditions:
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Acknowledgment of Risk</h2>
+            
+            <div class="subsection">
+                <div class="subsection-label">a. Device Purpose & Limitations</div>
+                <div class="subsection-content">
+                    I expressly acknowledge and understand that the Device is designed to facilitate conscious rhythmic breathing and promote overall wellness. The Device is <span class="highlight">not a medical device</span> and does not provide specific medical or therapeutic treatments. The Device provides vibration prompts and acts as a vibrating metronome to assist in matching your breathing rate. Its sole purpose is to support general wellness and relaxation.
+                </div>
+            </div>
+
+            <div class="subsection">
+                <div class="subsection-label">b. Physiological Effects & Safety Precautions</div>
+                <div class="subsection-content">
+                    I am aware that while engaging in breathing exercises with the Device it may have physiological effects, including, but not limited to, increased circulation, dizziness, and the potential to induce altered states of consciousness and that it should <span class="highlight">not be used while drinking alcoholic beverages, operating vehicles, vessels, or machinery</span>, and that I should exercise caution in selecting an appropriate setting for its use. I accept full responsibility for the responsible and mindful use of the Device, including not using the Device in an environment where my attention is compromised.
+                </div>
+            </div>
+
+            <div class="subsection">
+                <div class="subsection-label">c. Voluntary Use & Risk Assumption</div>
+                <div class="subsection-content">
+                    I am using the Device voluntarily and at my own risk. I am aware of the risks involved in using the Device, which may include physical injury and psychological injury. While I retain the sole discretion to follow or deviate from the vibration patterns at my own volition, I <span class="highlight">assume all risks involved, known and unknown to me</span>.
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Release of Liability and Indemnification from Claims</h2>
+            
+            <div class="subsection">
+                <div class="subsection-content">
+                    To the maximum extent permitted by applicable law, I hereby agree to:
+                </div>
+            </div>
+
+            <div class="subsection">
+                <div class="subsection-label">a. Waiver of Claims</div>
+                <div class="subsection-content">
+                    <span class="highlight">Waive any and all claims</span> against the manufacturer, distributor, and their respective affiliates, agents, employees, and related parties, including but not limited to claims for personal injury, property damage, or any other harm that may result from my use of the Device; and
+                </div>
+            </div>
+
+            <div class="subsection">
+                <div class="subsection-label">b. Indemnification</div>
+                <div class="subsection-content">
+                    <span class="highlight">Indemnify, defend, and hold harmless</span> the manufacturer, distributor, and their respective affiliates, agents, employees, and representatives from any and all claims, actions, damages, liabilities, costs, and expenses, including reasonable legal fees, arising from or related to my use of the Device in contravention of the terms of this Policy, or any violation of applicable laws or regulations.
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Doctor Approval</h2>
+            
+            <div class="subsection">
+                <div class="subsection-content">
+                    Individuals with pre-existing medical conditions such as <span class="highlight">hypertension, cardiovascular diseases, or any other condition that may impact blood circulation or breathing</span> are strongly advised to seek medical approval from a qualified healthcare professional before using the wellness breathing device. While the device is designed to potentially increase blood circulation, it is essential to consult with a healthcare professional to ensure its safety and appropriateness for your specific health circumstances. The manufacturer, distributor, and associated parties shall not be held liable for any adverse effects or consequences resulting from the use of the device without appropriate medical approval.
+                </div>
+            </div>
+        </div>
+
+        <div class="signature-section">
+            <div class="agreement-text">
+                <p>By clicking "I Agree" below, I acknowledge that I have read, understood, and agree to be bound by all terms and conditions outlined in this Buyer Policy, including the liability waiver and use at your own risk provisions.</p>
+            </div>
+            
+            <div class="button-container">
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="agree-button" onclick="handleAgreement(event)">
+                        <span class="button-icon">✓</span>
+                        I Agree & Continue
+                    </button>
+                </form>
+                <button class="decline-button" onclick="handleDecline()">
+                    <span class="button-icon">✗</span>
+                    I Decline
+                </button>
+            </div>
+            
+            <div class="agreement-info" id="agreementInfo" style="display: none;">
+                <div class="info-row">
+                    <span class="info-label">Agreement Date:</span>
+                    <span class="info-value" id="agreementDate"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Status:</span>
+                    <span class="info-value agreed">Agreed</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+  .container-s {
+    width: 70%;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 1199px) {
+    .container-s {
+      width: 90%;
+    }
+  }
+
+  @media (max-width: 599px) {
+    .container-s {
+      width: 100%;
+    }
+    .subtitle {
+    font-size: 0.7em;
+    color: #b0b0b0;
+    font-weight: 300;
+    letter-spacing: 1px;
+}
+.warning-banner {
+    padding: 12px;
+    margin-top: -30px;
+    margin-bottom: 10px;
+}
+
+.intro-text {
+    padding: 10px;
+}
+.subsection-content {
+    font-size: 0.75rem;
+}
+.subsection {
+    padding: 10px;
+}
+.section-title {
+    font-size: 1em;
+}
+.signature-section {
+    padding: 2px;
+    margin-top: 20px;
+}
+p{
+    font-size: 0.75rem;
+}
+  }
+body{
+    padding: 5px;
+}
+</style>
+
+</body>
+</html>

@@ -8,33 +8,94 @@ Home - Playlist
 <div class="container">
     <!-- Playlist Header -->
     <div class="header">
-        <button onclick="window.history.back()" class="back-btn">
-            &#8592;
-        </button>
-        <h1 class="playlist-title">Name - {{ playlist.name }}</h1>
+        <button style="
+  background-color: #2c2c2c;
+  border: none;
+  border-radius: 8px;
+  width: 48px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  margin-right: 20px;
+  border: 1px solid #444; /* Dark border for button */
+" onclick="window.history.back()">
+  <svg style="margin-left: -5px;" width="24" height="24" viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16 6L10 12L16 18" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="10" y1="12" x2="22" y2="12" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  </svg>
+</button>
+        <h1 class="playlist-title">{{ playlist.name }}</h1>
     </div>
 
     <!-- Playlist Details -->
-    <p class="playlist-info">Created By: <span>{{ playlist.user.username }}</span></p>
+    <!-- <p class="playlist-info">Created By: <span>{{ playlist.user.username }}</span></p> -->
     
     <!-- Tracks in Playlist -->
-    <h2 class="section-title">Tracks in Playlist</h2>
-    <ul class="track-list">
-        {% for track in playlist.tracks.all %}
-            <li class="track-item">
-                <strong>{{ track.title }}</strong> by {{ track.artist }}
-            </li>
-        {% empty %}
-            <li class="no-tracks">No tracks in this playlist yet.</li>
-        {% endfor %}
-    </ul>
+    <ul id="sortable-track-list" class="track-list">
+    {% for track in tracks %}
+        <li class="track-item" data-track-id="{{ track.id }}">
+            <div class="drag-handle">☰</div>
+            <strong>{{ track.title }}</strong>
+        </li>
+    {% empty %}
+        <li class="no-tracks">No tracks in this playlist yet.</li>
+    {% endfor %}
+</ul>
 
+<button style="margin-top: 10px;"></button>
+
+<!-- jQuery + Sortable + Touch Punch for mobile -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+<script>
+    $(function () {
+        $("#sortable-track-list").sortable({
+            placeholder: "sortable-placeholder",
+            tolerance: "pointer",
+            distance: 15,
+            cursor: "move",
+            opacity: 0.9,
+            delay: 100,
+            start: function(event, ui) {
+                ui.placeholder.height(ui.item.height());
+            }
+        });
+        
+        // Prevent text selection but allow dragging
+        $("#sortable-track-list").on('selectstart', function() {
+            return false;
+        });
+
+        $("#save-order-btn").click(function () {
+            let orderedTrackIds = [];
+            $("#sortable-track-list .track-item").each(function () {
+                orderedTrackIds.push($(this).data("track-id"));
+            });
+
+            $.ajax({
+                url: "{% url 'musicapp:update_track_order' playlist.id %}",
+                method: "POST",
+                headers: { "X-CSRFToken": "{{ csrf_token }}" },
+                data: { order: orderedTrackIds.join(",") },
+                success: function () {
+                    alert("Track order updated!");
+                },
+                error: function () {
+                    alert("Failed to update track order.");
+                }
+            });
+        });
+    });
+</script>
     <!-- Action Buttons -->
     <div class="action-buttons">
+        <a id="save-order-btn" class="unique-back-btn">Update Order</a>
         <a href="{% url 'musicapp:add_tracks_to_playlist' playlist.id %}" class="btn add-songs-btn">Add Songs</a>
-        <a href="{% url 'library' %}" class="unique-back-btn">Back to All Playlists</a>
-    <a href="{% url 'musicapp:sleep_program' %}" class="unique-play-btn">Play PlayList</a>
-
+        <a href="{% url 'musicapp:exercise_page' %}?playlist_id={{ playlist.id }}" class="unique-play-btn">Play PlayList</a>
     </div>
 </div>
 
@@ -49,7 +110,6 @@ Home - Playlist
 
     /* Body Styling */
     body {
-        background: #1e1e2f; /* Dark mode background */
         color: #f0f0f0;
         display: flex;
         justify-content: center;
@@ -60,7 +120,7 @@ Home - Playlist
 
     /* Container */
     .container {
-        background: #2a2a3c;
+        background: #1e1e1e;
         padding: 20px;
         border-radius: 15px;
         width: 100%;
@@ -127,6 +187,37 @@ Home - Playlist
         margin-bottom: 10px;
         border-radius: 10px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        display: flex;
+        align-items: center;
+        position: relative;
+        min-height: 60px;
+        cursor: move;
+        touch-action: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    .track-item:hover {
+        background: #252540;
+    }
+
+    .drag-handle {
+        color: #888;
+        font-size: 1.2rem;
+        margin-right: 15px;
+        cursor: move;
+        padding: 10px;
+        border-radius: 5px;
+        user-select: none;
+        min-width: 30px;
+        text-align: center;
+        touch-action: none;
+    }
+
+    .track-content {
+        flex: 1;
     }
 
     .track-item strong {
@@ -137,6 +228,15 @@ Home - Playlist
         text-align: center;
         color: #a3a3c2;
         font-style: italic;
+    }
+
+    /* Sortable Placeholder */
+    .sortable-placeholder {
+        background: rgba(136, 136, 136, 0.3);
+        border: 2px dashed #888;
+        margin-bottom: 10px;
+        border-radius: 10px;
+        visibility: visible !important;
     }
 
     /* Action Buttons */
@@ -156,6 +256,7 @@ Home - Playlist
         color: #fff;
         cursor: pointer;
         transition: all 0.3s ease;
+        min-height: 44px; /* Ensure minimum touch target size */
     }
 
     .add-songs-btn {
@@ -176,20 +277,6 @@ Home - Playlist
         background: #555567;
     }
 
-    /* Mobile Responsiveness */
-    @media (max-width: 480px) {
-        .playlist-title {
-            font-size: 1.3rem;
-        }
-
-        .section-title {
-            font-size: 1.2rem;
-        }
-
-        .btn {
-            font-size: 0.9rem;
-        }
-    }
     /* Styling for back-to-playlists button */
     .unique-back-btn {
         display: inline-block;
@@ -202,14 +289,15 @@ Home - Playlist
         color: #fff;
         border-radius: 8px;
         transition: all 0.3s ease;
-        background: linear-gradient(45deg, #ff6f61, #ff4b2b); /* Warm gradient */
+        background: linear-gradient(45deg, #ff6f61, #ff4b2b);
         border: 2px solid #ff4b2b;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        min-height: 44px;
     }
 
     .unique-back-btn:hover {
-        background: linear-gradient(45deg, #ff4b2b, #ff6f61); /* Hover gradient */
-        transform: translateY(-2px); /* Lift effect */
+        background: linear-gradient(45deg, #ff4b2b, #ff6f61);
+        transform: translateY(-2px);
     }
 
     /* Styling for play-playlist button */
@@ -223,14 +311,67 @@ Home - Playlist
         color: #fff;
         border-radius: 8px;
         transition: all 0.3s ease;
-        background: linear-gradient(45deg, #2bff88, #1eaa62); /* Cool gradient for play */
+        background: linear-gradient(45deg, #2bff88, #1eaa62);
         border: 2px solid #1eaa62;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        min-height: 44px;
     }
 
     .unique-play-btn:hover {
-        background: linear-gradient(45deg, #1eaa62, #2bff88); /* Hover gradient */
-        transform: translateY(-2px); /* Lift effect */
+        background: linear-gradient(45deg, #1eaa62, #2bff88);
+        transform: translateY(-2px);
+    }
+
+    /* Mobile-specific improvements */
+    @media (max-width: 480px) {
+        .playlist-title {
+            font-size: 1.3rem;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+        }
+
+        .btn {
+            font-size: 0.9rem;
+        }
+
+        .track-item {
+            min-height: 55px; /* Reduced height for mobile */
+            padding: 12px 15px;
+        }
+
+        .drag-handle {
+            font-size: 1.2rem;
+            padding: 8px;
+            min-width: 35px;
+        }
+
+        /* Improve touch responsiveness */
+        .track-item,
+        .drag-handle,
+        .btn {
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+    }
+
+    /* Enhanced mobile touch support */
+    @media (pointer: coarse) {
+        .drag-handle {
+            padding: 10px;
+            font-size: 1.3rem;
+        }
+        
+        .track-item {
+            min-height: 60px;
+            padding: 15px;
+        }
     }
 </style>
 {% endblock %}

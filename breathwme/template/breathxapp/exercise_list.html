@@ -80,9 +80,26 @@
         border-color: #004494;
     }
 </style>
+<div id="star-notification" style="
+    position: fixed;
+    top: 20px;
+    right: 30px;
+    background: #007bff;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    box-shadow: 0 8px 24px rgba(0, 123, 255, 0.4);
+    display: none;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    transform: translateY(-20px);
+"></div>
+
 
 <div class="">
-    <div class="container py-5">
+    <div class="py-3">
         <div class="row justify-content-center">
             <div class="col-lg-10">
                 <div class="card border-0 shadow-sm">
@@ -94,25 +111,12 @@
                                 <h4 class="mb-0 fw-bold">Silent Saved Exercises</h4>
                             
                                 <!-- Right Side: Secondary Buttons -->
-                                <div class="d-flex align-items-center">
-                                    <a href="{% url 'breathxapp:exercise_list' %}" class="btn btn-outline-danger px-3 py-2 fw-bold me-2">
-                                        <i class="fas fa-bookmark me-2"></i> Admin
-                                    </a>
-                            
-                                    <a href="{% url 'breathxapp:usersavedexercise' %}" class="btn btn-outline-success px-3 py-2 fw-bold">
-                                        <i class="fas fa-bookmark me-2"></i> MyList
-                                    </a>
-                                </div>
+                              
                             </div>
                             
                             <!-- Premium Feature Container -->
                             <div class="premium-feature-container">
-                                <!-- Premium badge - now centered -->
-                                <div class="premium-badge">
-                                    <span class="badge-icon"><i class="fas fa-crown"></i></span>
-                                    <span class="badge-text">PREMIUM FEATURE</span>
-                                </div>
-                                
+                               
                                 <!-- Main BreathFree button container - reduced height -->
                                 <div class="breathfree-container">
                                     <!-- Light beams -->
@@ -138,8 +142,8 @@
                                             
                                             <!-- Text content -->
                                             <div class="btn-text-content">
-                                                <h3 class="btn-title">BreathFree</h3>
-                                                <p class="btn-subtitle">Experience the ultimate breathing exercise</p>
+                                                <h3 class="btn-title">BreatheFree</h3>
+                                                <p class="btn-subtitle">Discover your perfect breathing exercise</p>
                                             </div>
                                         </div>
                                         
@@ -160,10 +164,7 @@
                                 </div>
                                 
                                 <!-- Info hint -->
-                                <div class="info-hint">
-                                    <i class="fas fa-info-circle"></i>
-                                    <span>Click to access our signature breathing technique</span>
-                                </div>
+                               
                             </div>
                         </div>
                         
@@ -505,77 +506,207 @@
                             }
                         </style>
                         <div class="row g-3 mb-4">
-                            <div class="col-md-6">
+                            <!-- <div class="col-md-6">
                                 <div class="search-box d-flex align-items-center p-2 rounded">
                                     <i class="fas fa-search text-muted me-2"></i>
                                     <input type="text" id="searchInput" class="border-0 w-100" placeholder="Search activities..." onkeyup="filterExercises()">
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="d-flex gap-2 flex-wrap">
-                                    <span class="badge filter-badge active px-3 py-2" onclick="filterBySkill('All')">All</span>
-                                    <span class="badge filter-badge px-3 py-2" onclick="filterBySkill('Beginner')">Beginner</span>
-                                    <span class="badge filter-badge px-3 py-2" onclick="filterBySkill('Intermediate')">Intermediate</span>
-                                    <span class="badge filter-badge px-3 py-2" onclick="filterBySkill('Advanced')">Advanced</span>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- <div class="activity-timeline" id="exerciseList">
-                          
-                            <div class="activity-item" data-skill="{{ exercise.skill_level }}" data-name="{{ exercise.name|lower }}">
-                                <div class="d-flex gap-3 align-items-center">
-                                    <div class="activity-icon">
-                                        <i class="fas fa-dumbbell"></i>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <h6 class="mb-0">BreathFree - Perform a BreathFree Exercise with us with all your choice </h6>
-                                            <span class="activity-date text-light">300 sec</span>
-                                        </div>
-                                        <span class="activity-date text-light">Skills Level - Depends on your Choice</span>
+                            </div> -->
+                           <div class="col-md-6">
+    <div class="d-flex gap-2 flex-wrap">
+        <form method="get" class="mb-3" style="margin-bottom: 1rem;">
+            <select name="category" id="category" onchange="this.form.submit()">
+                <option value="">All Category</option>
+                {% for category in categories %}
+                    <option value="{{ category.id }}" {% if category.id|stringformat:"s" == selected_category %}selected{% endif %}>
+                        {{ category.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </form>
 
-                                        <div class="d-flex align-items-center">
-                                            <div class="progress flex-grow-1 me-3" style="height: 6px;">
-                                                <div class="progress-bar w-100" role="progressbar"></div>
-                                            </div>
-                                            <a href="{% url 'breathxapp:breathfree' %}" class="btn btn-primary btn-sm">Play</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                        </div> -->
+        <div class="d-flex align-items-center" style="margin-top: -3%;" id="list-buttons">
+            <a href="{% url 'breathxapp:exercise_list' %}" class="btn btn-outline-danger px-3 py-2 fw-bold me-2">
+                <i class="fas fa-bookmark me-2"></i> Admin
+            </a>
+
+            <a href="{% url 'breathxapp:usersavedexercise' %}" class="btn btn-outline-success px-3 py-2 fw-bold">
+                <i class="fas fa-bookmark me-2"></i> MyList
+            </a>
+            <!-- <button onclick="filterStarred()" class="btn btn-outline-warning mb-3">⭐ Show Starred Only</button> -->
+ <button onclick="filterStarred()" class="btn btn-outline-warning px-3 py-2 fw-bold ms-2">
+                                    <i class="fas fa-star me-2"></i> Starred
+                                    </button>
+        </div>
+    </div>
+</div>
+
+
+                        </div>
+                       
                         <div class="activity-timeline" id="exerciseList">
-                            {% for exercise in exercises %}
-                            <div class="activity-item" data-skill="{{ exercise.skill_level }}" data-name="{{ exercise.name|lower }}">
-                                <div class="d-flex gap-3 align-items-center">
-                                    <div class="activity-icon">
-                                        <i class="fas fa-dumbbell"></i>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <h6 class="mb-0">{{ exercise.name }}</h6>
-                                            <span class="activity-date text-light">{{ exercise.total_time }} sec</span>
-                                        </div>
-                                        <span class="activity-date text-light">Skills Level - {{ exercise.skill_level }}</span>
+    {% for exercise in exercises %}
+    <div class="activity-item" data-skill="{{ exercise.skill_level }}" data-name="{{ exercise.name|lower }}">
+        <div class="d-flex gap-3 align-items-center">
+            <div class="activity-icon">
+                <i class="fas fa-dumbbell"></i>
 
-                                        <div class="d-flex align-items-center">
-                                            <div class="progress flex-grow-1 me-3" style="height: 6px;">
-                                                <div class="progress-bar w-100" role="progressbar"></div>
-                                            </div>
-                                            <a href="{% url 'breathxapp:play_exercise' exercise.id %}" class="btn btn-primary btn-sm">Play</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
+
+            </div>
+            <div class="flex-grow-1">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <h6 class="mb-0">{{ exercise.name }}</h6>
+                        <i class="fas fa-question-circle text-info learning-icon" 
+                           style="cursor: pointer; font-size: 14px;" 
+                           data-bs-toggle="modal" 
+                           data-bs-target="#learningModal{{ exercise.id }}"
+                           title="View learning content"></i>
+                                           <i class="fa-star {% if exercise.id in starred_ids %}fas text-warning{% else %}far text-muted{% endif %}"
+   style="cursor: pointer; font-size: 15px;"
+   onclick="toggleStar('{% url 'breathxapp:toggle_star' exercise.id %}', this)">
+</i>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+    <span class="activity-date text-light">{{ exercise.difficulty }}</span>
+    <span class="activity-date text-light">{{ exercise.exercisetime }}</span>
+
+</div>
+<span class="activity-date text-light"><i class="fas fa-tag" style="color: rgb(226, 226, 226); margin-right: 5px;"></i>
+
+    {% for cat in exercise.categories.all %}
+        {{ cat.name }}{% if not forloop.last %}, {% endif %}
+    {% empty %}
+        None
+    {% endfor %}
+</span>
+
+
+                <div class="d-flex align-items-center">
+                   
+                    <!-- <a href="{% url 'breathxapp:play_exercise' exercise.id %}" class="btn btn-primary btn-sm">Play</a> -->
+     <a href="{% url 'breathxapp:play_exercise' exercise.id %}" 
+   class="btn btn-primary btn-sm w-100 mt-3">
+    Play
+</a>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Learning Modal for each exercise -->
+    <div class="modal fade" id="learningModal{{ exercise.id }}" tabindex="-1" aria-labelledby="learningModalLabel{{ exercise.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title" id="learningModalLabel{{ exercise.id }}">
+                        <i class="fas fa-graduation-cap me-2 text-info"></i>
+                        Learning: {{ exercise.name }}
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="learning-content">
+                        {% if exercise.learning %}
+                            {{ exercise.learning|linebreaks }}
+                        {% else %}
+                            <p class="text-muted">No learning content available for this exercise.</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% endfor %}
+</div>
+<script>
+function toggleStar(url, iconElement) {
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => {
+        if (!response.ok) throw new Error("Server error");
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'starred') {
+            iconElement.classList.remove('far', 'text-muted');
+            iconElement.classList.add('fas', 'text-warning');
+            showNotification("⭐ Added to your starred list");
+        } else {
+            iconElement.classList.remove('fas', 'text-warning');
+            iconElement.classList.add('far', 'text-muted');
+            showNotification("❌ Removed from your starred list");
+        }
+    })
+    .catch(error => {
+        console.error("Star toggle failed:", error);
+        showNotification("⚠️ Something went wrong");
+    });
+}
+
+function showNotification(message) {
+    const notif = document.getElementById("star-notification");
+    notif.textContent = message;
+    notif.style.display = "block";
+
+    requestAnimationFrame(() => {
+        notif.style.opacity = "1";
+        notif.style.transform = "translateY(0)";
+    });
+
+    setTimeout(() => {
+        notif.style.opacity = "0";
+        notif.style.transform = "translateY(-20px)";
+        setTimeout(() => notif.style.display = "none", 400);
+    }, 2000);
+}
+</script>
+
+<script>
+let starredFilterActive = false;
+
+function filterStarred() {
+    starredFilterActive = !starredFilterActive;
+    const items = document.querySelectorAll('.activity-item');
+
+    items.forEach(item => {
+        const starIcon = item.querySelector('.fa-star');
+        const isStarred = starIcon.classList.contains('fas') && starIcon.classList.contains('text-warning');
+        
+        if (starredFilterActive && !isStarred) {
+            item.style.display = 'none';
+        } else {
+            item.style.display = '';
+        }
+    });
+
+    const button = document.querySelector('button[onclick="filterStarred()"]');
+    button.innerHTML = starredFilterActive ? '<i class="fas fa-list me-2"></i> Show All' : '⭐ Starred';
+
+}
+</script>
+
+
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 
 <script>
     function filterExercises() {
@@ -603,6 +734,61 @@
         event.target.classList.add("active");
     }
 </script>
+<style>
+     
+  #category{
+background-color: #1e1e1e;
+color: #ffffff;
+border: 1px solid #444;
+border-radius: 5px;
+padding: 8px 12px;
+width: 100%;
+  }
+                                     
+ select:hover {
+        cursor: pointer;
+    }
+    .text-muted {
+    --bs-text-opacity: 1;
+    color: rgb(238 246 255 / 75%) !important;
+}
+@media (max-width: 500px) {
+  .activity-icon {
+    display: none;
+  }
+  .icon-orbit{
+    display: none;
+  }
+  #category{
+width: 230px;
+  }
+  #list-buttons{
+    gap: 10px;
+  }
+}
+@media (max-width: 500px) {
+    /* Make form and select take full width */
+    form {
+        width: 100% !important;
+    }
 
+    form select {
+        width: 100% !important;
+        display: block;
+    }
+
+    /* Make buttons split 50% width on same line */
+    #list-buttons {
+        flex-wrap: nowrap !important;
+        width: 100%;
+    }
+
+    #list-buttons a {
+        width: 50% !important;
+        min-width: 0;
+        margin-right: 0 !important;
+    }
+}
+</style>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}

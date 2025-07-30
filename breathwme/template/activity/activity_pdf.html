@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Activity Report - {{ user.username }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #333;
+            background-color: #ffffff;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 3px solid #007bff;
+            padding-bottom: 20px;
+        }
+        
+        .header h1 {
+            color: #007bff;
+            margin: 0 0 12px 0;
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        
+        .header p {
+            color: #666;
+            margin: 6px 0;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .header strong {
+            color: #333;
+        }
+        
+        .summary-stats {
+            display: flex;
+            width: 100%;
+            margin-bottom: 25px;
+            gap: 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .stat-item {
+            flex: 1;
+            text-align: center;
+            padding: 20px 12px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-right: 1px solid #dee2e6;
+        }
+        
+        .stat-item:last-child {
+            border-right: none;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: #007bff;
+            display: block;
+            margin-bottom: 6px;
+            line-height: 1;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .section {
+            margin-bottom: 25px;
+            page-break-inside: avoid;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #007bff;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 6px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 18px;
+            background: #007bff;
+            margin-right: 8px;
+        }
+        
+        .top-activities {
+            display: flex;
+            width: 100%;
+            gap: 15px;
+        }
+        
+        .activity-column {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .activity-list {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            padding: 15px;
+            border-radius: 8px;
+            min-height: 140px;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .activity-list h4 {
+            margin: 0 0 12px 0;
+            font-size: 13px;
+            color: #007bff;
+            font-weight: 700;
+            text-align: center;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .activity-list ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .activity-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .activity-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-name {
+            font-size: 11px;
+            color: #333;
+            flex: 1;
+            margin-right: 10px;
+            font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .activity-count {
+            font-weight: 700;
+            color: #28a745;
+            font-size: 11px;
+            background: #e8f5e8;
+            padding: 3px 6px;
+            border-radius: 3px;
+            min-width: 35px;
+            text-align: center;
+        }
+        
+        .daily-details {
+            width: 100%;
+        }
+        
+        .detail-day {
+            margin-bottom: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            overflow: hidden;
+            page-break-inside: avoid;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .detail-header {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            padding: 12px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .detail-date {
+            font-weight: 700;
+            font-size: 13px;
+        }
+        
+        .detail-total {
+            font-size: 12px;
+            font-weight: 600;
+            background: rgba(255,255,255,0.2);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        
+        .detail-activities {
+            padding: 0;
+            background-color: #ffffff;
+        }
+        
+        .detail-activity {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 18px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .detail-activity:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-activity:nth-child(even) {
+            background-color: #fafafa;
+        }
+        
+        .activity-type {
+            font-size: 12px;
+            color: #333;
+            font-weight: 600;
+            flex: 1;
+        }
+        
+        .activity-minutes {
+            font-weight: 700;
+            color: #28a745;
+            font-size: 12px;
+            background: #e8f5e8;
+            padding: 5px 10px;
+            border-radius: 4px;
+            min-width: 70px;
+            text-align: center;
+        }
+        
+        .page-break {
+            page-break-before: always;
+        }
+        
+        .footer {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            text-align: center;
+            font-size: 10px;
+            color: #999;
+            border-top: 1px solid #dee2e6;
+            padding-top: 12px;
+            background: #ffffff;
+        }
+        
+        .no-activity {
+            color: #dc3545;
+            font-style: italic;
+            text-align: center;
+            padding: 15px;
+            font-size: 12px;
+        }
+        
+        /* Optimize spacing for better page utilization */
+        .section.activities-section {
+            margin-bottom: 20px;
+        }
+        
+        .section.details-section {
+            margin-bottom: 15px;
+        }
+        
+        /* Print optimizations */
+        @media print {
+            body {
+                padding: 12px;
+                font-size: 11px;
+            }
+            
+            .header {
+                margin-bottom: 20px;
+                padding-bottom: 12px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+                margin-bottom: 8px;
+            }
+            
+            .summary-stats {
+                margin-bottom: 20px;
+            }
+            
+            .stat-item {
+                padding: 15px 8px;
+            }
+            
+            .stat-value {
+                font-size: 24px;
+            }
+            
+            .section {
+                margin-bottom: 20px;
+            }
+            
+            .section.activities-section {
+                margin-bottom: 15px;
+            }
+            
+            .activity-list {
+                min-height: 120px;
+                padding: 12px;
+            }
+            
+            .activity-list h4 {
+                font-size: 12px;
+                margin-bottom: 10px;
+            }
+            
+            .activity-list li {
+                padding: 6px 0;
+            }
+            
+            .activity-name {
+                font-size: 10px;
+            }
+            
+            .activity-count {
+                font-size: 10px;
+                padding: 2px 5px;
+            }
+            
+            .detail-activity {
+                padding: 10px 15px;
+            }
+            
+            .detail-header {
+                padding: 10px 15px;
+            }
+            
+            .detail-day {
+                margin-bottom: 12px;
+            }
+            
+            .section-title {
+                font-size: 15px;
+                margin-bottom: 12px;
+            }
+            
+            .footer {
+                position: static;
+                margin-top: 20px;
+                border-top: 1px solid #dee2e6;
+                padding-top: 10px;
+            }
+        }
+        
+        /* Specific adjustments for better page layout */
+        @page {
+            size: A4;
+            margin: 15mm;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Activity Report</h1>
+        <p><strong>User:</strong> {{ user.username }}</p>
+        <p><strong>Period:</strong> {{ start_date|date:"F d, Y" }} to {{ end_date|date:"F d, Y" }}</p>
+        <p><strong>Generated:</strong> {{ generated_date }}</p>
+    </div>
+
+    <div class="summary-stats">
+        <div class="stat-item">
+            <span class="stat-value">{{ activity_days }}</span>
+            <div class="stat-label">Active Days</div>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value">{{ total_days }}</span>
+            <div class="stat-label">Total Days</div>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value">{{ activity_rate }}%</span>
+            <div class="stat-label">Activity Rate</div>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value">{{ total_minutes }}</span>
+            <div class="stat-label">Total Minutes</div>
+        </div>
+    </div>
+
+    <div class="section activities-section">
+        <div class="section-title">Top Performed Activities</div>
+        <div class="top-activities">
+            <div class="activity-column">
+                <div class="activity-list">
+                    <h4>Most Performed Exercises</h4>
+                    <ul>
+                        {% for activity in top_user_exercises %}
+                        <li>
+                            <span class="activity-name">{{ activity.exercise.name }}</span>
+                            <span class="activity-count">{{ activity.play_count }}x</span>
+                        </li>
+                        {% empty %}
+                        <li class="no-activity">No activity recorded</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="activity-column">
+                <div class="activity-list">
+                    <h4>Most Performed Silent Exercises</h4>
+                    <ul>
+                        {% for activity in top_silent_exercises %}
+                        <li>
+                            <span class="activity-name">{{ activity.exercise.nickname }}</span>
+                            <span class="activity-count">{{ activity.play_count }}x</span>
+                        </li>
+                        {% empty %}
+                        <li class="no-activity">No activity recorded</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="activity-column">
+                <div class="activity-list">
+                    <h4>Most Listened Music</h4>
+                    <ul>
+                        {% for activity in top_test_exercises %}
+                        <li>
+                            <span class="activity-name">{{ activity.exercise.title }}</span>
+                            <span class="activity-count">{{ activity.play_count }}x</span>
+                        </li>
+                        {% empty %}
+                        <li class="no-activity">No activity recorded</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section details-section">
+        <div class="section-title">Daily Activity Details</div>
+        <div class="daily-details">
+            {% for detail in detail_tiles %}
+            <div class="detail-day">
+                <div class="detail-header">
+                    <div class="detail-date">{{ detail.date|date:"l, F d, Y" }}</div>
+                    <div class="detail-total">
+                        {% if detail.is_active %}
+                            Total: {{ detail.total_minutes }} minutes
+                        {% else %}
+                            <span class="no-activity">No Activity</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% if detail.is_active %}
+                <div class="detail-activities">
+                    <div class="detail-activity">
+                        <span class="activity-type">Breath Free</span>
+                        <span class="activity-minutes">{{ detail.breath_free_page }} mins</span>
+                    </div>
+                    <div class="detail-activity">
+                        <span class="activity-type">Silent Exercises</span>
+                        <span class="activity-minutes">{{ detail.breathx_play_page|add:detail.breath_save_page }} mins</span>
+                    </div>
+                    <div class="detail-activity">
+                        <span class="activity-type">Breathing Beats</span>
+                        <span class="activity-minutes">{{ detail.breathing_beats_page }} mins</span>
+                    </div>
+                    <div class="detail-activity">
+                        <span class="activity-type">Course</span>
+                        <span class="activity-minutes">{{ detail.course_page }} mins</span>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>This report was automatically generated on {{ generated_date }}</p>
+    </div>
+</body>
+</html>
+
+<!-- Export Button for Activity Page -->
+<button type="button" class="export-btn" onclick="exportToPDF()" style="margin-top: 2.2%; margin-left: 10px;">
+    <i class="fas fa-file-pdf"></i> Export PDF
+</button>
+
+<style>
+.export-btn {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px rgba(220, 53, 69, 0.2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.export-btn:hover {
+    background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(220, 53, 69, 0.3);
+}
+
+.export-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.2);
+}
+
+.export-btn i {
+    font-size: 16px;
+}
+</style>
+
+<script>
+function exportToPDF() {
+    // Get current filter values
+    const startDate = document.getElementById('start').value;
+    const endDate = document.getElementById('end').value;
+    
+    // Build URL with current filters
+    let exportUrl = '{% url "export_activity_pdf" %}';
+    const params = new URLSearchParams();
+    
+    if (startDate) params.append('start', startDate);
+    if (endDate) params.append('end', endDate);
+    
+    if (params.toString()) {
+        exportUrl += '?' + params.toString();
+    }
+    
+    // Open PDF in new window/tab
+    window.open(exportUrl, '_blank');
+}
+</script>

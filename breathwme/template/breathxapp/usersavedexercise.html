@@ -81,7 +81,7 @@
     }
 </style>
 <div class="">
-    <div class="container py-5">
+    <div class="py-3">
         <div class="row justify-content-center">
             <div class="col-lg-10">
                 <div class="card border-0 shadow-sm">
@@ -93,24 +93,12 @@
                                 <h4 class="mb-0 fw-bold">Silent Saved Exercises</h4>
                             
                                 <!-- Right Side: Secondary Buttons -->
-                                <div class="d-flex align-items-center">
-                                    <a href="{% url 'breathxapp:exercise_list' %}" class="btn btn-outline-danger px-3 py-2 fw-bold me-2">
-                                        <i class="fas fa-bookmark me-2"></i> Admin
-                                    </a>
-                            
-                                    <a href="{% url 'breathxapp:usersavedexercise' %}" class="btn btn-outline-success px-3 py-2 fw-bold">
-                                        <i class="fas fa-bookmark me-2"></i> MyList
-                                    </a>
-                                </div>
+                               
                             </div>
                             
                             <!-- Premium Feature Container -->
                             <div class="premium-feature-container">
-                                <!-- Premium badge - now centered -->
-                                <div class="premium-badge">
-                                    <span class="badge-icon"><i class="fas fa-crown"></i></span>
-                                    <span class="badge-text">PREMIUM FEATURE</span>
-                                </div>
+                               
                                 
                                 <!-- Main BreathFree button container - reduced height -->
                                 <div class="breathfree-container">
@@ -137,8 +125,8 @@
                                             
                                             <!-- Text content -->
                                             <div class="btn-text-content">
-                                                <h3 class="btn-title">BreathFree</h3>
-                                                <p class="btn-subtitle">Experience the ultimate breathing exercise</p>
+                                                <h3 class="btn-title">BreatheFree</h3>
+                                                <p class="btn-subtitle">Discover your perfect breathing exercise</p>
                                             </div>
                                         </div>
                                         
@@ -158,12 +146,19 @@
                                     <div class="focus-dot focus-dot-4"></div>
                                 </div>
                                 
-                                <!-- Info hint -->
-                                <div class="info-hint">
-                                    <i class="fas fa-info-circle"></i>
-                                    <span>Click to access our signature breathing technique</span>
-                                </div>
                             </div>
+                             <div class="d-flex align-items-center" style="margin-top: 1%;" id="list-buttons">
+                                    <a href="{% url 'breathxapp:exercise_list' %}" class="btn btn-outline-danger px-3 py-2 fw-bold me-2">
+                                        <i class="fas fa-bookmark me-2"></i> Admin
+                                    </a>
+                            
+                                    <a href="{% url 'breathxapp:usersavedexercise' %}" class="btn btn-outline-success px-3 py-2 fw-bold">
+                                        <i class="fas fa-bookmark me-2"></i> MyList
+                                    </a>
+                                    <button id="toggleStarredBtn" class="btn btn-outline-warning px-3 py-2 fw-bold ms-2">
+                                    <i class="fas fa-star me-2"></i> Starred
+                                    </button>
+                                </div>
                         </div>
                         
                         <!-- Add this to your CSS -->
@@ -516,40 +511,186 @@
                             </div>
                         </div>
 
+
                         <!-- Saved Exercises List -->
                         <div class="activity-timeline" id="exerciseList">
-                            {% for exercise in exercises %}
-                            <div class="activity-item" data-name="{{ exercise.nickname|lower }}">
-                                <div class="d-flex gap-3 align-items-center">
-                                    <div class="activity-icon">
-                                        <i class="fas fa-dumbbell"></i>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <h6 class="mb-0">{{ exercise.nickname }}</h6>
-                                            <span class="activity-date text-light">Shape : {{ exercise.shape }}</span>
-                                        </div>
-                        
-                                        <div class="d-flex align-items-center">
-                                            <div class="progress flex-grow-1 me-3" style="height: 6px;">
-                                                <div class="progress-bar w-100" role="progressbar"></div>
-                                            </div>
-                                            <a href="{% url 'breathxapp:view_saved_exercise' exercise.id %}" class="btn btn-primary btn-sm me-2">Open</a>
-                                            <a href="{% url 'breathxapp:delete_exercise' exercise.id %}" class="text-danger" title="Delete"
-                                                onclick="return confirm('Are you sure you want to delete this exercise?')"
-                                                style="font-size: 18px; padding: 4px 6px; border-radius: 6px; transition: background 0.2s;"
-                                                onmouseover="this.style.background='#ffdddd'" onmouseout="this.style.background='transparent'">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            {% empty %}
-                            <p class="text-center text-muted">No saved exercises found.</p>
+    {% for exercise in exercises %}
+    <div class="activity-item" data-name="{{ exercise.nickname|lower }}">
+        <div class="d-flex gap-3 align-items-start">
+            <div class="activity-icon">
+                <i class="fas fa-dumbbell"></i>
+            </div>
+            <div class="flex-grow-1 w-100">
+                <!-- Name + Star in one tight inline-flex box -->
+                <div class="mb-1 w-100">
+                   <div class="d-flex align-items-center text-light" style="flex-wrap: nowrap; white-space: nowrap;">
+    <h6 class="mb-0 me-2" style="margin: 0; white-space: nowrap;">{{ exercise.nickname }}</h6>
+    <form method="post" class="star-form" data-id="{{ exercise.id }}" style="margin: 0; flex-shrink: 0;">
+        {% csrf_token %}
+       <button type="button"
+    class="star-toggle-btn"
+    data-starred="{{ exercise.starred|yesno:'true,false' }}"
+    style="background: none; border: none; padding: 0; font-size: 20px; cursor: pointer; color: white;">
+    {% if exercise.starred %}
+        <i class="fas fa-star" style="color: yellow;"></i>
+    {% else %}
+        <span style="font-size: 20px;">☆</span>
+    {% endif %}
+</button>
+
+    </form>
+</div>
+
+                </div>
+                <!-- Shape & Timing -->
+                <div class="mb-2">
+                    <span class="activity-date text-light text-break d-block">
+                        {{ exercise.shape|capfirst }} [
+                        {% if exercise.shape == "triangle" or exercise.shape == "reverseTriangle" %}
+                            {% for val in exercise.inputs|slice:":3" %}
+                                {{ val }}{% if not forloop.last %}, {% endif %}
                             {% endfor %}
-                        </div>
-                        
+                        {% elif exercise.shape == "oval" or exercise.shape == "circle" %}
+                            {% for val in exercise.inputs|slice:":2" %}
+                                {{ val }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            {% for val in exercise.inputs %}
+                                {{ val }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                        ]
+                    </span>
+                </div>
+                <!-- Buttons: Play + Delete always inline -->
+                <div class="d-flex justify-content-between align-items-center gap-2">
+                    <a href="{% url 'breathxapp:view_saved_exercise' exercise.id %}"
+                        class="btn btn-primary btn-sm flex-grow-1"
+                        style="padding-top: 4px; padding-bottom: 4px;">Play</a>
+                    <a href="{% url 'breathxapp:delete_exercise' exercise.id %}"
+                        class="text-danger text-center"
+                        title="Delete"
+                        onclick="return confirm('Are you sure you want to delete this exercise?')"
+                        style="font-size: 18px; padding: 4px 6px; border-radius: 6px; transition: background 0.2s;"
+                        onmouseover="this.style.background='
+#ffdddd'" onmouseout="this.style.background='transparent'">
+                        <i class="fas fa-trash-alt"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-center text-muted">No saved exercises found.</p>
+    {% endfor %}
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // Create toast container if not already there
+  let toast = document.createElement('div');
+  toast.id = 'star-toast';
+  toast.style.position = 'fixed';
+  toast.style.top = '20px';
+  toast.style.right = '20px';
+  toast.style.background = '#2196f3';
+  toast.style.color = '#fff';
+  toast.style.padding = '10px 18px';
+  toast.style.borderRadius = '10px';
+  toast.style.fontSize = '15px';
+  toast.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.2)';
+  toast.style.zIndex = '9999';
+  toast.style.display = 'none';
+  toast.style.opacity = '0';
+  toast.style.transform = 'translateY(-20px)';
+  toast.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+  document.body.appendChild(toast);
+
+  function showToast(message) {
+    toast.textContent = message;
+    toast.style.display = 'block';
+    // Animate in
+    setTimeout(() => {
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateY(0)';
+    }, 10);
+
+    // Animate out
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(-20px)';
+    }, 1800);
+
+    setTimeout(() => {
+      toast.style.display = 'none';
+    }, 2200);
+  }
+
+  document.querySelectorAll('.star-form').forEach(form => {
+    const button = form.querySelector('button');
+    const id = form.getAttribute('data-id');
+    const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    button.addEventListener('click', function (e) {
+      e.preventDefault();
+
+      fetch(`/breathxapp/star/exercise/${id}/`, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': csrfToken,
+        },
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          button.innerHTML = data.starred
+            ? '<i class="fas fa-star me-2" style="color: gold;"></i>'
+            : '<h4>☆</h4>';
+
+          showToast(data.starred ? '⭐ Exercise starred' : '☆ Exercise unstarred');
+        }
+      })
+      .catch(err => {
+        console.error('Star save failed', err);
+        showToast('❌ Error saving star');
+      });
+    });
+  });
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const toggleBtn = document.getElementById('toggleStarredBtn');
+  let showingStarred = false;
+
+  toggleBtn.addEventListener('click', function () {
+    const allItems = document.querySelectorAll('#exerciseList .activity-item');
+    showingStarred = !showingStarred;
+
+    allItems.forEach(item => {
+      const starBtn = item.querySelector('.star-toggle-btn');
+
+      // ✅ Get the current star state from the icon instead of stale data attribute
+      const isStarred = starBtn.querySelector('i.fas.fa-star') !== null;
+
+      if (showingStarred && !isStarred) {
+        item.style.display = 'none';
+      } else {
+        item.style.display = '';
+      }
+    });
+
+    toggleBtn.innerHTML = showingStarred
+      ? '<i class="fas fa-list me-2"></i> Show All'
+      : '<i class="fas fa-star me-2"></i> Starred';
+  });
+});
+</script>
+
+
+
+
+
 
                     </div>
                 </div>
@@ -584,7 +725,40 @@
         }));
     });
 </script>
+<style>
+    @media (max-width: 500px) {
+  .activity-icon {
+    display: none;
+  }
+  .icon-orbit{
+    display: none;
+  }
+}
+@media (max-width: 500px) {
+    /* Make form and select take full width */
+    form {
+        width: 100% !important;
+    }
 
+    form select {
+        width: 100% !important;
+        display: block;
+    }
+
+    /* Make buttons split 50% width on same line */
+    #list-buttons {
+        flex-wrap: nowrap !important;
+        width: 100%;
+        gap: 10px;
+    }
+
+    #list-buttons a {
+        width: 50% !important;
+        min-width: 0;
+        margin-right: 0 !important;
+    }
+}
+</style>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}

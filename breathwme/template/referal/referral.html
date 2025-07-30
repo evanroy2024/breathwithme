@@ -137,7 +137,25 @@ Home - Meditation Dashboard
 <div class="container">
   <!-- Header Section -->
   <div class="header">
-    <span class="back-arrow" onclick="window.location.href='{% url 'home' %}'">&#8592;</span>
+                    <button style="
+  background-color: #2c2c2c;
+  border: none;
+  border-radius: 8px;
+  width: 48px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  margin-right: 20px;
+  border: 1px solid #444; /* Dark border for button */
+" onclick="window.location.href='{% url 'home' %}'">
+  <svg style="margin-left: -5px;" width="24" height="24" viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16 6L10 12L16 18" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="10" y1="12" x2="22" y2="12" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  </svg>
+</button>
     <h1>Referral & Rewards</h1>
   </div>
 
@@ -152,9 +170,7 @@ Home - Meditation Dashboard
     <div class="referral-rules">
         <h3>Referral Rewards</h3>
         <ul>
-            <li>🎉 Get <b>5 coins</b> when a new user signs up using your link.</li>
-            <li>💎 <b>25 coins</b> unlock a <span class="premium">Free Premium Plan</span>.</li>
-            <li>💰 Earn <b>20% commission</b> when anyone buys a plan.</li>
+            <li>🎉 With an Ambassador account, you earn 20% commission per account per month for each user that signs up using your link. Head over to the Subscriptions page to become an Ambassador to start building recurring revenue today!</li>
         </ul>
     </div>
 
@@ -170,9 +186,10 @@ Home - Meditation Dashboard
   <!-- QR Code Section (Initially Hidden) -->
   <div id="qr-code-section" class="qr-code-section" style="display: none;">
     <h3>Share this QR code:</h3>
-    <img src="{% url 'referal:generate_qr_code' %}" alt="Referral QR Code" width="200">
+    <img id="qrImage" src="{% url 'referal:generate_qr_code' %}" alt="Referral QR Code" width="200">
     <div class="button-container">
-      <button class="qr-btn" onclick="hideQRCode()">Hide QR Code</button>
+      <button class="qr-btn" onclick="hideQRCode()">Hide </button>
+       <button class="qr-btn" onclick="shareQRCode()">Share</button>
     </div>
   </div>
 </div>
@@ -557,9 +574,38 @@ function toggleMode() {
 <style>
     
 </style>
-<!-- Toggle bnutton moving code start  -->
 
-<!-- Toggle bnutton moving code End  -->
+<!-- Share QR COde  -->
+ <script>
+  async function shareQRCode() {
+    const imageElement = document.getElementById('qrImage');
+
+    try {
+      const response = await fetch(imageElement.src);
+      const blob = await response.blob();
+
+      const file = new File([blob], 'qr-code.png', { type: blob.type });
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: 'My Referral QR Code',
+          text: 'Use this QR code to join and get rewards!',
+          files: [file],
+        });
+      } else {
+        // Fallback: download the image
+        const link = document.createElement('a');
+        link.href = imageElement.src;
+        link.download = 'qr-code.png';
+        link.click();
+        alert("Sharing not supported on this device. QR code downloaded instead.");
+      }
+    } catch (error) {
+      console.error('Sharing failed:', error);
+      alert('Failed to share QR Code. Please try again.');
+    }
+  }
+</script>
 
 {% endblock %}
 

@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Breathwithme</title>
+    <title>Breathe</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="styles.css">
     <style>
@@ -130,6 +130,17 @@
         .card a:hover {
             text-decoration: none;
         }
+
+        /* //////////////////////////////////////////////// */
+         html {
+        scroll-behavior: smooth;
+    }
+    
+    /* Offset for fixed header */
+    .section-offset {
+        padding-top: 80px;
+        margin-top: -80px;
+    }
     </style>
 </head>
 
@@ -138,7 +149,7 @@
     <header
         class="fixed top-0 left-0 w-full bg-black bg-opacity-20 backdrop-blur-md flex items-center justify-between px-6 md:px-10 py-4 z-50">
         <h1 class="text-xl md:text-2xl font-bold flex items-center">
-            <span class="mr-2">📖</span> Breathwithme
+            <span class="mr-2">📖</span> Breathe
         </h1>
         <!-- Mobile Menu Button -->
         <button id="menu-btn" class="md:hidden text-white focus:outline-none">
@@ -149,10 +160,10 @@
         </button>
         <!-- Navigation Links -->
         <nav class="hidden md:flex space-x-6 text-lg font-bold text-white">
-            <a href="#" class="hover:text-gray-300 transition">Home</a>
-            <a href="#" class="hover:text-gray-300 transition">About</a>
-            <a href="#" class="hover:text-gray-300 transition">Contact Us</a>
-            <a href="#" class="hover:text-gray-300 transition">Pricing</a>
+            <a href="#home" class="hover:text-gray-300 transition">Home</a>
+            <a href="#about" class="hover:text-gray-300 transition">About</a>
+            <a href="#contact" class="hover:text-gray-300 transition">Contact Us</a>
+            <a href="#pricing" class="hover:text-gray-300 transition">Pricing</a>
         </nav>
         <a href="{% url 'signin' %}"
             class="hidden md:block bg-[#c89e64] text-white px-5 py-2 rounded-lg font-semibold hover:bg-[#a97c43] transition">
@@ -163,21 +174,21 @@
 
     <!-- Mobile Menu -->
     <nav id="mobile-menu"
-        class="hidden absolute top-16 left-0 w-full bg-black bg-opacity-90 py-4 text-center md:hidden transition-all">
-        <a href="#" class="block py-3 text-white hover:bg-gray-700">Home</a>
-        <a href="#" class="block py-3 text-white hover:bg-gray-700">About</a>
-        <a href="#" class="block py-3 text-white hover:bg-gray-700">Contact Us</a>
-        <a href="#" class="block py-3 text-white hover:bg-gray-700">Pricing</a>
-        <a href="#" class="block py-3 bg-[#c89e64] text-white mx-6 rounded-lg hover:bg-[#a97c43]">Contact</a>
+    class="hidden absolute top-16 left-0 w-full bg-black bg-opacity-90 py-4 text-center md:hidden transition-all">
+    <a href="#home" class="block py-3 text-white hover:bg-gray-700">Home</a>
+    <a href="#about" class="block py-3 text-white hover:bg-gray-700">About</a>
+    <a href="#contact" class="block py-3 text-white hover:bg-gray-700">Contact Us</a>
+    <a href="#pricing" class="block py-3 text-white hover:bg-gray-700">Pricing</a>
+    <a href="#contact" class="block py-3 bg-[#c89e64] text-white mx-6 rounded-lg hover:bg-[#a97c43]">Contact</a>
     </nav>
 
     <!-- Hero Section -->
-    <section class="relative flex items-center justify-center h-[80vh] text-center px-6 md:px-10">
+    <section id="home" class="relative flex items-center justify-center h-[80vh] text-center px-6 md:px-10" >
         <div class="absolute inset-0 bg-black opacity-50"></div> <!-- Dark Overlay -->
         <img src="{% static 'fhome/bg1.jpg' %}" alt="Meditation" class="absolute inset-0 w-full h-full object-cover">
         <div class="relative max-w-3xl z-10 px-4">
             <h2 class="text-3xl sm:text-4xl md:text-5xl font-serif font-bold leading-tight text-white">
-                Discover the art <br> of mindful living with <b>BREATHWITHME</b>
+                Discover the art <br> of mindful living with <b>BREATHE</b>
             </h2>
             <p class="mt-4 text-base sm:text-lg text-gray-300">
                 Embark on a transformative journey to find inner peace and balance. Breathe deeply, let go of stress.
@@ -191,7 +202,7 @@
 
     <!-- Next section  -->
     <!-- Hero Section -->
-    <section class="bg-gradient-to-r from-[#f9f1e7] to-[#f0e6d4] py-20 px-6">
+    <section id="about" class="bg-gradient-to-r from-[#f9f1e7] to-[#f0e6d4] py-20 px-6">
         <div class="max-w-7xl mx-auto text-center">
             <p class="text-[#b89676] font-semibold uppercase tracking-wide">Discover the Power of Presence</p>
             <h2 class="mt-3 text-6xl font-extrabold italic text-[#5c4632] leading-tight">
@@ -285,7 +296,7 @@
                 class="absolute right-5 top-1/2 transform -translate-y-1/2 p-4 text-2xl">&#8250;</button>
         </div>
     </section>
-    <section class="bg-[#f9f1e7] py-16 px-6">
+    <section id="contact" class="bg-[#f9f1e7] py-16 px-6">
         <h2 class="pricing-title" style="text-align: center;">Contact Us</h2>
 
         <p class="pricing-subtitle" style="text-align: center; margin-bottom: 20px;">Reach Out to Us to know more about
@@ -325,7 +336,7 @@
     </section>
 
     <!-- Pricing  -->
-    <section class="pricing-section">
+    <section  id="pricing"  class="pricing-section">
         <div class="pricing-container">
             <h2 class="pricing-title">Choose Your Plan</h2>
             <p class="pricing-subtitle">Start your mindfulness journey with a plan that fits your needs.</p>
@@ -494,7 +505,9 @@
         <div>
             <h2 class="text-2xl font-bold mb-4">Breathwithme</h2>
             <p class="text-sm text-gray-300">
-                Embrace mindfulness and inner peace with us. Stay present, stay calm.
+                Embrace mindfulness and inner peace with us. Stay present, stay calm. <br>
+        Breathe deeply, relax your mind, and find your center. <br>
+        Your journey to a peaceful life begins here.
             </p>
         </div>
 
@@ -504,7 +517,6 @@
             <ul class="space-y-2 text-gray-300">
                 <li><a href="#" class="hover:text-[#b89676] transition">About Us</a></li>
                 <li><a href="#" class="hover:text-[#b89676] transition">Services</a></li>
-                <li><a href="#" class="hover:text-[#b89676] transition">Blog</a></li>
                 <li><a href="#" class="hover:text-[#b89676] transition">Contact</a></li>
             </ul>
         </div>
@@ -513,9 +525,9 @@
         <div>
             <h3 class="text-xl font-semibold mb-4">Contact Us</h3>
             <ul class="space-y-2 text-gray-300">
-                <li>📍 123 Mindfulness Street, India</li>
-                <li>📧 support@breathwithme.com</li>
-                <li>📞 +91 98765 43210</li>
+                <li>🏢 Breathe With Me, LLC </li>
+                <li>📧 noreply@breathewithmeapp.com</li>
+                <li>🏠 1209 Knopfler circle ,Folsom CA 95630</li>
             </ul>
         </div>
 

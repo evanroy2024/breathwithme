@@ -6,342 +6,442 @@ Home - Meditation Dashboard
 
 {% block content %}
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
 <style>
-    /* Header navigation bar */
-    .navbar {
-        background-color: #1f1f1f; /* Dark grey */
-        color: #e0e0e0;
-        padding: 10px 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-    }
-
-    .navbar h1 {
-        font-size: 24px;
+    * {
         margin: 0;
+        padding: 0;
+        box-sizing: border-box;
     }
 
-    .navbar .profile {
-        display: flex;
-        align-items: center;
+    body {
+        background-color: #0f0f0f;
+        color: #ffffff;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
     }
 
-    .navbar .profile img {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        margin-left: 10px;
-        border: 2px solid #e0e0e0;
-    }
-
-    /* Container for dashboard */
     .dashboard-container {
         max-width: 1200px;
-        margin: 20px auto;
-        padding: 20px;
-        text-align: center;
+        margin: 0 auto;
+        padding: 2rem;
+        min-height: 100vh;
     }
 
     .dashboard-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 20px;
-        flex-wrap: wrap;
+        margin-bottom: 3rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 2px solid #333;
     }
 
-    .dashboard-header h1 {
-        font-size: 28px;
+    .dashboard-header1 {
+        display: flex;
+        align-items: center;
+    }
+
+    .dashboard-header1 img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 1rem;
+    }
+
+    .dashboard-header1 h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
         color: #ffffff;
+        margin: 0;
+    }
+
+    .dashboard-header2 {
+        display: flex;
+        gap: 1rem;
     }
 
     .discover-button {
-        background-color: #4267B2;
-        color: white;
-        padding: 10px 20px;
+        padding: 0.75rem 1.5rem;
         border: none;
-        border-radius: 5px;
-        font-size: 14px;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
         cursor: pointer;
-        transition: background-color 0.3s ease;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
     .discover-button:hover {
-        background-color: #365899;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
 
-    /* Chatroom cards styling */
     .chatrooms-grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
-        justify-content: center;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
     }
 
     .chatroom-card {
-        background-color: #1f1f1f;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        background: linear-gradient(145deg, #1a1a1a, #2d2d2d);
+        border-radius: 15px;
         overflow: hidden;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        transition: all 0.3s ease;
+        border: 1px solid #333;
     }
 
     .chatroom-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.7);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+    }
+
+    .chatroom-card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
     }
 
     .chatroom-header {
-        padding: 15px;
-        background-color: #ff5722; /* Vibrant orange */
-        color: #ffffff;
-        font-size: 16px;
-        font-weight: bold;
-        text-align: left;
         display: flex;
         align-items: center;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid #333;
     }
 
     .chatroom-header img {
-        width: 20px;
-        height: 20px;
-        margin-right: 10px;
+        width: 30px;
+        height: 30px;
+        margin-right: 0.5rem;
+        border-radius: 50%;
+    }
+
+    .chatroom-header {
+        font-size: 0.9rem;
+        color: #888;
+        font-weight: 500;
     }
 
     .chatroom-body {
-        padding: 20px;
-        color: #e0e0e0;
-        text-align: left;
+        padding: 1.5rem;
     }
 
-    .chatroom-thumbnail {
-        width: 100%;
-        height: 150px;
-        object-fit: cover;
-        border-bottom: 1px solid #2c2c2c;
+    .chatroom-body h3 {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #ffffff;
+    }
+
+    .chatroom-body p {
+        color: #ccc;
+        margin-bottom: 0.5rem;
+    }
+
+    .chatroom-body b {
+        color: #4ecdc4;
+        font-size: 0.9rem;
+        line-height: 1.4;
     }
 
     .chatroom-footer {
-        padding: 15px;
-        background-color: #2c2c2c;
+        padding: 1.5rem;
+        border-top: 1px solid #333;
         display: flex;
-        justify-content: space-between;
-        align-items: center;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .join-button, .settings-button {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        flex: 1;
     }
 
     .join-button {
-        background-color: #4267B2;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        padding: 8px 15px;
-        border: none;
-        border-radius: 5px;
-        font-size: 14px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
     }
 
     .join-button:hover {
-        background-color: #365899;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
     }
 
-    .avatar-group {
+    .settings-button {
+        background: rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+        border: 1px solid #555;
+    }
+
+    .settings-button:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+    }
+
+    .invite-section {
         display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex: 1;
     }
 
-    .avatar-group img {
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        margin-left: -10px;
-        border: 2px solid #1f1f1f;
+    .invite-text {
+        color: #ccc;
+        font-size: 0.8rem;
+        font-weight: 500;
+        white-space: nowrap;
     }
+
+    .copy-button {
+        background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+    }
+
+    .copy-button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 3px 8px rgba(78, 205, 196, 0.3);
+    }
+
+    .share-dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .share-menu {
+        display: none;
+        position: absolute;
+        bottom: 100%;
+        right: 0;
+        background: #2d2d2d;
+        border: 1px solid #555;
+        border-radius: 8px;
+        padding: 0.5rem;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        z-index: 1000;
+        min-width: 200px;
+    }
+
+    .share-menu.show {
+        display: block;
+    }
+
+    .share-option {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem;
+        color: #ffffff;
+        text-decoration: none;
+        border-radius: 6px;
+        transition: background-color 0.3s ease;
+        font-size: 0.9rem;
+    }
+
+    .share-option:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .share-option i {
+        margin-right: 0.5rem;
+        width: 20px;
+    }
+
+    .share-option.whatsapp { color: #25d366; }
+    .share-option.telegram { color: #0088cc; }
+    .share-option.facebook { color: #1877f2; }
+    .share-option.twitter { color: #1da1f2; }
+    .share-option.copy { color: #4ecdc4; }
 
     .no-chatrooms {
         text-align: center;
-        font-size: 18px;
-        color: #ff6f61;
+        color: #888;
+        font-size: 1.2rem;
+        margin-top: 4rem;
+        padding: 3rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        border: 1px solid #333;
     }
 
-    /* Responsive adjustments */
     @media (max-width: 768px) {
+        .dashboard-container {
+            padding: 1rem;
+        }
+
         .dashboard-header {
             flex-direction: column;
-            align-items: center;
+            gap: 1rem;
+            text-align: center;
+        }
+
+        .dashboard-header1 h1 {
+            font-size: 2rem;
         }
 
         .chatrooms-grid {
-            grid-template-columns: repeat(1, 1fr);
+            grid-template-columns: 1fr;
         }
 
-        .discover-button {
-            margin-top: 10px;
+        .button-group {
+            flex-direction: column;
         }
     }
-    /* Back arrow styling */
-.back-arrow {
-    color: #ffffff;
-    font-size: 20px;
-    text-decoration: none;
-    margin-right: 10px;
-    display: flex;
-    align-items: center;
-}
-
-.navbar h1 {
-    font-size: 24px;
-    margin: 0;
-    color: #ffffff;
-}
-/* Container for the dashboard header */
-.dashboard-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-    background-color:#212121;/* Black background */
-    color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-}
-
-/* Left section with the group icon */
-.dashboard-header1 {
-    display: flex;
-    align-items: center;
-}
-
-.dashboard-header1 img {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 8px;
-}
-
-/* Title for the dashboard */
-.dashboard-header1 h1 {
-    margin-left: 15px;
-    font-size: 28px;
-    font-weight: bold;
-    color: #e0e0e0;
-    margin-top: 0;
-}
-
-/* Right section with buttons */
-.dashboard-header2 {
-    display: flex;
-    gap: 10px;
-}
-
-/* Styling for the discover button */
-.discover-button {
-    background-color: #4267B2;
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 5px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    font-weight: bold;
-}
-
-.discover-button:hover {
-    background-color: #365899;
-}
-
-.avatar-group {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 5px; /* Spacing between icons */
-}
-
-.icon-item {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 30px;  /* Fixed size */
-    height: 30px;
-    border-radius: 50%;  /* Circular shape */
-    background-color: #333;  /* Dark background */
-    color: white;  /* Icon color */
-    font-size: 25px;  /* Icon size */
-    text-decoration: none;  /* Remove underline */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.icon-item:hover {
-    transform: scale(1.1);  /* Slightly enlarge on hover */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);  /* Add a subtle shadow on hover */
-}
-
-.icon-item.twitter {
-    background-color: #1DA1F2;  /* Twitter Blue */
-}
-
-.icon-item.instagram {
-    background-color: #E1306C;  /* Instagram Pink */
-}
-
-.icon-item.facebook {
-    background-color: #1877F2;  /* Facebook Blue */
-}
-
 </style>
-
-
-
 <!-- Dashboard Content -->
+<div id="notification" class="notification">
+    <i class="fas fa-check"></i> Link Copied Successfully
+</div>
 <div class="dashboard-container">
     <div class="dashboard-header">
-        <div class="dashboard-header1" style="display: flex;">
-            <img style="width: 60px;"  src="{% static 'img/allimg/group.png' %}" alt="Thumbnail">
+        <div class="dashboard-header1">
+            <img src="{% static 'img/allimg/group.png' %}" alt="Groups">
+            <h1>Groups</h1>
+        </div>
+        <div class="dashboard-header2">
+            <button onclick="window.location.href='{% url 'mastercontrol:create_or_join_chatroom'%}'" 
+                    style="background-color: #00b894; color: #ffffff;" class="discover-button">
+                <i class="fas fa-plus"></i> Join
+            </button>
+            <button onclick="window.location.href='{% url 'mastercontrol:create_or_join_chatroom'%}'" 
+                    style="background-color: #d63031; color: #ffffff;" class="discover-button">
+                <i class="fas fa-users"></i> Create
+            </button>
+        </div>
+    </div>
 
-        <h1 style="margin-left: 10px;">Groups</h1>
-    </div>
-    <div class="dashboard-header2">
-
-        <button onclick="window.location.href='{% url 'mastercontrol:create_or_join_chatroom'%}'" style="background-color: #00b894; color: #ffffff;" class="discover-button">Join</button>
-        <button onclick="window.location.href='{% url 'mastercontrol:create_or_join_chatroom'%}'" style="background-color: #d63031; color: #ffffff;" class="discover-button">Create</button>
-        
-    </div>
-    </div>
     {% if chatrooms %}
     <div class="chatrooms-grid">
         {% for chatroom in chatrooms %}
         <div class="chatroom-card">
-            <img class="chatroom-thumbnail" src="{% static 'img/allimg/1.jpg' %}" alt="Thumbnail">
+            {% if chatroom.image %}
+                <img src="{{ chatroom.image.url }}" alt="Group Image">
+            {% else %}
+                <img src="{% static 'img/allimg/1.jpg' %}" alt="Default Image">
+            {% endif %}
+            
             <div class="chatroom-header">
                 <img src="{% static 'img/allimg/group.png' %}" alt="Group Icon">
-                Private Group
+                <span>Private Group</span>
             </div>
+            
             <div class="chatroom-body">
-                <h3>Group Name - {{ chatroom.name }}</h3>
-                <p>Created By: {{ chatroom.admin.username }}</p>
-               <b>You are a memebr of this private group , you can open the group .  </b>
-            </div>
-            <div class="chatroom-footer">
-                <button class="join-button" 
-        style="background-color: #3498db; color: #ffffff; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;" 
-        onclick="window.location.href='{% url 'mastercontrol:chatroom_detail' chatroom_name=chatroom.name %}'">
-    Open
-</button>
+                <h3>{{ chatroom.public_name }}</h3>
 
-                <div class="avatar-group">
-                    <a href="#" class="icon-item twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="icon-item instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="icon-item facebook"><i class="fab fa-facebook"></i></a>
+                <!-- <h3>{{ chatroom.display_name }}</h3> -->
+                <p><i class="fas fa-user-shield"></i> Created by: {{ chatroom.admin.username }}</p>
+            </div>
+           
+            <div class="chatroom-footer">
+                <div class="button-group">
+                    <button class="join-button" 
+                            onclick="window.location.href='{% url 'mastercontrol:chatroom_detail' chatroom_name=chatroom.name %}'">
+                        <i class="fas fa-door-open"></i> Open
+                    </button>
+                    <button class="settings-button" 
+                            onclick="window.location.href='{% url 'mastercontrol:group_settings' chatroom.id %}'">
+                        <i class="fas fa-cog"></i> Settings
+                    </button>
+                    <div class="invite-section">
+                        <div class="share-dropdown">
+                            <button class="copy-button" onclick="copyToClipboard('{{ request.scheme }}://{{ request.get_host }}{% url 'mastercontrol:join_chatroom' token=chatroom.invite_token %}', this)">
+                                <i class="fas fa-copy"></i> Copy 
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                
-                
             </div>
         </div>
         {% endfor %}
     </div>
     {% else %}
-    <p class="no-chatrooms">You have not joined any chatrooms yet.</p>
+    <div class="no-chatrooms">
+        <i class="fas fa-users" style="font-size: 3rem; margin-bottom: 1rem; color: #555;"></i>
+        <p>You haven't joined any groups yet.</p>
+        <p style="margin-top: 0.5rem; font-size: 1rem; color: #666;">Create or join a group to start connecting with others.</p>
+    </div>
     {% endif %}
 </div>
+
+<style>
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #00b894;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transform: translateY(-100px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    font-size: 14px;
+}
+
+.notification.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+</style>
+
+<script>
+function showNotification() {
+    const notification = document.getElementById('notification');
+    notification.classList.add('show');
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+    }, 3000);
+}
+
+function copyToClipboard(link, element) {
+    navigator.clipboard.writeText(link).then(() => {
+        showNotification();
+    }).catch(() => {
+        alert('Failed to copy link. Please try again.');
+    });
+}
+</script>
+<style>
+    @media (max-width: 608px) {
+
+    .copy-button {
+    display: block !important;
+    width: 100% !important;
+    min-width: unset !important;
+    white-space: normal !important;
+}
+.invite-section {
+    flex-direction: column !important;
+    align-items: stretch !important;
+}
+.dashboard-header1{
+    display: none;
+}
+}
+</style>
 {% endblock %}

@@ -1,9 +1,10 @@
-<!DOCTYPE html>
+{% extends "exercisebase.html" %}
 {% load static %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% block title %}
+Home - Meditation Dashboard
+{% endblock %}
+
+{% block content %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
      <!-- Add this Font Awesome link in the head of your HTML -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -344,8 +345,7 @@ svg.hold ellipse {
 
 
 </style>
-</head>
-<body>
+
     <div class="guide-container" style="display: none;">
         <h2 class="guide-heading">Choose shape to read guide</h2>
         <div class="guide-buttons">
@@ -380,14 +380,10 @@ svg.hold ellipse {
           <div class="main-heading">
             <div class="header-container">
               <button class="back-button" onclick="window.location.href='{% url 'breathxapp:exercise_list' %}'">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M19 12H5M12 19l-7-7 7-7"/>
-                </svg>
+              
               </button>
-              <h1 class="title">BreathFree-Meditation</h1>
             </div>
           </div>
-          <hr style="width: 400px; height: 5px;  background: linear-gradient(to right, #6e8efb, #a777e3); border-radius: 10px;">
         
 
  
@@ -670,11 +666,10 @@ function stopTimer() {
 
 // Voice -------------------------------------------------------------------
 const audioFiles = {
-    'Inhale': new Audio("{% static 'voices/inhale.mp3' %}"),
-    'Hold': new Audio("{% static 'voices/hold.mp3' %}"),
-    'Exhale': new Audio("{% static 'voices/exhale.mp3' %}")
-};
-
+        'Inhale': new Audio("{{ audio_urls.inhale }}"),
+        'Hold': new Audio("{{ audio_urls.hold }}"),
+        'Exhale': new Audio("{{ audio_urls.exhale }}")
+    };
 // For Vibration in React native app ------------------------------------------------------------------------------
 
 // For Vibration in React native app ------------------------------------------------------------------------------
@@ -2496,6 +2491,10 @@ document.addEventListener("click", (e) => {
   display: block;
 }
 }
+#controls-row button {
+    border: 2px solid #626262;
+}
+
           </style>
 
               <!-- For activity Page ----------------------------------------------- -->
@@ -2512,5 +2511,4 @@ document.addEventListener("click", (e) => {
     });
 </script>
 
-</body>
-</html>
+{% endblock content %}

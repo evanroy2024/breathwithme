@@ -27,53 +27,79 @@
       max-width: 400px;
       text-align: center;
       background-color: #000000;
-      padding: 20px;
+      padding: 30px;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     }
 
-    .back-button {
-      text-align: left;
-      margin-bottom: 20px;
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 30px;
     }
 
     .back-button a {
       text-decoration: none;
       font-size: 1.5rem;
       color: #ffffff;
+      transition: color 0.3s ease;
+    }
+
+    .back-button a:hover {
+      color: #d4af37;
     }
 
     .title {
-      margin-bottom: 20px;
+      flex-grow: 1;
+      text-align: left;
+      padding-left: 20px;
     }
 
     .title h1 {
       font-size: 2rem;
       color: #ffffff;
+      margin-bottom: 5px;
     }
 
-    .title p {
-      font-size: 1rem;
-      color: #aaaaaa;
+    .messages {
+      margin-bottom: 20px;
+      padding: 10px;
+      border-radius: 5px;
+      background-color: #4a1a1a;
+      border: 1px solid #cc4444;
+      color: #ff6666;
+      font-size: 0.9rem;
+      text-align: left;
     }
 
     .form {
-      margin-top: 20px;
+      margin-top: 30px;
     }
 
     .form .input-wrapper {
       position: relative;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
     }
 
     .form .input-wrapper input {
       width: 100%;
-      padding: 15px 15px 15px 40px; /* Adjust padding to accommodate the icon */
+      padding: 15px 15px 15px 45px;
       border: 1px solid #333333;
       border-radius: 8px;
       font-size: 1rem;
       background-color: #333333;
       color: #ffffff;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      text-align: center;
+      letter-spacing: 2px;
+      font-weight: bold;
+    }
+
+    .form .input-wrapper input:focus {
+      outline: none;
+      border-color: #d4af37;
+      box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
     }
 
     .form .input-wrapper .icon {
@@ -85,25 +111,6 @@
       color: #aaaaaa;
     }
 
-    .form .input-wrapper .toggle-password {
-      position: absolute;
-      top: 50%;
-      right: 15px;
-      transform: translateY(-50%);
-      font-size: 1.2rem;
-      cursor: pointer;
-      color: #aaaaaa;
-    }
-
-    .form a {
-      text-decoration: none;
-      font-size: 0.9rem;
-      color: #1e90ff;
-      display: block;
-      margin-bottom: 20px;
-      text-align: right;
-    }
-
     .form button {
       width: 100%;
       padding: 15px;
@@ -112,56 +119,86 @@
       border: none;
       border-radius: 8px;
       font-size: 1rem;
+      font-weight: bold;
       cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
     }
 
-    .divider {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 20px 0;
+    .form button:hover {
+      background-color: #c19b26;
+      transform: translateY(-1px);
+    }
+
+    .form button:active {
+      transform: translateY(0);
+    }
+
+    .resend-section {
+      margin-top: 25px;
+      text-align: center;
+    }
+
+    #timer {
       color: #aaaaaa;
+      font-size: 0.9rem;
+      margin-bottom: 10px;
     }
 
-    .divider::before,
-    .divider::after {
-      content: "";
-      flex: 1;
-      height: 1px;
-      background-color: #333333;
-      margin: 0 10px;
+    #countdown {
+      color: #d4af37;
+      font-weight: bold;
     }
 
-    .social-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+    #resend-form button {
+      background: none;
+      border: none;
+      color: #1e90ff;
+      cursor: pointer;
+      text-decoration: underline;
+      font-size: 0.9rem;
+      transition: color 0.3s ease;
     }
 
-    .social-buttons button {
+    #resend-form button:hover {
+      color: #4da6ff;
+    }
+
+    .additional-options {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #333333;
+    }
+
+    .security-note {
+      background-color: #1a1a2e;
+      border: 1px solid #16213e;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+
+    .security-note h3 {
+      color: #d4af37;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
       display: flex;
       align-items: center;
-      justify-content: center;
-      width: 100%;
-      padding: 15px;
-      border: 1px solid #333333;
-      border-radius: 8px;
-      font-size: 1rem;
-      cursor: pointer;
-      background-color: #444444;
-      color: #e0e0e0;
+      gap: 8px;
     }
 
-    .social-buttons button img {
-      width: 20px;
-      height: 20px;
-      margin-right: 10px;
+    .security-note p {
+      color: #aaaaaa;
+      font-size: 0.8rem;
+      line-height: 1.4;
     }
 
     .terms {
-      margin-top: 20px;
+      margin-top: 25px;
       font-size: 0.8rem;
       color: #aaaaaa;
+      line-height: 1.4;
+      padding-top: 20px;
+      border-top: 1px solid #333333;
     }
 
     .terms a {
@@ -169,13 +206,81 @@
       text-decoration: none;
     }
 
+    .terms a:hover {
+      color: #4da6ff;
+    }
+
     @media (min-width: 768px) {
       .title h1 {
         font-size: 2.5rem;
       }
 
-      .title p {
-        font-size: 1.2rem;
+      .container {
+        padding: 40px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+        margin: 10px;
+      }
+      
+      .header {
+        margin-bottom: 25px;
+      }
+      
+      .title h1 {
+        font-size: 1.8rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 15px;
+        margin: 5px;
+      }
+      
+      .header {
+        margin-bottom: 20px;
+      }
+      
+      .title h1 {
+        font-size: 1.5rem;
+      }
+
+      .security-note {
+        padding: 12px;
+      }
+      
+      .security-note h3 {
+        font-size: 0.85rem;
+      }
+      
+      .security-note p {
+        font-size: 0.75rem;
+      }
+    }
+
+    @media (max-width: 320px) {
+      .container {
+        padding: 10px;
+        margin: 0;
+      }
+      
+      .form .input-wrapper input {
+        padding: 12px 12px 12px 35px;
+        font-size: 0.9rem;
+      }
+      
+      .form .input-wrapper .icon {
+        left: 12px;
+        font-size: 1rem;
+      }
+      
+      .form button {
+        padding: 12px;
+        font-size: 0.9rem;
       }
     }
 
@@ -183,39 +288,127 @@
 </head>
 <body>
   <div class="container">
-    <div class="back-button">
-      <a href="#">&larr;</a>
+    <div class="header">
+      <div class="back-button">
+        <a href="{% url 'signin' %}">&larr;</a>
+      </div>
+      <div class="title">
+        <h1>Enter OTP</h1>
+      </div>
+      <div style="width: 24px;"></div> <!-- Spacer for balance -->
     </div>
-    <div class="title">
-      <h1>Enter OTP</h1>
-      <p>Please enter the OTP sent to your email</p>
-    </div>
+
+    {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+          <div class="message {{ message.tags }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
     <form class="form" method="POST">
       {% csrf_token %}
       <div class="input-wrapper">
-        <span class="icon">&#x1F4E7;</span>
-        <input type="text" name="otp" placeholder="Enter OTP" required>
+        <span class="icon">🔐</span>
+        <input type="text" name="otp" placeholder="Enter OTP" required maxlength="6">
       </div>
       <button type="submit">Verify OTP</button>
     </form>
+
+    <div class="resend-section">
+      <p id="timer">Resend OTP in <span id="countdown">60</span>s</p>
+
+      <form id="resend-form" action="{% url 'register' %}" method="POST" style="display: none;">
+        {% csrf_token %}
+        <input type="hidden" name="username" value="{{ request.session.username }}">
+        <input type="hidden" name="email" value="{{ request.session.email }}">
+        <input type="hidden" name="password" value="{{ request.session.password }}">
+        <button type="submit">Resend OTP</button>
+      </form>
+    </div>
+
+    <div class="additional-options">
+      <div class="security-note">
+        <h3>🔒 Secure Verification</h3>
+        <p>Your OTP is valid for 10 minutes. Never share this code with anyone.</p>
+      </div>
+    </div>
+
     <div class="terms">
-      By verifying, I accept the <a href="#">Terms of Service</a> and <a href="#">Community Guidelines</a> and have read <a href="#">Privacy Policy</a>.
+      By verifying, you agree to our <a href="{% url 'terms' %}">Terms of Service</a> and <a href="{% url 'privacy' %}">Privacy Policy</a>.
     </div>
   </div>
 
   <script>
-    function togglePassword() {
-      var passwordField = document.getElementById("password");
-      var toggleIcon = document.querySelector(".toggle-password");
-      if (passwordField.type === "password") {
-        passwordField.type = "text";
-        toggleIcon.innerHTML = "&#x1f441;&#xfe0f;";
-      } else {
-        passwordField.type = "password";
-        toggleIcon.innerHTML = "&#x1f441;";
-      }
-    }
-  </script>
+    const COUNTDOWN_SECONDS = 60;
+    const countdownEl = document.getElementById('countdown');
+    const timerText = document.getElementById('timer');
+    const resendForm = document.getElementById('resend-form');
 
+    const STORAGE_KEY = 'otp_timer_start';
+    const TIMER_ACTIVE_KEY = 'otp_timer_active';
+    
+    let timerInterval;
+
+    function initializeTimer() {
+      const now = Math.floor(Date.now() / 1000);
+      let startTime = localStorage.getItem(STORAGE_KEY);
+      const isTimerActive = localStorage.getItem(TIMER_ACTIVE_KEY);
+
+      // If no timer is active or stored, start a new one
+      if (!startTime || !isTimerActive) {
+        localStorage.setItem(STORAGE_KEY, now);
+        localStorage.setItem(TIMER_ACTIVE_KEY, 'true');
+        startTime = now;
+      } else {
+        startTime = parseInt(startTime);
+      }
+
+      startCountdown(startTime);
+    }
+
+    function startCountdown(startTime) {
+      function updateTimer() {
+        const now = Math.floor(Date.now() / 1000);
+        const elapsed = now - startTime;
+        const remaining = COUNTDOWN_SECONDS - elapsed;
+
+        if (remaining > 0) {
+          countdownEl.textContent = remaining;
+        } else {
+          // Timer finished
+          clearInterval(timerInterval);
+          timerText.style.display = 'none';
+          resendForm.style.display = 'block';
+          
+          // Clear timer storage
+          localStorage.removeItem(STORAGE_KEY);
+          localStorage.removeItem(TIMER_ACTIVE_KEY);
+        }
+      }
+
+      updateTimer();
+      timerInterval = setInterval(updateTimer, 1000);
+    }
+
+    // Reset timer when resend button is clicked
+    document.getElementById('resend-form').addEventListener('submit', function() {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(TIMER_ACTIVE_KEY);
+    });
+
+    // Initialize timer on page load
+    initializeTimer();
+
+    // Auto-focus the OTP input
+    document.addEventListener('DOMContentLoaded', function() {
+      const otpInput = document.querySelector('input[name="otp"]');
+      if (otpInput) {
+        otpInput.focus();
+      }
+    });
+  </script>
 </body>
 </html>

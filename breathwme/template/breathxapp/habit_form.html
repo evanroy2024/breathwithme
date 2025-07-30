@@ -2,8 +2,6 @@
 
 {% block content %}
 <!-- Bootstrap & FontAwesome -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
     body {
@@ -50,8 +48,30 @@
         background: #00d9ff;
         color: #121212;
     }
-    input {
+    input[type="radio"] {
         display: none;
+    }
+    input[type="time"] {
+        display: block;
+        width: 100%;
+        max-width: 200px;
+        margin: 10px auto;
+        padding: 12px;
+        background: #222;
+        color: #ffffff;
+        border: 1px solid #00d9ff;
+        border-radius: 6px;
+        font-size: 16px;
+        text-align: center;
+    }
+    input[type="time"]:focus {
+        outline: none;
+        background: #333;
+        border-color: #00ff99;
+        box-shadow: 0 0 5px rgba(0, 255, 153, 0.3);
+    }
+    .time-input-container {
+        margin: 20px 0;
     }
     .buttons {
         display: flex;
@@ -103,6 +123,15 @@
         50% { transform: scale(1.1); opacity: 0.8; }
         100% { transform: scale(1); opacity: 1; }
     }
+    .notification-dependent {
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+    }
+    .notification-dependent.show {
+        display: block;
+        opacity: 1;
+    }
 </style>
 
 <div class="container">
@@ -116,13 +145,13 @@
             <fieldset>
                 <legend>What is your experience with breathwork/meditation?</legend>
             </fieldset>
-            <input type="radio" id="beginner" name="experience" value="beginner" required>
+            <input type="radio" id="beginner" name="experience" value="beginner" required {% if habit.experience == 'beginner' %}checked{% endif %}>
             <label for="beginner">Beginner</label>
 
-            <input type="radio" id="intermediate" name="experience" value="intermediate">
+            <input type="radio" id="intermediate" name="experience" value="intermediate" {% if habit.experience == 'intermediate' %}checked{% endif %}>
             <label for="intermediate">Intermediate</label>
 
-            <input type="radio" id="advanced" name="experience" value="advanced">
+            <input type="radio" id="advanced" name="experience" value="advanced" {% if habit.experience == 'advanced' %}checked{% endif %}>
             <label for="advanced">Advanced</label>
 
             <div class="buttons">
@@ -135,13 +164,13 @@
             <fieldset>
                 <legend>How many times per week can you commit to practicing?</legend>
             </fieldset>
-            <input type="radio" id="once" name="practice_frequency" value="1" required>
+            <input type="radio" id="once" name="practice_frequency" value="1" required {% if habit.practice_frequency == '1' %}checked{% endif %}>
             <label for="once">Once a week</label>
 
-            <input type="radio" id="twice" name="practice_frequency" value="2">
+            <input type="radio" id="twice" name="practice_frequency" value="2" {% if habit.practice_frequency == '2' %}checked{% endif %}>
             <label for="twice">Twice a week</label>
 
-            <input type="radio" id="daily" name="practice_frequency" value="7">
+            <input type="radio" id="daily" name="practice_frequency" value="7" {% if habit.practice_frequency == '7' %}checked{% endif %}>
             <label for="daily">Every day</label>
 
             <div class="buttons">
@@ -155,10 +184,10 @@
             <fieldset>
                 <legend>What time of day is best for you to practice?</legend>
             </fieldset>
-            <input type="radio" id="morning" name="preferred_time" value="morning" required>
+            <input type="radio" id="morning" name="preferred_time" value="morning" required {% if habit.preferred_time == 'morning' %}checked{% endif %}>
             <label for="morning">Morning</label>
 
-            <input type="radio" id="evening" name="preferred_time" value="evening">
+            <input type="radio" id="evening" name="preferred_time" value="evening" {% if habit.preferred_time == 'evening' %}checked{% endif %}>
             <label for="evening">Evening</label>
 
             <div class="buttons">
@@ -172,11 +201,19 @@
             <fieldset>
                 <legend>Can we send you notifications during these times?</legend>
             </fieldset>
-            <input type="radio" id="yes" name="allow_notifications" value="yes" required>
+            <input type="radio" id="yes" name="allow_notifications" value="yes" required {% if habit.allow_notifications == 'yes' %}checked{% endif %}>
             <label for="yes">Yes</label>
 
-            <input type="radio" id="no" name="allow_notifications" value="no">
+            <input type="radio" id="no" name="allow_notifications" value="no" {% if habit.allow_notifications == 'no' %}checked{% endif %}>
             <label for="no">No</label>
+
+            <!-- Notification Time Input (conditionally shown) -->
+            <div class="notification-dependent time-input-container" id="timeInputContainer">
+                <fieldset>
+                    <legend>What time would you like to receive notifications?</legend>
+                </fieldset>
+                <input type="time" id="notification_time" name="notification_time" placeholder="Select time" {% if habit.notification_time %}value="{{ habit.notification_time }}"{% endif %}>
+            </div>
 
             <div class="buttons">
                 <button type="button" class="btn btn-prev">⬅ Previous</button>
@@ -189,19 +226,19 @@
             <fieldset>
                 <legend>What is your main goal for practicing breathwork?</legend>
             </fieldset>
-            <input type="radio" id="relaxation" name="goal" value="relaxation" required>
+            <input type="radio" id="relaxation" name="goal" value="relaxation" required {% if habit.goal == 'relaxation' %}checked{% endif %}>
             <label for="relaxation">Relaxation</label>
 
-            <input type="radio" id="focus" name="goal" value="focus">
+            <input type="radio" id="focus" name="goal" value="focus" {% if habit.goal == 'focus' %}checked{% endif %}>
             <label for="focus">Better Focus</label>
 
-            <input type="radio" id="sleep" name="goal" value="sleep">
+            <input type="radio" id="sleep" name="goal" value="sleep" {% if habit.goal == 'sleep' %}checked{% endif %}>
             <label for="sleep">Improve Sleep</label>
 
-            <input type="radio" id="stress" name="goal" value="stress">
+            <input type="radio" id="stress" name="goal" value="stress" {% if habit.goal == 'stress' %}checked{% endif %}>
             <label for="stress">Reduce Stress</label>
 
-            <input type="radio" id="energy" name="goal" value="energy">
+            <input type="radio" id="energy" name="goal" value="energy" {% if habit.goal == 'energy' %}checked{% endif %}>
             <label for="energy">Increase Energy</label>
 
             <div class="buttons">
@@ -226,15 +263,50 @@
     const form = document.getElementById('breathForm');
     const finalScreen = document.querySelector('.final-screen');
     const container = document.querySelector('.container');
+    const timeInputContainer = document.getElementById('timeInputContainer');
+    const notificationRadios = document.querySelectorAll('input[name="allow_notifications"]');
     let currentStep = 0;
 
     function showStep(step) {
         steps.forEach((s, index) => s.classList.toggle('active', index === step));
     }
 
+    // Handle notification time visibility
+    function toggleNotificationTime() {
+        const selectedValue = document.querySelector('input[name="allow_notifications"]:checked')?.value;
+        if (selectedValue === 'yes') {
+            timeInputContainer.classList.add('show');
+            document.getElementById('notification_time').required = true;
+        } else {
+            timeInputContainer.classList.remove('show');
+            document.getElementById('notification_time').required = false;
+            document.getElementById('notification_time').value = '';
+        }
+    }
+
+    // Add event listeners for notification radio buttons
+    notificationRadios.forEach(radio => {
+        radio.addEventListener('change', toggleNotificationTime);
+    });
+
     nextBtns.forEach((btn) => {
         btn.addEventListener('click', () => {
-            if (document.querySelector('.step.active input:checked')) {
+            const currentStepElement = document.querySelector('.step.active');
+            const requiredInputs = currentStepElement.querySelectorAll('input[required]');
+            let allValid = true;
+
+            // Check if all required inputs are filled
+            requiredInputs.forEach(input => {
+                if (input.type === 'radio') {
+                    const radioGroup = currentStepElement.querySelectorAll(`input[name="${input.name}"]`);
+                    const isChecked = Array.from(radioGroup).some(radio => radio.checked);
+                    if (!isChecked) allValid = false;
+                } else if (input.type === 'time' && input.required && !input.value) {
+                    allValid = false;
+                }
+            });
+
+            if (allValid) {
                 currentStep++;
                 showStep(currentStep);
             }
@@ -250,12 +322,52 @@
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-        steps.forEach(s => s.style.display = "none"); 
-        finalScreen.style.display = "block"; 
-        setTimeout(() => {
-            window.location.href = "{% url 'home' %}";
+        
+        // Final validation for required fields
+        const finalRequiredInputs = form.querySelectorAll('input[required]');
+        let allValid = true;
+        
+        finalRequiredInputs.forEach(input => {
+            if (input.type === 'radio') {
+                const radioGroup = form.querySelectorAll(`input[name="${input.name}"]`);
+                const isChecked = Array.from(radioGroup).some(radio => radio.checked);
+                if (!isChecked) allValid = false;
+            } else if (input.type === 'time' && input.required && !input.value) {
+                allValid = false;
+            }
+        });
 
-        }, 3000);
+        if (allValid) {
+            steps.forEach(s => s.style.display = "none"); 
+            finalScreen.style.display = "block"; 
+            setTimeout(() => {
+                // Submit the form data
+                const formData = new FormData(form);
+                fetch(form.action || window.location.href, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    }
+                }).then(() => {
+                    window.location.href = "{% url 'home' %}";
+                }).catch(() => {
+                    // Fallback: submit form normally
+                    form.submit();
+                });
+            }, 3000);
+        }
+    });
+
+    // Initialize notification time visibility on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleNotificationTime();
+        
+        // If form is pre-populated and notifications are enabled, show time input
+        const notificationYes = document.getElementById('yes');
+        if (notificationYes && notificationYes.checked) {
+            timeInputContainer.classList.add('show');
+        }
     });
 </script>
 

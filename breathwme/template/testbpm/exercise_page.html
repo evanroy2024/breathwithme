@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+{% extends "base2.html" %}
 {% load static %}
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Breathing Exercise</title>
+{% block title %}
+Breathing Exercise Songs
+{% endblock %}
+
+{% block content %}
   <style>
     body {
       margin: 0;
@@ -144,14 +144,12 @@
       color: #aaa;
     }
   </style>
-</head>
-<body>
+
   <div class="container">
-    <h1 class="title">
-      <span class="back-arrow" onclick="window.location.href='{% url 'testapp:song_list' %}'">←</span>
-      Breathing Exercise
-    </h1>
-    
+
+    <div id="topmargin" style="color: #121212;"> 
+      it is 
+    </div>
     
     <div class="shape-container" id="shapeContainer">
       <div class="breathing-circle" id="breathingCircle">
@@ -181,7 +179,7 @@
         </div>
         
         <div class="shape-select">
-          <label >Vibration :</label>
+          <label >Vibration </label>
           <select id="VibrationType">
             <option value="2">Off </option>
             <option value="3">On </option>
@@ -189,7 +187,7 @@
         </div> 
 
         <div class="shape-select">
-          <label >Voice :</label>
+          <label >Voice </label>
 
           <select onchange="speechEnabled = this.value === 'on';">
             <option value="on">On</option>
@@ -198,6 +196,7 @@
           
           
         </div>
+        
       </div>
      
         <div id="shapeOverlay">
@@ -240,7 +239,7 @@
             <option value="">All Categories</option>
             {% for category in categories %}
               <option value="{{ category.id }}" {% if selected_category_id == category.id|stringformat:"s" %}selected{% endif %}>
-                {{ category.name }}
+                {{ category.name }} 
               </option>
             {% endfor %}
           </select>
@@ -255,7 +254,7 @@
         <div class="dark-song-item">
           <a href="?song_id={{ song.id }}&category_id={{ selected_category_id|default:'' }}" class="dark-song-link">
             <div class="dark-song-icon">♫</div>
-            <div class="dark-song-title">{{ song.title }}</div>
+            <div class="dark-song-title">{{ song.title }} By {{ song.artist }}</div>
             <div class="dark-song-arrow">→</div>
           </a>
         </div>
@@ -521,16 +520,67 @@
 
 <!-- Song selection ends -->
       <!-- music selection Ends  -->
-      <audio id="audio" controls controlsList="nodownload">
+      <!-- <audio id="audio" controls controlsList="nodownload noplaybackrate nofullscreen noremoteplayback">
         <source src="{{ song.song.url }}" type="audio/mpeg">
       </audio>
-      
-      
+      <div class="play-arrow">Click to play →</div> -->
+
+<!-- Next Audio Play button  -->
+
+
+<div class="song-nav-buttons">
+  <button id="prevBtn" aria-label="Previous">⏮️</button>
+  <audio id="audio" controls controlsList="nodownload noplaybackrate nofullscreen noremoteplayback" style="position: absolute; left: -9999px; width: 0; height: 0; opacity: 0;">
+    <source src="{{ song.song.url }}" type="audio/mpeg">
+  </audio>
+<button id="customPlayBtn">Play</button>
+
+  <button id="nextBtn" aria-label="Next">⏭️</button>
+</div>
+
+
+<script>
+  // Songs and current index based on backend data
+  const songs = [
+    {% for s in all_songs %}
+      {
+        id: {{ s.id }},
+        url: "{{ s.song.url|escapejs }}"
+      }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+  ];
+
+  const currentSongId = {{ song.id }};
+
+  let currentIndex = songs.findIndex(s => s.id === currentSongId);
+
+  document.getElementById("prevBtn").addEventListener("click", function () {
+    if (currentIndex > 0) {
+      const prevSong = songs[currentIndex - 1];
+      window.location.href = `?song_id=${prevSong.id}{% if selected_category_id %}&category_id={{ selected_category_id }}{% endif %}`;
+    }
+  });
+
+  document.getElementById("nextBtn").addEventListener("click", function () {
+    if (currentIndex < songs.length - 1) {
+      const nextSong = songs[currentIndex + 1];
+      window.location.href = `?song_id=${nextSong.id}{% if selected_category_id %}&category_id={{ selected_category_id }}{% endif %}`;
+    }
+  });
+</script>
+
+
+
+ <!-- Next audio play button end  -->
 <div style="display: none;" class="timer" id="timer">00:00</div>
 <div class="song-vibration-btn">
-  <button id="uniqueOpenModalButton" onclick="openUniqueModal()">Open Song and Category Selector</button>
-
+  <button id="uniqueOpenModalButton" onclick="openUniqueModal()">Open Songs</button>
+<button class="plst-modal-trigger-btn" onclick="openPlaylistModal()">Add to Playlist</button>
+<button class="plst-modal-trigger-btn" onclick="openCreateModal()">Create Playlist</button>
+<button id="shuffleBtn" aria-label="Shuffle">Shuffle</button>
 </div>
+       <p>{{ song.title }} By {{ song.artist }}</p>
+
     </div>
   </div>
 
@@ -568,12 +618,23 @@
     "fourBar": 16 
   };
 
-  
+// For Custom Play Modal --------------------------------------------------
+const customPlayBtn = document.getElementById("customPlayBtn");
+
+customPlayBtn.addEventListener("click", function() {
+    if (audio.paused) {
+        audio.play();
+        this.textContent = "Pause";
+    } else {
+        audio.pause();
+        this.textContent = "Play";
+    }
+});
 // Voice -------------------------------------------------------------------
 const audioFiles = {
-    'Inhale': new Audio("{% static 'voices/inhale.mp3' %}"),
-    'Hold': new Audio("{% static 'voices/hold.mp3' %}"),
-    'Exhale': new Audio("{% static 'voices/exhale.mp3' %}")
+        'Inhale': new Audio("{{ audio_urls.inhale }}"),
+        'Hold': new Audio("{{ audio_urls.hold }}"),
+        'Exhale': new Audio("{{ audio_urls.exhale }}")
 };
 
 // For Vibration in React native app ------------------------------------------------------------------------------
@@ -858,6 +919,7 @@ audio.onseeked = () => {
       cancelAnimationFrame(animationFrameId);
     }
     animationFrameId = requestAnimationFrame(animateMarker);
+    customPlayBtn.textContent = "Pause";
   };
 
   // On pause, just set isPaused flag
@@ -873,6 +935,7 @@ audio.onseeked = () => {
     // Clear any scheduled timeouts if any
     timeoutIds.forEach(id => clearTimeout(id));
     timeoutIds = [];
+    customPlayBtn.textContent = "Play";
   };
 
   audio.onended = () => {
@@ -900,6 +963,7 @@ audio.onseeked = () => {
     
     // Reset marker position to top
     calculatePosition(0);
+    customPlayBtn.textContent = "Play";
   };
 
   // Handle seeking in the audio
@@ -956,7 +1020,17 @@ audio.onseeked = () => {
       updateShapeAnimation(currentState);
     }
   }
-
+// Add shuffle functionality
+document.getElementById("shuffleBtn").addEventListener("click", function () {
+  // Get a random song that's not the current one
+  let randomIndex;
+  do {
+    randomIndex = Math.floor(Math.random() * songs.length);
+  } while (randomIndex === currentIndex && songs.length > 1);
+  
+  const randomSong = songs[randomIndex];
+  window.location.href = `?song_id=${randomSong.id}{% if selected_category_id %}&category_id={{ selected_category_id }}{% endif %}`;
+});
   // Initialize the timer
   updateTimer(0);
 </script>
@@ -1353,7 +1427,567 @@ window.onclick = function(event) {
     });
 </script>
 
-</body>
+<!-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+<!-- Add these 2 buttons where you want them -->
+
+<!-- Modal overlay (add to your template) -->
+<div id="plstModalOverlay987" class="plst-modal-overlay-wrapper">
+    <div class="plst-modal-container">
+        <button class="plst-modal-close-x" onclick="closePlstModal()">&times;</button>
+        
+        <div id="plstAddForm" class="plst-modal-form-section">
+            <h3>Add to Playlist</h3>
+            <form method="POST" action="{% url 'testapp:add_to_playlist' %}">
+                {% csrf_token %}
+                <input type="hidden" name="song_id" value="{{ song.id }}">
+                
+                <label for="plst_select_dropdown">Choose Playlist:</label>
+                <select name="playlist_id" id="plst_select_dropdown" required>
+                    {% for playlist in playlists %}
+                        <option value="{{ playlist.id }}">{{ playlist.name }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="plst-submit-action-btn">Add Song</button>
+            </form>
+        </div>
+
+        <div id="plstCreateForm" class="plst-modal-form-section" style="display: none;">
+            <h3>Create New Playlist</h3>
+            <form method="POST" action="{% url 'testapp:create_playlist' %}">
+                {% csrf_token %}
+                <input type="text" name="playlist_name" placeholder="Enter playlist name" required>
+                <input type="hidden" name="song_id" value="{{ song.id }}">
+                <button type="submit" class="plst-submit-action-btn">Create & Add Song</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Unique playlist modal styles - won't interfere with existing CSS */
+.plst-modal-overlay-wrapper {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(12px);
+    z-index: 99999;
+    justify-content: center;
+    align-items: center;
+    animation: plstFadeIn 0.3s ease;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.plst-modal-overlay-wrapper.plst-active {
+    display: flex;
+}
+
+.plst-modal-container {
+    background: linear-gradient(145deg, #1f2937, #111827);
+    border: 1px solid #374151;
+    border-radius: 18px;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.8);
+    width: 100%;
+    max-width: 420px;
+    position: relative;
+    padding: 30px;
+    margin: 10px;
+    transform: scale(0.8);
+    animation: plstSlideUp 0.4s ease forwards;
+    box-sizing: border-box;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    .plst-modal-container {
+        padding: 20px;
+        margin: 5px;
+        max-width: calc(100vw - 20px);
+        border-radius: 12px;
+    }
+    
+    .plst-modal-trigger-btn {
+        padding: 10px 18px;
+        font-size: 14px;
+        margin: 0 4px;
+    }
+}
+
+@media (max-width: 480px) {
+    .plst-modal-container {
+        padding: 15px;
+        max-width: calc(100vw - 10px);
+    }
+    
+    .plst-modal-trigger-btn {
+        display: block;
+        margin: 5px 0;
+        width: 100%;
+    }
+}
+
+.plst-modal-close-x {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    padding: 22px;
+    background: rgba(55, 65, 81, 0.8);
+    border: 1px solid #4b5563;
+    font-size: 24px;
+    color: #d1d5db;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.plst-modal-close-x:hover {
+    background: #dc2626;
+    color: white;
+    transform: rotate(90deg);
+    border-color: #dc2626;
+}
+
+.plst-modal-trigger-btn {
+    background: linear-gradient(135deg, #1f2937, #374151);
+    color: #e5e7eb;
+    border: 1px solid #4b5563;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.plst-modal-trigger-btn:hover {
+    background: linear-gradient(135deg, #374151, #4b5563);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+    color: #fff;
+}
+
+.plst-modal-form-section h3 {
+    margin: 0 0 25px 0;
+    color: #f3f4f6;
+    font-size: 18px;
+    text-align: center;
+    font-weight: 700;
+}
+
+.plst-modal-form-section label {
+    display: block;
+    margin-bottom: 8px;
+    color: #d1d5db;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.plst-modal-form-section input,
+.plst-modal-form-section select {
+    width: 100%;
+    padding: 12px 16px;
+    background: #374151;
+    border: 2px solid #4b5563;
+    border-radius: 10px;
+    font-size: 16px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    color: #f3f4f6;
+}
+
+.plst-modal-form-section input::placeholder {
+    color: #9ca3af;
+}
+
+.plst-modal-form-section input:focus,
+.plst-modal-form-section select:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    background: #4b5563;
+}
+
+.plst-submit-action-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #059669, #047857);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.plst-submit-action-btn:hover {
+    background: linear-gradient(135deg, #047857, #065f46);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4);
+}
+
+/* Mobile form adjustments */
+@media (max-width: 768px) {
+    .plst-modal-form-section h3 {
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+    
+    .plst-modal-form-section input,
+    .plst-modal-form-section select {
+        font-size: 16px;
+        padding: 14px 16px;
+    }
+    
+    .plst-submit-action-btn {
+        padding: 16px;
+        font-size: 16px;
+    }
+    button{
+          width: 400px;
+    }
+}
+
+@keyframes plstFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes plstSlideUp {
+    from { 
+        transform: scale(0.8) translateY(50px);
+        opacity: 0;
+    }
+    to { 
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+}
+
+/* // ADDing for larger play button  */
+/* Just add this CSS to style your existing audio player */
+#audio {
+    width: 100%;
+    height: 60px;
+    background: #1f2937;
+    border: 2px solid #4b5563;
+    border-radius: 12px;
+    outline: none;
+}
+
+#audio::-webkit-media-controls-panel {
+    background: #1f2937;
+}
+
+#audio::-webkit-media-controls-play-button {
+    background-color: #374151 !important;
+    border: 2px solid #6b7280 !important;
+    border-radius: 50% !important;
+    width: 45px !important;
+    height: 45px !important;
+    min-width: 45px !important;
+    min-height: 45px !important;
+    margin: 5px 15px !important;
+    filter: invert(1) !important;
+    aspect-ratio: 1/1 !important;
+}
+
+#audio::-webkit-media-controls-play-button:hover {
+    background-color: #4b5563 !important;
+    transform: scale(1.05);
+}
+
+#audio::-webkit-media-controls-current-time-display,
+#audio::-webkit-media-controls-time-remaining-display {
+    color: #e5e7eb !important;
+    font-size: 14px !important;
+    text-shadow: none !important;
+}
+
+#audio::-webkit-media-controls-timeline {
+    background: #4b5563 !important;
+    border-radius: 25px !important;
+    margin: 0 10px !important;
+    height: 6px !important;
+}
+
+#audio::-webkit-media-controls-volume-slider {
+    background: #4b5563 !important;
+    border-radius: 25px !important;
+    height: 6px !important;
+}
+
+/* Hide the 3-dot menu and speed controls */
+#audio::-webkit-media-controls-overflow-button,
+#audio::-webkit-media-controls-overflow-menu-button,
+#audio::-webkit-media-controls-toggle-closed-captions-button,
+#audio[controls]::-webkit-media-controls-overflow-button {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    #audio {
+        height: 55px;
+    }
+    
+    #audio::-webkit-media-controls-play-button {
+        width: 40px !important;
+        height: 40px !important;
+        margin: 5px 10px !important;
+    }
+    #topmargin{
+      margin-bottom: 70px;
+    }
+    .containeres{
+      margin-top: 15%;
+    }
+}
+</style>
+
+<script>
+function openPlaylistModal() {
+    document.getElementById('plstModalOverlay987').classList.add('plst-active');
+    document.getElementById('plstAddForm').style.display = 'block';
+    document.getElementById('plstCreateForm').style.display = 'none';
+}
+
+function openCreateModal() {
+    document.getElementById('plstModalOverlay987').classList.add('plst-active');
+    document.getElementById('plstAddForm').style.display = 'none';
+    document.getElementById('plstCreateForm').style.display = 'block';
+}
+
+function closePlstModal() {
+    document.getElementById('plstModalOverlay987').classList.remove('plst-active');
+}
+
+// Close modal when clicking outside
+document.getElementById('plstModalOverlay987').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closePlstModal();
+    }
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closePlstModal();
+    }
+});
+</script>
+
+<!-- New css code to fix the css issue in the site  -->
+<style>
+  @media (max-width: 800px) {
+  html, body {
+    overflow-x: hidden;
+  }
+  .container {
+    transform: scale(0.95);
+    transform-origin: top center;
+  }
+}
+
+@media (max-width: 500px) {
+  .container {
+    transform: scale(0.88);
+    transform-origin: top center;
+  }
+}
+
+@media (max-width: 400px) {
+  .container {
+    transform: scale(0.82);
+    transform-origin: top center;
+  }
+  #topmargin {
+    margin-bottom: 250px;
+  }
+}
+
+@media (max-width: 350px) {
+  .container {
+    transform: scale(0.78);
+    transform-origin: top center;
+  }
+  #topmargin {
+    margin-bottom: 350px;
+  }
+}
 
 
-</html>
+.plst-modal-trigger-btn {
+    padding: 10px 24px;
+    background: linear-gradient(135deg, #6e8efb, #a777e3);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+
+audio::-webkit-media-controls-rewind-button,
+audio::-webkit-media-controls-seek-back-button,
+audio::-webkit-media-controls-seek-forward-button,
+audio::-webkit-media-controls-mute-button,
+audio::-webkit-media-controls-volume-slider-container,
+audio::-webkit-media-controls-volume-slider,
+audio::-webkit-media-controls-overflow-menu-button {
+   display: none !important;
+   -webkit-appearance: none;
+}
+
+#shapeOverlay {
+    height: 100%;
+    width: 100%;
+}
+</style>
+
+
+<style>
+  .song-nav-wrapper {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  .song-nav-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+
+  
+
+  #audio {
+    flex: 1 1 auto;
+    min-width: 200px;
+    width: 100%;
+    max-width: 100%;
+  }
+ @media (max-width: 500px) {
+.song-nav-buttons button {
+    font-size: 22px;
+    padding: 4px;
+  }
+  .song-nav-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 52%;
+  }
+ }
+  
+</style>
+<style>
+  .song-nav-wrapper {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  .song-nav-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+
+  
+
+  #audio {
+    flex: 1 1 auto;
+    min-width: 200px;
+    width: 100%;
+    max-width: 100%;
+  }
+ @media (max-width: 500px) {
+.song-nav-buttons button {
+    font-size: 22px;
+    padding: 4px;
+  }
+  .song-nav-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 52%;
+  }
+  .play-arrow {
+    margin-left: -15%;
+  }
+
+ }
+    .select-group {
+    margin-bottom: 0px;
+}
+</style>
+<style>
+  #customPlayBtn {
+    width: 100%;
+    padding: 14px 0;
+    background: linear-gradient(135deg, #1f1f1f, #333333); /* Dark gray gradient */
+    color: #ffffff;
+    border: 1px solid #444;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-shadow: none;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+
+  #customPlayBtn:hover {
+    background: linear-gradient(135deg, #2b2b2b, #3a3a3a);
+    transform: translateY(-1px);
+  }
+
+  #customPlayBtn:active {
+    transform: scale(0.98);
+  }
+  @media (max-width: 500px) {
+  .unique-modal {
+    width: 70% !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    padding: 16px !important;
+    border-radius: 6px !important;
+  }
+}
+ @media (max-width: 420px) {
+  .unique-modal {
+    width: 60% !important;
+  }
+}
+ @media (max-width: 320px) {
+  .unique-modal {
+    width: 50% !important;
+  }
+}
+</style>
+
+{% endblock content %}
